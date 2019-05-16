@@ -10,16 +10,19 @@ import store from './store'
 import filter from './filter'
 import directive from './directive'
 import 'babel-polyfill'
-import axios from './utils/ajax.js'
+import ajax from './utils/ajax'
+import axios from './utils/axios_new'
 
 Vue.config.productionTip = false
 
 //完整引入element-ui
 Vue.use(ElementUI)
-Vue.use(axios);
+Vue.use(ajax);
 
+// 注入到根实例中
 /* eslint-disable no-new */
 new Vue({
+  axios,
   router,
   store,
   filter,

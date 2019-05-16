@@ -14,12 +14,12 @@ const vuerouters = new VueRouter({
 });
 
 // 路由跳转前验证(全局守卫)
-// vuerouters.beforeEach((to, from, next) => {
-//   next();
-// });
+vuerouters.beforeEach((to, from, next) => {
+  next();
+});
 
-// vuerouters.afterEach(() => {
+vuerouters.afterEach(() => {
 
-// });
+});
 
 export default vuerouters;
