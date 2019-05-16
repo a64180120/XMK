@@ -18,6 +18,8 @@ Vue.config.productionTip = false
 //完整引入element-ui
 Vue.use(ElementUI)
 Vue.use(ajax);
+// 注册组件到Vue
+Vue.prototype.$axios = axios
 
 // 注入到根实例中
 /* eslint-disable no-new */

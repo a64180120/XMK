@@ -3,7 +3,7 @@
  * TODO: 拦截器全局配置，根据实际情况修改
  */
 import axios from './axios_new'
-import qs from 'qs'
+import Qs from 'qs'
 import store from "../store";
 import { Message } from "element-ui";
 
@@ -16,41 +16,27 @@ let Base64 = require("js-base64").Base64;
 // 封装axios--------------------------------------------------------------------------------------
 function apiAxios(method, url, params, hastimeout) {
 
-  var config = null
+
   //var token = store.state.user.token;
   //var timestamp = new Date().getTime();
   //var signature = getSha512(timestamp + "_" + token + "_newgrand");
 
-
-  if (method === 'FORM') {
-    //form表单提交
-    method = 'POST'
-    config = {
-      "Content-Type": "multipart/form-data",
-      'Accept': "application/json;",
-      // 'token': token,
-      // 'timestamp': timestamp,
-      // 'signature': signature
-    };
-  } else {
-    config = {
-      "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-      'Accept': "application/json;",
-      // 'token': token,
-      // 'timestamp': timestamp,
-      // 'signature': signature
-    };
-  }
+  var config = {
+    "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+    'Accept': "application/json;",
+    // 'token': token,
+    // 'timestamp': timestamp,
+    // 'signature': signature
+  };
 
   let httpDefault = {
     headers: config,
     method: method,
-    baseURL: baseURL,
     url: url,
     // `params` 是即将与请求一起发送的 URL 参数
     // `data` 是作为请求主体被发送的数据
     params: method === 'GET' || method === 'DELETE' ? params : null,
-    data: method === 'POST' || method === 'PUT' ? qs.stringify(params) : null,
+    data: method === 'POST' || method === 'PUT'|| method === 'FORM' ? Qs.stringify(params) : null,
    
   }
   // 请求超时时间
@@ -80,6 +66,6 @@ export default {
     Vue.prototype.postAxios = (url, params, timeout) => apiAxios('POST', url, params, timeout)
     Vue.prototype.putAxios = (url, params, timeout) => apiAxios('PUT', url, params, timeout)
     Vue.prototype.delectAxios = (url, params, timeout) => apiAxios('DELECT', url, params, timeout)
-    Vue.prototype.formAxios = (url, params, timeout) => apiAxios('FORM', url, params, timeout)
+    //Vue.prototype.formAxios = (url, params, timeout) => apiAxios('FORM', url, params, timeout)
   }
 }
