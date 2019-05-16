@@ -1,0 +1,39 @@
+.sys-app,
+.sys-error-page,
+.sys-full-page{
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background-color: #fff;
+}
+.sys-page{
+    width: 100%;
+    height: 100%;
+    padding: 10px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    box-sizing: border-box;
+    .el-dialog__header{
+        border-bottom:1px solid #dcdfe6;
+    }
+
+}
+.el-message-box__header{
+    background:#00B8EE;
+}
+.el-message{
+    top: 250px;
+}
+.sys-content{
+    position: absolute;
+    top: 60px ;
+    right: 0;
+    bottom: 0;
+    padding-top: 53px;
+    &.left{
+        left: 160px ;
+    }
+    &.top{
+        left: 0
+    }
+}
