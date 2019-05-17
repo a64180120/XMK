@@ -19,10 +19,15 @@ const staticRoute = [
         path: "",
         component: () =>import(/* webpackChunkName:'home'*/"../pages/home/index"),
         meta:{ requireAuth:true,type:'page',name:'首页' }
+      },
+      {
+        path: "/fund",
+        component: () =>import(/* webpackChunkName:'home'*/"../pages/payfund/index"),
+        meta:{ requireAuth:true,type:'page',name:'资金拨付' }
       }
     ]
   }
-  
+
 ];
 
 export default staticRoute;
