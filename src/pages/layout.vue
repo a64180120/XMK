@@ -1,13 +1,13 @@
 <template>
   <div>
-    Layout
+    <top-handle></top-handle>
     <router-view></router-view>
   </div>
 </template>
 
 <script>
 import { mapState, mapActions } from "vuex";
-
+import topHandle from '@/components/topNav/topHandle'
 export default {
   components: {},
   data() {
@@ -23,7 +23,10 @@ export default {
   },
   created() {},
   mounted() {},
-  methods: {}
+  methods: {},
+  components:{
+    topHandle
+  }
 };
 </script>
 

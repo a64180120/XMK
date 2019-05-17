@@ -101,3 +101,23 @@ body {
     white-space: nowrap;
     overflow: hidden;
 }
+
+// 项目库
+$primaryColor:#3294e8; //主色
+$btnColor:#3294e8; //弹窗按钮颜色
+$listHeader:rgb(51, 51, 51); //表头颜色
+
+.msFixed{
+    position:fixed;
+    position:-ms-page;
+}
+.btn{
+    color: #fff;
+    border-radius: 3px;
+    display: inline-block;
+    height:30px;
+    line-height:30px;
+    padding:0 10px;
+    text-align: center;
+    background: $btnColor;
+}
