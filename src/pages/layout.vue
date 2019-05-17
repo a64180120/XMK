@@ -1,17 +1,16 @@
 <template>
   <div>
-    Layout
     <router-view></router-view>
   </div>
 </template>
 
 <script>
-import { mapState, mapActions } from "vuex";
+import { mapState, mapActions } from 'vuex'
 
 export default {
   components: {},
   data() {
-    return {};
+    return {}
   },
   computed: {
     ...mapState({
@@ -24,7 +23,7 @@ export default {
   created() {},
   mounted() {},
   methods: {}
-};
+}
 </script>
 
 <style scoped>
