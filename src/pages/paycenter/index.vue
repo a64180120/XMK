@@ -1,6 +1,8 @@
 <template>
   <div class="payIndex">
-    <top-handle title="支付中心在线工作平台"></top-handle>
+    <top-handle title="支付中心在线工作平台">
+      <div>123</div>
+    </top-handle>
     <div class="container">
       <div class="selects">
         <span>支付单据</span>
@@ -56,21 +58,16 @@
               <col width="15%">
               <col width="15%">
               <col width="10%">
+              <col width="5%">
               <col width="10%">
-              <col width="15%">
+              <col width="10%">
             </colgroup>
             <thead>
               <tr>
                 <td>
                   <el-checkbox v-model="checked">序号</el-checkbox>
                 </td>
-                <td>申请单编号</td>
-                <td>申请单名称</td>
-                <td>申请单金额（元）</td>
-                <td>申请日期</td>
-                <td>审批状态</td>
-                <td>支付状态</td>
-                <td>申请说明</td>
+                <td v-for="(item,index) in tableHeader" :key="index">{{item.label}}</td>
               </tr>
             </thead>
           </table>
@@ -84,21 +81,39 @@
               <col width="15%">
               <col width="15%">
               <col width="10%">
+              <col width="5%">
               <col width="10%">
-              <col width="15%">
+              <col width="10%">
             </colgroup>
             <thead>
-              <tr v-for="n in 35">
+              <tr v-for="(item,index) in tableData" :key="index">
                 <td>
                   <el-checkbox v-model="checked">序号</el-checkbox>
                 </td>
-                <td>申请单编号</td>
-                <td>申请单名称</td>
-                <td>申请单金额（元）</td>
-                <td>申请日期</td>
-                <td>审批状态</td>
-                <td>支付状态</td>
-                <td>申请说明</td>
+                <td>
+                  <div>{{item.zfdbh}}</div>
+                </td>
+                <td>
+                  <div>{{item.zfje}}</div>
+                </td>
+                <td>
+                  <div>{{item.djlx}}</div>
+                </td>
+                <td>
+                  <div>{{item.sqdbh}}</div>
+                </td>
+                <td>
+                  <div>{{item.sbrq}}</div>
+                </td>
+                <td>
+                  <div>{{item.spzt}}</div>
+                </td>
+                <td>
+                  <div>{{item.zfzt}}</div>
+                </td>
+                <td>
+                  <div>{{item.zfrq}}</div>
+                </td>
               </tr>
             </thead>
           </table>
@@ -204,6 +219,7 @@ export default {
           label: '项目支出单'
         }
       ],
+      checked: '',
       type: null,
       statusList: [
         {
@@ -351,120 +367,50 @@ export default {
   }
 }
 </script>
-<style lang="stylus" scoped>
-.payIndex
-  color #333
-  font-size 0.16rem
-  .container
-    min-width 1200px
-    position absolute
-    top 135px
-    bottom 15px
-    left 15px
-    right 15px
-    .selects
-      text-align left
-      line-height 30px
-      height 30px
-      margin 10px
-      box-sizing border-box
-      font-size 0.14rem
-      >span
-        &:not(:first-of-type)
-          margin-left 20px
-        +div
-          width 150px
-      .btns
-        float right
-        .search > span
-          display inline-block
-          width 40px
-          line-height 30px
-          height 30px
-          background #3294e8
-          text-align center
-          float right
-          margin-left -5px
-          position relative
-          z-index 2
-    // .table
-    // position absolute
-    // top 50px
-    // bottom 50px
-    // left 10px
-    // right 10px
-    // overflow hidden
-    // ul.tableHeader, ul.contentList
-    // >li
-    // width 11%
-    // &:first-child
-    // width 8%
-    // &:nth-child(5), &:nth-child(6)
-    // width 13%
-    // .tableHeader
-    // overflow hidden
-    // background #9e9e9e8a
-    // >li
-    // float left
-    // box-sizing border-box
-    // height 48px
-    // line-height 48px
-    // border-right 1px solid #ffffff
-    // &:last-child
-    // border-right 0
-    // .tableContent
-    // position absolute
-    // top 48px
-    // bottom 0
-    // left 0
-    // right -17px
-    // padding-bottom 20px
-    // overflow-x hidden
-    // overflow-y scroll
-    // ul.contentList
-    // margin-top 10px
-    // position relative
-    // &:after
-    // content ''
-    // display block
-    // clear both
-    // &:before
-    // content ''
-    // position absolute
-    // top 0
-    // left 5px
-    // right 5px
-    // bottom 0
-    // box-shadow 0px 3px 8px #cbcbcb
-    // border-radius 6px
-    // >li
-    // box-sizing border-box
-    // height 48px
-    // line-height 48px
-    // float left
-    // font-size 0.16rem
-    // &:last-child > div:after
-    // border-right 0
-    // >div
-    // box-sizing border-box
-    // width 100%
-    // height 38px
-    // line-height 38px
-    // margin 5px 0
-    // position relative
-    // &:after
-    // content ''
-    // position absolute
-    // right 0
-    // top 0
-    // bottom 0
-    // border-right 1px solid #cacaca
-    .pages
-      position absolute
-      bottom 0
-      right 0
+<style lang="scss" scoped>
+.payIndex {
+  color: #333;
+  font-size: 0.16rem;
+}
+
+.payIndex .container .selects {
+  text-align: left;
+  line-height: 30px;
+  height: 30px;
+  margin: 10px;
+  box-sizing: border-box;
+  font-size: 0.14rem;
+}
+.payIndex .container .selects > span:not(:first-of-type) {
+  margin-left: 20px;
+}
+.payIndex .container .selects > span + div {
+  width: 150px;
+}
+.payIndex .container .selects .btns {
+  float: right;
+}
+.payIndex .container .selects .btns .search > span {
+  width: 40px;
+  line-height: 30px;
+  height: 30px;
+  background: #3294e8;
+  text-align: center;
+  float: right;
+  margin-left: -5px;
+  position: relative;
+  z-index: 2;
+}
+.payIndex .container .pages {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+}
+.payIndex {
+}
 </style>
-<style lang='less'>
+
+<style lang='scss'>
 .el-checkbox,
 .el-checkbox-button__inner {
   color: #333;
