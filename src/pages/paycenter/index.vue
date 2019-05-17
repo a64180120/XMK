@@ -46,16 +46,65 @@
           </div>
         </div>
       </div>
-      <div class="table">
-        <!-- <el-table border :data="tableData" :height="contentHeight" style="width: 100%" ref="table">
-          <el-table-column type="selection" width="100"></el-table-column>
-          <el-table-column
-            v-for="item in tableHeader"
-            :prop="item.name"
-            :label="item.label"
-            :width="item.width"
-          ></el-table-column>
-        </el-table>-->
+      <div class="formArea">
+        <div class="tableHead">
+          <table>
+            <colgroup>
+              <col width="5%">
+              <col width="15%">
+              <col width="15%">
+              <col width="15%">
+              <col width="15%">
+              <col width="10%">
+              <col width="10%">
+              <col width="15%">
+            </colgroup>
+            <thead>
+              <tr>
+                <td>
+                  <el-checkbox v-model="checked">序号</el-checkbox>
+                </td>
+                <td>申请单编号</td>
+                <td>申请单名称</td>
+                <td>申请单金额（元）</td>
+                <td>申请日期</td>
+                <td>审批状态</td>
+                <td>支付状态</td>
+                <td>申请说明</td>
+              </tr>
+            </thead>
+          </table>
+        </div>
+        <div class="tableBody">
+          <table>
+            <colgroup>
+              <col width="5%">
+              <col width="15%">
+              <col width="15%">
+              <col width="15%">
+              <col width="15%">
+              <col width="10%">
+              <col width="10%">
+              <col width="15%">
+            </colgroup>
+            <thead>
+              <tr v-for="n in 35">
+                <td>
+                  <el-checkbox v-model="checked">序号</el-checkbox>
+                </td>
+                <td>申请单编号</td>
+                <td>申请单名称</td>
+                <td>申请单金额（元）</td>
+                <td>申请日期</td>
+                <td>审批状态</td>
+                <td>支付状态</td>
+                <td>申请说明</td>
+              </tr>
+            </thead>
+          </table>
+        </div>
+      </div>
+      <!-- <div class="table">
         <ul class="tableHeader">
           <li>
             <el-checkbox v-model="checkAll">全选</el-checkbox>
@@ -99,7 +148,7 @@
             </li>
           </el-checkbox-group>
         </ul>
-      </div>
+      </div>-->
       <div class="pages">
         <el-pagination
           @size-change="handleSizeChange"
@@ -338,78 +387,78 @@ export default {
           margin-left -5px
           position relative
           z-index 2
-    .table
-      position absolute
-      top 50px
-      bottom 50px
-      left 10px
-      right 10px
-      overflow hidden
-      ul.tableHeader, ul.contentList
-        >li
-          width 11%
-          &:first-child
-            width 8%
-          &:nth-child(5), &:nth-child(6)
-            width 13%
-      .tableHeader
-        overflow hidden
-        background #9e9e9e8a
-        >li
-          float left
-          box-sizing border-box
-          height 48px
-          line-height 48px
-          border-right 1px solid #ffffff
-          &:last-child
-            border-right 0
-      .tableContent
-        position absolute
-        top 48px
-        bottom 0
-        left 0
-        right -17px
-        padding-bottom 20px
-        overflow-x hidden
-        overflow-y scroll
-        ul.contentList
-          margin-top 10px
-          position relative
-          &:after
-            content ''
-            display block
-            clear both
-          &:before
-            content ''
-            position absolute
-            top 0
-            left 5px
-            right 5px
-            bottom 0
-            box-shadow 0px 3px 8px #cbcbcb
-            border-radius 6px
-          >li
-            box-sizing border-box
-            height 48px
-            line-height 48px
-            float left
-            font-size 0.16rem
-            &:last-child > div:after
-              border-right 0
-            >div
-              box-sizing border-box
-              width 100%
-              height 38px
-              line-height 38px
-              margin 5px 0
-              position relative
-              &:after
-                content ''
-                position absolute
-                right 0
-                top 0
-                bottom 0
-                border-right 1px solid #cacaca
+    // .table
+    // position absolute
+    // top 50px
+    // bottom 50px
+    // left 10px
+    // right 10px
+    // overflow hidden
+    // ul.tableHeader, ul.contentList
+    // >li
+    // width 11%
+    // &:first-child
+    // width 8%
+    // &:nth-child(5), &:nth-child(6)
+    // width 13%
+    // .tableHeader
+    // overflow hidden
+    // background #9e9e9e8a
+    // >li
+    // float left
+    // box-sizing border-box
+    // height 48px
+    // line-height 48px
+    // border-right 1px solid #ffffff
+    // &:last-child
+    // border-right 0
+    // .tableContent
+    // position absolute
+    // top 48px
+    // bottom 0
+    // left 0
+    // right -17px
+    // padding-bottom 20px
+    // overflow-x hidden
+    // overflow-y scroll
+    // ul.contentList
+    // margin-top 10px
+    // position relative
+    // &:after
+    // content ''
+    // display block
+    // clear both
+    // &:before
+    // content ''
+    // position absolute
+    // top 0
+    // left 5px
+    // right 5px
+    // bottom 0
+    // box-shadow 0px 3px 8px #cbcbcb
+    // border-radius 6px
+    // >li
+    // box-sizing border-box
+    // height 48px
+    // line-height 48px
+    // float left
+    // font-size 0.16rem
+    // &:last-child > div:after
+    // border-right 0
+    // >div
+    // box-sizing border-box
+    // width 100%
+    // height 38px
+    // line-height 38px
+    // margin 5px 0
+    // position relative
+    // &:after
+    // content ''
+    // position absolute
+    // right 0
+    // top 0
+    // bottom 0
+    // border-right 1px solid #cacaca
     .pages
       position absolute
       bottom 0
