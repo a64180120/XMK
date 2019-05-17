@@ -63,7 +63,6 @@
     export default {
         name: "handleBtn",
         props:{
-           
             printBtn:true,
             title:{
               type:String,
@@ -136,9 +135,11 @@
 <style lang="scss" scoped>
 .handleBtn{
   width:100%;
+  height:100px;
   overflow: hidden;
   background: url(../../assets/images/bj.gif);
   box-shadow: 0px 1px 5px #959595;
+  
   >p{
     width:100%;
     text-align: center;
@@ -149,23 +150,27 @@
   .btnContainer{
     width:100%;
     font-size:0.16rem;
+    position:relative;
     >div{
       margin:0 auto;
     }
     .rightBtn{
       float:right;
       overflow: hidden;
+      position: absolute;
+      right:20px;
+      top:-10px;
       >li{
         float:left;
-        width:80px;
-        height:60px;
+        width:60px;
+        height:50px;
         padding:10px 0;
         text-align: center;
         cursor:pointer;
         >div{
           text-align: center;
            >img{
-             width:40px;
+             width:30px;
           }
         }
        
