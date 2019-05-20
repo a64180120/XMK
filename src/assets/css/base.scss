@@ -3,6 +3,7 @@
 @import '_mixin';
 @import 'reset';
 
-@import 'element-ui/lib/theme-chalk/index.css';
+@import '../../../node_modules/element-ui/lib/theme-chalk/index.css';
 @import 'common/common';
 
+$primaryColor:red;

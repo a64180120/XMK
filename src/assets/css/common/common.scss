@@ -37,3 +37,15 @@
         left: 0
     }
 }
+.msFixed{
+    position:fixed;
+    position:-ms-page;
+}
+.btn{
+    color: #fff;
+    border-radius: 3px;
+    display: inline-block;
+    height:30px;
+    text-align: center;
+    background: $btnColor;
+}
