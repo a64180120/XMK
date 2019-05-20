@@ -1,5 +1,5 @@
 <template>
-  <div class="handleBtnCon">
+  <div class="handleBtnCon msFixed" style="z-index: 9;">
     <div style="z-index:9" v-show="orgTreeShow" class="model" @click.stop="orgTreeShow=false">
 
     </div>
@@ -39,7 +39,7 @@
         <span class="fl mr-2">单位:</span>
         <div class="fl">
           <p @click="orgTreeInit" class="orgName">{{orgName}}</p>
-          <div v-show="orgTreeShow" class="treeCon">
+          <div v-show="orgTreeShow" class="treeCon" style="z-index:9;">
             <el-tree
               :props="props"
               :load="loadNode1"
@@ -133,6 +133,14 @@
 </script>
 
 <style lang="scss" scoped>
+.handleBtnCon{
+    position: fixed;
+    top: 0;
+    height: 150px;
+    left: 0;
+    right: 0;
+    
+}
 .handleBtn{
   width:100%;
   height:100px;
@@ -200,7 +208,7 @@
     padding:3px;
     left:0;
     top:100%;
-    z-index:9;
+
     min-width: 100px;
   }
   .orgSelect{
