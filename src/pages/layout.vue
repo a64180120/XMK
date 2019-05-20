@@ -1,9 +1,7 @@
 <template>
   <div>
-<<<<<<< HEAD
-=======
-    <!--<auditfollow></auditfollow>-->
->>>>>>> d1440a6e1034c5a433be1c9fae3057eb4579c862
+    <auditfollow></auditfollow>
+    
     <router-view></router-view>
 
   </div>
@@ -15,7 +13,8 @@ import { mapState, mapActions } from "vuex";
 export default {
   components: {},
   data() {
-    return {};
+    return {
+    };
   },
   computed: {
     ...mapState({
@@ -29,6 +28,7 @@ export default {
   mounted() {},
   methods: {
     msg(){
+      this.auditfollowShow=true;
       this.$message({message:'6666',duration:0})
     }
   },
