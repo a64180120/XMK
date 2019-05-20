@@ -1,5 +1,5 @@
 <template>
-  <div class="handleBtnCon">
+  <div class="handleBtnCon msFixed" style="z-index: 9;">
     <div style="z-index:9" v-show="orgTreeShow" class="model" @click.stop="orgTreeShow=false"></div>
     <div class="handleBtn">
       <p>{{title}}</p>
@@ -43,7 +43,7 @@
         <span class="fl mr-2">单位:</span>
         <div class="fl">
           <p @click="orgTreeInit" class="orgName">{{orgName}}</p>
-          <div v-show="orgTreeShow" class="treeCon">
+          <div v-show="orgTreeShow" class="treeCon" style="z-index:9;">
             <el-tree
               :props="props"
               :load="loadNode1"
@@ -60,22 +60,37 @@
 </template>
 
 <script>
-export default {
-  name: 'handleBtn',
-  props: {
-    printBtn: true,
-    title: {
-      type: String,
-      default: '资金拨付在线工作平台'
-    }
-  },
-  data() {
-    return {
-      options: [
-        {
-          //年度选项
-          value: '2019',
-          label: '2019'
+    export default {
+        name: "topHandle",
+        props:{
+            printBtn:true,
+            title:{
+              type:String,
+              default:'资金拨付在线工作平台'
+            }
+        },
+        data(){
+          return {
+            options: [{  //年度选项
+                value: '2019',
+                label: '2019'
+              }, {
+                value: '2018',
+                label: '2018'
+            }],
+
+            year: '2018',//年度
+            orgName:'组织名aklshdflhas',//组织=名
+            orgTreeShow:false,//显示组织树
+            props: {  //组织树懒加载配置
+              label: 'OrgName',
+              children: 'zones',
+              isLeaf: 'leaf'
+            },
+          }
+        },
+        mounted(){
+
         },
         {
           value: '2018',
@@ -140,8 +155,16 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.handleBtnCon {
+  position: fixed;
+  top: 0;
+  height: 150px;
+  left: 0;
+  right: 0;
+}
 .handleBtn {
   width: 100%;
+  height: 100px;
   overflow: hidden;
   background: url(../../assets/images/bj.gif);
   box-shadow: 0px 1px 5px #959595;
@@ -154,7 +177,9 @@ export default {
   }
   .btnContainer {
     width: 100%;
+    height: 60px;
     font-size: 0.16rem;
+    position: relative;
     > div {
       margin: 0 auto;
     }
@@ -194,10 +219,17 @@ export default {
     border: 1px solid #ddd;
     border-radius: 5px;
     overflow: hidden;
+    <<<<<<<HEAD
     padding: 3px;
     left: 0;
     top: 100%;
     z-index: 9;
+    =======background: #fff;
+    padding: 3px;
+    left: 0;
+    top: 100%;
+
+    >>>>>>>d1440a6e1034c5a433be1c9fae3057eb4579c862
     min-width: 100px;
   }
   .orgSelect {

@@ -1,0 +1,101 @@
+@import 'common/common';
+@import 'reset';
+.container{
+  position: absolute;
+  top: 170px;
+  bottom: .3rem;
+  left: 20px;
+  right: 20px;
+  overflow: hidden;
+  border-radius: 5px;
+  box-shadow: 0 0px 14px $primaryColor;
+  overflow-scrolling: auto;
+  min-height: 350px;
+}
+.container .btnArea{
+  height: 50px;
+  padding: 5px 20px;
+  line-height: 40px;
+  text-align: left;
+}
+.container .pageArea{
+  position: absolute;
+  bottom: 10px;
+  right: 20px;
+}
+
+.container .formArea{
+  position: absolute;
+  overflow: hidden;
+  left: 20px;
+  right: 20px;
+  top: 50px;
+  bottom: 50px;
+}
+.tableHead{}
+.tableHead table{
+  width: 100%;
+  border-collapse:separate;
+  border-spacing:0;
+  background-color: $listHeader;
+  padding: 0 15px;
+}
+.tableHead table td{
+  border-left: 1px solid #fff;
+  height:40px
+}
+.tableHead table td:nth-of-type(1){
+  border: 0;
+}
+.tableBody{
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: -17px;
+  top: 40px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+
+}
+.tableBody table{
+  width: 100%;
+  border-collapse:separate;
+  border-spacing:0 10px;
+  padding:0 15px;
+}
+.tableBody table tr{
+  border-radius: 8px;
+  padding: 10px 0;
+  box-shadow: 0 3px 8px #cbcbcb;
+}
+.tableBody table td:nth-of-type(1){
+  border-left: 0;
+  margin-left: 10px;
+}
+.tableBody table td{
+  border-left: 1px solid #ccc;
+  height:40px
+}
+
+.confirmBtn{
+  color: #fff;
+  background-color: $btnColor;
+  height: 38px;
+  border: 1px solid $btnColor;
+  border-radius: 3px;
+  width: 120px;
+  cursor: pointer;
+}
+.confirmBtn:hover{
+  color: $btnColor;
+  background: #fff;
+}
+.cancelBtn{
+  cursor: pointer;
+  color: $btnColor;
+  background: #fff;
+  height: 38px;
+  border: 1px solid $btnColor;
+  border-radius: 3px;
+  width: 120px;
+}

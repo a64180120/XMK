@@ -1,7 +1,9 @@
 <template>
   <div class="payIndex">
     <top-handle title="支付中心在线工作平台">
-      <div>123</div>
+      <div>
+        <div class="bt" @click="mergePay">合并支付</div>
+      </div>
     </top-handle>
     <div class="container">
       <div class="selects">
@@ -193,6 +195,52 @@
         </el-pagination>
       </div>
     </div>
+    <div class="mask" v-show="showMask"></div>
+    <el-dialog
+      class="mergeDialog passwordDialog"
+      :title="showMergePay?'合并支付':showPassword?'请输入支付口令':''"
+      :visible="showDialog"
+      :width="showMergePay?'50%':'350px'"
+      @close="closeDialog"
+      :modal="false"
+    >
+      <template v-if="showMergePay">
+        <div class="content">
+          <img src="@/assets/images/mergepay.png" alt>
+          <span>合计支付1982,834.24元？</span>
+        </div>
+        <div class="btns">
+          <span class="btn btn-cancel" @click="closeDialog">取消</span>
+          <span class="btn" @click="enterPassword">确定</span>
+        </div>
+        <el-collapse>
+          <el-collapse-item name="1">
+            <template slot="title">
+              <i class="header-icon el-icon-menu" style="margin-left:10px;"></i>点击查看详细收款信息
+            </template>
+            <el-table height="250px" :data="gridData" border>
+              <el-table-column type="index" label="序号" width="50"></el-table-column>
+              <el-table-column property="date" label="收款方姓名" width="200"></el-table-column>
+              <el-table-column property="name" label="待付金额" width="200"></el-table-column>
+              <el-table-column property="address" label="银行卡号" width="200"></el-table-column>
+              <el-table-column property="address" label="银行卡号" width="200"></el-table-column>
+              <el-table-column property="address" label="银行卡号" width="200"></el-table-column>
+              <el-table-column property="address" label="银行卡号" width="200"></el-table-column>
+            </el-table>
+          </el-collapse-item>
+        </el-collapse>
+      </template>
+      <template v-if="showPassword">
+        <div class="content">
+          <img src="@/assets/images/mergepay.png" alt>
+          <el-input v-model="password" placeholder="请输入支付口令" show-password></el-input>
+        </div>
+        <div class="btns">
+          <span class="btn btn-cancel" @click="closeDialog">取消</span>
+          <span class="btn" @click="pay">支付</span>
+        </div>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -203,6 +251,11 @@ export default {
   components: { topHandle },
   data() {
     return {
+      paySuccess: false,
+      showDialog: false,
+      showMergePay: false,
+      showPassword: false,
+      password: '',
       sbrq: '',
       zfrq: '',
       typeList: [
@@ -342,12 +395,63 @@ export default {
       search: '',
       pageSize: 12,
       currentPage: 1,
-      total: 100
+      total: 100,
+      gridData: [
+        {
+          xuhao: 1,
+          date: '浙江省总工会本级女工部',
+          name: '20121254',
+          address: '上海市普陀区金沙江上海市普陀18 弄'
+        },
+        {
+          xuhao: 1,
+          date: '浙江省总工会本级女工部',
+          name: '20121254',
+          address: '上海市普陀区金沙江上海市路 1518 弄'
+        },
+        {
+          xuhao: 1,
+          date: '浙江省总工会本级女工部',
+          name: '20121254',
+          address: '上海市普陀普区金路 1518 弄'
+        },
+        {
+          xuhao: 1,
+          date: '浙江省总工会本级女工部',
+          name: '20121254',
+          address: '上海市普陀区金沙江上金路 1518 弄'
+        }
+      ]
     }
   },
   created() {},
   mounted() {},
   methods: {
+    pay() {
+      // this.showPassword = false
+      // this.paySuccess = true
+      this.showDialog = false
+      this.$alert('<strong>这是 <i>HTML</i> 片段</strong>', 'HTML 片段', {
+        dangerouslyUseHTMLString: true
+      })
+    },
+    mergePay() {
+      this.showDialog = true
+      this.showMergePay = true
+    },
+    closeDialog() {
+      console.log('close')
+      if (this.showPassword) {
+        this.showPassword = false
+        this.showMergePay = true
+      } else {
+        this.showDialog = false
+      }
+    },
+    enterPassword() {
+      this.showMergePay = false
+      this.showPassword = true
+    },
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`)
     },
@@ -387,6 +491,57 @@ export default {
   .container .formArea {
     margin-top: 10px;
   }
+  .mergeDialog {
+    .el-dialog__body {
+      padding-bottom: 0;
+      .content {
+        text-align: left;
+        line-height: 55px;
+        font-size: 16px;
+        > img {
+          width: 55px;
+          height: 55px;
+          margin-right: 10px;
+        }
+      }
+      .btns {
+        text-align: right;
+        padding: 10px 0px 20px 0px;
+        .btn {
+          border: 1px solid $primaryColor;
+          box-sizing: border-box;
+          cursor: pointer;
+          line-height: 28px;
+          &:not(:last-child) {
+            margin-right: 10px;
+          }
+        }
+        .btn-cancel {
+          background: #fff;
+          color: $primaryColor;
+          border: 1px solid $primaryColor;
+          box-sizing: border-box;
+        }
+      }
+    }
+  }
+  .passwordDialog {
+    .el-dialog__body .content {
+      > .el-input {
+        width: auto;
+      }
+    }
+  }
+  .mask {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.5;
+    background: #000;
+    z-index: 2000;
+  }
 }
 
 .payIndex .container .selects {
@@ -414,6 +569,7 @@ export default {
   z-index: 2;
   cursor: pointer;
   border-radius: 0;
+  background-color: $primaryColor;
 }
 .payIndex .container .pages {
   position: absolute;
@@ -480,6 +636,30 @@ export default {
     &.unclickable {
       cursor: not-allowed;
       color: #c0c4cc;
+    }
+  }
+  .el-dialog__header {
+    border-bottom: 1px solid rgb(204, 204, 204);
+    margin: 0 20px;
+  }
+  .el-table td,
+  .el-table th.is-leaf {
+    border-color: rgb(204, 204, 204);
+  }
+  .el-table--border,
+  .el-table--group {
+    border-color: rgb(204, 204, 204);
+  }
+  .mergeDialog {
+    .el-dialog__body {
+      padding-bottom: 0;
+    }
+    .el-table th {
+      background-color: $primaryColor;
+      border-right-color: #fff;
+    }
+    .el-table thead {
+      color: #fff;
     }
   }
 }
