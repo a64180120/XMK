@@ -1,13 +1,13 @@
 <template>
   <div>
-    <top-handle></top-handle>
+    <auditfollow></auditfollow>
     <router-view></router-view>
   </div>
 </template>
 
 <script>
+import auditfollow from "@/components/auditFollow/auditfollow"
 import { mapState, mapActions } from "vuex";
-import topHandle from '@/components/topNav/topHandle'
 export default {
   components: {},
   data() {
@@ -25,7 +25,7 @@ export default {
   mounted() {},
   methods: {},
   components:{
-    topHandle
+    auditfollow
   }
 };
 </script>
