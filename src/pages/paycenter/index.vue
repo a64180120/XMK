@@ -44,7 +44,7 @@
         <div class="btns">
           <div class="search">
             <el-input v-model="search" placeholder="申请单编号/名称"></el-input>
-            <span>搜索</span>
+            <span class="btn">搜索</span>
           </div>
         </div>
       </div>
@@ -88,7 +88,7 @@
             <thead>
               <tr v-for="(item,index) in tableData" :key="index">
                 <td>
-                  <el-checkbox v-model="checked">序号</el-checkbox>
+                  <el-checkbox v-model="checked">{{index+1}}</el-checkbox>
                 </td>
                 <td>
                   <div>{{item.zfdbh}}</div>
@@ -371,13 +371,30 @@ export default {
 .payIndex {
   color: #333;
   font-size: 0.16rem;
+  .tableBody table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 10px;
+    padding: 0 15px;
+  }
+  .tableHead table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background-color: #dcdfe6;
+    padding: 0 15px;
+  }
+  .container .formArea {
+    margin-top: 10px;
+  }
 }
 
 .payIndex .container .selects {
   text-align: left;
   line-height: 30px;
   height: 30px;
-  margin: 10px;
+  margin: 20px;
+  margin-bottom: 10px;
   box-sizing: border-box;
   font-size: 0.14rem;
 }
@@ -390,16 +407,13 @@ export default {
 .payIndex .container .selects .btns {
   float: right;
 }
-.payIndex .container .selects .btns .search > span {
-  width: 40px;
-  line-height: 30px;
-  height: 30px;
-  background: #3294e8;
-  text-align: center;
+.payIndex .container .selects .btns .search > span.btn {
   float: right;
   margin-left: -5px;
   position: relative;
   z-index: 2;
+  cursor: pointer;
+  border-radius: 0;
 }
 .payIndex .container .pages {
   position: absolute;
@@ -407,51 +421,66 @@ export default {
   right: 0;
 }
 .payIndex {
+  .tableBody {
+    bottom: 96px;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    table td {
+      border-left: 0;
+      > div {
+        height: 30px;
+        line-height: 30px;
+        border-left: 1px solid #ccc;
+      }
+    }
+  }
 }
 </style>
 
 <style lang='scss'>
-.el-checkbox,
-.el-checkbox-button__inner {
-  color: #333;
-}
-.el-checkbox__label {
-  font-size: 0.16rem;
-}
-.el-input--mini {
-  font-size: 0.14rem;
-}
-.el-select-dropdown__item {
-  font-size: 0.14rem;
-}
-.search .el-input {
-  width: auto;
-  font-size: 0.14rem;
-}
-.search .el-input__inner {
-  font-size: 0.14rem;
-  border: 1px #bbb9b9 solid;
-  border-bottom-left-radius: 20px;
-  border-top-left-radius: 20px;
-  height: 30px;
-  line-height: 30px;
-  color: #333;
-}
-.el-pagination {
-  color: #333;
-  font-weight: normal;
-  font-size: 0.14rem;
-}
-.el-pagination button,
-.el-pagination span:not([class*='suffix']) {
-  font-size: 0.14rem;
-}
-.pages slot > span.changePage {
-  text-decoration: underline;
-  cursor: pointer;
-  &.unclickable {
-    cursor: not-allowed;
-    color: #c0c4cc;
+.payIndex {
+  .el-checkbox,
+  .el-checkbox-button__inner {
+    color: #333;
+  }
+  .el-checkbox__label {
+    font-size: 0.16rem;
+  }
+  .el-input--mini {
+    font-size: 0.14rem;
+  }
+  .el-select-dropdown__item {
+    font-size: 0.14rem;
+  }
+  .search .el-input {
+    width: auto;
+    font-size: 0.14rem;
+  }
+  .search .el-input__inner {
+    font-size: 0.14rem;
+    border: 1px #bbb9b9 solid;
+    border-bottom-left-radius: 20px;
+    border-top-left-radius: 20px;
+    height: 30px;
+    line-height: 30px;
+    color: #333;
+  }
+  .el-pagination {
+    color: #333;
+    font-weight: normal;
+    font-size: 0.14rem;
+  }
+  .el-pagination button,
+  .el-pagination span:not([class*='suffix']) {
+    font-size: 0.14rem;
+  }
+  .pages slot > span.changePage {
+    text-decoration: underline;
+    cursor: pointer;
+    &.unclickable {
+      cursor: not-allowed;
+      color: #c0c4cc;
+    }
   }
 }
 </style>
