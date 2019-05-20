@@ -26,7 +26,7 @@ export default {
     .title{
         text-align: center;
         color:#fff;
-        font-size:0.18rem;
+        font-size:0.2rem;
         height:40px;
         line-height: 40px;
         background:$primaryColor;
