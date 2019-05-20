@@ -73,13 +73,13 @@
               </li>
               <li class="smallinput">
                 <span>申请金额</span>
-                <el-input size="small"></el-input>
+                <el-input size="small" v-model="searchData.money.smoney"></el-input>
                 <span>至</span>
-                <el-input size="small"></el-input>
+                <el-input size="small" v-model="searchData.money.emoney"></el-input>
               </li>
-              <li>
-                <button class="btn cancleBtn">重置</button>
-                <button class="btn confirmBtn">搜索</button>
+              <li style="text-align: center;margin:15px 0 0 0 ">
+                <button class="cancelBtn">重置</button>
+                <button class="confirmBtn" style="margin-left: 50px">搜索</button>
               </li>
             </ul>
           </el-popover>
@@ -173,7 +173,19 @@
         </table>
       </div>
     </div>
+    <div class="pageArea">
+      <el-pagination
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page="searchData.pageSearch.pageIndex"
+        :page-sizes="[50,100,150,200]"
+        :page-size="searchData.pageSearch.pageSize"
+        layout="total,sizes,prev,pager,next,jumper"
+        :total="dataList.total"
+      >
 
+      </el-pagination>
+    </div>
   </div>
 </div>
 </template>
@@ -186,19 +198,34 @@
           return{
             checked:false,//多选选择框
             dataList:{
+              total:200,
+              data:[],
             },
             searchData:{
               approvalType:0,
               payType:0,
               searchValue:'',
               date:'',
+              money:{
+                smoney:'',
+                emoney:''
+              },
+              pageSearch:{
+                pageIndex:1,
+                pageSize:50
+              },
+
             },
             approvalList:[{value:0,label:'全部'},{value:1,label:'待审批'},{value:2,label:'审批中'},{value:3,label:'审批未通过'},{value:4,label:'审批通过'}],
             payList:[{value:0,label:'全部'},{value:1,label:'待支付'},{value:2,label:'支付异常'},{value:3,label:'支付成功'}],
             visiable:false,//高级搜索框显示隐藏
           }
       },
-      components:{tophandle}
+      components:{tophandle},
+      methods:{
+        handleSizeChange:function(){},
+        handleCurrentChange:function(){},
+      }
     }
 </script>
 
