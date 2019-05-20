@@ -16,6 +16,7 @@ const staticRoute = [
     children: [
       {
         path: '',
+        redirect: '/fund',
         component: () =>
           import(/* webpackChunkName:'home'*/ '../pages/home/index'),
         meta: { requireAuth: true, type: 'page', name: '首页' }

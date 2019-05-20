@@ -61,7 +61,7 @@
 
 <script>
     export default {
-        name: "handleBtn",
+        name: "topHandle",
         props:{
             printBtn:true,
             title:{
@@ -149,6 +149,7 @@
   }
   .btnContainer{
     width:100%;
+    height:60px;
     font-size:0.16rem;
     position:relative;
     >div{
@@ -195,6 +196,7 @@
     border:1px solid #ddd;
     border-radius: 5px;
     overflow: hidden;
+    background: #fff;
     padding:3px;
     left:0;
     top:100%;

@@ -1,5 +1,5 @@
 <template>
-  <div class="container homeTopFixed">
+  <div class="container">
     home
   </div>
 </template>
@@ -18,8 +18,6 @@ export default {
 </script>
 <style lang="stylus" scoped>
 .container {
-  width: 10rem;
-  height: 100%;
-  padding-bottom: 1.6rem;
+
 }
 </style>
