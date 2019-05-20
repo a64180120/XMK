@@ -1,5 +1,9 @@
 <template>
   <div>
+<<<<<<< HEAD
+=======
+    <!--<auditfollow></auditfollow>-->
+>>>>>>> d1440a6e1034c5a433be1c9fae3057eb4579c862
     <router-view></router-view>
 
   </div>
