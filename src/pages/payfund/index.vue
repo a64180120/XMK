@@ -1,7 +1,11 @@
 <template>
-  <div class="container">
-    <div class="btnArea">
+  <div>
+    <handle-btn></handle-btn>
 
+  <div class="container">
+
+    <div class="btnArea">
+        
     </div>
     <div class="formArea">
       <div class="tableHead">
@@ -91,17 +95,21 @@
     </div>
 
   </div>
+  </div>
 </template>
 
 <script>
+  import HandleBtn from "../../components/topNav/topHandle";
     export default {
         name: "index",
+      components: {HandleBtn},
       data(){
           return{
             checked:false,//多选选择框
             dataList:{},
           }
-      }
+      },
+      computed:{HandleBtn},
     }
 </script>
 
