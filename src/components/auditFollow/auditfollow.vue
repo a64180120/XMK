@@ -4,7 +4,9 @@
             <span>审批流查看</span>  
             <i></i>  
         </p>
-        <div></div>
+        <div class="content">
+            
+        </div>
     </div>
 </template>
 
@@ -40,6 +42,9 @@ export default {
             background:url(../../assets/images/delete.svg);
             background-size:100% 100%;
         }
+    }
+    .content{
+
     }
 }
 </style>

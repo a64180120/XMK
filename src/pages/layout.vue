@@ -1,7 +1,7 @@
 <template>
   <div>
-    <auditfollow></auditfollow>
     <router-view></router-view>
+
   </div>
 </template>
 
@@ -23,7 +23,11 @@ export default {
   },
   created() {},
   mounted() {},
-  methods: {},
+  methods: {
+    msg(){
+      this.$message({message:'6666',duration:0})
+    }
+  },
   components:{
     auditfollow
   }
