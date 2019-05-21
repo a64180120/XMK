@@ -24,11 +24,8 @@ export default {
   mounted() {
   },
   methods: {
-    msg(){
-    }
   },
   components:{
-    auditfollow
   }
 };
 </script>
