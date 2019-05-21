@@ -17,7 +17,7 @@
           </li>
           <li>
             <div><img src="@/assets/images/g-1.png" alt=""></div>
-            <span>回主页</span>
+            <span>主目录</span>
           </li>
         </ul>
         <slot></slot>
@@ -161,7 +161,7 @@
     height: 150px;
     left: 0;
     right: 0;
-    
+    color:#676767;
 }
 .handleBtn{
   width:100%;
@@ -215,7 +215,7 @@
 .orgInfo{
   
   height:30px;
-  padding:10px ;
+  padding:10px 23px;
   font-size:0.16rem;
   >div{
     float:right;
