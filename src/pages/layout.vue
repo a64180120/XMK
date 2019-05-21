@@ -1,7 +1,6 @@
 <template>
   <div> 
     <router-view></router-view>
-
   </div>
 </template>
 
@@ -23,7 +22,9 @@ export default {
     isLogin: function(newvalue, oldvalue) {}
   },
   created() {},
-  mounted() {},
+  mounted() {
+    this.$alert('click me ')
+  },
   methods: {
     msg(){
       this.auditfollowShow=true;
