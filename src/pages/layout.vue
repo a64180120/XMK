@@ -1,6 +1,6 @@
 <template>
   <div>
-<!--    <auditfollow></auditfollow>-->
+    <!--<auditfollow></auditfollow>-->
     <router-view></router-view>
   </div>
 </template>

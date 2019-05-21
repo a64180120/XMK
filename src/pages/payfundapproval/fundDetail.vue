@@ -1,145 +1,392 @@
 <template>
-    <section>
-      <el-dialog
-        :visible.sync="data.openDialog"
-        width="80%"
-        :close-on-click-modal="false">
-        <div slot="title" class="dialog-title">
-          <span style="float: left">查看</span>
-        </div>
-        <div class="dialog-content">
-          <el-row :gutter="10">
-           <el-col :span="24">
-             <div class="top-btn">
-               <el-button class="btn" size="mini">审批</el-button>
-               <el-button class="btn" size="mini">取消审批</el-button>
-               <el-button class="btn" size="mini">打印</el-button>
-             </div>
-           </el-col>
-          </el-row>
-          <el-row class="content" :gutter="10">
-           <el-col :span="5">
-             <div class="left-card">
-               <div>
-                 <!--申请信息-->
-                 <div class="apply-info">
+  <section>
+    <el-dialog
+      :visible.sync="data.openDialog"
+      width="80%"
+      :close-on-click-modal="false">
+      <div slot="title" class="dialog-title">
+        <span style="float: left">查看</span>
+      </div>
+      <div class="dialog-content">
+        <el-row :gutter="10">
+          <el-col :span="24">
+            <div class="top-btn">
+              <el-button class="btn" size="mini">审批</el-button>
+              <el-button class="btn" size="mini">取消审批</el-button>
+              <el-button class="btn" size="mini">打印</el-button>
+            </div>
+          </el-col>
+        </el-row>
+        <el-row class="content" :gutter="10">
+          <el-col :span="5">
+            <div class="left-card">
+              <i class="el-icon-edit-outline"></i>
+              <span>待审核</span>
+              <div>
+                <!--申请信息-->
+                <div class="apply-info">
+                  <span class="title">附件</span>
+                  <div class="appendix-item" v-for="(item,idx) in projectItem">
+                    <span class="title"><i class="el-icon-s-order"></i>{{item.projectName}}</span>
                     <ul>
-                      <li>申报部门：{{data.data.applyDepart}}</li>
-                      <li>申报金额：{{data.data.applyAmount}}元</li>
+                      <li v-for="(folder,idx) in item.projectFolder">{{folder}}</li>
                     </ul>
-                 </div>
-                 <!--拨付说明-->
-                 <div class="pay-explain">
-                    <div class="title">
-                      <span>付款说明</span>
-                    </div>
-                    <div class="content">
-                      <p>{{data.data.itemName}}</p>
-                    </div>
-                 </div>
-               </div>
-             </div>
-           </el-col>
-           <el-col :span="19">
-             <div>
-                <report-item></report-item>
-             </div>
-           </el-col>
-          </el-row>
-        </div>
-      </el-dialog>
-    </section>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </el-col>
+          <el-col :span="19">
+            <div class="detail-table">
+              <div class="title">
+                <span>资金拨付申请单</span>
+              </div>
+              <div class="top">
+                <ul>
+                  <li>申报单位/部门：{{data.data.applyDepart}}</li>
+                  <li>申报部门：{{data.data.applyDate}}</li>
+                  <li>单位：元</li>
+                </ul>
+              </div>
+              <div class="content">
+                <div class="top-tbody">
+                  <table>
+                    <colgroup>
+                      <col width="16%">
+                      <col width="84%">
+                    </colgroup>
+                    <tbody>
+                    <tr>
+                      <td>申请单号</td>
+                      <td>{{data.data.applyCode}}</td>
+                    </tr>
+                    <tr>
+                      <td>申请单位名称</td>
+                      <td>{{data.data.applyDepart}}</td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="top-total">
+                  <table>
+                    <colgroup>
+                      <col width="16%">
+                      <col width="44%">
+                      <col width="20%">
+                      <col width="20%">
+                    </colgroup>
+                    <tbody>
+                    <tr>
+                      <td>申请说明</td>
+                      <td></td>
+                      <td>申请金额合计</td>
+                      <td>{{data.data.applyAmount}}</td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="title">
+                  <table>
+                    <colgroup>
+                      <col width="84%">
+                    </colgroup>
+                    <tbody>
+                    <tr>
+                      <td>申请拨付明细</td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="bottom-thead">
+                  <table>
+                    <colgroup>
+                      <col width="16%">
+                      <col width="16%">
+                      <col width="16%">
+                      <col width="20%">
+                      <col width="16%">
+                      <col width="16%">
+                    </colgroup>
+                    <tbody>
+                    <tr>
+                      <td>项目编码</td>
+                      <td>项目名称</td>
+                      <td>补助单位/部门</td>
+                      <td>明细项目名称</td>
+                      <td>申请金额</td>
+                      <td>备注</td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="bottom-tbody">
+                  <table>
+                    <colgroup>
+                      <col width="16%">
+                      <col width="16%">
+                      <col width="16%">
+                      <col width="20%">
+                      <col width="16%">
+                      <col width="16%">
+                    </colgroup>
+                    <tbody>
+                    <tr v-for="i in 6">
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </el-col>
+        </el-row>
+      </div>
+    </el-dialog>
+  </section>
 </template>
 
 <script>
-    import ReportItem from "./reportItem";
-    export default {
-        name: "fundDetail",
-      components: {ReportItem},
-      props:{
-        data:{
-          type:Object,
-          default:{
-            openDialog:false,
-            data:{}
-          }
+  export default {
+    name: "fundDetail",
+    props: {
+      data: {
+        type: Object,
+        default: {
+          openDialog: false,
+          data: {}
         }
-      },
-      data(){
-          return{
-            openDialog:false,
-          }
+      }
+    },
+    data() {
+      return {
+        openDialog: false,
+
+        projectItem: [{
+          projectName: 'XXXXX项目A',
+          projectFolder: ['附件1', '附件2', '附件3', '附件4']
+        }, {
+          projectName: 'XXXXX项目B',
+          projectFolder: ['附件1', '附件2', '附件3', '附件4']
+        }, {
+          projectName: 'XXXXX项目C',
+          projectFolder: ['附件1', '附件2', '附件3', '附件4']
+        }]
       }
     }
+  }
 </script>
 <style scoped lang="scss">
-  .dialog-title{
-    >span{
+  .dialog-title {
+    > span {
       width: 100%;
       text-align: left;
       font-size: 0.16rem;
       border-bottom: 1px solid #eaeaea;
     }
   }
-  .content{
+
+  .content {
     height: 470px;
-    padding: 20px 0 0 0 ;
+    padding: 20px 0 0 0;
   }
-  .left-card{
+
+  .left-card {
     background-color: $primaryColor;
     height: 200px;
     max-width: 100%;
     border-radius: 8px;
     position: relative;
     padding: 7%;
-    >div{
+
+    > i {
+      font-size: 0.2rem;
+      color: #91BFF8;
+    }
+
+    > span {
+      font-size: 0.2rem;
+      font-family: 宋体;
+      color: #FFFF00;
+      text-decoration: underline;
+    }
+
+    > div {
       background-color: #ffffff;
       position: absolute;
       width: 86%;
-      height: 400px;
+      height: 350px;
       border-radius: 8px;
       box-shadow: 0px 2px 10px #888888;
-      >.apply-info{
+      margin-top: 20px;
+      margin-right: -15px;
+      overflow: auto;
+
+      > .apply-info {
         padding: 8px;
-        >ul{
-          >li{
-            height: 0.3rem;
-            border-bottom: 1px solid #eaeaea;
-            line-height: 0.3rem;
-            text-align: left;
-            width: 100%;
+
+        > .title {
+          font-size: 0.20rem;
+          font-weight: 800;
+          font-family: 宋体;
+        }
+
+        > .appendix-item {
+          margin-bottom: 15px;
+
+          > .title {
+            font-size: 0.16rem;
+
+            > i {
+              color: red;
+            }
+          }
+
+          > ul {
+            padding: 0 20px;
+
+            > li {
+              text-align: left;
+              margin-bottom: 5px;
+            }
           }
         }
       }
-      >.pay-explain{
-        max-width: 100%;
-        height: 200px;
-        margin: 5%;
-        box-shadow: 0px 2px 10px #888888;
-        border-radius: 8px;
-        >.title{
+    }
+  }
+
+  .detail-table {
+    height: 450px;
+    overflow: auto;
+    width: 100%;
+
+    > .title {
+      > span {
+        font-size: 0.2rem;
+      }
+    }
+
+    > .top {
+      > ul {
+        list-style: none;
+        float: left;
+        width: 100%;
+
+        > li {
+          width: 33%;
+          display: inline-block;
+        }
+
+        > li:first-child {
+          text-align: left;
+        }
+
+        > li:last-child {
+          text-align: right;
+        }
+      }
+    }
+
+    > .content {
+      > .top-tbody {
+        > table {
+          border: 1px solid #eaeaea;
           width: 100%;
-          height: 0.25rem;
-          border-radius: 8px 8px 0 0;
-          background-color: $primaryColor;
-          >span{
-            line-height: 0.25rem;
-            color: #ffffff;
+          > tbody {
+            > tr {
+              > td {
+                border: 1px solid #eaeaea;
+                height: 30px;
+              }
+            }
           }
-        };
-        >.content{
-          height: 1.75rem;
-          border-radius:0 0 8px 8px;
-       }
+        }
+      }
+      > .top-total{
+        > table {
+          border: 1px solid #eaeaea;
+          border-top: none;
+          border-bottom: none;
+          width: 100%;
+          > tbody {
+            > tr {
+              > td {
+                border: 1px solid #eaeaea;
+                height: 100px;
+                border-top: none;
+                /*border-bottom: none;*/
+              }
+            }
+          }
+        }
+      }
+      > .title{
+        > table {
+          border: 1px solid #eaeaea;
+          border-top: none;
+          border-bottom: none;
+          width: 100%;
+          > tbody {
+            > tr {
+              > td {
+                border: 1px solid #eaeaea;
+                height: 30px;
+                border-top: none;
+                /*border-bottom: none;*/
+              }
+            }
+          }
+        }
+      }
+      > .bottom-thead{
+        > table {
+          border: 1px solid #eaeaea;
+          border-top: none;
+          border-bottom: none;
+          width: 100%;
+          > tbody {
+            > tr {
+              > td {
+                border: 1px solid #eaeaea;
+                height: 30px;
+                border-top: none;
+                /*border-bottom: none;*/
+              }
+            }
+          }
+        }
+      }
+      > .bottom-tbody{
+        > table {
+          border: 1px solid #eaeaea;
+          border-top: none;
+          border-bottom: none;
+          width: 100%;
+          > tbody {
+            > tr {
+              > td {
+                border: 1px solid #eaeaea;
+                height: 30px;
+                border-top: none;
+                /*border-bottom: none;*/
+              }
+            }
+          }
+        }
       }
     }
   }
 </style>
 <style scoped>
-  .top-btn{
+  .top-btn {
     float: right;
   }
-  .dialog-content{
+
+  .dialog-content {
     height: 500px;
   }
 </style>

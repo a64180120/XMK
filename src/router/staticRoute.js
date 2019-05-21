@@ -35,8 +35,13 @@ const staticRoute = [
       },{
         path: '/payfundapproval',
         component: () =>
-          import(/* webpackChunkName:'home'*/ '../pages/payfundapproval/index'),
+          import(/* webpackChunkName:'payfundapproval'*/ '../pages/payfundapproval/index'),
         meta: { requireAuth: true, type: 'page', name: '资金拨付审批' }
+      },{
+        path: '/approvalcenter',
+        component: () =>
+          import(/* webpackChunkName:'approvalcenter'*/ '../pages/approvalcenter/index'),
+        meta: { requireAuth: true, type: 'page', name: '审批中心' }
       }
     ]
   }
