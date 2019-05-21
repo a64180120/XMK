@@ -5,7 +5,6 @@
 </template>
 
 <script>
-import auditfollow from "@/components/auditFollow/auditfollow"
 import { mapState, mapActions } from "vuex";
 export default {
   components: {},
@@ -23,12 +22,9 @@ export default {
   },
   created() {},
   mounted() {
-    this.$alert('click me ')
   },
   methods: {
     msg(){
-      this.auditfollowShow=true;
-      this.$message({message:'6666',duration:0})
     }
   },
   components:{

@@ -1,5 +1,5 @@
 <template>
-    <div v-show="visible" class="saasMsgCon" style="z-index:9999">
+    <div v-show="visible" class="saasMsgCon" :class="{noModel:!model}" style="z-index:9999">
 
         <div  class="saasMsg">
             <p class="title">
@@ -50,16 +50,19 @@ export default {
       }
   },
   props:{
-      delay:{
+      delay:{ //延迟关闭时间
           type:Number,
-          default:4000
-          
+          default:4000   
         },
-        title:{
+      title:{ //弹窗标题
             type:String,
             default:'提示'
         },
-      message:String,
+      model:{  //黑色遮罩层
+            type:Boolean,
+            default:false
+        },
+      message:String, //信息
       visible:{type:Boolean}
   },
   computed:{
@@ -81,6 +84,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
 .saasMsgCon{
 
     position:fixed;
@@ -174,5 +178,8 @@ export default {
 .btn:hover{
     background: #fff;
     color:#00b7ee;
+}
+.noModel{
+     background:none;
 }
 </style>
