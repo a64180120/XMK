@@ -154,7 +154,7 @@
       </div>
     </div>
     <div class="mask" v-show="showMask"></div>
-    <div class="dialogContainer" :class="{lowIndex:index>1}" v-show="showMergePay">
+    <div class="dialogContainer" :class="{lowIndex:index>2}" v-show="showMergePay">
       <div class="payCenterDialog">
         <div class="header">
           合并支付
@@ -186,7 +186,7 @@
         </el-collapse>
       </div>
     </div>
-    <div class="dialogContainer" :class="{lowIndex:index>1}" v-show="showPassword">
+    <div class="dialogContainer" :class="{lowIndex:index>2}" v-show="showPassword">
       <div class="payCenterDialog smallDialog">
         <div class="header">
           请输入支付口令
@@ -300,22 +300,11 @@
         </div>
         <div class="btns">
           <span class="btn">取消</span>
-          <span class="btn" @click="index = 3">确定</span>
+          <span class="btn" @click="tishi = true">确定</span>
         </div>
       </div>
     </div>
-    <div class="dialogContainer" v-show="tishi">
-      <div class="payCenterDialog smallDialog">
-        <div class="header">
-          提示
-          <i @click="closeDialog" class="el-icon-close"></i>
-        </div>
-        <div class="btns">
-          <span class="btn">取消</span>
-          <span class="btn">确定</span>
-        </div>
-      </div>
-    </div>
+    <xm-message :visible.sync="tishi" :message="message"></xm-message>
   </div>
 </template>
 
@@ -327,6 +316,7 @@ export default {
   data() {
     return {
       tishi: false,
+      message: '',
       songShenList: false,
       showMask: false,
       paySuccess: false,
