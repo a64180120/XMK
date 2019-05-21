@@ -41,12 +41,16 @@
           <p @click="orgTreeInit" class="orgName">{{orgName}}</p>
           <div v-show="orgTreeShow" class="treeCon" style="z-index:9;">
             <el-tree
+              ref="orgtree"
               :props="props"
               :load="loadNode1"
+              node-key="Phid"
               lazy
               show-checkbox
               :check-strictly="true"
-              @node-click="orgChange"
+              :check-on-click-node="false"
+              
+              @check="orgChange"
               >
             </el-tree>
           </div>
@@ -85,7 +89,7 @@
             props: {  //组织树懒加载配置
               label: 'OrgName',
               children: 'zones',
-              isLeaf: 'leaf'
+              isLeaf: 'isLast'
             },
           }
         },
@@ -95,13 +99,27 @@
         methods:{
           orgTreeInit(){
             this.orgTreeShow=true;
+            this.$refs.orgtree.setCheckedKeys([]);//清空选择
+            
           },
-          orgChange(val,val2,val3){
-            console.log(val,val2,val3)
+          orgChange(val){ //组织改变
+            console.log(val);//选中的组织
+
           },
-          yearChange(){
+           yearChange(){  //年度改变
             this.$emit("year-click",this.year);
           },
+          //设置选中的组织
+          setCheckedNodes() {
+            this.setCheckedNodes([{
+              Phid: '0000',
+              OrgName: '选中'
+            }]);
+          },
+          setCheckedKeys() {
+            this.$refs.orgtree.setCheckedKeys([3]);
+          },
+         
           print(){  //打印
             this.$emit('print');
           },
@@ -112,17 +130,21 @@
           loadNode1(node, resolve) {
             
             if (node.level === 0) {
-              return resolve([{ OrgName: 'region' }]);
+              return resolve([{ Phid:'0000',OrgName:'选中' }]);
             }
             if (node.level > 1) return resolve([]);
 
             setTimeout(() => {
               const data = [{
                 OrgName: '浙江省总',
-                leaf: true
+                isLast: true,
+                Phid:'0001',
+                OrgId:'10013'
               }, {
                 OrgName: '湖南省总',
                 
+                Phid:2,
+                OrgId:'10222'
               }];
 
               resolve(data);
