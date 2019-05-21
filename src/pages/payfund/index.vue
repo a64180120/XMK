@@ -1,7 +1,7 @@
 <template>
 <div>
   <div style="position: relative">
-    <tophandle></tophandle>
+    <tophandle title="审批中心在线工作平台"></tophandle>
   </div>
 
   <div class="container">

@@ -12,16 +12,14 @@ import directive from './directive'
 import 'babel-polyfill'
 import ajax from './utils/ajax'
 import axios from './utils/axios_new'
-//import Echarts from 'echarts'//引入echarts
+import xmMessage from "@/components/message"
 
 Vue.config.productionTip = false
 
 //完整引入element-ui
 Vue.use(ElementUI)
 Vue.use(ajax);
-//引入echarts
-//Vue.prototype.echarts = Echarts
-//Vue.use(Echarts)
+Vue.use(xmMessage)
 // 注册组件到Vue
 Vue.prototype.$axios = axios
 

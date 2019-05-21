@@ -1,17 +1,16 @@
 <template>
-  <div>
-    <!--<auditfollow></auditfollow>-->
+  <div> 
     <router-view></router-view>
   </div>
 </template>
 
 <script>
-import auditfollow from "@/components/auditFollow/auditfollow"
 import { mapState, mapActions } from "vuex";
 export default {
   components: {},
   data() {
-    return {};
+    return {
+    };
   },
   computed: {
     ...mapState({
@@ -22,10 +21,11 @@ export default {
     isLogin: function(newvalue, oldvalue) {}
   },
   created() {},
-  mounted() {},
-  methods: {},
+  mounted() {
+  },
+  methods: {
+  },
   components:{
-    auditfollow
   }
 };
 </script>

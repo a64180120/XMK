@@ -110,7 +110,7 @@
           },
           //组织树懒加载方法
           loadNode1(node, resolve) {
-            console.log(node,resolve)
+            
             if (node.level === 0) {
               return resolve([{ OrgName: 'region' }]);
             }
