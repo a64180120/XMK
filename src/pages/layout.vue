@@ -1,7 +1,5 @@
 <template>
-  <div>
-    <auditfollow></auditfollow>
-    
+  <div> 
     <router-view></router-view>
 
   </div>
