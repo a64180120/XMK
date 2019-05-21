@@ -7,17 +7,18 @@ import './assets/css/base.scss'
 import './assets/css/table.scss'
 import router from './router'
 import store from './store'
-import './filter'
+import filter from './filter'
 import directive from './directive'
 import 'babel-polyfill'
 import ajax from './utils/ajax'
 import axios from './utils/axios_new'
-
+import xmMessage from "@/components/message"
 Vue.config.productionTip = false
 
 //完整引入element-ui
 Vue.use(ElementUI)
-Vue.use(ajax)
+Vue.use(ajax);
+Vue.use(xmMessage)
 // 注册组件到Vue
 Vue.prototype.$axios = axios
 
@@ -27,7 +28,7 @@ new Vue({
   axios,
   router,
   store,
-  // filter,
+  filter,
   directive,
   render: h => h(App)
 }).$mount('#app')
