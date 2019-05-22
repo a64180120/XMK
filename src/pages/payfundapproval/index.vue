@@ -14,7 +14,7 @@
               <div class="top-btn">
                 <ul class="top-ul">
                   <li class="top-li">
-                    <span>审批</span>
+                    <span @click="aprovalItem()">审批</span>
                   </li>
                   <li class="top-li">
                     <span>取消审批</span>
@@ -170,8 +170,10 @@
             :total="page.total"></el-pagination>
         </div>
       </div>
-      <!--弹框-->
-      <fund-detail :data="detail"></fund-detail>
+      <!--详情弹框-->
+      <fund-detail ref="fundDetail" :data="detailData" ></fund-detail>
+      <!--审批弹框-->
+      <approval-dialog ref="approvalDialog" :data="approvalData" ></approval-dialog>
     </div>
 
 
@@ -182,17 +184,18 @@
   import FundDetail from "./fundDetail";
   import HandleBtn from "../../components/topNav/topHandle";
   import SearchInput from "../../components/seachInput/searchInput";
+  import ApprovalDialog from "./approvalDialog";
   export default {
     name: "index",
-    components: {SearchInput, HandleBtn, FundDetail},
+    components: {ApprovalDialog, SearchInput, HandleBtn, FundDetail},
     data(){
       return{
-        detail:{
-          openDialog:false,
-          data:{
-
-          }
+        openDetailDialog:false,
+        detailData:{
         },
+        approvalData:{
+        },
+        openApprovalDialog:false,
         checked:'',
         form:{
           depart:'',
@@ -268,9 +271,8 @@
       },
       //单行点击事件
       handleRowClick(row,idx){
-        console.log(row,idx)
-        this.detail.openDialog = true
-        this.detail.data = row
+        this.$refs.fundDetail.changeDialog();
+        this.detailData = row
       },
       //当前页显示多少条数据
       handleSizeChange(val){
@@ -284,6 +286,10 @@
       openApproval(row,idx){
         console.log(row,idx)
       },
+      //打开审批弹框
+      aprovalItem(){
+        this.$refs.approvalDialog.changeDialog()
+      }
     }
   }
 </script>
