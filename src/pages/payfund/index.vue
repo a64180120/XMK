@@ -1,93 +1,94 @@
 <template>
 <div>
   <div style="position: relative">
-    <tophandle></tophandle>
+    <tophandle title="审批中心在线工作平台"></tophandle>
   </div>
 
   <div class="container">
 
-    <div class="btnArea">
-      <label>
-        <span>审批状态：</span>
-        <el-select size="small" v-model="searchData.approvalType">
-          <el-option v-for="item in approvalList"
-                     :key="item.value"
-                     :label="item.label"
-                     :value="item.value">
-          </el-option>
-      </el-select>
-      </label>
-      <label>
-        <span>支付状态：</span>
-        <el-select size="small" v-model="searchData.payType">
-          <el-option v-for="item in payList"
-                     :key="item.value"
-                     :label="item.label"
-                     :value="item.value">
-          </el-option>
-        </el-select>
-      </label>
-      <div style="float: right;display: flex">
+
+    <div class="formArea">
+      <div class="btnArea">
         <label>
-          <el-input size="small" placeholder="请输入内容" v-model="searchData.searchValue">
-            <el-button slot="append" >搜索</el-button>
-          </el-input>
+          <span>审批状态：</span>
+          <el-select size="small" v-model="searchData.approvalType">
+            <el-option v-for="item in approvalList"
+                       :key="item.value"
+                       :label="item.label"
+                       :value="item.value">
+            </el-option>
+          </el-select>
         </label>
         <label>
-          <el-popover trigger="click" placement="bottom-start" width="412" v-model="visiable" :hide-on-click="false">
+          <span>支付状态：</span>
+          <el-select size="small" v-model="searchData.payType">
+            <el-option v-for="item in payList"
+                       :key="item.value"
+                       :label="item.label"
+                       :value="item.value">
+            </el-option>
+          </el-select>
+        </label>
+        <div style="float: right;display: flex">
+          <label>
+            <el-input size="small" placeholder="请输入内容" style="border-top-right-radius: 0;border-bottom-right-radius: 0" v-model="searchData.searchValue">
+              <el-button slot="append" size="small" style="background-color: #3294e8;color: #fff;border-top-left-radius: 0;border-bottom-left-radius: 0">搜索</el-button>
+            </el-input>
+          </label>
+          <label>
+            <el-popover trigger="click" placement="bottom-start" width="412" v-model="visiable" :hide-on-click="false">
               <!--<span class=" el-dropdown-link">
             下拉菜单<i class="el-icon-arrow-down el-icon&#45;&#45;right"></i>
             </span>-->
-            <el-button size="small" slot="reference" style="margin-left:20px">高级</el-button>
-            <ul class="sinor">
-              <li>
-                <span>审批状态</span>
-                <el-select size="small" v-model="searchData.approvalType">
-                  <el-option v-for="item in approvalList"
-                             :key="item.value"
-                             :label="item.label"
-                             :value="item.value">
-                  </el-option>
-                </el-select>
-              </li>
-              <li>
-                <span>支付状态</span>
-                <el-select size="small" v-model="searchData.payType">
-                  <el-option v-for="item in payList"
-                             :key="item.value"
-                             :label="item.label"
-                             :value="item.value">
-                  </el-option>
-                </el-select>
-              </li>
-              <li>
-                <span>申请日期</span>
-                <el-date-picker
-                  size="small"
-                  v-model="searchData.date"
-                  type="daterange"
-                  range-separator="至"
-                  start-placeholder="开始日期"
-                  end-placeholder="结束日期">
-                </el-date-picker>
-              </li>
-              <li class="smallinput">
-                <span>申请金额</span>
-                <el-input size="small" v-model="searchData.money.smoney"></el-input>
-                <span>至</span>
-                <el-input size="small" v-model="searchData.money.emoney"></el-input>
-              </li>
-              <li style="text-align: center;margin:15px 0 0 0 ">
-                <button class="cancelBtn">重置</button>
-                <button class="confirmBtn" style="margin-left: 50px">搜索</button>
-              </li>
-            </ul>
-          </el-popover>
-        </label>
-      </div>
+              <el-button size="small" slot="reference" style="margin-left:20px;background-color: #39b49b;border-color: #39b49b;color: #fff">高级</el-button>
+              <ul class="sinor">
+                <li>
+                  <span>审批状态</span>
+                  <el-select size="small" v-model="searchData.approvalType">
+                    <el-option v-for="item in approvalList"
+                               :key="item.value"
+                               :label="item.label"
+                               :value="item.value">
+                    </el-option>
+                  </el-select>
+                </li>
+                <li>
+                  <span>支付状态</span>
+                  <el-select size="small" v-model="searchData.payType">
+                    <el-option v-for="item in payList"
+                               :key="item.value"
+                               :label="item.label"
+                               :value="item.value">
+                    </el-option>
+                  </el-select>
+                </li>
+                <li>
+                  <span>申请日期</span>
+                  <el-date-picker
+                    size="small"
+                    v-model="searchData.date"
+                    type="daterange"
+                    range-separator="至"
+                    start-placeholder="开始日期"
+                    end-placeholder="结束日期">
+                  </el-date-picker>
+                </li>
+                <li class="smallinput">
+                  <span>申请金额</span>
+                  <el-input size="small" v-model="searchData.money.smoney"></el-input>
+                  <span>至</span>
+                  <el-input size="small" v-model="searchData.money.emoney"></el-input>
+                </li>
+                <li style="text-align: center;margin:15px 0 0 0 ">
+                  <button class="cancelBtn">重置</button>
+                  <button class="confirmBtn" style="margin-left: 50px">搜索</button>
+                </li>
+              </ul>
+            </el-popover>
+          </label>
+        </div>
 
-    </div>
-    <div class="formArea">
+      </div>
       <div class="tableHead">
         <table>
           <colgroup>
@@ -173,6 +174,47 @@
         </table>
       </div>
     </div>
+    <div class="rightPanel">
+      <div style="">
+        <!--部门选择-->
+        <el-select size="small" style="width: 260px;" v-model="searchData.approvalType">
+          <el-option v-for="item in approvalList"
+                     :key="item.value"
+                     :label="item.label"
+                     :value="item.value">
+          </el-option>
+        </el-select>
+        <!--预算显示区域-->
+        <el-card>
+          <div>
+            <p style="color: #3294e8;">28</p>
+            <div>预算支出项目总数</div>
+          </div>
+          <div>
+            <p style="color:#f52c1d">1859543.88</p>
+            <div>支出预算总额</div>
+          </div>
+        </el-card>
+        <el-card>
+          <div style="border-bottom: 1px solid #ccc">
+            <span>对下补助项目名称：</span>
+            <!--部门选择-->
+            <el-select size="small" style="width: 100px" v-model="searchData.approvalType">
+              <el-option v-for="item in approvalList"
+                         :key="item.value"
+                         :label="item.label"
+                         :value="item.value">
+              </el-option>
+            </el-select>
+          </div>
+          <div>
+            <!--echartArea-->
+            <pie-chart :chartData="chartData"></pie-chart>
+          </div>
+        </el-card>
+      </div>
+
+    </div>
     <div class="pageArea">
       <el-pagination
         @size-change="handleSizeChange"
@@ -192,6 +234,7 @@
 
 <script>
   import tophandle from '../../components/topNav/topHandle'
+  import pieChart from '../../components/echart/pieChart'
     export default {
         name: "index",
       data(){
@@ -219,18 +262,55 @@
             approvalList:[{value:0,label:'全部'},{value:1,label:'待审批'},{value:2,label:'审批中'},{value:3,label:'审批未通过'},{value:4,label:'审批通过'}],
             payList:[{value:0,label:'全部'},{value:1,label:'待支付'},{value:2,label:'支付异常'},{value:3,label:'支付成功'}],
             visiable:false,//高级搜索框显示隐藏
+            chartData:[]
           }
       },
-      components:{tophandle},
+      components:{tophandle,pieChart},
       methods:{
-        handleSizeChange:function(){},
+        handleSizeChange:function(){
+          this.chartData=[{
+            value:255,
+            name:'视频广告'
+          },
+            {
+              value:275,
+              name:'联盟广告'
+            },
+            {
+              value:275,
+              name:'邮件营销'
+            },
+            {
+              value:275,
+              name:'直接访问'
+            },];
+        },
         handleCurrentChange:function(){},
       }
     }
 </script>
 
 <style scoped>
-
+  .formArea,.pageArea{
+    right: 300px;
+  }
+.rightPanel{
+  width: 260px;
+  position: absolute;
+  right: 20px;
+  top: 8px;
+  bottom: 20px;
+  box-shadow: 0 0 7px #ccc;
+  padding: 5px;
+  background-color: #58a5e6;
+  overflow-y: auto;
+  font-size: 0.12rem;
+}
+  .rightPanel p{
+    font-size: .4rem;
+    margin-top: 10px;
+    text-shadow: 1px 2px 1px #5302026e;
+  }
 </style>
 <style>
   .sinor li{
@@ -241,5 +321,14 @@
   }
   .sinor .smallinput .el-input{
     width: 164px;
+  }
+  .container .el-card{
+    margin: 5px 0 0 0;
+  }
+  .rightPanel .el-input--small .el-input__inner{
+    border: 0;
+  }
+  .rightPanel .el-card__body{
+    padding: 5px;
   }
 </style>

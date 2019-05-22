@@ -13,6 +13,7 @@ import 'babel-polyfill'
 import ajax from './utils/ajax'
 import axios from './utils/axios_new'
 import xmMessage from "@/components/message"
+
 Vue.config.productionTip = false
 
 //完整引入element-ui

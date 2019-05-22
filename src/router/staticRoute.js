@@ -32,6 +32,16 @@ const staticRoute = [
         component: () =>
           import(/* webpackChunkName:'home'*/ '../pages/paycenter/index'),
         meta: { requireAuth: true, type: 'page', name: '支付中心' }
+      },{
+        path: '/payfundapproval',
+        component: () =>
+          import(/* webpackChunkName:'payfundapproval'*/ '../pages/payfundapproval/index'),
+        meta: { requireAuth: true, type: 'page', name: '资金拨付审批' }
+      },{
+        path: '/approvalcenter',
+        component: () =>
+          import(/* webpackChunkName:'approvalcenter'*/ '../pages/approvalcenter/index'),
+        meta: { requireAuth: true, type: 'page', name: '审批中心' }
       }
     ]
   }
