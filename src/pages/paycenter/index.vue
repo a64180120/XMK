@@ -1,17 +1,18 @@
 <template>
   <div class="payIndex">
-    <top-handle title="支付中心在线工作平台"></top-handle>
+    <top-handle title="支付中心在线工作平台">
+      <div class="navs">
+        <div class="nav" @click="payNav('showPayList')">收付款信息维护</div>
+        <div class="nav" @click="payNav('showMergePay')">合并支付</div>
+        <div class="nav" @click="payNav('showErrorHandle')">异常处理</div>
+        <div class="nav" @click="payNav('showApprove')">送审</div>
+      </div>
+    </top-handle>
+    <!-- 主体内容 -->
     <div class="container">
       <div class="selects">
         <span>支付单据</span>
-        <el-select
-          @change="selectType"
-          collapse-tags
-          multiple
-          v-model="type"
-          placeholder="请选择"
-          size="mini"
-        >
+        <el-select @change="selectType" collapse-tags v-model="type" placeholder="请选择" size="mini">
           <el-option
             v-for="item in typeList"
             :key="item.value"
@@ -36,13 +37,29 @@
           ></el-option>
         </el-select>
         <span class="demonstration">申报日期</span>
-        <el-date-picker size="mini" v-model="sbrq" type="date" placeholder="选择日期"></el-date-picker>
+        <el-date-picker
+          v-model="sbrq"
+          type="daterange"
+          range-separator="至"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+          size="mini"
+          class="large-input"
+        ></el-date-picker>
         <span class="demonstration">支付日期</span>
-        <el-date-picker size="mini" v-model="zfrq" type="date" placeholder="选择日期"></el-date-picker>
+        <el-date-picker
+          v-model="zfrq"
+          type="daterange"
+          range-separator="至"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+          size="mini"
+          class="large-input"
+        ></el-date-picker>
         <div class="btns">
           <div class="search">
             <el-input v-model="search" placeholder="申请单编号/名称"></el-input>
-            <span>搜索</span>
+            <span class="btn">搜索</span>
           </div>
         </div>
       </div>
@@ -51,26 +68,21 @@
           <table>
             <colgroup>
               <col width="5%">
-              <col width="15%">
-              <col width="15%">
-              <col width="15%">
-              <col width="15%">
+              <col width="13%">
+              <col width="13%">
+              <col width="10%">
+              <col width="13%">
+              <col width="13%">
               <col width="10%">
               <col width="10%">
-              <col width="15%">
+              <col width="13%">
             </colgroup>
             <thead>
               <tr>
                 <td>
-                  <el-checkbox v-model="checked">序号</el-checkbox>
+                  <el-checkbox v-model="checkAll" @change="handleCheckAll">序号</el-checkbox>
                 </td>
-                <td>申请单编号</td>
-                <td>申请单名称</td>
-                <td>申请单金额（元）</td>
-                <td>申请日期</td>
-                <td>审批状态</td>
-                <td>支付状态</td>
-                <td>申请说明</td>
+                <td v-for="(item,index) in tableHeader" :key="index">{{item.label}}</td>
               </tr>
             </thead>
           </table>
@@ -79,76 +91,49 @@
           <table>
             <colgroup>
               <col width="5%">
-              <col width="15%">
-              <col width="15%">
-              <col width="15%">
-              <col width="15%">
+              <col width="13%">
+              <col width="13%">
+              <col width="10%">
+              <col width="13%">
+              <col width="13%">
               <col width="10%">
               <col width="10%">
-              <col width="15%">
+              <col width="13%">
             </colgroup>
             <thead>
-              <tr v-for="n in 35">
+              <tr v-for="(item,index) in tableData" :key="index">
                 <td>
-                  <el-checkbox v-model="checked">序号</el-checkbox>
+                  <el-checkbox v-model="item.checked" @change="handleCheckOne(item)">{{index+1}}</el-checkbox>
                 </td>
-                <td>申请单编号</td>
-                <td>申请单名称</td>
-                <td>申请单金额（元）</td>
-                <td>申请日期</td>
-                <td>审批状态</td>
-                <td>支付状态</td>
-                <td>申请说明</td>
+                <td>
+                  <div @click="payNav('showPayList')">{{item.zfdbh}}</div>
+                </td>
+                <td>
+                  <div>{{item.zfje}}</div>
+                </td>
+                <td>
+                  <div>{{item.djlx}}</div>
+                </td>
+                <td>
+                  <div>{{item.sqdbh}}</div>
+                </td>
+                <td>
+                  <div>{{item.sbrq}}</div>
+                </td>
+                <td>
+                  <div>{{item.spzt}}</div>
+                </td>
+                <td>
+                  <div>{{item.zfzt}}</div>
+                </td>
+                <td>
+                  <div>{{item.zfrq}}</div>
+                </td>
               </tr>
             </thead>
           </table>
         </div>
       </div>
-      <!-- <div class="table">
-        <ul class="tableHeader">
-          <li>
-            <el-checkbox v-model="checkAll">全选</el-checkbox>
-          </li>
-          <li v-for="(item,index) in tableHeader" :key="index">{{item.label}}</li>
-        </ul>
-        <ul class="tableContent">
-          <el-checkbox-group v-model="checkedList">
-            <li v-for="(item,index) in tableData" :key="index">
-              <ul class="contentList">
-                <li>
-                  <div>
-                    <el-checkbox :label="index">{{index+1}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</el-checkbox>
-                  </div>
-                </li>
-                <li>
-                  <div>{{item.zfdbh}}</div>
-                </li>
-                <li>
-                  <div>{{item.zfje}}</div>
-                </li>
-                <li>
-                  <div>{{item.djlx}}</div>
-                </li>
-                <li>
-                  <div>{{item.sqdbh}}</div>
-                </li>
-                <li>
-                  <div>{{item.sbrq}}</div>
-                </li>
-                <li>
-                  <div>{{item.spzt}}</div>
-                </li>
-                <li>
-                  <div>{{item.zfzt}}</div>
-                </li>
-                <li>
-                  <div>{{item.zfrq}}</div>
-                </li>
-              </ul>
-            </li>
-          </el-checkbox-group>
-        </ul>
-      </div>-->
       <div class="pages">
         <el-pagination
           @size-change="handleSizeChange"
@@ -178,6 +163,164 @@
         </el-pagination>
       </div>
     </div>
+    <div class="mask" v-show="showMask"></div>
+    <!-- 支付单查看 -->
+    <div class="dialogContainer" :class="{lowIndex:index>1}" v-show="showPayList">
+      <div class="payCenterDialog largeDialog">
+        <div class="header">
+          支付单查看
+          <i @click="closeDialog('showPayList')" class="el-icon-close"></i>
+        </div>
+        <div class="btns">
+          <span class="payId">支付单号：201904180001</span>
+          <template v-if="itemType == 'error'">
+            <span class="btn btn-large" @click="save('showErrorHandle')">异常处理</span>
+            <span class="btn btn-large" @click="save('new')">重新支付</span>
+          </template>
+          <template v-if="itemType == 'notApprove'">
+            <span class="btn btn-large" @click="save('')">保存</span>
+            <span class="btn btn-large" @click="save('showApprove')">保存并送审</span>
+          </template>
+          <template v-if="itemType =='pay'">
+            <span class="btn btn-large" @click="save('showMergePay')">支付</span>
+          </template>
+          <span class="btn btn-large">打印</span>
+        </div>
+        <div class="content payList">
+          <h1>付款方</h1>
+          <div class="payDetail">
+            <h2>付款单位：浙江省总工会</h2>
+            <h2>
+              <span>
+                付款账户：
+                <el-select v-model="account" placeholder="请选择" size="mini">
+                  <el-option label="账号A" value="1"></el-option>
+                  <el-option label="账号B" value="2"></el-option>
+                  <el-option label="XXXXX" value="3"></el-option>
+                </el-select>
+              </span>
+              <span>
+                支付方式：
+                <el-select v-model="payWay" placeholder="请选择" size="mini">
+                  <el-option label="网银" value="1"></el-option>
+                  <el-option label="现金" value="2"></el-option>
+                  <el-option label="支票" value="3"></el-option>
+                </el-select>
+              </span>
+            </h2>
+          </div>
+          <h1>收款方</h1>
+          <div class="getDetail">
+            <div>
+              批量设置转账方式
+              <el-select v-model="bankType" placeholder="请选择" size="mini">
+                <el-option label="同行" value="1"></el-option>
+                <el-option label="跨行" value="2"></el-option>
+              </el-select>
+            </div>
+            <el-table max-height="250px" :data="payList" border>
+              <el-table-column type="index" width="80">
+                <template slot="header" slot-scope="scope">
+                  <el-checkbox @change="selectAll">序号</el-checkbox>
+                </template>
+                <template slot-scope="scope">
+                  <el-checkbox
+                    @change="selectOne(scope)"
+                    :label="scope.$index"
+                    v-model="scope.row.choosed"
+                  >{{scope.$index+1}}</el-checkbox>
+                </template>
+              </el-table-column>
+              <el-table-column
+                v-for="item in payHeaders1"
+                :property="item.name"
+                :label="item.label"
+                :width="item.width||''"
+                :header-align="item.headerAlign||'center'"
+              ></el-table-column>
+            </el-table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- 合并支付 -->
+    <div class="dialogContainer" :class="{lowIndex:index>2}" v-show="showMergePay">
+      <div class="payCenterDialog">
+        <div class="header">
+          合并支付
+          <i @click="closeDialog('showMergePay')" class="el-icon-close"></i>
+        </div>
+        <div class="content">
+          <img src="@/assets/images/mergepay.png" alt>
+          <span>合计支付1982,834.24元？</span>
+        </div>
+        <div class="btns">
+          <span class="btn btn-cancel" @click="closeDialog('showMergePay')">取消</span>
+          <span class="btn" @click="enterPassword">确定</span>
+        </div>
+        <el-collapse>
+          <el-collapse-item name="1">
+            <template slot="title">
+              <i class="header-icon el-icon-menu" style="margin-left:10px;"></i>点击查看详细收款信息
+            </template>
+            <el-table height="250px" :data="gridData" border>
+              <el-table-column type="index" label="序号" width="50"></el-table-column>
+              <el-table-column property="date" label="收款方姓名" width="200"></el-table-column>
+              <el-table-column property="name" label="待付金额" width="200"></el-table-column>
+              <el-table-column property="address" label="银行卡号" width="200"></el-table-column>
+              <el-table-column property="address" label="银行卡号" width="200"></el-table-column>
+              <el-table-column property="address" label="银行卡号" width="200"></el-table-column>
+              <el-table-column property="address" label="银行卡号" width="200"></el-table-column>
+            </el-table>
+          </el-collapse-item>
+        </el-collapse>
+      </div>
+    </div>
+    <!-- 支付口令 -->
+    <div class="dialogContainer" :class="{lowIndex:index>2}" v-show="showPassword">
+      <div class="payCenterDialog smallDialog">
+        <div class="header">
+          请输入支付口令
+          <i @click="closeDialog('showPassword')" class="el-icon-close"></i>
+        </div>
+        <div class="content">
+          <img src="@/assets/images/mergepay.png" alt>
+          <el-input v-model="password" placeholder="请输入支付口令" show-password></el-input>
+        </div>
+        <div class="btns">
+          <span class="btn btn-cancel" @click="closeDialog('showPassword')">取消</span>
+          <span class="btn" @click="pay">支付</span>
+        </div>
+      </div>
+    </div>
+    <!-- 异常处理 -->
+    <div class="dialogContainer" :class="{lowIndex:index>2}" v-show="showErrorHandle">
+      <div class="payCenterDialog">
+        <div class="header">
+          支付异常处理
+          <i @click="closeDialog('showErrorHandle')" class="el-icon-close"></i>
+        </div>
+        <div class="content"></div>
+        <div class="btns">
+          <span class="btn" @click="closeDialog('showErrorHandle')">取消</span>
+          <span class="btn" @click="errorHandle">确定</span>
+        </div>
+      </div>
+    </div>
+    <!-- 送审选择 -->
+    <div class="dialogContainer" :class="{lowIndex:index>2}" v-show="showApprove">
+      <div class="payCenterDialog">
+        <div class="header">
+          送审
+          <i @click="closeDialog('showApprove')" class="el-icon-close"></i>
+        </div>
+        <div class="btns">
+          <span class="btn" @click="closeDialog('showApprove')">取消</span>
+          <span class="btn" @click="songShen">确定</span>
+        </div>
+      </div>
+    </div>
+    <xm-message :visible.sync="tishi" :message="message" :modal="false"></xm-message>
   </div>
 </template>
 
@@ -188,6 +331,25 @@ export default {
   components: { topHandle },
   data() {
     return {
+      // dialog数据
+      bankType: '',
+      account: '',
+      payWay: '',
+      itemType: '',
+      showErrorHandle: false,
+      notClosedAll: true,
+      dialogCheckList: [],
+      tishi: false,
+      message: '',
+      showApprove: false,
+      showMask: false,
+      paySuccess: false,
+      showMergePay: false,
+      showPassword: false,
+      showPayList: false,
+      index: 1,
+      password: '',
+      // 筛选数据
       sbrq: '',
       zfrq: '',
       typeList: [
@@ -224,6 +386,13 @@ export default {
         }
       ],
       status: [],
+      // 搜索数据
+      search: '',
+      // 分页
+      pageSize: 12,
+      currentPage: 1,
+      total: 100,
+      // 首页表格数据
       tableHeader: [
         {
           label: '支付单编号',
@@ -261,77 +430,349 @@ export default {
       ],
       tableData: [
         {
-          zfdbh: 1123123132,
-          zfje: 123.1,
-          djlx: '资金',
-          sqdbh: '123123',
-          sbrq: '2019-1-1',
-          spzt: 'pass',
-          zfzt: 'payed',
-          zfrq: '2019-1-1'
+          checked: false,
+          zfdbh: 201904180001,
+          zfje: '4,567.90',
+          djlx: '资金拨付单',
+          sqdbh: '201901300008',
+          sbrq: '2019-04-17 15：21',
+          spzt: '待送审',
+          zfzt: '待支付',
+          zfrq: '——'
         },
         {
-          zfdbh: 1123123132,
-          zfje: 123.1,
-          djlx: '资金',
-          sqdbh: '123123',
-          sbrq: '2019-1-1',
-          spzt: 'pass',
-          zfzt: 'payed',
-          zfrq: '2019-1-1'
+          checked: false,
+          zfdbh: 201904180001,
+          zfje: '4,567.90',
+          djlx: '资金拨付单',
+          sqdbh: '201901300008',
+          sbrq: '2019-04-17 15：21',
+          spzt: '审批中',
+          zfzt: '待支付',
+          zfrq: '——'
         },
         {
-          zfdbh: 1123123132,
-          zfje: 123.1,
-          djlx: '资金',
-          sqdbh: '123123',
-          sbrq: '2019-1-1',
-          spzt: 'pass',
-          zfzt: 'payed',
-          zfrq: '2019-1-1'
+          checked: false,
+          zfdbh: 201904180001,
+          zfje: '4,567.90',
+          djlx: '资金拨付单',
+          sqdbh: '201901300008',
+          sbrq: '2019-04-17 15：21',
+          spzt: '未通过',
+          zfzt: '待支付',
+          zfrq: '——'
         },
         {
-          zfdbh: 1123123132,
-          zfje: 123.1,
-          djlx: '资金',
-          sqdbh: '123123',
-          sbrq: '2019-1-1',
-          spzt: 'pass',
-          zfzt: 'payed',
-          zfrq: '2019-1-1'
+          zfdbh: 201904180001,
+          zfje: '4,567.90',
+          djlx: '资金拨付单',
+          checked: false,
+          sqdbh: '201901300008',
+          sbrq: '2019-04-17 15：21',
+          spzt: '审批通过',
+          zfzt: '待支付',
+          zfrq: '——'
         },
         {
-          zfdbh: 1123123132,
-          zfje: 123.1,
-          djlx: '资金',
-          sqdbh: '123123',
-          sbrq: '2019-1-1',
-          spzt: 'pass',
-          zfzt: 'payed',
-          zfrq: '2019-1-1'
+          zfdbh: 201904180001,
+          zfje: '4,567.90',
+          checked: false,
+          djlx: '资金拨付单',
+          sqdbh: '201901300008',
+          sbrq: '2019-04-17 15：21',
+          spzt: '审批通过',
+          zfzt: '支付异常',
+          zfrq: '——'
         },
         {
-          zfdbh: 1123123132,
-          zfje: 123.1,
-          djlx: '资金',
-          sqdbh: '123123',
-          sbrq: '2019-1-1',
-          spzt: 'pass',
-          zfzt: 'payed',
-          zfrq: '2019-1-1'
+          zfdbh: 201904180001,
+          zfje: '4,567.90',
+          djlx: '资金拨付单',
+          checked: false,
+          sqdbh: '201901300008',
+          sbrq: '2019-04-17 15：21',
+          spzt: '审批通过',
+          zfzt: '支付成功',
+          zfrq: '2019-04-17 15:23'
         }
       ],
       checkAll: false,
-      checkedList: [],
-      search: '',
-      pageSize: 12,
-      currentPage: 1,
-      total: 100
+      checkedList: new Set(),
+      // 合并支付表单
+      gridData: [
+        {
+          xuhao: 1,
+          date: '浙江省总工会本级女工部',
+          name: '20121254',
+          address: '上海市普陀区金沙江上海市普陀18 弄'
+        },
+        {
+          xuhao: 1,
+          date: '浙江省总工会本级女工部',
+          name: '20121254',
+          address: '上海市普陀区金沙江上海市路 1518 弄'
+        },
+        {
+          xuhao: 1,
+          date: '浙江省总工会本级女工部',
+          name: '20121254',
+          address: '上海市普陀普区金路 1518 弄'
+        },
+        {
+          xuhao: 1,
+          date: '浙江省总工会本级女工部',
+          name: '20121254',
+          address: '上海市普陀区金沙江上金路 1518 弄'
+        }
+      ],
+      // 支付单表单
+      payHeaders1: [
+        {
+          name: 'depart',
+          label: '收款单位/部门',
+          width: '200'
+        },
+        {
+          name: 'proName',
+          label: '明细项目名称',
+          width: '200'
+        },
+        {
+          name: 'money',
+          label: '申请金额（元）',
+          width: '200'
+        },
+        {
+          name: 'descrilbe',
+          label: '备注',
+          width: ''
+        },
+        {
+          name: 'kemu',
+          label: '预算科目',
+          width: '120'
+        },
+        {
+          name: 'way',
+          label: '转账方式',
+          width: '120'
+        },
+        {
+          name: 'getName',
+          label: '收款方账户名称',
+          width: '120'
+        },
+        {
+          name: 'getAccount',
+          label: '收款账号',
+          width: '120'
+        },
+        {
+          name: 'bankName',
+          label: '开户行',
+          width: '120'
+        },
+        {
+          name: 'cardId',
+          label: '银行行号',
+          width: '120'
+        }
+      ],
+      payList: [
+        {
+          choosed: false,
+          depart: '杭州市总工会',
+          proName: 'XXXXX',
+          money: '99999',
+          descrilbe: 'beizhu',
+          kemu: '',
+          way: '',
+          getName: '',
+          getAccount: '',
+          bankName: '',
+          cardId: ''
+        },
+        {
+          choosed: false,
+          depart: '杭州市总工会',
+          proName: 'XXXXX',
+          money: '99999',
+          descrilbe: 'beizhu',
+          kemu: '',
+          way: '',
+          getName: '',
+          getAccount: '',
+          bankName: '',
+          cardId: ''
+        },
+        {
+          choosed: false,
+          depart: '杭州市总工会',
+          proName: 'XXXXX',
+          money: '99999',
+          descrilbe: 'beizhu',
+          kemu: '',
+          way: '',
+          getName: '',
+          getAccount: '',
+          bankName: '',
+          cardId: ''
+        },
+        {
+          choosed: false,
+          depart: '杭州市总工会',
+          proName: 'XXXXX',
+          money: '99999',
+          descrilbe: 'beizhu',
+          kemu: '',
+          way: '',
+          getName: '',
+          getAccount: '',
+          bankName: '',
+          cardId: ''
+        },
+        {
+          choosed: false,
+          depart: '杭州市总工会',
+          proName: 'XXXXX',
+          money: '99999',
+          descrilbe: 'beizhu',
+          kemu: '',
+          way: '',
+          getName: '',
+          getAccount: '',
+          bankName: '',
+          cardId: ''
+        }
+      ]
     }
   },
   created() {},
   mounted() {},
   methods: {
+    // 主体全选事件
+    handleCheckAll(val) {
+      this.tableData.forEach(item => {
+        item.checked = val
+      })
+    },
+    handleCheckOne(item) {
+      if (!item.checked) {
+        this.checkAll = false
+      } else {
+        this.checkAll = this.tableData.every(item => item.checked)
+        this.checkedList.add(item)
+      }
+    },
+    // dialog中的check事件
+    selectOne($scope) {
+      console.log($scope)
+    },
+    selectAll(choosed) {
+      console.log(choosed)
+    },
+    // 支付单详情事件
+    save(type) {
+      console.log(type)
+      switch (type) {
+        case '':
+          this.index = 2
+          this.message = '保存成功'
+          this.notClosedAll = true
+          this.tishi = true
+        case 'showApprove':
+        case 'showErrorHandle':
+        case 'showMergePay':
+          this.index = 2
+          this[type] = true
+          break
+        case 'new':
+          alert('newTable????')
+          break
+      }
+    },
+    // 送审请求
+    songShen() {
+      this.showApprove = false
+      this.showPayList = false
+      this.notClosedAll = false
+      this.tishi = true
+    },
+    // 支付请求
+    pay() {
+      this.showPayList = false
+      this.showMergePay = false
+      this.showPassword = false
+      this.message = '支付操作成功！具体到账情况以银行处理时间为准。'
+      this.tishi = true
+      this.notClosedAll = false
+    },
+    // 异常处理请求
+    errorHandle() {
+      this.message = '操作成功！请在2小时后查看状态。'
+      this.showErrorHandle = false
+      if (this.index == 1) {
+        this.notClosedAll = false
+        this.tishi = true
+      } else {
+        this.notClosedAll = true
+        this.tishi = true
+      }
+    },
+    // 导航栏事件
+    payNav(type) {
+      if (this.tableData.length > 0) {
+        switch (type) {
+          case 'showPayList':
+            if (this.checkedList.size > 1) {
+              console.log(Array.from(this.checkedList)[0])
+              this.notClosedAll = false
+              this.showMask = true
+              this.message = '请选择一条数据进行维护。'
+              this.tishi = true
+              return
+            }
+            break
+        }
+        this.showMask = true
+        this[type] = true
+      }
+    },
+    // 关闭弹窗事件
+    closeDialog(dialog) {
+      this[dialog] = false
+      console.log(dialog)
+      switch (dialog) {
+        case 'showPayList':
+          this.showMask = false
+          break
+        case 'showPassword':
+          this.showMergePay = true
+          break
+        case 'showMergePay':
+        case 'showApprove':
+        case 'showErrorHandle':
+          if (this.index > 1) {
+            this.index--
+          } else {
+            this.showMask = false
+          }
+          break
+      }
+    },
+    // 打开输入密码
+    enterPassword() {
+      this.showMergePay = false
+      this.showPassword = true
+    },
+    // 筛选
+    selectType(cur) {
+      console.log(cur, this.type)
+    },
+    selectStatus(cur) {
+      console.log(cur, this.type)
+    },
+    // 分页
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`)
     },
@@ -341,171 +782,322 @@ export default {
     changePage(page) {
       console.log(page)
       this.currentPage = page
-    },
-    selectType(cur) {
-      console.log(cur, this.type)
-    },
-    selectStatus(cur) {
-      console.log(cur, this.type)
+    }
+  },
+  watch: {
+    tishi(newVal) {
+      if (!newVal) {
+        if (this.notClosedAll) {
+          this.index--
+        } else {
+          this.index = 1
+          this.showMask = false
+        }
+      }
     }
   }
 }
 </script>
-<style lang="stylus" scoped>
-.payIndex
-  color #333
-  font-size 0.16rem
-  .container
-    min-width 1200px
-    position absolute
-    top 135px
-    bottom 15px
-    left 15px
-    right 15px
-    .selects
-      text-align left
-      line-height 30px
-      height 30px
-      margin 10px
-      box-sizing border-box
-      font-size 0.14rem
-      >span
-        &:not(:first-of-type)
-          margin-left 20px
-        +div
-          width 150px
-      .btns
-        float right
-        .search > span
-          display inline-block
-          width 40px
-          line-height 30px
-          height 30px
-          background #3294e8
-          text-align center
-          float right
-          margin-left -5px
-          position relative
-          z-index 2
-    // .table
-    // position absolute
-    // top 50px
-    // bottom 50px
-    // left 10px
-    // right 10px
-    // overflow hidden
-    // ul.tableHeader, ul.contentList
-    // >li
-    // width 11%
-    // &:first-child
-    // width 8%
-    // &:nth-child(5), &:nth-child(6)
-    // width 13%
-    // .tableHeader
-    // overflow hidden
-    // background #9e9e9e8a
-    // >li
-    // float left
-    // box-sizing border-box
-    // height 48px
-    // line-height 48px
-    // border-right 1px solid #ffffff
-    // &:last-child
-    // border-right 0
-    // .tableContent
-    // position absolute
-    // top 48px
-    // bottom 0
-    // left 0
-    // right -17px
-    // padding-bottom 20px
-    // overflow-x hidden
-    // overflow-y scroll
-    // ul.contentList
-    // margin-top 10px
-    // position relative
-    // &:after
-    // content ''
-    // display block
-    // clear both
-    // &:before
-    // content ''
-    // position absolute
-    // top 0
-    // left 5px
-    // right 5px
-    // bottom 0
-    // box-shadow 0px 3px 8px #cbcbcb
-    // border-radius 6px
-    // >li
-    // box-sizing border-box
-    // height 48px
-    // line-height 48px
-    // float left
-    // font-size 0.16rem
-    // &:last-child > div:after
-    // border-right 0
-    // >div
-    // box-sizing border-box
-    // width 100%
-    // height 38px
-    // line-height 38px
-    // margin 5px 0
-    // position relative
-    // &:after
-    // content ''
-    // position absolute
-    // right 0
-    // top 0
-    // bottom 0
-    // border-right 1px solid #cacaca
-    .pages
-      position absolute
-      bottom 0
-      right 0
-</style>
-<style lang='less'>
-.el-checkbox,
-.el-checkbox-button__inner {
+<style lang="scss" scoped>
+.payIndex {
   color: #333;
-}
-.el-checkbox__label {
   font-size: 0.16rem;
+  .navs {
+    padding-top: 7px;
+    height: 60px;
+    > .nav {
+      display: inline-block;
+      font-size: 0.12rem;
+      color: #676767;
+      cursor: pointer;
+      &:not(:last-child) {
+        margin-right: 60px;
+      }
+      &::before {
+        content: '';
+        display: block;
+        width: 100%;
+        height: 27px;
+        background-image: url(../../assets/images/zj6.png);
+        background-repeat: no-repeat;
+        background-size: contain;
+        background-position: center 0;
+      }
+      img {
+        width: 100%;
+      }
+    }
+  }
+  .tableBody table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 10px;
+    padding: 0 15px;
+  }
+  .tableHead table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background-color: #dcdfe6;
+    padding: 0 15px;
+  }
+  .container {
+    .selects {
+      text-align: left;
+      line-height: 30px;
+      height: 30px;
+      margin: 8px;
+      box-sizing: border-box;
+      font-size: 0.12rem;
+      color: #757575;
+      > span:not(:first-of-type) {
+        margin-left: 20px;
+      }
+      > span + div {
+        width: 150px;
+        &.large-input {
+          width: 210px;
+        }
+      }
+      .btns {
+        float: right;
+        .search > span.btn {
+          float: right;
+          margin-left: -5px;
+          position: relative;
+          z-index: 2;
+          cursor: pointer;
+          border-radius: 0;
+          background-color: $btnColor;
+        }
+      }
+    }
+    .pages {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+    }
+  }
+  .mask {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 2000;
+  }
+  .tableBody {
+    overflow-x: hidden;
+    overflow-y: scroll;
+    table td {
+      border-left: 0;
+      > div {
+        height: 30px;
+        line-height: 30px;
+        border-left: 1px solid #ccc;
+      }
+    }
+  }
+  .dialogContainer {
+    &.lowIndex {
+      z-index: 1999;
+    }
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2001;
+    .payCenterDialog {
+      &.smallDialog {
+        width: 300px;
+      }
+      &.largeDialog {
+        width: 80%;
+      }
+      z-index: 2001;
+      background-color: #fff;
+      width: 50%;
+      padding: 20px;
+      display: inline-block;
+      vertical-align: middle;
+
+      .header {
+        text-align: left;
+        font-size: 0.24rem;
+        line-height: 0.24rem;
+        height: 0.24rem;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #ccc;
+        color: #535252;
+        position: relative;
+        i.el-icon-close {
+          float: right;
+          cursor: pointer;
+          line-height: 0.24rem;
+        }
+      }
+      .content {
+        margin-top: 10px;
+        text-align: left;
+        font-size: 0.16rem;
+        > span {
+          line-height: 55px;
+        }
+        > .el-input {
+          width: auto;
+          line-height: 55px;
+        }
+        > img {
+          width: 55px;
+          height: 55px;
+          margin-right: 10px;
+        }
+        &.payList {
+          background-color: #f5f5f5;
+          padding: 10px;
+          margin-top: 15px;
+          .payDetail {
+            background-color: #fff;
+            border-radius: 5px;
+          }
+          .getDetail {
+            background-color: #fff;
+          }
+        }
+      }
+      .btns {
+        text-align: right;
+        padding-top: 10px;
+        .btn {
+          border: 1px solid $btnColor;
+          cursor: pointer;
+          &:not(:last-of-type) {
+            margin-right: 10px;
+          }
+          &.btn-cancel {
+            background: #fff;
+            color: $btnColor;
+            border: 1px solid $btnColor;
+          }
+          &.btn-large {
+            width: 88px;
+          }
+        }
+        .payId {
+          float: left;
+          line-height: 30px;
+        }
+      }
+      .el-collapse {
+        margin-top: 10px;
+      }
+    }
+    &::after {
+      content: '';
+      display: inline-block;
+      vertical-align: middle;
+      height: 100%;
+    }
+  }
 }
-.el-input--mini {
-  font-size: 0.14rem;
-}
-.el-select-dropdown__item {
-  font-size: 0.14rem;
-}
-.search .el-input {
-  width: auto;
-  font-size: 0.14rem;
-}
-.search .el-input__inner {
-  font-size: 0.14rem;
-  border: 1px #bbb9b9 solid;
-  border-bottom-left-radius: 20px;
-  border-top-left-radius: 20px;
-  height: 30px;
-  line-height: 30px;
-  color: #333;
-}
-.el-pagination {
-  color: #333;
-  font-weight: normal;
-  font-size: 0.14rem;
-}
-.el-pagination button,
-.el-pagination span:not([class*='suffix']) {
-  font-size: 0.14rem;
-}
-.pages slot > span.changePage {
-  text-decoration: underline;
-  cursor: pointer;
-  &.unclickable {
-    cursor: not-allowed;
-    color: #c0c4cc;
+</style>
+
+<style lang='scss'>
+.payIndex {
+  .el-checkbox,
+  .el-checkbox__input.is-checked + .el-checkbox__label,
+  .el-checkbox-button__inner {
+    color: #333;
+  }
+  .el-checkbox__label {
+    font-size: 0.16rem;
+  }
+  .selects {
+    .el-input--mini .el-input__inner {
+      height: 30px;
+      line-height: 30px;
+    }
+    .search .el-input {
+      width: auto;
+      font-size: 0.12rem;
+    }
+    .search .el-input__inner {
+      font-size: 0.12rem;
+      border: 1px #bbb9b9 solid;
+      border-bottom-left-radius: 20px;
+      border-top-left-radius: 20px;
+      height: 30px;
+      line-height: 30px;
+      color: #333;
+    }
+    .el-range-editor--mini.el-input__inner {
+      height: 30px;
+      line-height: 30px;
+    }
+    .el-input--mini,
+    .el-select-dropdown__item,
+    .el-range-editor--mini .el-range-separator,
+    .el-range-editor--mini .el-range-input {
+      font-size: 0.12rem;
+      color: #757575;
+    }
+  }
+
+  .el-pagination {
+    color: #333;
+    font-weight: normal;
+    font-size: 0.14rem;
+  }
+  .el-pagination button,
+  .el-pagination span:not([class*='suffix']) {
+    font-size: 0.14rem;
+  }
+  .pages slot > span.changePage {
+    text-decoration: underline;
+    cursor: pointer;
+    &.unclickable {
+      cursor: not-allowed;
+      color: #c0c4cc;
+    }
+  }
+  .el-dialog__header {
+    border-bottom: 1px solid rgb(204, 204, 204);
+    margin: 0 20px;
+  }
+  .el-table td,
+  .el-table th.is-leaf {
+    border-color: rgb(204, 204, 204);
+  }
+  .el-table--border,
+  .el-table--group {
+    border-color: rgb(204, 204, 204);
+  }
+  .payCenterDialog {
+    .el-table {
+      font-size: 0.14rem;
+      th {
+        background-color: $btnColor;
+        border-right-color: #fff;
+      }
+      thead {
+        color: #fff;
+      }
+    }
+    .el-collapse-item__header {
+      font-size: 0.13rem;
+      border-bottom: 0px;
+    }
+    .el-collapse-item__wrap {
+      border-bottom: 0px;
+    }
+    .el-collapse-item__content {
+      padding-bottom: 0;
+    }
+    .el-table__header-wrapper thead .el-checkbox__label {
+      color: #fff;
+    }
   }
 }
 </style>
