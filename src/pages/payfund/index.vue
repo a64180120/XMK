@@ -229,12 +229,21 @@
       </el-pagination>
     </div>
   </div>
+
+  <!--申请单弹窗-->
+  <el-dialog title="查看申请"
+  :visible.sync="applyType"
+  width="50%"
+  :before-close="handleClose">
+    <applybill :applyNum="applyNum"></applybill>
+  </el-dialog>
 </div>
 </template>
 
 <script>
   import tophandle from '../../components/topNav/topHandle'
   import pieChart from '../../components/echart/pieChart'
+  import Applybill from "../../components/applyBill/applybill";
     export default {
         name: "index",
       data(){
@@ -268,13 +277,19 @@
             spTypeList:[{value:0,label:'待送审'},{value:1,label:'审批中'},{value:2,label:'审批通过'},{value:3,label:'未通过'}],
             payTypeList:[{value:0,label:'—'},{value:1,label:'待支付'},{value:2,label:'支付成功'}],
             visiable:false,//高级搜索框显示隐藏
-            chartData:[]
+            chartData:[],//图表数据
+            applyType:false,//是否显示查看申请弹窗
+            applyNum:'0',//当前查看申请单的编号
           }
       },
-      components:{tophandle,pieChart},
+      components:{Applybill, tophandle,pieChart},
       methods:{
+        //分页pagesize修改触发事件
         handleSizeChange:function(){},
+        //当前页码修改触发事件
         handleCurrentChange:function(){},
+        //dialog关闭前触发事件
+        handleClose:function(){},
       }
     }
 </script>
