@@ -21,7 +21,7 @@
                 <span>待我审批类型</span>
               </div>
               <div class="content">
-                <div class="content-item" v-for="(item,idx) in myApproval" @click="openApprovalList(item.path)">
+                <div class="content-item" v-for="(item,idx) in myApproval" @click="openApprovalList(item.path,item.label)">
                     <img v-if="idx === 0" src="../../assets/images/yk1.png">
                     <img v-else-if="idx === 1" src="../../assets/images/yk.png">
                     <img v-else-if="idx === 2" src="../../assets/images/pz.png">
@@ -50,7 +50,7 @@
                     <li  v-for="(item,idx) in approvaled">
                       <span class="item-value" :class="[idx === 0?'blue':(idx === 1?'green':'orange')]">{{item.value}}</span>
                       <br>
-                      <span class="item-title">{{item.label}}</span>
+                      <span class="item-title" @click="approvaledClick(item.path)">{{item.label}}</span>
                     </li>
                   </ul>
                 </div>
@@ -96,13 +96,16 @@
             },],
             approvaled:[{
               label:"资金拨付单",
-              value:"67"
+              value:"67",
+              path:'/payfundapproval'
             },{
               label:"支付单",
-              value:"12"
+              value:"12",
+              path:''
             },{
               label:"项目用款单",
-              value:"56"
+              value:"56",
+              path:''
             }]
           }
       },
@@ -113,7 +116,20 @@
         },
         //跳转到置顶的详情页面
         openApprovalList(path){
-          this.$router.push({path:path})
+          this.$router.push({
+            path:path,
+            query:{
+              approval:true
+            }
+          })
+        },
+        //我已审批
+        approvaledClick(path,label){
+          this.$router.push({
+            path:path,
+            query:{
+              value:false
+            }})
         }
       }
     }
@@ -251,6 +267,9 @@
             >.item-title{
               font-size:0.18rem ;
               font-family: 宋体;
+              &:hover{
+                cursor: pointer;
+              }
             }
           }
         }

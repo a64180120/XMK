@@ -232,6 +232,7 @@
 
   <!--申请单弹窗-->
   <el-dialog title="查看申请"
+
   :visible.sync="applyType"
   :before-close="handleClose">
     <applybill :applyNum="applyNum"

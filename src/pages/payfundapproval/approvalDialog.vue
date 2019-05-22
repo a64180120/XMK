@@ -253,7 +253,7 @@
     left: 50%;
     margin: 0 !important;
     transform: translate(-50%,-50%);
-    height: 40%;
+    height: 310px;
   }
   .dialog >>> .el-dialog__header{
     padding: 0;

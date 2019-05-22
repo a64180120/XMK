@@ -401,7 +401,7 @@
     left: 50%;
     margin: 0 !important;
     transform: translate(-50%,-50%);
-    height: 86%;
+    height: 600px;
     display: flex;
     flex-direction: column;
   }
