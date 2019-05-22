@@ -1,9 +1,13 @@
 <template>
-  <div class="payIndex">
+  <div class="payList">
     <!-- 支付单查看 -->
-    <el-dialog :visible.sync="data.openDialog" width="80%" :close-on-click-modal="false">
-      <fund-detail :data="fundDetailData" :inner="true"></fund-detail>
-      <merge-pay :data="mergePayData" :inner="true"></merge-pay>
+    <el-dialog
+      append-to-body
+      :visible.sync="data.openDialog"
+      width="80%"
+      :close-on-click-modal="false"
+      class="payCenter"
+    >
       <div slot="title" class="dialog-title">
         <span style="float: left">支付单查看</span>
       </div>
@@ -11,7 +15,7 @@
         <div class="btns">
           <span class="payId">支付单号：201904180001</span>
           <template v-if="data.itemType == 'error'">
-            <span class="btn btn-large" @click="save('errorHandleData')">异常处理</span>
+            <span class="btn btn-large" @click="save('payErrorHandleData')">异常处理</span>
             <span class="btn btn-large" @click="save('new')">重新支付</span>
           </template>
           <template v-if="data.itemType == 'notApprove'">
@@ -23,7 +27,7 @@
           </template>
           <span class="btn btn-large">打印</span>
         </div>
-        <div class="content payList">
+        <div class="content payListContent">
           <h1>付款方</h1>
           <div class="payDetail">
             <h2>付款单位：浙江省总工会</h2>
@@ -69,7 +73,8 @@
                 </template>
               </el-table-column>
               <el-table-column
-                v-for="item in payHeaders1"
+                v-for="(item,index) in payHeaders1"
+                :key="index"
                 :property="item.name"
                 :label="item.label"
                 :width="item.width||''"
@@ -84,16 +89,34 @@
           </div>
         </div>
       </div>
+      <!-- 支付单查看 -->
+      <el-dialog
+        append-to-body
+        :visible.sync="fundDetailData.openDialog"
+        width="80%"
+        :close-on-click-modal="false"
+      >
+        <div slot="title" class="dialog-title">
+          <span>查看申请</span>
+        </div>
+        <apply-bill :data="fundDetailData" :applyNum="1"></apply-bill>
+      </el-dialog>
+      <!-- 合并支付组件 -->
+      <merge-pay :data="mergePayData"></merge-pay>
+      <!-- 异常处理 -->
+      <pay-error-handle :data="payErrorHandleData"></pay-error-handle>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import fundDetail from '../payfundapproval/fundDetail'
+import applyBill from '@/components/applyBill/applyBill'
 import mergePay from './mergePay.vue'
+import payErrorHandle from './payErrorHandle.vue'
+
 export default {
   name: 'payList',
-  components: { fundDetail, mergePay },
+  components: { applyBill, mergePay, payErrorHandle },
   props: {
     data: {
       type: Object,
@@ -236,6 +259,10 @@ export default {
       mergePayData: {
         openDialog: false,
         data: {}
+      },
+      payErrorHandleData: {
+        openDialog: false,
+        data: {}
       }
     }
   },
@@ -262,7 +289,7 @@ export default {
           this.notClosedAll = true
           this.tishi = true
         case 'approveData':
-        case 'errorHandleData':
+        case 'payErrorHandleData':
         case 'mergePayData':
           this[type].openDialog = true
           break
@@ -276,10 +303,11 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.payIndex {
+.payCenter {
   color: #333;
   font-size: 0.16rem;
   .dialog-title {
+    overflow: hidden;
     > span {
       width: 100%;
       text-align: left;
@@ -289,23 +317,7 @@ export default {
   }
   .payCenterDialog {
     background-color: #fff;
-    .header {
-      text-align: left;
-      font-size: 0.24rem;
-      line-height: 0.24rem;
-      height: 0.24rem;
-      padding-bottom: 10px;
-      border-bottom: 1px solid #ccc;
-      color: #535252;
-      position: relative;
-      i.el-icon-close {
-        float: right;
-        cursor: pointer;
-        line-height: 0.24rem;
-      }
-    }
     .content {
-      margin-top: 10px;
       text-align: left;
       font-size: 0.16rem;
       > span {
@@ -320,7 +332,7 @@ export default {
         height: 55px;
         margin-right: 10px;
       }
-      &.payList {
+      &.payListContent {
         background-color: #f5f5f5;
         padding: 10px;
         margin-top: 15px;
@@ -364,7 +376,7 @@ export default {
 </style>
 
 <style lang='scss'>
-.payIndex {
+.payCenter {
   .el-checkbox,
   .el-checkbox__input.is-checked + .el-checkbox__label,
   .el-checkbox-button__inner {
@@ -408,25 +420,26 @@ export default {
     .el-table__header-wrapper thead .el-checkbox__label {
       color: #fff;
     }
-    &.smallDialog {
-      .el-radio__inner {
-        width: 0.14rem;
-        height: 0.14rem;
-      }
-      .el-radio__label {
-        font-size: 0.14rem;
-      }
-      .el-radio:not(:last-of-type) {
-        margin-bottom: 10px;
-      }
+
+    .el-radio__label {
+      font-size: 0.14rem;
+    }
+    .el-radio:not(:last-of-type) {
+      margin-bottom: 10px;
     }
   }
   .el-dialog {
     display: inline-block;
     margin: 0 !important;
     vertical-align: middle;
+    .el-dialog__body {
+      padding-top: 0px;
+    }
   }
-  > .el-dialog__wrapper::after {
+  &.el-dialog__wrapper {
+    text-align: center;
+  }
+  &.el-dialog__wrapper::after {
     display: inline-block;
     content: '';
     vertical-align: middle;

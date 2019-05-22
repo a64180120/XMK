@@ -1,11 +1,12 @@
 <template>
-  <div class="mergePay">
-    <!-- 支付单查看 -->
+  <div class="payErrorHandle">
+    <!-- 异常处理 -->
     <el-dialog
-      :append-to-body="inner"
+      append-to-body
       :visible.sync="data.openDialog"
       width="350px"
       :close-on-click-modal="false"
+      class="payCenter"
     >
       <div slot="title" class="dialog-title">
         <span style="float: left">支付异常处理</span>
@@ -18,7 +19,7 @@
           </el-radio-group>
         </div>
         <div class="btns">
-          <span class="btn">取消</span>
+          <span class="btn" @click="data.openDialog = false">取消</span>
           <span class="btn">确定</span>
         </div>
       </div>
@@ -35,13 +36,8 @@ export default {
       type: Object,
       default: {
         openDialog: false,
-        data: {},
-        itemType: ''
+        data: {}
       }
-    },
-    inner: {
-      type: Boolean,
-      default: false
     }
   },
   data() {
@@ -88,10 +84,11 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.mergePay {
+.payCenter {
   color: #333;
   font-size: 0.16rem;
   .dialog-title {
+    overflow: hidden;
     > span {
       width: 100%;
       text-align: left;
@@ -99,95 +96,68 @@ export default {
       border-bottom: 1px solid #eaeaea;
     }
   }
-  .dialogContainer {
-    position: fixed;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 2001;
-    .payCenterDialog {
-      &.smallDialog {
-        width: 300px;
+  .payCenterDialog {
+    background-color: #fff;
+    .content {
+      text-align: left;
+      font-size: 0.16rem;
+      > span {
+        line-height: 55px;
       }
-      &.largeDialog {
-        width: 80%;
+      > .el-input {
+        width: auto;
+        line-height: 55px;
       }
-      z-index: 2001;
-      background-color: #fff;
-      width: 50%;
-      padding: 20px;
-      display: inline-block;
-      vertical-align: middle;
-
-      .content {
-        margin-top: 10px;
-        text-align: left;
-        font-size: 0.16rem;
-        > span {
-          line-height: 55px;
-        }
-        > .el-input {
-          width: auto;
-          line-height: 55px;
-        }
-        > img {
-          width: 55px;
-          height: 55px;
-          margin-right: 10px;
-        }
-        &.payList {
-          background-color: #f5f5f5;
-          padding: 10px;
-          margin-top: 15px;
-          .payDetail {
-            background-color: #fff;
-            border-radius: 5px;
-          }
-          .getDetail {
-            background-color: #fff;
-          }
-        }
+      > img {
+        width: 55px;
+        height: 55px;
+        margin-right: 10px;
       }
-      .btns {
-        text-align: right;
-        padding-top: 10px;
-        .btn {
-          border: 1px solid $btnColor;
-          cursor: pointer;
-          &:not(:last-of-type) {
-            margin-right: 10px;
-          }
-          &.btn-cancel {
-            background: #fff;
-            color: $btnColor;
-            border: 1px solid $btnColor;
-          }
-          &.btn-large {
-            width: 88px;
-          }
+      &.payListContent {
+        background-color: #f5f5f5;
+        padding: 10px;
+        margin-top: 15px;
+        .payDetail {
+          background-color: #fff;
+          border-radius: 5px;
         }
-        .payId {
-          float: left;
-          line-height: 30px;
+        .getDetail {
+          background-color: #fff;
         }
-      }
-      .el-collapse {
-        margin-top: 10px;
       }
     }
-    &::after {
-      content: '';
-      display: inline-block;
-      vertical-align: middle;
-      height: 100%;
+    .btns {
+      text-align: right;
+      padding-top: 10px;
+      .btn {
+        border: 1px solid $btnColor;
+        cursor: pointer;
+        &:not(:last-of-type) {
+          margin-right: 10px;
+        }
+        &.btn-cancel {
+          background: #fff;
+          color: $btnColor;
+          border: 1px solid $btnColor;
+        }
+        &.btn-large {
+          width: 88px;
+        }
+      }
+      .payId {
+        float: left;
+        line-height: 30px;
+      }
+    }
+    .el-collapse {
+      margin-top: 10px;
     }
   }
 }
 </style>
 
 <style lang='scss'>
-.payIndex {
+.payCenter {
   .el-checkbox,
   .el-checkbox__input.is-checked + .el-checkbox__label,
   .el-checkbox-button__inner {
@@ -231,18 +201,33 @@ export default {
     .el-table__header-wrapper thead .el-checkbox__label {
       color: #fff;
     }
-    &.smallDialog {
-      .el-radio__inner {
-        width: 0.14rem;
-        height: 0.14rem;
-      }
-      .el-radio__label {
-        font-size: 0.14rem;
-      }
-      .el-radio:not(:last-of-type) {
-        margin-bottom: 10px;
-      }
+    .el-radio__inner {
+      width: 0.16rem;
+      height: 0.16rem;
     }
+    .el-radio__label {
+      font-size: 0.16rem;
+    }
+    .el-radio:not(:last-of-type) {
+      margin-bottom: 10px;
+    }
+  }
+  .el-dialog {
+    display: inline-block;
+    margin: 0 !important;
+    vertical-align: middle;
+    .el-dialog__body {
+      padding-top: 0px;
+    }
+  }
+  &.el-dialog__wrapper {
+    text-align: center;
+  }
+  &.el-dialog__wrapper::after {
+    display: inline-block;
+    content: '';
+    vertical-align: middle;
+    height: 100%;
   }
 }
 </style>

@@ -2,9 +2,9 @@
   <div class="payIndex">
     <top-handle title="支付中心在线工作平台">
       <div class="navs">
-        <div class="nav" @click="payNav('showPayList')">收付款信息维护</div>
-        <div class="nav" @click="payNav('showMergePay')">合并支付</div>
-        <div class="nav" @click="payNav('showErrorHandle')">异常处理</div>
+        <div class="nav" @click="payNav('payListData')">收付款信息维护</div>
+        <div class="nav" @click="payNav('mergePayData')">合并支付</div>
+        <div class="nav" @click="payNav('payErrorHandleData')">异常处理</div>
         <div class="nav" @click="payNav('showApprove')">送审</div>
       </div>
     </top-handle>
@@ -169,185 +169,35 @@
         </el-pagination>
       </div>
     </div>
-    <div class="mask" v-show="showMask"></div>
     <!-- 支付单查看 -->
     <pay-list :data="payListData"></pay-list>
     <merge-pay :data="mergePayData"></merge-pay>
-    <!-- <div class="dialogContainer" :class="{lowIndex:index>1}" v-show="showPayList">
-      <div class="payCenterDialog largeDialog">
-        <div class="header">
-          支付单查看
-          <i @click="closeDialog('showPayList')" class="el-icon-close"></i>
-        </div>
-        <div class="btns">
-          <span class="payId">支付单号：201904180001</span>
-          <template v-if="itemType == 'error'">
-            <span class="btn btn-large" @click="save('showErrorHandle')">异常处理</span>
-            <span class="btn btn-large" @click="save('new')">重新支付</span>
-          </template>
-          <template v-if="itemType == 'notApprove'">
-            <span class="btn btn-large" @click="save('')">保存</span>
-            <span class="btn btn-large" @click="save('showApprove')">保存并送审</span>
-          </template>
-          <template v-if="itemType =='pay'">
-            <span class="btn btn-large" @click="save('showMergePay')">支付</span>
-          </template>
-          <span class="btn btn-large">打印</span>
-        </div>
-        <div class="content payList">
-          <h1>付款方</h1>
-          <div class="payDetail">
-            <h2>付款单位：浙江省总工会</h2>
-            <h2>
-              <span>
-                付款账户：
-                <el-select v-model="account" placeholder="请选择" size="mini">
-                  <el-option label="账号A" value="1"></el-option>
-                  <el-option label="账号B" value="2"></el-option>
-                  <el-option label="XXXXX" value="3"></el-option>
-                </el-select>
-              </span>
-              <span>
-                支付方式：
-                <el-select v-model="payWay" placeholder="请选择" size="mini">
-                  <el-option label="网银" value="1"></el-option>
-                  <el-option label="现金" value="2"></el-option>
-                  <el-option label="支票" value="3"></el-option>
-                </el-select>
-              </span>
-            </h2>
-          </div>
-          <h1>收款方</h1>
-          <div class="getDetail">
-            <div>
-              批量设置转账方式
-              <el-select v-model="bankType" placeholder="请选择" size="mini">
-                <el-option label="同行" value="1"></el-option>
-                <el-option label="跨行" value="2"></el-option>
-              </el-select>
-            </div>
-            <el-table max-height="250px" :data="payList" border>
-              <el-table-column type="index" width="80">
-                <template slot="header" slot-scope="scope">
-                  <el-checkbox @change="selectAll">序号</el-checkbox>
-                </template>
-                <template slot-scope="scope">
-                  <el-checkbox
-                    @change="selectOne(scope)"
-                    :label="scope.$index"
-                    v-model="scope.row.choosed"
-                  >{{scope.$index+1}}</el-checkbox>
-                </template>
-              </el-table-column>
-              <el-table-column
-                v-for="item in payHeaders1"
-                :property="item.name"
-                :label="item.label"
-                :width="item.width||''"
-                :header-align="item.headerAlign||'center'"
-              ></el-table-column>
-            </el-table>
-          </div>
-          <div>
-            <span>待送审</span>
-            <span>未支付</span>
-            <span @click="showFundDetail">点击查看关联申请单信息（申请编号：20191010201212）</span>
-          </div>
-        </div>
-      </div>
-    </div>-->
-    <!-- 合并支付
-    <div class="dialogContainer" :class="{lowIndex:index>2}" v-show="showMergePay">
-      <div class="payCenterDialog">
-        <div class="header">
-          合并支付
-          <i @click="closeDialog('showMergePay')" class="el-icon-close"></i>
-        </div>
-        <div class="content">
-          <img src="@/assets/images/mergepay.png" alt>
-          <span>合计支付1982,834.24元？</span>
-        </div>
-        <div class="btns">
-          <span class="btn btn-cancel" @click="closeDialog('showMergePay')">取消</span>
-          <span class="btn" @click="enterPassword">确定</span>
-        </div>
-        <el-collapse>
-          <el-collapse-item name="1">
-            <template slot="title">
-              <i class="header-icon el-icon-menu" style="margin-left:10px;"></i>点击查看详细收款信息
-            </template>
-            <el-table height="250px" :data="gridData" border>
-              <el-table-column type="index" label="序号" width="50"></el-table-column>
-              <el-table-column property="date" label="收款方姓名" width="200"></el-table-column>
-              <el-table-column property="name" label="待付金额" width="200"></el-table-column>
-              <el-table-column property="address" label="银行卡号" width="200"></el-table-column>
-              <el-table-column property="address" label="银行卡号" width="200"></el-table-column>
-              <el-table-column property="address" label="银行卡号" width="200"></el-table-column>
-              <el-table-column property="address" label="银行卡号" width="200"></el-table-column>
-            </el-table>
-          </el-collapse-item>
-        </el-collapse>
-      </div>
-    </div>
-    支付口令
-    <div class="dialogContainer" :class="{lowIndex:index>2}" v-show="showPassword">
-      <div class="payCenterDialog smallDialog">
-        <div class="header">
-          请输入支付口令
-          <i @click="closeDialog('showPassword')" class="el-icon-close"></i>
-        </div>
-        <div class="content">
-          <img src="@/assets/images/mergepay.png" alt>
-          <el-input v-model="password" placeholder="请输入支付口令" show-password></el-input>
-        </div>
-        <div class="btns">
-          <span class="btn btn-cancel" @click="closeDialog('showPassword')">取消</span>
-          <span class="btn" @click="pay">支付</span>
-        </div>
-      </div>
-    </div>-->
-    <!-- 异常处理 -->
-    <!-- <div class="dialogContainer" :class="{lowIndex:index>2}" v-show="showErrorHandle">
-      <div class="payCenterDialog smallDialog">
-        <div class="header">
-          支付异常处理
-          <i @click="closeDialog('showErrorHandle')" class="el-icon-close"></i>
-        </div>
-        <div class="content">
-          <el-radio-group v-model="radio">
-            <el-radio :label="0">发起线上异常处理。</el-radio>
-            <el-radio :label="1">线下确认已成功支付，消除异常。</el-radio>
-          </el-radio-group>
-        </div>
-        <div class="btns">
-          <span class="btn" @click="closeDialog('showErrorHandle')">取消</span>
-          <span class="btn" @click="errorHandle">确定</span>
-        </div>
-      </div>
-    </div>-->
-    <fund-detail :data="fundDetailData"></fund-detail>
+    <pay-error-handle :data="payErrorHandleData"></pay-error-handle>
     <xm-message :visible.sync="tishi" :message="message" :modal="false"></xm-message>
   </div>
 </template>
 
 <script>
 import topHandle from '../../components/topNav/topHandle.vue'
-import fundDetail from '../payfundapproval/fundDetail'
 import payList from './payList.vue'
 import mergePay from './mergePay.vue'
 import payErrorHandle from './payErrorHandle.vue'
 export default {
   name: 'pay',
-  components: { topHandle, fundDetail, payList, mergePay, payErrorHandle },
+  components: { topHandle, payList, mergePay, payErrorHandle },
   data() {
     return {
       // dialog数据
       fundDetailData: { openDialog: false, data: {} },
       mergePayData: { openDialog: false, data: {} },
       payListData: {
-        openDialog: true,
+        openDialog: false,
         data: {},
-        itemType: 'pay'
+        itemType: 'error'
+      },
+      payErrorHandleData: {
+        openDialog: false,
+        data: {}
       },
       radio: '',
       bankType: '',
@@ -568,7 +418,7 @@ export default {
         return
       }
       switch (type) {
-        case 'showPayList':
+        case 'payListData':
           if (checkedCount != 1) {
             this.errorAlert('请选择一条数据进行维护。')
             return
@@ -582,7 +432,7 @@ export default {
             return
           }
           break
-        case 'showMergePay':
+        case 'mergePayData':
           if (
             !handleitem.every(item => {
               return item.spzt == '审批通过' && item.zfzt == '待支付'
@@ -594,7 +444,7 @@ export default {
             return
           }
           break
-        case 'showErrorHandle':
+        case 'payErrorHandleData':
           if (
             !handleitem.every(item => {
               return item.zfzt == '支付异常'
@@ -615,8 +465,7 @@ export default {
           }
           break
       }
-      this.showMask = true
-      this[type] = true
+      this[type].openDialog = true
     },
     // tableData无数据处理
     noDataRefresh() {

@@ -1,43 +1,37 @@
 <template>
   <div class="mergePay">
-    <!-- 支付单查看 -->
+    <!-- 支付流程 -->
     <el-dialog
-      :append-to-body="inner"
+      append-to-body
       :visible.sync="data.openDialog"
-      width="80%"
+      class="payCenter"
+      :width="showMergePay?'550px':showPassword?'500px':'50%'"
       :close-on-click-modal="false"
+      :before-close="beforeClose"
     >
       <div slot="title" class="dialog-title">
-        <span style="float: left">支付单查看</span>
+        <span style="float: left">{{title}}</span>
       </div>
       <!-- 合并支付 -->
       <div class="dialogContainer" v-show="showMergePay">
         <div class="payCenterDialog">
-          <div class="header">
-            合并支付
-            <i class="el-icon-close"></i>
-          </div>
           <div class="content">
             <img src="@/assets/images/mergepay.png" alt>
             <span>合计支付1982,834.24元？</span>
           </div>
           <div class="btns">
-            <span class="btn btn-cancel">取消</span>
-            <span class="btn">确定</span>
+            <span class="btn btn-cancel" @click="beforeClose('btn')">取消</span>
+            <span class="btn" @click="enterPassword">确定</span>
           </div>
           <el-collapse>
             <el-collapse-item name="1">
               <template slot="title">
                 <i class="header-icon el-icon-menu" style="margin-left:10px;"></i>点击查看详细收款信息
               </template>
-              <el-table height="250px" :data="gridData" border>
+              <el-table max-height="200px" :data="gridData" border>
                 <el-table-column type="index" label="序号" width="50"></el-table-column>
-                <el-table-column property="date" label="收款方姓名" width="200"></el-table-column>
-                <el-table-column property="name" label="待付金额" width="200"></el-table-column>
-                <el-table-column property="address" label="银行卡号" width="200"></el-table-column>
-                <el-table-column property="address" label="银行卡号" width="200"></el-table-column>
-                <el-table-column property="address" label="银行卡号" width="200"></el-table-column>
-                <el-table-column property="address" label="银行卡号" width="200"></el-table-column>
+                <el-table-column property="date" label="收款方姓名"></el-table-column>
+                <el-table-column property="name" label="待付金额" width="150"></el-table-column>
               </el-table>
             </el-collapse-item>
           </el-collapse>
@@ -45,15 +39,92 @@
       </div>
       <!-- 支付口令 -->
       <div class="dialogContainer" v-show="showPassword">
-        <div class="payCenterDialog smallDialog">
-          <div class="header">请输入支付口令</div>
-          <div class="content">
+        <div class="payCenterDialog">
+          <div class="content password">
             <img src="@/assets/images/mergepay.png" alt>
-            <el-input v-model="password" placeholder="请输入支付口令" show-password></el-input>
+            <div class="passwordContent">
+              <el-input
+                :type="passwordCanSee?'text':'password'"
+                v-model="password"
+                placeholder="请输入支付口令"
+                :disabled="openPassword"
+              ></el-input>
+              <img
+                v-show="passwordCanSee"
+                class="eye"
+                src="@/assets/images/zy.png"
+                @click="passwordCanSee= !passwordCanSee"
+              >
+              <img
+                v-show="!passwordCanSee"
+                class="eye"
+                src="@/assets/images/by.png"
+                @click="passwordCanSee= !passwordCanSee"
+              >
+              <div class="notice" v-show="openPassword">
+                <span @click="goSetting">支付口令已启用，不允许为空，请点击维护。</span>
+              </div>
+            </div>
           </div>
           <div class="btns">
-            <span class="btn btn-cancel">取消</span>
-            <span class="btn">支付</span>
+            <span class="btn btn-cancel" @click="beforeClose('btn')">取消</span>
+            <span class="btn" :class="{'btn-disable':openPassword}">支付</span>
+          </div>
+        </div>
+      </div>
+      <!-- 设置支付口令 -->
+      <div class="dialogContainer" v-show="showSetting">
+        <div class="payCenterDialog">
+          <div class="content password setting">
+            <span>支付口令</span>
+            <div class="passwordContent">
+              <el-input
+                :type="newPasswordCanSee?'text':'password'"
+                v-model="newPassword"
+                placeholder="请输入支付口令"
+              ></el-input>
+              <img
+                v-show="newPasswordCanSee"
+                class="eye"
+                src="@/assets/images/zy.png"
+                @click="newPasswordCanSee= !newPasswordCanSee"
+              >
+              <img
+                v-show="!newPasswordCanSee"
+                class="eye"
+                src="@/assets/images/by.png"
+                @click="newPasswordCanSee= !newPasswordCanSee"
+              >
+            </div>
+            <span>确认口令</span>
+            <div class="passwordContent">
+              <el-input
+                :type="confirmPasswordCanSee?'text':'password'"
+                v-model="confirmPassword"
+                placeholder="请输入支付口令"
+              ></el-input>
+              <img
+                v-show="confirmPasswordCanSee"
+                class="eye"
+                src="@/assets/images/zy.png"
+                @click="confirmPasswordCanSee= !confirmPasswordCanSee"
+              >
+              <img
+                v-show="!confirmPasswordCanSee"
+                class="eye"
+                src="@/assets/images/by.png"
+                @click="confirmPasswordCanSee= !confirmPasswordCanSee"
+              >
+            </div>
+            <span>启用/停用</span>
+            <el-radio-group v-model="radio">
+              <el-radio :label="0">启用</el-radio>
+              <el-radio :label="1">停用</el-radio>
+            </el-radio-group>
+          </div>
+          <div class="btns">
+            <span class="btn btn-cancel" @click="beforeClose('btn')">取消</span>
+            <span class="btn" @click="setPassword">保存</span>
           </div>
         </div>
       </div>
@@ -73,16 +144,20 @@ export default {
         data: {},
         itemType: ''
       }
-    },
-    inner: {
-      type: Boolean,
-      default: false
     }
   },
   data() {
     return {
+      radio: 0,
+      newPassword: '',
+      newPasswordCanSee: false,
+      confirmPassword: '',
+      confirmPasswordCanSee: false,
+      passwordCanSee: false,
+      openPassword: true,
       showMergePay: true,
       showPassword: false,
+      showSetting: false,
       password: '',
       gridData: [
         {
@@ -115,46 +190,51 @@ export default {
   created() {},
   mounted() {},
   methods: {
-    showFundDetail() {
-      this.showMask = false
-      this.fundDetailData.openDialog = true
+    setPassword() {
+      this.showSetting = false
+      this.openPassword = false
+      this.showPassword = true
     },
-    // dialog中的check事件
-    selectOne($scope) {
-      console.log($scope)
+    enterPassword() {
+      this.showMergePay = false
+      this.showPassword = true
     },
-    selectAll(choosed) {
-      console.log(choosed)
-    },
-    // 支付单详情事件
-    save(type) {
-      console.log(type)
-      switch (type) {
-        case '':
-          this.index = 2
-          this.message = '保存成功'
-          this.notClosedAll = true
-          this.tishi = true
-        case 'showApprove':
-        case 'showErrorHandle':
-        case 'showMergePay':
-          this.index = 2
-          this[type] = true
-          break
-        case 'new':
-          alert('newTable????')
-          break
+    beforeClose(done) {
+      if (this.showMergePay) {
+        this.data.openDialog = false
+      } else if (this.showPassword) {
+        this.showMergePay = true
+        this.showPassword = false
+      } else if (this.showSetting) {
+        this.showSetting = false
+        this.showPassword = true
       }
+    },
+    goSetting() {
+      this.showPassword = false
+      this.showSetting = true
+    }
+  },
+  computed: {
+    title() {
+      return this.showMergePay
+        ? '合并支付'
+        : this.showPassword
+        ? '请输入支付口令'
+        : this.showSetting
+        ? '请设置支付口令'
+        : ''
     }
   },
   watch: {}
 }
 </script>
 <style lang="scss" scoped>
-.mergePay {
+.payCenter {
   color: #333;
   font-size: 0.16rem;
   .dialog-title {
+    overflow: hidden;
     > span {
       width: 100%;
       text-align: left;
@@ -162,95 +242,128 @@ export default {
       border-bottom: 1px solid #eaeaea;
     }
   }
-  .dialogContainer {
-    position: fixed;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 2001;
-    .payCenterDialog {
-      &.smallDialog {
-        width: 300px;
-      }
-      &.largeDialog {
-        width: 80%;
-      }
-      z-index: 2001;
-      background-color: #fff;
-      width: 50%;
-      padding: 20px;
-      display: inline-block;
-      vertical-align: middle;
-
-      .content {
-        margin-top: 10px;
-        text-align: left;
-        font-size: 0.16rem;
-        > span {
-          line-height: 55px;
-        }
-        > .el-input {
-          width: auto;
-          line-height: 55px;
+  .payCenterDialog {
+    background-color: #fff;
+    .content {
+      text-align: left;
+      font-size: 0.16rem;
+      padding: 0 25px;
+      &.password {
+        margin-left: 90px;
+        &.setting {
+          > span {
+            float: left;
+            position: relative;
+            left: -90px;
+            clear: both;
+            line-height: 55px;
+            ~ .passwordContent,
+            ~ .el-radio-group {
+              width: 100%;
+              float: left;
+              margin-left: -150px;
+              line-height: 55px;
+              position: relative;
+              left: 80px;
+            }
+            ~ .passwordContent {
+              .eye {
+                top: 8px;
+              }
+            }
+          }
         }
         > img {
-          width: 55px;
-          height: 55px;
-          margin-right: 10px;
-        }
-        &.payList {
-          background-color: #f5f5f5;
-          padding: 10px;
-          margin-top: 15px;
-          .payDetail {
-            background-color: #fff;
-            border-radius: 5px;
-          }
-          .getDetail {
-            background-color: #fff;
-          }
-        }
-      }
-      .btns {
-        text-align: right;
-        padding-top: 10px;
-        .btn {
-          border: 1px solid $btnColor;
-          cursor: pointer;
-          &:not(:last-of-type) {
-            margin-right: 10px;
-          }
-          &.btn-cancel {
-            background: #fff;
-            color: $btnColor;
-            border: 1px solid $btnColor;
-          }
-          &.btn-large {
-            width: 88px;
-          }
-        }
-        .payId {
           float: left;
-          line-height: 30px;
+          position: relative;
+          left: -90px;
+        }
+        > .passwordContent {
+          font-size: 14px;
+          width: 100%;
+          float: left;
+          margin-left: -90px;
+          line-height: 70px;
+          position: relative;
+          .eye {
+            position: absolute;
+            width: 56px;
+            height: 40px;
+            top: 14px;
+            right: 0;
+          }
+          .notice {
+            text-align: center;
+            text-decoration: underline;
+            color: red;
+            line-height: 30px;
+            margin-bottom: 10px;
+            > span {
+              cursor: pointer;
+            }
+          }
         }
       }
-      .el-collapse {
-        margin-top: 10px;
+      > span {
+        line-height: 70px;
+        font-size: 0.2rem;
+      }
+      > img {
+        width: 70px;
+        height: 70px;
+        margin-right: 20px;
+      }
+      &.payListContent {
+        background-color: #f5f5f5;
+        padding: 10px;
+        margin-top: 15px;
+        .payDetail {
+          background-color: #fff;
+          border-radius: 5px;
+        }
+        .getDetail {
+          background-color: #fff;
+        }
       }
     }
-    &::after {
-      content: '';
-      display: inline-block;
-      vertical-align: middle;
-      height: 100%;
+    .btns {
+      text-align: center;
+      padding-top: 10px;
+      clear: both;
+      .btn {
+        border: 1px solid $btnColor;
+        cursor: pointer;
+        &:not(:last-of-type) {
+          margin-right: 100px;
+        }
+        &.btn-cancel {
+          background: #fff;
+          color: $btnColor;
+          border: 1px solid $btnColor;
+        }
+        &.btn-large {
+          width: 88px;
+        }
+        &.btn-disable {
+          background-color: $primaryColor;
+          border-color: $primaryColor;
+          cursor: not-allowed;
+        }
+      }
+      .payId {
+        float: left;
+        line-height: 30px;
+      }
+    }
+    .el-collapse {
+      margin-top: 10px;
     }
   }
 }
 </style>
 
 <style lang='scss'>
-.payIndex {
+.payCenter {
   .el-checkbox,
   .el-checkbox__input.is-checked + .el-checkbox__label,
   .el-checkbox-button__inner {
@@ -271,6 +384,9 @@ export default {
     border-color: rgb(204, 204, 204);
   }
   .payCenterDialog {
+    .passwordContent .el-input__inner {
+      padding-right: 56px;
+    }
     .el-table {
       font-size: 0.14rem;
       th {
@@ -294,18 +410,46 @@ export default {
     .el-table__header-wrapper thead .el-checkbox__label {
       color: #fff;
     }
-    &.smallDialog {
-      .el-radio__inner {
-        width: 0.14rem;
-        height: 0.14rem;
+    .el-radio__label {
+      font-size: 0.14rem;
+    }
+    .el-radio:not(:last-of-type) {
+      margin-bottom: 10px;
+    }
+    .content.password.setting {
+      .el-radio-group {
+        line-height: 55px;
+      }
+      .el-radio {
+        line-height: 55px;
+        margin-bottom: 0;
       }
       .el-radio__label {
-        font-size: 0.14rem;
+        font-size: 0.2rem;
       }
-      .el-radio:not(:last-of-type) {
-        margin-bottom: 10px;
+      .el-radio__inner {
+        width: 0.2rem;
+        height: 0.2rem;
       }
     }
+  }
+  .el-dialog {
+    display: inline-block;
+    margin: 0 !important;
+    vertical-align: middle;
+    .el-dialog__body {
+      padding-top: 0px;
+      padding-bottom: 15px;
+    }
+  }
+  &.el-dialog__wrapper {
+    text-align: center;
+  }
+  &.el-dialog__wrapper::after {
+    display: inline-block;
+    content: '';
+    vertical-align: middle;
+    height: 100%;
   }
 }
 </style>
