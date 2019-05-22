@@ -10,7 +10,24 @@
       data(){
           return {
             target:'',
-            chart:[]
+            chart:[
+              {
+                value:255,
+                name:'视频广告'
+              },
+              {
+                value:275,
+                name:'联盟广告'
+              },
+              {
+                value:275,
+                name:'邮件营销'
+              },
+              {
+                value:275,
+                name:'直接访问'
+              },
+            ]
           }
       },
       props: {

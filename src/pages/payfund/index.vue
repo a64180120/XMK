@@ -161,10 +161,10 @@
               申请日期
             </td>
             <td>
-              审批状态
+              {{spTypeList[n%4].label}}
             </td>
             <td>
-              支付状态
+              {{payTypeList[n%3].label}}
             </td>
             <td>
               申请说明
@@ -177,8 +177,8 @@
     <div class="rightPanel">
       <div style="">
         <!--部门选择-->
-        <el-select size="small" style="width: 260px;" v-model="searchData.approvalType">
-          <el-option v-for="item in approvalList"
+        <el-select size="small" style="width: 260px;" v-model="searchData.bmType">
+          <el-option v-for="item in bmList"
                      :key="item.value"
                      :label="item.label"
                      :value="item.value">
@@ -199,8 +199,8 @@
           <div style="border-bottom: 1px solid #ccc">
             <span>对下补助项目名称：</span>
             <!--部门选择-->
-            <el-select size="small" style="width: 100px" v-model="searchData.approvalType">
-              <el-option v-for="item in approvalList"
+            <el-select size="small" style="width: 100px" v-model="searchData.bzType">
+              <el-option v-for="item in bzList"
                          :key="item.value"
                          :label="item.label"
                          :value="item.value">
@@ -247,6 +247,8 @@
             searchData:{
               approvalType:0,
               payType:0,
+              bmType:0,
+              bzType:0,
               searchValue:'',
               date:'',
               money:{
@@ -261,30 +263,17 @@
             },
             approvalList:[{value:0,label:'全部'},{value:1,label:'待审批'},{value:2,label:'审批中'},{value:3,label:'审批未通过'},{value:4,label:'审批通过'}],
             payList:[{value:0,label:'全部'},{value:1,label:'待支付'},{value:2,label:'支付异常'},{value:3,label:'支付成功'}],
+            bmList:[{value:0,label:'办公室'},{value:1,label:'女工部'},{value:2,label:'财务与资产部'}],
+            bzList:[{value:0,label:'全部'},{value:1,label:'XXX项目1'},{value:2,label:'XXX项目2'}],
+            spTypeList:[{value:0,label:'待送审'},{value:1,label:'审批中'},{value:2,label:'审批通过'},{value:3,label:'未通过'}],
+            payTypeList:[{value:0,label:'—'},{value:1,label:'待支付'},{value:2,label:'支付成功'}],
             visiable:false,//高级搜索框显示隐藏
             chartData:[]
           }
       },
       components:{tophandle,pieChart},
       methods:{
-        handleSizeChange:function(){
-          this.chartData=[{
-            value:255,
-            name:'视频广告'
-          },
-            {
-              value:275,
-              name:'联盟广告'
-            },
-            {
-              value:275,
-              name:'邮件营销'
-            },
-            {
-              value:275,
-              name:'直接访问'
-            },];
-        },
+        handleSizeChange:function(){},
         handleCurrentChange:function(){},
       }
     }
