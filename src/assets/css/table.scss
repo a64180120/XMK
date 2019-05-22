@@ -91,19 +91,7 @@
   overflow: hidden;
 }
 
-.confirmBtn{
-  color: #fff;
-  background-color: $btnColor;
-  height: 38px;
-  border: 1px solid $btnColor;
-  border-radius: 3px;
-  width: 120px;
-  cursor: pointer;
-}
-.confirmBtn:hover{
-  color: $btnColor;
-  background: #fff;
-}
+
 .cancelBtn{
   cursor: pointer;
   color: $btnColor;
@@ -113,3 +101,17 @@
   border-radius: 3px;
   width: 120px;
 }
+.confirmBtn{
+  color: #fff;
+  background-color: $btnColor!important;
+  height: 38px;
+  border: 1px solid $btnColor;
+  border-radius: 3px;
+  width: 120px;
+  cursor: pointer;
+}
+.confirmBtn:hover{
+  color: $btnColor;
+  background: #fff!important;
+}
+
