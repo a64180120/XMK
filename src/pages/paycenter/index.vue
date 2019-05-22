@@ -10,60 +10,66 @@
     </top-handle>
     <!-- 主体内容 -->
     <div class="container">
-      <div class="selects">
-        <span>支付单据</span>
-        <el-select @change="selectType" collapse-tags v-model="type" placeholder="请选择" size="mini">
-          <el-option
-            v-for="item in typeList"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          ></el-option>
-        </el-select>
-        <span>支付状态</span>
-        <el-select
-          @change="selectStatus"
-          collapse-tags
-          v-model="status"
-          multiple
-          placeholder="请选择"
-          size="mini"
-        >
-          <el-option
-            v-for="item in statusList"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          ></el-option>
-        </el-select>
-        <span class="demonstration">申报日期</span>
-        <el-date-picker
-          v-model="sbrq"
-          type="daterange"
-          range-separator="至"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-          size="mini"
-          class="large-input"
-        ></el-date-picker>
-        <span class="demonstration">支付日期</span>
-        <el-date-picker
-          v-model="zfrq"
-          type="daterange"
-          range-separator="至"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-          size="mini"
-          class="large-input"
-        ></el-date-picker>
-        <div class="btns">
-          <div class="search">
-            <el-input v-model="search" placeholder="申请单编号/名称"></el-input>
-            <span class="btn">搜索</span>
+      <div class="formArea">
+        <div class="selects">
+          <span>支付单据</span>
+          <el-select
+            @change="selectType"
+            collapse-tags
+            v-model="type"
+            placeholder="请选择"
+            size="mini"
+          >
+            <el-option
+              v-for="item in typeList"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            ></el-option>
+          </el-select>
+          <span>支付状态</span>
+          <el-select
+            @change="selectStatus"
+            collapse-tags
+            v-model="status"
+            multiple
+            placeholder="请选择"
+            size="mini"
+          >
+            <el-option
+              v-for="item in statusList"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            ></el-option>
+          </el-select>
+          <span class="demonstration">申报日期</span>
+          <el-date-picker
+            v-model="sbrq"
+            type="daterange"
+            range-separator="至"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+            size="mini"
+            class="large-input"
+          ></el-date-picker>
+          <span class="demonstration">支付日期</span>
+          <el-date-picker
+            v-model="zfrq"
+            type="daterange"
+            range-separator="至"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+            size="mini"
+            class="large-input"
+          ></el-date-picker>
+          <div class="btns">
+            <div class="search">
+              <el-input v-model="search" placeholder="申请单编号/名称"></el-input>
+              <span class="btn">搜索</span>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="formArea">
         <div class="tableHead">
           <table>
             <colgroup>
@@ -497,7 +503,6 @@ export default {
         }
       ],
       checkAll: false,
-      checkedList: new Set(),
       // 合并支付表单
       gridData: [
         {
@@ -661,7 +666,6 @@ export default {
         this.checkAll = false
       } else {
         this.checkAll = this.tableData.every(item => item.checked)
-        this.checkedList.add(item)
       }
     },
     // dialog中的check事件
@@ -670,6 +674,56 @@ export default {
     },
     selectAll(choosed) {
       console.log(choosed)
+    },
+    // 导航栏事件
+    payNav(type) {
+      noDataRefresh()
+      switch (type) {
+        case 'showPayList':
+          var handleitem = null
+          let checkedCount = this.tableData.reduce((prev, cur) => {
+            console.log(cur)
+            if (cur.checked) handleitem = cur
+            return prev + cur.checked
+          }, 0)
+          if (checkedCount > 1) {
+            this.notClosedAll = false
+            this.showMask = true
+            this.message = '请选择一条数据进行维护。'
+            this.tishi = true
+            return
+          } else if (
+            handleitem.spzt == '待送审' ||
+            handleitem.spzt == '未通过'
+          ) {
+            this.itemType = 'notApprove'
+          } else {
+            this.notClosedAll = false
+            this.showMask = true
+            this.message = `单据已经${handleitem.spzt}。`
+            this.tishi = true
+            return
+          }
+          break
+        case 'showMergePay':
+          let canMerge = this.tableData.every(item => {
+            return item.checked
+              ? item.spzt == '审批通过' && item.zfzt == '待支付'
+              : true
+          })
+      }
+      this.showMask = true
+      this[type] = true
+    },
+    // tableData无数据处理
+    noDataRefresh() {
+      if (this.tableData.length === 0) {
+        this.notClosedAll = false
+        this.showMask = true
+        this.message = '暂无数据可以操作。'
+        this.tishi = true
+        return
+      }
     },
     // 支付单详情事件
     save(type) {
@@ -717,25 +771,6 @@ export default {
       } else {
         this.notClosedAll = true
         this.tishi = true
-      }
-    },
-    // 导航栏事件
-    payNav(type) {
-      if (this.tableData.length > 0) {
-        switch (type) {
-          case 'showPayList':
-            if (this.checkedList.size > 1) {
-              console.log(Array.from(this.checkedList)[0])
-              this.notClosedAll = false
-              this.showMask = true
-              this.message = '请选择一条数据进行维护。'
-              this.tishi = true
-              return
-            }
-            break
-        }
-        this.showMask = true
-        this[type] = true
       }
     },
     // 关闭弹窗事件
@@ -829,16 +864,13 @@ export default {
     }
   }
   .tableBody table {
-    width: 100%;
     border-collapse: separate;
     border-spacing: 0 10px;
     padding: 0 15px;
   }
   .tableHead table {
-    width: 100%;
     border-collapse: separate;
     border-spacing: 0;
-    background-color: #dcdfe6;
     padding: 0 15px;
   }
   .container {
@@ -886,18 +918,6 @@ export default {
     height: 100%;
     background: rgba(0, 0, 0, 0.5);
     z-index: 2000;
-  }
-  .tableBody {
-    overflow-x: hidden;
-    overflow-y: scroll;
-    table td {
-      border-left: 0;
-      > div {
-        height: 30px;
-        line-height: 30px;
-        border-left: 1px solid #ccc;
-      }
-    }
   }
   .dialogContainer {
     &.lowIndex {
