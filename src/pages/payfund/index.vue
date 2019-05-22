@@ -1,5 +1,5 @@
 <template>
-<div>
+<div class="self">
   <div style="position: relative">
     <tophandle title="审批中心在线工作平台"></tophandle>
   </div>
@@ -148,7 +148,7 @@
             <td>
               <el-checkbox v-model="checked">序号</el-checkbox>
             </td>
-            <td>
+            <td @click="showApply(n)">
               申请单编号
             </td>
             <td>
@@ -233,9 +233,10 @@
   <!--申请单弹窗-->
   <el-dialog title="查看申请"
   :visible.sync="applyType"
-  width="50%"
   :before-close="handleClose">
-    <applybill :applyNum="applyNum"></applybill>
+    <applybill :applyNum="applyNum"
+      @delete="handleDelete"
+    ></applybill>
   </el-dialog>
 </div>
 </template>
@@ -279,17 +280,35 @@
             visiable:false,//高级搜索框显示隐藏
             chartData:[],//图表数据
             applyType:false,//是否显示查看申请弹窗
-            applyNum:'0',//当前查看申请单的编号
+            applyNum:'',//当前查看申请单的编号
           }
       },
       components:{Applybill, tophandle,pieChart},
       methods:{
+          getData:function(){
+            console.log('查询数据');
+          },
         //分页pagesize修改触发事件
         handleSizeChange:function(){},
         //当前页码修改触发事件
         handleCurrentChange:function(){},
         //dialog关闭前触发事件
-        handleClose:function(){},
+        handleClose:function(){
+            //alert('cloase');
+            this.applyType=false;
+        },
+        //查看申请弹窗
+        showApply:function(num){
+          this.applyType=true;
+          this.applyNum=num;
+        },
+        //handleDelete
+        handleDelete:function(flag){
+          if(flag){
+            this.applyType=false;
+            this.getData();
+          }
+        }
       }
     }
 </script>
@@ -334,5 +353,18 @@
   }
   .rightPanel .el-card__body{
     padding: 5px;
+  }
+  .self .el-dialog{
+    padding: 0 10px;
+    width: 90%;
+    height: 70vh;
+    margin:auto;
+  }
+  .self .el-dialog__header{
+    text-align: left;
+    border-bottom: 1px solid #ccc;
+  }
+  .self .el-dialog__body{
+    padding: 10px 20px 30px;
   }
 </style>
