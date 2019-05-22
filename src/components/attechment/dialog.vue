@@ -1,6 +1,6 @@
 <template>
     <div v-show="visible" class="dialogCon msFixed" style="z-index:99;">
-        <div class="fDialog">
+        <div class="fDialog" >
             <p class="title">
                 <span>{{title}}</span>
                 <i @click="close"></i>
@@ -24,11 +24,11 @@ export default {
             type:Boolean,
             default:false
         },
-        width:{
-            type:String,
-            default:'50%'
-        },
         callback:{}  //回调函数
+    },
+    data(){
+        return{
+        }
     },
     mounted(){
         this.$nextTick(this.dialogWidth);
@@ -40,13 +40,6 @@ export default {
             }
             this.$emit('update:visible',false);
         },
-        dialogWidth(){
-            if(this.width){
-                let dialog=document.querySelector('.fDialog');
-                console.log(dialog.style)
-                dialog.style.maxWidth=this.width;
-            }
-        }
     },
 }
 </script>
@@ -74,6 +67,7 @@ export default {
             line-height: 30px;
             padding:0 5px;
             border-bottom:1px solid #ccc;
+            color:#333;
             >i{
                 position: absolute;
                 width:30px;
