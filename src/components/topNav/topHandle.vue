@@ -25,7 +25,9 @@
     </div>
     <div class="orgInfo">
       <div class="count">
-        当前在线人数:23
+        <img src="" alt="">
+        <span>当前在线人数:</span> 
+        <span>23</span>
       </div>
       <div>
         <span class="mr-2">年度:</span>
