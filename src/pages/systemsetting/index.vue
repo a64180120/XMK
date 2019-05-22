@@ -1,7 +1,7 @@
 <template>
-    <div class="sys-setting">
-        <navbar></navbar>
+    <div class="sys-setting">  
         <router-view></router-view>
+        <navbar></navbar>
     </div>
 </template>
 

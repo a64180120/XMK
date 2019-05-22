@@ -1,12 +1,16 @@
 <template>
     <div class="navbar">
         <ul>
-            <li class="navitem active" v-for="(item,index) of navlist" :key="index">
-                <img src="../../assets/images/1_03.png" alt="">
-                <span :title="item.name">{{item.name}}</span>
+            <li @mouseenter="active=true" @mouseleave="active=false" class="navitem active" v-for="(item,index) of navlist" :key="index">
+                <div @click.stop="routerto(item.path)">
+                    <img v-show="!active" src="../../assets/images/1_03.png" alt="">
+                    <img v-show="active" src="../../assets/images/2_03.png" alt="">
+                    <span :title="item.name">{{item.name}}</span>    
+                </div>
+                
                 <div class="subitemCon">
                      <ul v-if="item.children" class="subitem">
-                        <li :title="nav.name" v-for="nav of item.children">{{nav.name}}</li>
+                        <li @click.stop="routerto(nav.path)" :title="nav.name" v-for="nav of item.children">{{nav.name}}</li>
                     </ul>
                 </div> 
             </li>
@@ -19,9 +23,18 @@ export default {
     name:'navbar',
     data(){
         return{
-            navlist:    [{url:'../../assets/images/1_03.png',name:'审批流管理',path:'/setting/audit/liucheng',children:[{name:'审批流程设置',path:'/setting/audit/liucheng'}]},
-                    {url:'../../assets/images/1_14.png',name:'数据与安全维护',path:'/setting/audit/renyuan'}
+            navlist:    [{url:'../../assets/images/1_03.png',name:'审批流管理',children:[{name:'审批流程设置',path:'/setting/audit'},{name:'岗位人员设置',path:'/setting/post'}]},
+                    {url:'../../assets/images/1_14.png',name:'数据与安全维护',path:'/'}
             ],
+            active:false,
+        }
+    },
+    methods:{
+        routerto(url){
+            if(url){
+                this.$router.push(url);
+            }
+            
         }
     }
 }
@@ -65,18 +78,27 @@ export default {
             &:hover{
                 background: $btnColor;
                 color:#fff;
+                .subitemCon{
+                    display: block;
+                    z-index: 9;
+                }
             }
             .subitemCon{
                 position:absolute;
-                left:101%;
+                left:100%;
                 top:0;
-                padding:10px;
+                padding:0 10px;
+                background: $btnColor;
+                display: none;
+                border-radius: 0 5px 5px 0;
+                box-shadow: 2px 2px 5px #9f9c9c;
                 .subitem{
                    
                     >li{
                         width:150px;
-                        height:30px;
-                        line-height: 30px; 
+                        height:40px;
+                        line-height: 40px;
+                        text-align: center; 
                     }
                 }
             }
