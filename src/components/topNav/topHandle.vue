@@ -7,9 +7,9 @@
       <p>{{title}}</p>
       <div class="btnContainer">
         <ul class="rightBtn">
-          <li @click.stop="print">
-            <div><img src="@/assets/images/dy.png" alt=""></div>
-            <span >打印</span>
+          <li @click.stop="auditPage">
+            <div><img src="@/assets/images/zj6.png" alt=""></div>
+            <span >审批中心</span>
           </li>
           <li @click.stop="refresh">
             <div><img src="@/assets/images/sx.png" alt=""></div>
@@ -17,13 +17,18 @@
           </li>
           <li>
             <div><img src="@/assets/images/g-1.png" alt=""></div>
-            <span>回主页</span>
+            <span>主目录</span>
           </li>
         </ul>
         <slot></slot>
       </div>
     </div>
     <div class="orgInfo">
+      <div class="count">
+        <img src="" alt="">
+        <span>当前在线人数:</span> 
+        <span>23</span>
+      </div>
       <div>
         <span class="mr-2">年度:</span>
         <el-select style="width:100px" @change="yearChange" v-model="year" placeholder="请选择">
@@ -41,12 +46,16 @@
           <p @click="orgTreeInit" class="orgName">{{orgName}}</p>
           <div v-show="orgTreeShow" class="treeCon" style="z-index:9;">
             <el-tree
+              ref="orgtree"
               :props="props"
               :load="loadNode1"
+              node-key="Phid"
               lazy
               show-checkbox
               :check-strictly="true"
-              @node-click="orgChange"
+              :check-on-click-node="false"
+              
+              @check="orgChange"
               >
             </el-tree>
           </div>
@@ -85,7 +94,7 @@
             props: {  //组织树懒加载配置
               label: 'OrgName',
               children: 'zones',
-              isLeaf: 'leaf'
+              isLeaf: 'isLast'
             },
           }
         },
@@ -95,15 +104,29 @@
         methods:{
           orgTreeInit(){
             this.orgTreeShow=true;
+            this.$refs.orgtree.setCheckedKeys([]);//清空选择
+            
           },
-          orgChange(val,val2,val3){
-            console.log(val,val2,val3)
+          orgChange(val){ //组织改变
+            console.log(val);//选中的组织
+
           },
-          yearChange(){
+           yearChange(){  //年度改变
             this.$emit("year-click",this.year);
           },
-          print(){  //打印
-            this.$emit('print');
+          //设置选中的组织
+          setCheckedNodes() {
+            this.setCheckedNodes([{
+              Phid: '0000',
+              OrgName: '选中'
+            }]);
+          },
+          setCheckedKeys() {
+            this.$refs.orgtree.setCheckedKeys([3]);
+          },
+         
+          auditPage(){  //审批中心
+            
           },
           refresh(){ //刷新
             this.$emit('refresh');
@@ -112,17 +135,21 @@
           loadNode1(node, resolve) {
             
             if (node.level === 0) {
-              return resolve([{ OrgName: 'region' }]);
+              return resolve([{ Phid:'0000',OrgName:'选中' }]);
             }
             if (node.level > 1) return resolve([]);
 
             setTimeout(() => {
               const data = [{
                 OrgName: '浙江省总',
-                leaf: true
+                isLast: true,
+                Phid:'0001',
+                OrgId:'10013'
               }, {
                 OrgName: '湖南省总',
                 
+                Phid:2,
+                OrgId:'10222'
               }];
 
               resolve(data);
@@ -139,7 +166,7 @@
     height: 150px;
     left: 0;
     right: 0;
-    
+    color:#676767;
 }
 .handleBtn{
   width:100%;
@@ -171,7 +198,7 @@
       top:-10px;
       >li{
         float:left;
-        width:60px;
+        width:65px;
         height:50px;
         padding:10px 0;
         text-align: center;
@@ -191,10 +218,12 @@
   }
 }
 .orgInfo{
-  
   height:30px;
-  padding:10px ;
+  padding:10px 23px;
   font-size:0.16rem;
+  .count{
+    float:left;
+  }
   >div{
     float:right;
     position:relative;

@@ -103,7 +103,7 @@ body {
 }
 
 // 项目库
-$primaryColor:#39b49b; //主色
+$primaryColor:#cbcbcb; //主色
 $btnColor:#3294e8; //弹窗按钮颜色
 $listHeader: #9e9e9e8a; //表头颜色
 .msFixed{
@@ -120,5 +120,22 @@ $listHeader: #9e9e9e8a; //表头颜色
     text-align: center;
     border:1px solid $btnColor;
     background: $btnColor;
+    cursor: pointer;
+    &:hover{
+        background: #fff;
+        color:$btnColor;
+    }
+}
+.whiteBtn{
+
+    border-radius: 3px;
+    display: inline-block;
+    height:28px;
+    line-height:30px;
+    padding:0 10px;
+    text-align: center;
+    border:1px solid $btnColor;
+    color:$btnColor;
+    background: #fff;
     cursor: pointer;
 }
