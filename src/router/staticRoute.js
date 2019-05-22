@@ -55,6 +55,18 @@ const staticRoute = [
           import(/* webpackChunkName:'audit'*/ '../pages/systemsetting/audit'),
         meta: { requireAuth: true, type: 'page', name: '审核工作流' }
       },
+      {
+        path: 'audit',
+        component: () =>
+          import(/* webpackChunkName:'audit'*/ '../pages/systemsetting/audit'),
+        meta: { requireAuth: true, type: 'page', name: '审核工作流' }
+      },
+      {
+        path: 'post',
+        component: () =>
+          import(/* webpackChunkName:'post'*/ '../pages/systemsetting/post'),
+        meta: { requireAuth: true, type: 'page', name: '审核工作流' }
+      },
     ]
   }
 

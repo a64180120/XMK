@@ -74,13 +74,13 @@
                      <div class="typeHandle">
                        <div>
                             <div @click.stop="showAuditTypeAdd('add')" class="typeAdd">
-                                <img src="" alt="">   <span>新增</span> 
+                                <img src="@/assets/images/add.png" alt="">   <span>新增</span> 
                             </div>
                             <div @click.stop="showAuditTypeAdd('update')" class="typeUpdate">
-                                <img src="" alt="">   <span>修改</span> 
+                                <img src="@/assets/images/update.png" alt="">   <span>修改</span> 
                             </div>
                             <div @click.stop="AuditTypeDelete" class="typeDelete">
-                                <img src="" alt="">   <span>删除</span> 
+                                <img src="@/assets/images/del.png" alt="">   <span>删除</span> 
                             </div>
                        </div>
                     </div>
@@ -290,17 +290,28 @@ export default {
                         >div{
                             display: inline-block;
                             cursor: pointer;
-                            text-decoration: underline;
-                            margin-left:10px;
+                            margin-left:15px;
                             font-size:0.16rem;
+                            >span{
+                                position: relative;
+                                top:2px;
+                            }
+                            >img{
+                                    width:20px;
+                                    vertical-align: middle;
+                                }
                             &.typeAdd{
                                 color:$btnColor;
+                                
                             }
                             &.typeUpdate{
                                 color:#ff9900;
                             }
                             &.typeDelete{
-                                color:red;
+                                color:#8e8e8e;
+                                >img{
+                                    width:25px;
+                                }
                             }
                         }
                     }
@@ -321,6 +332,9 @@ export default {
     }
 
 }
+.tableBody{
+        top: 50px;
+}
 .tableBody table {
     width: 100%;
     border-collapse: separate;
@@ -331,7 +345,6 @@ export default {
     width: 100%;
     border-collapse: separate;
     border-spacing: 0;
-    background-color: #8ec2c6;
     padding: 0 15px;
 }
 .enable{
