@@ -29,6 +29,7 @@
             </el-option>
           </el-select>
         </label>
+        <el-button size="small" @click="showOrg">{{searchData.searchorg.label}}</el-button>
         <div style="float: right;display: flex">
           <label>
             <el-input size="small" placeholder="请输入内容" style="border-top-right-radius: 0;border-bottom-right-radius: 0" v-model="searchData.searchValue">
@@ -231,12 +232,25 @@
   </div>
 
   <!--申请单弹窗-->
-  <el-dialog title="查看申请"
+  <el-dialog id="applydialog" title="查看申请"
   :visible.sync="applyType"
   :before-close="handleClose">
     <applybill :applyNum="applyNum"
       @delete="handleDelete"
     ></applybill>
+  </el-dialog>
+  <!--申请单弹窗-->
+  <el-dialog id="orgdialog" width="350px" title="组织树"
+             :visible.sync="orgType">
+    <orgtree :currentOrg="searchData.searchorg" @choose="getOrg"></orgtree>
+   <!-- <span slot="body">
+      <orgtree></orgtree>
+    </span>
+-->
+    <span slot="footer"   style="text-align: center">
+        <button class="cancelBtn"  @click="orgType=false">取消</button>
+        <button class="confirmBtn" style="margin-left: 30px" @click="confirmOrg">确定</button>
+      </span>
   </el-dialog>
 </div>
 </template>
@@ -245,6 +259,7 @@
   import tophandle from '../../components/topNav/topHandle'
   import pieChart from '../../components/echart/pieChart'
   import Applybill from "../../components/applyBill/applybill";
+  import Orgtree from "../../components/orgtree/index";
     export default {
         name: "index",
       data(){
@@ -269,7 +284,7 @@
                 pageIndex:1,
                 pageSize:50
               },
-
+              searchorg:{label:'女工部'}
             },
             approvalList:[{value:0,label:'全部'},{value:1,label:'待审批'},{value:2,label:'审批中'},{value:3,label:'审批未通过'},{value:4,label:'审批通过'}],
             payList:[{value:0,label:'全部'},{value:1,label:'待支付'},{value:2,label:'支付异常'},{value:3,label:'支付成功'}],
@@ -281,9 +296,11 @@
             chartData:[],//图表数据
             applyType:false,//是否显示查看申请弹窗
             applyNum:'',//当前查看申请单的编号
+            orgType:true,//是否显示组织弹窗
+            choosedOrg:{}//选中的组织
           }
       },
-      components:{Applybill, tophandle,pieChart},
+      components:{Orgtree, Applybill, tophandle,pieChart},
       methods:{
           getData:function(){
             console.log('查询数据');
@@ -302,13 +319,29 @@
           this.applyType=true;
           this.applyNum=num;
         },
-        //handleDelete
+        //删除事件
         handleDelete:function(flag){
           if(flag){
             this.applyType=false;
             this.getData();
           }
-        }
+        },
+        //弹出组织树
+        showOrg(){
+            this.orgType=true;
+        },
+        //组织树点击选择事件
+        getOrg:function(data){
+            console.log(data);//这边可以得到选中的组织，当点击确定时，进行选中组织赋值，建议添加中间变量，用于保存点击组织树获取的值
+          this.choosedOrg=data;
+        },
+        //点击组织树确定按钮进行选中组织赋值
+        confirmOrg:function(){
+          this.orgType=false;
+          if(this.choosedOrg!==this.searchData.searchorg){
+            this.searchData.searchorg=this.choosedOrg;
+          }
+        },
       }
     }
 </script>
@@ -354,17 +387,17 @@
   .rightPanel .el-card__body{
     padding: 5px;
   }
-  .self .el-dialog{
+  #applydialog .el-dialog{
     padding: 0 10px;
     width: 90%;
-    height: 70vh;
+    height: 600px;
     margin:auto;
   }
-  .self .el-dialog__header{
+  #applydialog .el-dialog__header{
     text-align: left;
     border-bottom: 1px solid #ccc;
   }
-  .self .el-dialog__body{
+  #applydialog .el-dialog__body{
     padding: 10px 20px 30px;
   }
 </style>

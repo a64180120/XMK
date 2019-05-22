@@ -2,7 +2,7 @@
 @import 'reset';
 .container{
   position: absolute;
-  top: 170px;
+  top: 150px;
   bottom: .3rem;
   left: 20px;
   right: 20px;
@@ -40,7 +40,7 @@
   border-spacing:0;
   background-color: $listHeader;
   padding: 0 15px;
-  font-size: .14rem;
+  font-size: .15rem;
   color: #333;
   table-layout: fixed;
 }
@@ -71,7 +71,7 @@
   border-collapse:separate;
   border-spacing:0 12px;
   padding:0 1%;
-  font-size: .12rem;
+  font-size: .14rem;
 
 }
 .tableBody table tr{
