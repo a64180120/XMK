@@ -12,7 +12,7 @@
         <el-row :gutter="10">
           <el-col :span="24">
             <div class="top-btn">
-              <el-button class="btn" size="mini">审批</el-button>
+              <el-button class="btn" size="mini" @click="approval()">审批</el-button>
               <el-button class="btn" size="mini">取消审批</el-button>
               <el-button class="btn" size="mini">打印</el-button>
             </div>
@@ -148,13 +148,16 @@
         </el-row>
       </div>
       <!--内层弹框-->
+      <approval-dialog ref="approvalDialog" :inner="true"></approval-dialog>
     </el-dialog>
   </section>
 </template>
 
 <script>
+  import ApprovalDialog from "./approvalDialog";
   export default {
     name: "fundDetail",
+    components: {ApprovalDialog},
     props: {
       data: {
         type: Object,
@@ -174,9 +177,6 @@
         }, {
           projectName: 'XXXXX项目B',
           projectFolder: ['附件1', '附件2', '附件3', '附件4']
-        }, {
-          projectName: 'XXXXX项目C',
-          projectFolder: ['附件1', '附件2', '附件3', '附件4']
         }]
       }
     },
@@ -186,6 +186,9 @@
     methods:{
       changeDialog(){
         this.openDialog = true
+      },
+      approval(){
+        this.$refs.approvalDialog.changeDialog()
       }
     }
   }

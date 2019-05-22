@@ -22,8 +22,11 @@
               </div>
               <div class="content">
                 <div class="content-item" v-for="(item,idx) in myApproval" @click="openApprovalList(item.path)">
-<!--                    <i class="el-icon-coin"></i>-->
-                    <img src="../../assets/images/y1.png" class="">
+                    <img v-if="idx === 0" src="../../assets/images/yk1.png">
+                    <img v-else-if="idx === 1" src="../../assets/images/yk.png">
+                    <img v-else-if="idx === 2" src="../../assets/images/pz.png">
+                    <img v-else-if="idx === 3" src="../../assets/images/y1.png">
+                    <img v-else-if="idx === 4" src="../../assets/images/ys.png">
                     <span>{{item.label}}</span>
                     <div v-if="item.approvalValue>0" class="badge">
                       <span v-if="item.approvalValue<100">{{item.approvalValue}}</span>
@@ -160,7 +163,8 @@
       }
       >img{
         transform: scale(0.6,0.6);
-        margin-top: 10px;
+        margin-top: 0px;
+        width: 100px;
       }
       >i{
         height: 100px;
@@ -169,8 +173,9 @@
         color:$primaryColor
       }
       >span{
-        height: 90px;
-        line-height: 90px;
+        margin-left: -15px;
+        height: 100px;
+        line-height: 100px;
         font-size: 0.25rem;
         font-family: 宋体;
         font-weight: 800;

@@ -5,9 +5,10 @@
         width="37.5%"
         :close-on-click-modal="false"
         class="dialog"
+        :append-to-body="inner"
       >
         <div slot="title" class="dialog-title">
-          <p>查看</p>
+          <p>{{title}}</p>
         </div>
         <div class="content">
           <div class="sub-table">
@@ -74,8 +75,8 @@
           </div>
         </div>
         <div class="approval-btn">
-          <el-button size="small" type="primary" @click="cancel()">取消</el-button>
-          <el-button size="small" type="primary" @click="submit()">确认</el-button>
+          <el-button size="small" type="primary" @click="cancel()">{{btnGroup.cancelName}}</el-button>
+          <el-button size="small" type="primary" @click="submit()">{{btnGroup.onfirmName}}</el-button>
         </div>
       </el-dialog>
     </section>
@@ -85,13 +86,30 @@
     export default {
         name: "approvalDialog",
       props:{
+          title:{
+            type:String,
+            default:'查看'
+          },
          data:{
            type:Object,
            default:function () {
              return {
              }
            }
-         }
+         },
+        inner:{
+           type: Boolean,
+          default:false
+        },
+        btnGroup:{
+            type:Object,
+          default:function () {
+            return {
+              cancelName:"取消",
+              onfirmName:'确认'
+            }
+          }
+        }
       },
       data(){
           return{
@@ -150,6 +168,8 @@
   }
   .content{
     width: 100%;
+    height:228px;
+    overflow: auto;
     >.handle{
       >.title{
         color: #3294e8;

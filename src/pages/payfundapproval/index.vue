@@ -1,8 +1,21 @@
 <template>
   <section>
     <handle-btn title="审批中心在线工作平台">
-      <div >
-        <i></i>
+      <div class="top">
+         <ul>
+           <li @click="aprovalItem()">
+             <div>
+               <img src="../../assets/images/sp.png">
+             </div>
+             <span>审批</span>
+           </li>
+           <li @click="creatPayItem()">
+             <div>
+               <img src="../../assets/images/zj6.png">
+             </div>
+             <span>生成支付单</span>
+           </li>
+         </ul>
       </div>
     </handle-btn>
     <div>
@@ -95,7 +108,7 @@
                 <td>
                   <el-checkbox v-model="checked" >{{idx}}</el-checkbox>
                 </td>
-                <td @click="handleRowClick(item,idx)">
+                <td @click="handleRowClick(item,idx)" class="apply-epart">
                   {{item.applyDepart}}
                 </td>
                 <td>
@@ -122,9 +135,10 @@
                   <span style="cursor: pointer" v-if="item.approvalStutas ==3 " @click.stop="openApproval(item,idx)">审批通过</span>
                 </td>
                 <td>
-<!--                  <i @click.stop="openApproval(item,idx)" class="el-icon-alarm-clock icon-clock" :class="[item.approvalStutas == 1 ? 'blue' :'red']"></i>-->
-                  <img  v-if="item.approvalStutas == 1" src="../../assets/images/sj2.png" class="img-icon">
-                  <img v-else src="../../assets/images/sj1.png" class="img-icon">
+                  <div @click="openAuditfollow()">
+                    <img  v-if="item.approvalStutas == 1" src="../../assets/images/sj2.png" class="img-icon">
+                    <img v-else src="../../assets/images/sj1.png" class="img-icon">
+                  </div>
                 </td>
               </tr>
               </tbody>
@@ -144,8 +158,11 @@
       </div>
       <!--详情弹框-->
       <fund-detail ref="fundDetail" :data="detailData" ></fund-detail>
+      <el-dialog ></el-dialog>
       <!--审批弹框-->
-      <approval-dialog ref="approvalDialog" :data="approvalData" ></approval-dialog>
+      <approval-dialog ref="approvalDialog" :title="appDialog.title" :btn-group="appDialog.btnGroup" :data="approvalData" ></approval-dialog>
+      <!--查看审批流程-->
+      <auditfollow :visible="visible" @update:visible="closeAuditFollow()"></auditfollow>
     </div>
 
 
@@ -157,9 +174,10 @@
   import HandleBtn from "../../components/topNav/topHandle";
   import SearchInput from "../../components/searchInput/searchInput";
   import ApprovalDialog from "./approvalDialog";
+  import Auditfollow from "../../components/auditFollow/auditfollow";
   export default {
     name: "index",
-    components: {ApprovalDialog, SearchInput, HandleBtn, FundDetail},
+    components: {Auditfollow, ApprovalDialog, SearchInput, HandleBtn, FundDetail},
     data(){
       return{
         openDetailDialog:false,
@@ -180,6 +198,14 @@
           pageSize:[20,50,100], //每页显示多少条
           total:200//总条数
         },
+        visible:false,
+        appDialog:{
+          title:'',
+          btnGroup: {
+            cancelName:"",
+            onfirmName:""
+          }
+        }
       }
     },
     mounted() {
@@ -260,17 +286,47 @@
       },
       //打开审批弹框
       aprovalItem(){
+        this.appDialog.title = '查看'
+        this.appDialog.btnGroup.cancelName = '取消'
+        this.appDialog.btnGroup.onfirmName = '确认'
         this.$refs.approvalDialog.changeDialog()
+      },
+      //生成支付单弹框
+      creatPayItem(){
+        this.appDialog.title = '审批并生成支付单'
+        this.appDialog.btnGroup.cancelName = '取消'
+        this.appDialog.btnGroup.onfirmName = '生成支付单'
+        this.$refs.approvalDialog.changeDialog()
+      },
+      closeAuditFollow(){
+        this.visible = false
+      },
+      openAuditfollow(){
+        this.visible = true
       }
     }
   }
 </script>
 <style scoped>
+  .top{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin: 0 !important;
+    transform: translate(-50%,-50%);
+  }
+  .top ul li{
+    float: left;
+    width: 80px;
+  }
+  .top ul li:hover{
+    cursor: pointer;
+  }
+  .top ul li div img {
+    width: 30px;
+  }
   .divider .el-divider--horizontal{
     margin: 0;
-  }
-  .btnArea{
-    padding: 10px;
   }
   .top-form-left{
     float: left;
@@ -302,5 +358,8 @@
   .top-btn .top-ul .top-li span:hover{
     color: #39b49b;
     cursor: pointer;
+  }
+  .apply-epart:hover{
+      cursor: pointer;
   }
 </style>
