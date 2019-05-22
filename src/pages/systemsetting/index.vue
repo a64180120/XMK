@@ -1,6 +1,6 @@
 <template>
     <div class="sys-setting">
-        <!-- <navbar></navbar> -->
+        <navbar></navbar>
         <router-view></router-view>
     </div>
 </template>

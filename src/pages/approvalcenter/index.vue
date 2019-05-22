@@ -63,7 +63,7 @@
 </template>
 
 <script>
-    import SearchInput from "../../components/seachInput/searchInput";
+    import SearchInput from "../../components/searchInput/searchInput";
     import TopHandle from "../../components/topNav/topHandle";
     export default {
         name: "index",

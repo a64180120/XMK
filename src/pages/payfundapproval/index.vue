@@ -181,7 +181,7 @@
 <script>
   import FundDetail from "./fundDetail";
   import HandleBtn from "../../components/topNav/topHandle";
-  import SearchInput from "../../components/seachInput/searchInput";
+  import SearchInput from "../../components/searchInput/searchInput";
   export default {
     name: "index",
     components: {SearchInput, HandleBtn, FundDetail},

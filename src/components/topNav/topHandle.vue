@@ -7,9 +7,9 @@
       <p>{{title}}</p>
       <div class="btnContainer">
         <ul class="rightBtn">
-          <li @click.stop="print">
-            <div><img src="@/assets/images/dy.png" alt=""></div>
-            <span >打印</span>
+          <li @click.stop="auditPage">
+            <div><img src="@/assets/images/zj6.png" alt=""></div>
+            <span >审批中心</span>
           </li>
           <li @click.stop="refresh">
             <div><img src="@/assets/images/sx.png" alt=""></div>
@@ -24,6 +24,9 @@
       </div>
     </div>
     <div class="orgInfo">
+      <div class="count">
+        当前在线人数:23
+      </div>
       <div>
         <span class="mr-2">年度:</span>
         <el-select style="width:100px" @change="yearChange" v-model="year" placeholder="请选择">
@@ -120,8 +123,8 @@
             this.$refs.orgtree.setCheckedKeys([3]);
           },
          
-          print(){  //打印
-            this.$emit('print');
+          auditPage(){  //审批中心
+            
           },
           refresh(){ //刷新
             this.$emit('refresh');
@@ -193,7 +196,7 @@
       top:-10px;
       >li{
         float:left;
-        width:60px;
+        width:65px;
         height:50px;
         padding:10px 0;
         text-align: center;
@@ -213,10 +216,12 @@
   }
 }
 .orgInfo{
-  
   height:30px;
   padding:10px 23px;
   font-size:0.16rem;
+  .count{
+    float:left;
+  }
   >div{
     float:right;
     position:relative;

@@ -24,10 +24,6 @@ export default {
             type:Boolean,
             default:false
         },
-        width:{
-            type:String,
-            default:'50%'
-        },
         callback:{}  //回调函数
     },
     data(){
@@ -44,12 +40,6 @@ export default {
             }
             this.$emit('update:visible',false);
         },
-        dialogWidth(){
-            if(this.width){
-                let dialog=document.querySelector('.fDialog');
-                dialog.style.width=this.width;
-            }
-        }
     },
 }
 </script>
