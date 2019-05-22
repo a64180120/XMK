@@ -7,53 +7,25 @@
     </handle-btn>
     <div>
       <div class="container">
-        <!--顶部按钮栏-->
-        <div>
-          <el-row>
-            <el-col>
-              <div class="top-btn">
-                <ul class="top-ul">
-                  <li class="top-li">
-                    <span>审批</span>
-                  </li>
-                  <li class="top-li">
-                    <span>取消审批</span>
-                  </li>
-                  <li class="top-li">
-                    <span>申请打印表</span>
-                  </li>
-                  <li class="top-li">
-                    <span>汇总打印表</span>
-                  </li>
-                </ul>
-              </div>
-            </el-col>
-          </el-row>
-        </div>
-        <!--分割线-->
-        <div class="divider">
-          <el-divider class="line"></el-divider>
-        </div>
-        <!--搜索栏-->
-        <div class="btnArea">
-          <el-form :inline="true">
-            <el-form-item label="申报部门" class="top-form-left">
-              <el-select size="mini" v-model="form.depart" style="width: 120px"></el-select>
-            </el-form-item>
-            <el-form-item label="提留时长" class="top-form-left">
-              <el-input size="mini" v-model="form.long" style="width: 150px"></el-input>
-            </el-form-item>
-            <el-form-item label="申报日期" class="top-form-left">
-              <el-date-picker v-model="form.date" style="width: 240px" size="mini" type="daterange" start-placeholder="开始时间" end-placeholder="开始时间"></el-date-picker>
-            </el-form-item>
-            <el-form-item label="" class="top-form-right">
-              <search-input @btnClick="search()"></search-input>
-            </el-form-item>
-          </el-form>
-        </div>
-        <div style="clear: both"></div>
-        <!--表格-->
-        <div class="formArea" style="top:100px">
+        <div class="formArea">
+          <!--搜索栏-->
+          <div class="btnArea">
+            <el-form :inline="true">
+              <el-form-item label="申报部门" class="top-form-left">
+                <el-select size="mini" v-model="form.depart" style="width: 120px"></el-select>
+              </el-form-item>
+              <el-form-item label="提留时长" class="top-form-left">
+                <el-input size="mini" v-model="form.long" style="width: 150px"></el-input>
+              </el-form-item>
+              <el-form-item label="申报日期" class="top-form-left">
+                <el-date-picker v-model="form.date" style="width: 240px" size="mini" type="daterange" start-placeholder="开始时间" end-placeholder="开始时间"></el-date-picker>
+              </el-form-item>
+              <el-form-item label="" class="top-form-right">
+                <search-input @btnClick="search()"></search-input>
+              </el-form-item>
+            </el-form>
+          </div>
+          <!--表格-->
           <div class="tableHead">
             <table>
               <colgroup>
@@ -170,8 +142,10 @@
             :total="page.total"></el-pagination>
         </div>
       </div>
-      <!--弹框-->
-      <fund-detail :data="detail"></fund-detail>
+      <!--详情弹框-->
+      <fund-detail ref="fundDetail" :data="detailData" ></fund-detail>
+      <!--审批弹框-->
+      <approval-dialog ref="approvalDialog" :data="approvalData" ></approval-dialog>
     </div>
 
 
@@ -182,17 +156,18 @@
   import FundDetail from "./fundDetail";
   import HandleBtn from "../../components/topNav/topHandle";
   import SearchInput from "../../components/searchInput/searchInput";
+  import ApprovalDialog from "./approvalDialog";
   export default {
     name: "index",
-    components: {SearchInput, HandleBtn, FundDetail},
+    components: {ApprovalDialog, SearchInput, HandleBtn, FundDetail},
     data(){
       return{
-        detail:{
-          openDialog:false,
-          data:{
-
-          }
+        openDetailDialog:false,
+        detailData:{
         },
+        approvalData:{
+        },
+        openApprovalDialog:false,
         checked:'',
         form:{
           depart:'',
@@ -268,9 +243,8 @@
       },
       //单行点击事件
       handleRowClick(row,idx){
-        console.log(row,idx)
-        this.detail.openDialog = true
-        this.detail.data = row
+        this.$refs.fundDetail.changeDialog();
+        this.detailData = row
       },
       //当前页显示多少条数据
       handleSizeChange(val){
@@ -284,6 +258,10 @@
       openApproval(row,idx){
         console.log(row,idx)
       },
+      //打开审批弹框
+      aprovalItem(){
+        this.$refs.approvalDialog.changeDialog()
+      }
     }
   }
 </script>
