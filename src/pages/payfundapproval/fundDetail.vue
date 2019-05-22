@@ -1,8 +1,9 @@
 <template>
   <section>
     <el-dialog
-      :visible.sync="data.openDialog"
-      width="80%"
+      :visible.sync="openDialog"
+      width="94%"
+      class="dialog"
       :close-on-click-modal="false">
       <div slot="title" class="dialog-title">
         <span style="float: left">查看</span>
@@ -43,8 +44,8 @@
               </div>
               <div class="top">
                 <ul>
-                  <li>申报单位/部门：{{data.data.applyDepart}}</li>
-                  <li>申报部门：{{data.data.applyDate}}</li>
+                  <li>申报单位/部门：{{data.applyDepart}}</li>
+                  <li>申报部门：{{data.applyDate}}</li>
                   <li>单位：元</li>
                 </ul>
               </div>
@@ -58,11 +59,11 @@
                     <tbody>
                     <tr>
                       <td>申请单号</td>
-                      <td>{{data.data.applyCode}}</td>
+                      <td>{{data.applyCode}}</td>
                     </tr>
                     <tr>
                       <td>申请单位名称</td>
-                      <td>{{data.data.applyDepart}}</td>
+                      <td>{{data.applyDepart}}</td>
                     </tr>
                     </tbody>
                   </table>
@@ -80,7 +81,7 @@
                       <td>申请说明</td>
                       <td></td>
                       <td>申请金额合计</td>
-                      <td>{{data.data.applyAmount}}</td>
+                      <td>{{data.applyAmount}}</td>
                     </tr>
                     </tbody>
                   </table>
@@ -146,6 +147,7 @@
           </el-col>
         </el-row>
       </div>
+      <!--内层弹框-->
     </el-dialog>
   </section>
 </template>
@@ -176,6 +178,14 @@
           projectName: 'XXXXX项目C',
           projectFolder: ['附件1', '附件2', '附件3', '附件4']
         }]
+      }
+    },
+    mounted(){
+
+    },
+    methods:{
+      changeDialog(){
+        this.openDialog = true
       }
     }
   }
@@ -382,6 +392,16 @@
   }
 </style>
 <style scoped>
+  .dialog >>> .el-dialog{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin: 0 !important;
+    transform: translate(-50%,-50%);
+    height: 86%;
+    display: flex;
+    flex-direction: column;
+  }
   .top-btn {
     float: right;
   }
