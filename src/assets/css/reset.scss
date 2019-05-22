@@ -121,4 +121,21 @@ $listHeader: #9e9e9e8a; //表头颜色
     border:1px solid $btnColor;
     background: $btnColor;
     cursor: pointer;
+    &:hover{
+        background: #fff;
+        color:$btnColor;
+    }
+}
+.whiteBtn{
+
+    border-radius: 3px;
+    display: inline-block;
+    height:28px;
+    line-height:30px;
+    padding:0 10px;
+    text-align: center;
+    border:1px solid $btnColor;
+    color:$btnColor;
+    background: #fff;
+    cursor: pointer;
 }

@@ -232,6 +232,7 @@
   </div>
 
   <!--申请单弹窗-->
+
   <el-dialog id="applydialog" title="查看申请"
   :visible.sync="applyType"
   :before-close="handleClose">

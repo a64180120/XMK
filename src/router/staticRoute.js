@@ -16,7 +16,7 @@ const staticRoute = [
     children: [
       {
         path: '',
-        redirect: '/fund',
+        redirect: '/fund',//测试
         component: () =>
           import(/* webpackChunkName:'home'*/ '../pages/home/index'),
         meta: { requireAuth: true, type: 'page', name: '首页' }
@@ -44,7 +44,20 @@ const staticRoute = [
         meta: { requireAuth: true, type: 'page', name: '审批中心' }
       }
     ]
+  },{
+    path: '/setting',
+    component: ()=> import(/* webpackChunkName:'systemsetting'*/ '../pages/systemsetting'),
+    meta: { keep: true },
+    children: [
+      {
+        path: '',
+        component: () =>
+          import(/* webpackChunkName:'audit'*/ '../pages/systemsetting/audit'),
+        meta: { requireAuth: true, type: 'page', name: '审核工作流' }
+      },
+    ]
   }
+
 ]
 
 export default staticRoute
