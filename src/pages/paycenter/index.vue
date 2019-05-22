@@ -171,7 +171,8 @@
     </div>
     <div class="mask" v-show="showMask"></div>
     <!-- 支付单查看 -->
-    <pay-list :data="payList"></pay-list>
+    <pay-list :data="payListData"></pay-list>
+    <merge-pay :data="mergePayData"></merge-pay>
     <!-- <div class="dialogContainer" :class="{lowIndex:index>1}" v-show="showPayList">
       <div class="payCenterDialog largeDialog">
         <div class="header">
@@ -255,7 +256,7 @@
         </div>
       </div>
     </div>-->
-    <!-- 合并支付 -->
+    <!-- 合并支付
     <div class="dialogContainer" :class="{lowIndex:index>2}" v-show="showMergePay">
       <div class="payCenterDialog">
         <div class="header">
@@ -288,7 +289,7 @@
         </el-collapse>
       </div>
     </div>
-    <!-- 支付口令 -->
+    支付口令
     <div class="dialogContainer" :class="{lowIndex:index>2}" v-show="showPassword">
       <div class="payCenterDialog smallDialog">
         <div class="header">
@@ -304,9 +305,9 @@
           <span class="btn" @click="pay">支付</span>
         </div>
       </div>
-    </div>
+    </div>-->
     <!-- 异常处理 -->
-    <div class="dialogContainer" :class="{lowIndex:index>2}" v-show="showErrorHandle">
+    <!-- <div class="dialogContainer" :class="{lowIndex:index>2}" v-show="showErrorHandle">
       <div class="payCenterDialog smallDialog">
         <div class="header">
           支付异常处理
@@ -323,20 +324,7 @@
           <span class="btn" @click="errorHandle">确定</span>
         </div>
       </div>
-    </div>
-    <!-- 送审选择 -->
-    <div class="dialogContainer" :class="{lowIndex:index>2}" v-show="showApprove">
-      <div class="payCenterDialog">
-        <div class="header">
-          送审
-          <i @click="closeDialog('showApprove')" class="el-icon-close"></i>
-        </div>
-        <div class="btns">
-          <span class="btn" @click="closeDialog('showApprove')">取消</span>
-          <span class="btn" @click="songShen">确定</span>
-        </div>
-      </div>
-    </div>
+    </div>-->
     <fund-detail :data="fundDetailData"></fund-detail>
     <xm-message :visible.sync="tishi" :message="message" :modal="false"></xm-message>
   </div>
@@ -346,13 +334,21 @@
 import topHandle from '../../components/topNav/topHandle.vue'
 import fundDetail from '../payfundapproval/fundDetail'
 import payList from './payList.vue'
+import mergePay from './mergePay.vue'
+import payErrorHandle from './payErrorHandle.vue'
 export default {
   name: 'pay',
-  components: { topHandle, fundDetail, payList },
+  components: { topHandle, fundDetail, payList, mergePay, payErrorHandle },
   data() {
     return {
       // dialog数据
       fundDetailData: { openDialog: false, data: {} },
+      mergePayData: { openDialog: false, data: {} },
+      payListData: {
+        openDialog: true,
+        data: {},
+        itemType: 'pay'
+      },
       radio: '',
       bankType: '',
       account: '',
@@ -529,159 +525,7 @@ export default {
           zfrq: '2019-04-17 15:23'
         }
       ],
-      checkAll: false,
-      // 合并支付表单
-      gridData: [
-        {
-          xuhao: 1,
-          date: '浙江省总工会本级女工部',
-          name: '20121254',
-          address: '上海市普陀区金沙江上海市普陀18 弄'
-        },
-        {
-          xuhao: 1,
-          date: '浙江省总工会本级女工部',
-          name: '20121254',
-          address: '上海市普陀区金沙江上海市路 1518 弄'
-        },
-        {
-          xuhao: 1,
-          date: '浙江省总工会本级女工部',
-          name: '20121254',
-          address: '上海市普陀普区金路 1518 弄'
-        },
-        {
-          xuhao: 1,
-          date: '浙江省总工会本级女工部',
-          name: '20121254',
-          address: '上海市普陀区金沙江上金路 1518 弄'
-        }
-      ],
-      // 支付单表单
-      payList: {
-        openDialog: true,
-        data: {},
-        itemType: ''
-      }
-      // payHeaders1: [
-      //   {
-      //     name: 'depart',
-      //     label: '收款单位/部门',
-      //     width: '200'
-      //   },
-      //   {
-      //     name: 'proName',
-      //     label: '明细项目名称',
-      //     width: '200'
-      //   },
-      //   {
-      //     name: 'money',
-      //     label: '申请金额（元）',
-      //     width: '200'
-      //   },
-      //   {
-      //     name: 'descrilbe',
-      //     label: '备注',
-      //     width: ''
-      //   },
-      //   {
-      //     name: 'kemu',
-      //     label: '预算科目',
-      //     width: '120'
-      //   },
-      //   {
-      //     name: 'way',
-      //     label: '转账方式',
-      //     width: '120'
-      //   },
-      //   {
-      //     name: 'getName',
-      //     label: '收款方账户名称',
-      //     width: '120'
-      //   },
-      //   {
-      //     name: 'getAccount',
-      //     label: '收款账号',
-      //     width: '120'
-      //   },
-      //   {
-      //     name: 'bankName',
-      //     label: '开户行',
-      //     width: '120'
-      //   },
-      //   {
-      //     name: 'cardId',
-      //     label: '银行行号',
-      //     width: '120'
-      //   }
-      // ],
-      // payList: [
-      //   {
-      //     choosed: false,
-      //     depart: '杭州市总工会',
-      //     proName: 'XXXXX',
-      //     money: '99999',
-      //     descrilbe: 'beizhu',
-      //     kemu: '',
-      //     way: '',
-      //     getName: '',
-      //     getAccount: '',
-      //     bankName: '',
-      //     cardId: ''
-      //   },
-      //   {
-      //     choosed: false,
-      //     depart: '杭州市总工会',
-      //     proName: 'XXXXX',
-      //     money: '99999',
-      //     descrilbe: 'beizhu',
-      //     kemu: '',
-      //     way: '',
-      //     getName: '',
-      //     getAccount: '',
-      //     bankName: '',
-      //     cardId: ''
-      //   },
-      //   {
-      //     choosed: false,
-      //     depart: '杭州市总工会',
-      //     proName: 'XXXXX',
-      //     money: '99999',
-      //     descrilbe: 'beizhu',
-      //     kemu: '',
-      //     way: '',
-      //     getName: '',
-      //     getAccount: '',
-      //     bankName: '',
-      //     cardId: ''
-      //   },
-      //   {
-      //     choosed: false,
-      //     depart: '杭州市总工会',
-      //     proName: 'XXXXX',
-      //     money: '99999',
-      //     descrilbe: 'beizhu',
-      //     kemu: '',
-      //     way: '',
-      //     getName: '',
-      //     getAccount: '',
-      //     bankName: '',
-      //     cardId: ''
-      //   },
-      //   {
-      //     choosed: false,
-      //     depart: '杭州市总工会',
-      //     proName: 'XXXXX',
-      //     money: '99999',
-      //     descrilbe: 'beizhu',
-      //     kemu: '',
-      //     way: '',
-      //     getName: '',
-      //     getAccount: '',
-      //     bankName: '',
-      //     cardId: ''
-      //   }
-      // ]
+      checkAll: false
     }
   },
   created() {},
