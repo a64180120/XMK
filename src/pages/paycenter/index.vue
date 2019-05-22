@@ -171,7 +171,8 @@
     </div>
     <div class="mask" v-show="showMask"></div>
     <!-- 支付单查看 -->
-    <div class="dialogContainer" :class="{lowIndex:index>1}" v-show="showPayList">
+    <pay-list :data="payList"></pay-list>
+    <!-- <div class="dialogContainer" :class="{lowIndex:index>1}" v-show="showPayList">
       <div class="payCenterDialog largeDialog">
         <div class="header">
           支付单查看
@@ -246,9 +247,14 @@
               ></el-table-column>
             </el-table>
           </div>
+          <div>
+            <span>待送审</span>
+            <span>未支付</span>
+            <span @click="showFundDetail">点击查看关联申请单信息（申请编号：20191010201212）</span>
+          </div>
         </div>
       </div>
-    </div>
+    </div>-->
     <!-- 合并支付 -->
     <div class="dialogContainer" :class="{lowIndex:index>2}" v-show="showMergePay">
       <div class="payCenterDialog">
@@ -301,12 +307,17 @@
     </div>
     <!-- 异常处理 -->
     <div class="dialogContainer" :class="{lowIndex:index>2}" v-show="showErrorHandle">
-      <div class="payCenterDialog">
+      <div class="payCenterDialog smallDialog">
         <div class="header">
           支付异常处理
           <i @click="closeDialog('showErrorHandle')" class="el-icon-close"></i>
         </div>
-        <div class="content"></div>
+        <div class="content">
+          <el-radio-group v-model="radio">
+            <el-radio :label="0">发起线上异常处理。</el-radio>
+            <el-radio :label="1">线下确认已成功支付，消除异常。</el-radio>
+          </el-radio-group>
+        </div>
         <div class="btns">
           <span class="btn" @click="closeDialog('showErrorHandle')">取消</span>
           <span class="btn" @click="errorHandle">确定</span>
@@ -326,18 +337,23 @@
         </div>
       </div>
     </div>
+    <fund-detail :data="fundDetailData"></fund-detail>
     <xm-message :visible.sync="tishi" :message="message" :modal="false"></xm-message>
   </div>
 </template>
 
 <script>
 import topHandle from '../../components/topNav/topHandle.vue'
+import fundDetail from '../payfundapproval/fundDetail'
+import payList from './payList.vue'
 export default {
   name: 'pay',
-  components: { topHandle },
+  components: { topHandle, fundDetail, payList },
   data() {
     return {
       // dialog数据
+      fundDetailData: { openDialog: false, data: {} },
+      radio: '',
       bankType: '',
       account: '',
       payWay: '',
@@ -480,6 +496,17 @@ export default {
           zfrq: '——'
         },
         {
+          zfdbh: 201904180002,
+          zfje: '4,567.90',
+          djlx: '资金拨付单',
+          checked: false,
+          sqdbh: '201901300008',
+          sbrq: '2019-04-17 15：21',
+          spzt: '审批通过',
+          zfzt: '待支付',
+          zfrq: '——'
+        },
+        {
           zfdbh: 201904180001,
           zfje: '4,567.90',
           checked: false,
@@ -531,130 +558,139 @@ export default {
         }
       ],
       // 支付单表单
-      payHeaders1: [
-        {
-          name: 'depart',
-          label: '收款单位/部门',
-          width: '200'
-        },
-        {
-          name: 'proName',
-          label: '明细项目名称',
-          width: '200'
-        },
-        {
-          name: 'money',
-          label: '申请金额（元）',
-          width: '200'
-        },
-        {
-          name: 'descrilbe',
-          label: '备注',
-          width: ''
-        },
-        {
-          name: 'kemu',
-          label: '预算科目',
-          width: '120'
-        },
-        {
-          name: 'way',
-          label: '转账方式',
-          width: '120'
-        },
-        {
-          name: 'getName',
-          label: '收款方账户名称',
-          width: '120'
-        },
-        {
-          name: 'getAccount',
-          label: '收款账号',
-          width: '120'
-        },
-        {
-          name: 'bankName',
-          label: '开户行',
-          width: '120'
-        },
-        {
-          name: 'cardId',
-          label: '银行行号',
-          width: '120'
-        }
-      ],
-      payList: [
-        {
-          choosed: false,
-          depart: '杭州市总工会',
-          proName: 'XXXXX',
-          money: '99999',
-          descrilbe: 'beizhu',
-          kemu: '',
-          way: '',
-          getName: '',
-          getAccount: '',
-          bankName: '',
-          cardId: ''
-        },
-        {
-          choosed: false,
-          depart: '杭州市总工会',
-          proName: 'XXXXX',
-          money: '99999',
-          descrilbe: 'beizhu',
-          kemu: '',
-          way: '',
-          getName: '',
-          getAccount: '',
-          bankName: '',
-          cardId: ''
-        },
-        {
-          choosed: false,
-          depart: '杭州市总工会',
-          proName: 'XXXXX',
-          money: '99999',
-          descrilbe: 'beizhu',
-          kemu: '',
-          way: '',
-          getName: '',
-          getAccount: '',
-          bankName: '',
-          cardId: ''
-        },
-        {
-          choosed: false,
-          depart: '杭州市总工会',
-          proName: 'XXXXX',
-          money: '99999',
-          descrilbe: 'beizhu',
-          kemu: '',
-          way: '',
-          getName: '',
-          getAccount: '',
-          bankName: '',
-          cardId: ''
-        },
-        {
-          choosed: false,
-          depart: '杭州市总工会',
-          proName: 'XXXXX',
-          money: '99999',
-          descrilbe: 'beizhu',
-          kemu: '',
-          way: '',
-          getName: '',
-          getAccount: '',
-          bankName: '',
-          cardId: ''
-        }
-      ]
+      payList: {
+        openDialog: true,
+        data: {},
+        itemType: ''
+      }
+      // payHeaders1: [
+      //   {
+      //     name: 'depart',
+      //     label: '收款单位/部门',
+      //     width: '200'
+      //   },
+      //   {
+      //     name: 'proName',
+      //     label: '明细项目名称',
+      //     width: '200'
+      //   },
+      //   {
+      //     name: 'money',
+      //     label: '申请金额（元）',
+      //     width: '200'
+      //   },
+      //   {
+      //     name: 'descrilbe',
+      //     label: '备注',
+      //     width: ''
+      //   },
+      //   {
+      //     name: 'kemu',
+      //     label: '预算科目',
+      //     width: '120'
+      //   },
+      //   {
+      //     name: 'way',
+      //     label: '转账方式',
+      //     width: '120'
+      //   },
+      //   {
+      //     name: 'getName',
+      //     label: '收款方账户名称',
+      //     width: '120'
+      //   },
+      //   {
+      //     name: 'getAccount',
+      //     label: '收款账号',
+      //     width: '120'
+      //   },
+      //   {
+      //     name: 'bankName',
+      //     label: '开户行',
+      //     width: '120'
+      //   },
+      //   {
+      //     name: 'cardId',
+      //     label: '银行行号',
+      //     width: '120'
+      //   }
+      // ],
+      // payList: [
+      //   {
+      //     choosed: false,
+      //     depart: '杭州市总工会',
+      //     proName: 'XXXXX',
+      //     money: '99999',
+      //     descrilbe: 'beizhu',
+      //     kemu: '',
+      //     way: '',
+      //     getName: '',
+      //     getAccount: '',
+      //     bankName: '',
+      //     cardId: ''
+      //   },
+      //   {
+      //     choosed: false,
+      //     depart: '杭州市总工会',
+      //     proName: 'XXXXX',
+      //     money: '99999',
+      //     descrilbe: 'beizhu',
+      //     kemu: '',
+      //     way: '',
+      //     getName: '',
+      //     getAccount: '',
+      //     bankName: '',
+      //     cardId: ''
+      //   },
+      //   {
+      //     choosed: false,
+      //     depart: '杭州市总工会',
+      //     proName: 'XXXXX',
+      //     money: '99999',
+      //     descrilbe: 'beizhu',
+      //     kemu: '',
+      //     way: '',
+      //     getName: '',
+      //     getAccount: '',
+      //     bankName: '',
+      //     cardId: ''
+      //   },
+      //   {
+      //     choosed: false,
+      //     depart: '杭州市总工会',
+      //     proName: 'XXXXX',
+      //     money: '99999',
+      //     descrilbe: 'beizhu',
+      //     kemu: '',
+      //     way: '',
+      //     getName: '',
+      //     getAccount: '',
+      //     bankName: '',
+      //     cardId: ''
+      //   },
+      //   {
+      //     choosed: false,
+      //     depart: '杭州市总工会',
+      //     proName: 'XXXXX',
+      //     money: '99999',
+      //     descrilbe: 'beizhu',
+      //     kemu: '',
+      //     way: '',
+      //     getName: '',
+      //     getAccount: '',
+      //     bankName: '',
+      //     cardId: ''
+      //   }
+      // ]
     }
   },
   created() {},
   mounted() {},
   methods: {
+    showFundDetail() {
+      this.showMask = false
+      this.fundDetailData.openDialog = true
+    },
     // 主体全选事件
     handleCheckAll(val) {
       this.tableData.forEach(item => {
@@ -677,40 +713,63 @@ export default {
     },
     // 导航栏事件
     payNav(type) {
-      noDataRefresh()
+      this.noDataRefresh()
+      var handleitem = []
+      let checkedCount = this.tableData.reduce((prev, cur) => {
+        if (cur.checked) handleitem.push(cur)
+        return prev + cur.checked
+      }, 0)
+      if (handleitem.length < 1) {
+        this.errorAlert('请至少选择一条数据进行操作。')
+        return
+      }
       switch (type) {
         case 'showPayList':
-          var handleitem = null
-          let checkedCount = this.tableData.reduce((prev, cur) => {
-            console.log(cur)
-            if (cur.checked) handleitem = cur
-            return prev + cur.checked
-          }, 0)
-          if (checkedCount > 1) {
-            this.notClosedAll = false
-            this.showMask = true
-            this.message = '请选择一条数据进行维护。'
-            this.tishi = true
+          if (checkedCount != 1) {
+            this.errorAlert('请选择一条数据进行维护。')
             return
           } else if (
-            handleitem.spzt == '待送审' ||
-            handleitem.spzt == '未通过'
+            handleitem[0].spzt == '待送审' ||
+            handleitem[0].spzt == '未通过'
           ) {
             this.itemType = 'notApprove'
           } else {
-            this.notClosedAll = false
-            this.showMask = true
-            this.message = `单据已经${handleitem.spzt}。`
-            this.tishi = true
+            this.errorAlert(`单据已经${handleitem[0].spzt}。`)
             return
           }
           break
         case 'showMergePay':
-          let canMerge = this.tableData.every(item => {
-            return item.checked
-              ? item.spzt == '审批通过' && item.zfzt == '待支付'
-              : true
-          })
+          if (
+            !handleitem.every(item => {
+              return item.spzt == '审批通过' && item.zfzt == '待支付'
+            })
+          ) {
+            this.errorAlert(
+              '只有审批状态为“审批通过”，支付状态为“待支付”的单据，才可以使用【合并支付】。'
+            )
+            return
+          }
+          break
+        case 'showErrorHandle':
+          if (
+            !handleitem.every(item => {
+              return item.zfzt == '支付异常'
+            })
+          ) {
+            this.errorAlert('只能对支付异常的单据进行处理。')
+            return
+          }
+          break
+        case 'showApprove':
+          if (
+            !handleitem.every(item => {
+              return item.spzt == '待送审'
+            })
+          ) {
+            this.errorAlert('只能对待送审的单据进行处理。')
+            return
+          }
+          break
       }
       this.showMask = true
       this[type] = true
@@ -724,6 +783,13 @@ export default {
         this.tishi = true
         return
       }
+    },
+    // 主页错误提示
+    errorAlert(message) {
+      this.notClosedAll = false
+      this.showMask = true
+      this.message = message
+      this.tishi = true
     },
     // 支付单详情事件
     save(type) {
@@ -828,6 +894,13 @@ export default {
           this.index = 1
           this.showMask = false
         }
+      }
+    },
+    'fundDetailData.openDialog'(val) {
+      if (val) {
+        this.showMask = false
+      } else {
+        this.showMask = true
       }
     }
   }
@@ -942,7 +1015,6 @@ export default {
       padding: 20px;
       display: inline-block;
       vertical-align: middle;
-
       .header {
         text-align: left;
         font-size: 0.24rem;
@@ -1032,7 +1104,10 @@ export default {
     color: #333;
   }
   .el-checkbox__label {
-    font-size: 0.16rem;
+    font-size: 0.14rem;
+  }
+  .tableBody .el-checkbox__label {
+    font-size: 0.12rem;
   }
   .selects {
     .el-input--mini .el-input__inner {
@@ -1064,7 +1139,6 @@ export default {
       color: #757575;
     }
   }
-
   .el-pagination {
     color: #333;
     font-weight: normal;
@@ -1081,10 +1155,6 @@ export default {
       cursor: not-allowed;
       color: #c0c4cc;
     }
-  }
-  .el-dialog__header {
-    border-bottom: 1px solid rgb(204, 204, 204);
-    margin: 0 20px;
   }
   .el-table td,
   .el-table th.is-leaf {
@@ -1117,6 +1187,18 @@ export default {
     }
     .el-table__header-wrapper thead .el-checkbox__label {
       color: #fff;
+    }
+    &.smallDialog {
+      .el-radio__inner {
+        width: 0.14rem;
+        height: 0.14rem;
+      }
+      .el-radio__label {
+        font-size: 0.14rem;
+      }
+      .el-radio:not(:last-of-type) {
+        margin-bottom: 10px;
+      }
     }
   }
 }
