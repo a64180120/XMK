@@ -24,7 +24,7 @@ export default {
     data(){
         return{
             navlist:    [{url:'../../assets/images/1_03.png',name:'审批流管理',children:[{name:'审批流程设置',path:'/setting/audit'},{name:'岗位人员设置',path:'/setting/post'}]},
-                    {url:'../../assets/images/1_14.png',name:'数据与安全维护',path:'/'}
+                    {url:'../../assets/images/1_14.png',name:'数据与安全维护',children:[{name:'数据字典',path:'/setting/dictionary'},{name:'支付口令设置',path:'/setting/paypassword'}]}
             ],
             active:false,
         }
