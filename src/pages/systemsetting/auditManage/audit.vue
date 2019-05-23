@@ -319,7 +319,7 @@ export default {
             }
             .auditcontent{
                 float:left;
-                width:74%;
+                width:75%;
                 height:100%;
                 .formArea{
                    left: 0;

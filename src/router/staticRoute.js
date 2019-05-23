@@ -52,20 +52,32 @@ const staticRoute = [
       {
         path: '',
         component: () =>
-          import(/* webpackChunkName:'audit'*/ '../pages/systemsetting/audit'),
+          import(/* webpackChunkName:'audit'*/ '../pages/systemsetting/auditManage/audit'),
         meta: { requireAuth: true, type: 'page', name: '审核工作流' }
       },
       {
         path: 'audit',
         component: () =>
-          import(/* webpackChunkName:'audit'*/ '../pages/systemsetting/audit'),
+          import(/* webpackChunkName:'audit'*/ '../pages/systemsetting/auditManage/audit'),
         meta: { requireAuth: true, type: 'page', name: '审核工作流' }
       },
       {
         path: 'post',
         component: () =>
-          import(/* webpackChunkName:'post'*/ '../pages/systemsetting/post'),
-        meta: { requireAuth: true, type: 'page', name: '审核工作流' }
+          import(/* webpackChunkName:'post'*/ '../pages/systemsetting/auditManage/post'),
+        meta: { requireAuth: true, type: 'page', name: '岗位人员设置' }
+      },
+      {
+        path: 'dictionary',
+        component: () =>
+          import(/* webpackChunkName:'dictionary'*/ '../pages/systemsetting/dataSafe/dictionary'),
+        meta: { requireAuth: true, type: 'page', name: '数据字典' }
+      },
+      {
+        path: 'paypassword',
+        component: () =>
+          import(/* webpackChunkName:'paypassword'*/ '../pages/systemsetting/dataSafe/paypassword'),
+        meta: { requireAuth: true, type: 'page', name: '支付口令设置' }
       },
     ]
   }

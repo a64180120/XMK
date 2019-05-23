@@ -1,11 +1,16 @@
 html, body, div, section, header, footer, aside, ul, ol, li, table, tr, th, td, button, input, textarea, select, h1, h2, h3, h4, h5, h6, em, i, strong, p, span, blockquote {
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
 }
 h1, h2, h3, h4, h5, h6, em, th, i, strong, input, textarea, button, select {
     font-weight: normal;
     font-style: normal;
     font-size: 100%;
+    box-sizing: border-box;
+}
+*{
+    box-sizing: border-box;
 }
 ul, ol {
     list-style: none;
