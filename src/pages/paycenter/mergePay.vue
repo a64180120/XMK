@@ -187,7 +187,9 @@ export default {
       ]
     }
   },
-  created() {},
+  created() {
+    console.log('merge')
+  },
   mounted() {},
   methods: {
     setPassword() {
@@ -348,6 +350,7 @@ export default {
           background-color: $primaryColor;
           border-color: $primaryColor;
           cursor: not-allowed;
+          color: #fff;
         }
       }
       .payId {
