@@ -80,7 +80,9 @@
                 :label="item.label"
                 :width="item.width||''"
                 :header-align="item.headerAlign||'center'"
-              ></el-table-column>
+              >
+                <template slot-scope="scope" v-if="scope.column.property=='kemu'">123</template>
+              </el-table-column>
             </el-table>
           </div>
           <div>
@@ -111,7 +113,7 @@
 </template>
 
 <script>
-import applyBill from '@/components/applyBill/applyBill'
+import applyBill from '@/components/applyBill/applybill'
 import mergePay from './mergePay.vue'
 import payErrorHandle from './payErrorHandle.vue'
 
