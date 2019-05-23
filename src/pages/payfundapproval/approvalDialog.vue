@@ -70,7 +70,7 @@
               </ul>
             </div>
             <div class="textare">
-              <el-input type="textarea"></el-input>
+              <el-input type="textarea" v-model="textare"></el-input>
             </div>
           </div>
         </div>
@@ -113,6 +113,7 @@
       },
       data(){
           return{
+            textare:'',
             openDialog:false,
             handleValue:'',
             subData:[{
