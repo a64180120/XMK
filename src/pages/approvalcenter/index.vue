@@ -2,7 +2,7 @@
     <section>
       <el-row>
         <el-col :span="24">
-          <top-handle></top-handle>
+          <top-handle title="审批中心在线工作平台"></top-handle>
         </el-col>
       </el-row>
       <div style="clear:both"></div>
@@ -80,7 +80,7 @@
             },{
               label:"支付单审批",
               approvalValue:'0',
-              path:''
+              path:'/paylistapproval'
             },{
               label:"项目用款审批",
               approvalValue:'6',
@@ -101,7 +101,7 @@
             },{
               label:"支付单",
               value:"12",
-              path:''
+              path:'/paylistapproval'
             },{
               label:"项目用款单",
               value:"56",

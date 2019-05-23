@@ -42,6 +42,11 @@ const staticRoute = [
         component: () =>
           import(/* webpackChunkName:'approvalcenter'*/ '../pages/approvalcenter/index'),
         meta: { requireAuth: true, type: 'page', name: '审批中心' }
+      },{
+        path: '/paylistapproval',
+        component: () =>
+          import(/* webpackChunkName:'approvalcenter'*/ '../pages/paylistapproval/index'),
+        meta: { requireAuth: true, type: 'page', name: '支付单审批' }
       }
     ]
   },{

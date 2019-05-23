@@ -61,8 +61,8 @@
             <div class="radio">
               <ul>
                 <li>
-                  <el-radio v-model="handleValue">同意</el-radio>
-                  <el-radio v-model="handleValue">不同意</el-radio>
+                  <el-radio v-model="handleValue" label="1">同意</el-radio>
+                  <el-radio v-model="handleValue" label="2">不同意</el-radio>
                 </li>
                 <li>
                   <span>附单据{{}}张</span>
@@ -70,7 +70,7 @@
               </ul>
             </div>
             <div class="textare">
-              <el-input type="textarea"></el-input>
+              <el-input type="textarea" v-model="textare"></el-input>
             </div>
           </div>
         </div>
@@ -113,6 +113,7 @@
       },
       data(){
           return{
+            textare:'',
             openDialog:false,
             handleValue:'',
             subData:[{
