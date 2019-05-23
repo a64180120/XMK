@@ -7,6 +7,7 @@
       width="80%"
       :close-on-click-modal="false"
       class="payCenter"
+      :before-close="payListClose"
     >
       <div slot="title" class="dialog-title">
         <span style="float: left">支付单查看</span>
@@ -263,14 +264,22 @@ export default {
       payErrorHandleData: {
         openDialog: false,
         data: {}
-      }
+      },
+      reSetting: false
     }
   },
   created() {},
   mounted() {},
   methods: {
+    payListClose(done) {
+      if (this.reSetting) {
+        this.reSetting = false
+        this.data.openDialog = 'error'
+      } else {
+        done()
+      }
+    },
     showFundDetail() {
-      this.showMask = false
       this.fundDetailData.openDialog = true
     },
     // dialog中的check事件
@@ -294,7 +303,8 @@ export default {
           this[type].openDialog = true
           break
         case 'new':
-          alert('newTable????')
+          this.reSetting = true
+          this.data.itemType = 'notApprove'
           break
       }
     }

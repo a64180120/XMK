@@ -112,7 +112,7 @@
                   <el-checkbox v-model="item.checked" @change="handleCheckOne(item)">{{index+1}}</el-checkbox>
                 </td>
                 <td>
-                  <div @click="payNav('showPayList')">{{item.zfdbh}}</div>
+                  <div @click="payNav('payListData',item)" style="cursor:pointer">{{item.zfdbh}}</div>
                 </td>
                 <td>
                   <div>{{item.zfje}}</div>
@@ -406,64 +406,77 @@ export default {
       console.log(choosed)
     },
     // 导航栏事件
-    payNav(type) {
+    payNav(type, item) {
       this.noDataRefresh()
-      var handleitem = []
-      let checkedCount = this.tableData.reduce((prev, cur) => {
-        if (cur.checked) handleitem.push(cur)
-        return prev + cur.checked
-      }, 0)
-      if (handleitem.length < 1) {
-        this.errorAlert('请至少选择一条数据进行操作。')
-        return
-      }
-      switch (type) {
-        case 'payListData':
-          if (checkedCount != 1) {
-            this.errorAlert('请选择一条数据进行维护。')
-            return
-          } else if (
-            handleitem[0].spzt == '待送审' ||
-            handleitem[0].spzt == '未通过'
-          ) {
-            this.itemType = 'notApprove'
-          } else {
-            this.errorAlert(`单据已经${handleitem[0].spzt}。`)
-            return
-          }
-          break
-        case 'mergePayData':
-          if (
-            !handleitem.every(item => {
-              return item.spzt == '审批通过' && item.zfzt == '待支付'
-            })
-          ) {
-            this.errorAlert(
-              '只有审批状态为“审批通过”，支付状态为“待支付”的单据，才可以使用【合并支付】。'
-            )
-            return
-          }
-          break
-        case 'payErrorHandleData':
-          if (
-            !handleitem.every(item => {
-              return item.zfzt == '支付异常'
-            })
-          ) {
-            this.errorAlert('只能对支付异常的单据进行处理。')
-            return
-          }
-          break
-        case 'showApprove':
-          if (
-            !handleitem.every(item => {
-              return item.spzt == '待送审'
-            })
-          ) {
-            this.errorAlert('只能对待送审的单据进行处理。')
-            return
-          }
-          break
+      if (item) {
+        console.log(item)
+        if (item.spzt == '待送审' || item.spzt == '未通过') {
+          this.payListData.itemType = 'notApprove'
+        } else if (item.zfzt == '支付异常') {
+          this.payListData.itemType = 'error'
+        } else if (item.zfzt == '待支付' && item.spzt == '审批通过') {
+          this.payListData.itemType = 'pay'
+        } else {
+          this.payListData.itemType = ''
+        }
+      } else {
+        var handleitem = []
+        let checkedCount = this.tableData.reduce((prev, cur) => {
+          if (cur.checked) handleitem.push(cur)
+          return prev + cur.checked
+        }, 0)
+        if (handleitem.length < 1) {
+          this.errorAlert('请至少选择一条数据进行操作。')
+          return
+        }
+        switch (type) {
+          case 'payListData':
+            if (checkedCount != 1) {
+              this.errorAlert('请选择一条数据进行维护。')
+              return
+            } else if (
+              handleitem[0].spzt == '待送审' ||
+              handleitem[0].spzt == '未通过'
+            ) {
+              this.payListData.itemType = 'notApprove'
+            } else {
+              this.errorAlert(`单据已经${handleitem[0].spzt}。`)
+              return
+            }
+            break
+          case 'mergePayData':
+            if (
+              !handleitem.every(item => {
+                return item.spzt == '审批通过' && item.zfzt == '待支付'
+              })
+            ) {
+              this.errorAlert(
+                '只有审批状态为“审批通过”，支付状态为“待支付”的单据，才可以使用【合并支付】。'
+              )
+              return
+            }
+            break
+          case 'payErrorHandleData':
+            if (
+              !handleitem.every(item => {
+                return item.zfzt == '支付异常'
+              })
+            ) {
+              this.errorAlert('只能对支付异常的单据进行处理。')
+              return
+            }
+            break
+          case 'showApprove':
+            if (
+              !handleitem.every(item => {
+                return item.spzt == '待送审'
+              })
+            ) {
+              this.errorAlert('只能对待送审的单据进行处理。')
+              return
+            }
+            break
+        }
       }
       this[type].openDialog = true
     },
