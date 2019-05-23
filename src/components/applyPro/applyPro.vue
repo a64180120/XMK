@@ -4,10 +4,10 @@
       <el-row :gutter="10">
         <el-col :span="24">
           <div class="top-btn">
-            <el-button class="btn" size="mini">保存</el-button>
-            <el-button class="btn" size="mini">保存并新增</el-button>
-            <el-button class="btn" size="mini">增加项目</el-button>
-            <el-button class="btn" size="mini" @click="msgType=true">删除项目</el-button>
+            <el-button class="btn" size="mini" @click="save(0)">保存</el-button>
+            <el-button class="btn" size="mini" @click="save(1)">保存并送审</el-button>
+            <el-button class="btn" size="mini" @click="add">增加项目</el-button>
+            <el-button class="btn" size="mini" @click="delPro">删除项目</el-button>
           </div>
         </el-col>
       </el-row>
@@ -34,7 +34,7 @@
           </div>
         </el-col>
         <el-col :span="19" style="height: 470px;overflow: auto;text-align: left">
-          <el-card class="payText" v-for="(item,index) in projectItem">
+          <el-card class="payText" v-for="(item,pindex) in projectItem">
             <div slot="header" style="padding: 0 10px;text-align: left">
               <span>
                  <el-checkbox v-model="item.checked"></el-checkbox>
@@ -50,7 +50,7 @@
             <div>
               <div>
                 <span>项目名称：</span>
-                <sapn>
+                <span>
                   <el-select size="small" v-model="item.projectCode">
                     <el-option v-for="pro in projectList"
                                :label="pro.proName"
@@ -58,14 +58,17 @@
                                :value="pro.proCode"
                     ></el-option>
                   </el-select>
-                </sapn>
-                <span>
+                </span>
+                <span style="float: right">
+                  <span>
                   项目编码
                 </span>
                 <span>{{item.projectCode}}</span>
+                </span>
+
               </div>
-              <div style="height: 40px;line-height: 40px;background-color: #d7d7d7;padding:0 10px;">
-                <span>预算总额 （93,432,78元）- 实际已使用 （4,423.78元） - 冻结 （1,234,00元） = </span><span>本次可申请 （86,546.98元）</span>
+              <div style="height: 40px;line-height: 40px;background-color: #d7d7d7;padding:0 10px;margin: 10px 0;">
+                <span>预算总额 （93,432,78元）- 实际已使用 （4,423.78元） - 冻结 （1,234,00元） = </span><span style="color: red;">本次可申请 （86,546.98元）</span>
               </div>
             </div>
             <div>
@@ -94,10 +97,16 @@
                     </template>
                     <template v-else>
                       <td>{{index+1}}</td>
-                      <td>{{mx.pdOrgName}}</td>
-                      <td>{{mx.pdName}}</td>
-                      <td>{{mx.pdMoney}}</td>
-                      <td>{{mx.pdNode}}</td>
+                      <td @click="showOrg(pindex,index)">
+                        {{mx.pdOrg.orgName}}
+                      </td>
+                      <td><input v-model="mx.pdName"></td>
+                      <td>
+                        <input v-model="mx.pdMoney">
+                      </td>
+                      <td>
+                        <input v-model="mx.pdNode"></input>
+                      </td>
                     </template>
                   </tr>
                 </tbody>
@@ -133,12 +142,22 @@
         <button class="confirmBtn"  @click="handleClose">确定</button>
       </span>
     </el-dialog>
+    <!--组织树弹窗-->
+    <el-dialog id="orgdialog" width="350px" title="组织树"
+               :visible.sync="orgType" :append-to-body="true">
+      <orgtree  @choose="getOrg"></orgtree>
+      <span slot="footer"   style="text-align: center">
+          <button class="cancelBtn"  @click="orgType=false">取消</button>
+          <button class="confirmBtn" style="margin-left: 30px" @click="confirmOrg">确定</button>
+        </span>
+    </el-dialog>
   </section>
 
   <!--内层弹框-->
 </template>
 
 <script>
+  import Orgtree from "../../components/orgtree/index";
   export default {
     name: "applypro",
     props:{applyNum:String},
@@ -163,8 +182,8 @@
             projectFileNum: 2,
             projectFileList: 2,
             pdList: [
-              {pdOrgName: '杭州市总工会', pdName: '未见星河', pdMoney: 1000, pdNode: ''},
-              {pdOrgName: '宁波市总工会', pdName: '爱上咖啡', pdMoney: 2000, pdNode: ''},
+              {pdOrg:{orgName: '杭州市总工会',orgId:'0001'}, pdName: '未见星河', pdMoney: 1000, pdNode: ''},
+              {pdOrg:{orgName: '杭州市总工会',orgId:'0001'}, pdName: '爱上咖啡', pdMoney: 2000, pdNode: ''},
               {countName: '小计', countMoney: 3000, countNode: ''}
             ]
           },
@@ -174,14 +193,17 @@
             projectFileNum: 0,
             projectFileList: 2,
             pdList: [
-              {pdOrgName: '杭州市总工会', pdName: '未见星河', pdMoney: 1000, pdNode: ''},
-              {pdOrgName: '宁波市总工会', pdName: '爱上咖啡', pdMoney: 2000, pdNode: ''},
+              {pdOrg:{orgName: '杭州市总工会',orgId:'0001'}, pdName: '未见星河', pdMoney: 1000, pdNode: ''},
+              {pdOrg:{orgName: '杭州市总工会',orgId:'0001'}, pdName: '爱上咖啡', pdMoney: 2000, pdNode: ''},
               {countName: '小计', countMoney: 3000, countNode: ''}
             ]
           }
-        ]
+        ],
+        orgType:false,//是否显示组织弹窗
+        choosedOrg:{index:[0,0],org:{}},//选中的组织,及对应数据下标
       }
     },
+    components:{Orgtree},
     watch:{
       applyNum(){
         this.getApply();
@@ -198,9 +220,26 @@
       getApply:function(){
         console.log(this.applyNum+'这里添加数据查询方法');
       },
-      //生成支付单
-      creatApply:function(){
-        console.log(this.applyNum+'这里添加数据查询方法');
+      //保存0，保存并送审1，区别：是否调用送审组件
+      save:function(type){
+
+      },
+      //新增项目
+      add(){
+        let obj={
+            checked: false,
+            projectCode: '001',
+            projectFileNum: 0,
+            projectFileList: 0,
+            pdList: [
+              {pdOrg:{orgName: '杭州市总工会',orgId:'0001'}, pdName: '', pdMoney: '', pdNode: ''},
+              {countName: '小计', countMoney: 0, countNode: ''}
+            ]
+          };
+        this.projectItem.push(obj)
+      },
+      delPro(index){
+
       },
       //送审
       postApply:function(){
@@ -242,7 +281,26 @@
           }
           //this.$forceUpdate();
         },1000)
-      }
+      },
+      //弹出组织树f表示项目下标，s表示项目对应的pdList下标
+      showOrg(f,s){
+        this.choosedOrg.index=[f,s];
+        this.orgType=true;
+      },
+      //组织树点击选择事件
+      getOrg:function(data){
+        console.log(data);//这边可以得到选中的组织，当点击确定时，进行选中组织赋值，建议添加中间变量，用于保存点击组织树获取的值
+        this.choosedOrg.org=data;
+      },
+      //点击组织树确定按钮进行选中组织赋值
+      confirmOrg:function(){
+        this.orgType=false;
+        if(this.choosedOrg.org!==this.projectItem[this.choosedOrg.index[0]].pdList[this.choosedOrg.index[1]]){
+          console.log(this.projectItem[this.choosedOrg.index[0]].pdList[this.choosedOrg.index[1]].pdOrg);
+          console.log(this.choosedOrg.org);
+          this.projectItem[this.choosedOrg.index[0]].pdList[this.choosedOrg.index[1]].pdOrg.orgName=this.choosedOrg.org.label;
+        }
+      },
     }
   }
 </script>
@@ -452,6 +510,10 @@ table{
   }
   .payText{
     margin-bottom: 10px;
+  }
+  table td input{
+    border: none;
+    width: 100%;
   }
 </style>
 <style>
