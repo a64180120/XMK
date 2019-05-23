@@ -25,7 +25,7 @@
           <div class="btnArea">
             <el-form :inline="true">
               <el-form-item label="申报部门" class="top-form-left">
-                <el-select size="mini" v-model="form.depart" style="width: 120px"></el-select>
+                <el-input size="mini" v-model="form.depart" @focus="openOrg()" style="width: 120px"></el-input>
               </el-form-item>
               <el-form-item label="提留时长" class="top-form-left">
                 <el-input size="mini" v-model="form.long" style="width: 150px"></el-input>
@@ -251,6 +251,15 @@
       <approval-dialog ref="approvalDialog" :title="appDialog.title" :btn-group="appDialog.btnGroup" :data="approvalData" ></approval-dialog>
       <!--查看审批流程-->
       <auditfollow :visible="visible" @update:visible="closeAuditFollow()"></auditfollow>
+      <!--组织树-->
+      <el-dialog id="orgdialog" :currentOrg="searchorg" width="350px" title="组织树"
+                 :visible.sync="orgType">
+        <orgtree :currentOrg="searchorg"  @choose="getOrg"></orgtree>
+        <span slot="footer"   style="text-align: center">
+          <button class="cancelBtn"  @click="orgType=false">取消</button>
+          <button class="confirmBtn" style="margin-left: 30px" @click="confirmOrg()">确定</button>
+        </span>
+      </el-dialog>
     </div>
 
 
@@ -264,11 +273,14 @@
   import ApprovalDialog from "./approvalDialog";
   import Auditfollow from "../../components/auditFollow/auditfollow";
   import Applybill from "../../components/applyBill/applybill";
+  import Orgtree from "../../components/orgtree/index";
   export default {
     name: "index",
-    components: {Applybill, Auditfollow, ApprovalDialog, SearchInput, HandleBtn, FundDetail},
+    components: {Orgtree, Applybill, Auditfollow, ApprovalDialog, SearchInput, HandleBtn, FundDetail},
     data(){
       return{
+        searchorg:{},
+        orgType:false,
         openDetailDialog:false,
         detailData:{
         },
@@ -400,6 +412,19 @@
       },
       openAuditfollow(){
         this.visible = true
+      },
+      //确认按钮
+      confirmOrg(){
+
+      },
+      //获取组织树
+      getOrg(e){
+        console.log(e)
+        this
+      },
+      //打开组织树
+      openOrg(){
+        this.orgType =true
       }
     }
   }
