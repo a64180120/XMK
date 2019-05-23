@@ -248,7 +248,7 @@
 
     <!--申请单弹窗-->
 
-    <el-dialog id="applydialog" title="查看申请"
+    <el-dialog class="applydialog" title="查看申请"
     :visible.sync="applyType"
     :before-close="handleClose">
       <applybill :applyNum="applyNum"
@@ -268,6 +268,12 @@
           <button class="confirmBtn" style="margin-left: 30px" @click="confirmOrg">确定</button>
         </span>
     </el-dialog>
+    <!--项目新增修改-->
+    <el-dialog class="applydialog" title="新增项目"
+               :visible.sync="applyproType"
+               >
+       <applypro :applyNum="applyNum"  @delete="handleDelete"></applypro>
+    </el-dialog>
   </div>
 </template>
 
@@ -276,6 +282,7 @@
   import pieChart from '../../components/echart/pieChart'
   import Applybill from "../../components/applyBill/applybill";
   import Orgtree from "../../components/orgtree/index";
+  import Applypro from "../../components/applyPro/applyPro";
     export default {
         name: "index",
       data(){
@@ -313,10 +320,11 @@
             applyType:false,//是否显示查看申请弹窗
             applyNum:'',//当前查看申请单的编号
             orgType:false,//是否显示组织弹窗
-            choosedOrg:{}//选中的组织
+            choosedOrg:{},//选中的组织
+            applyproType:false,//显示项目新增修改弹窗
           }
       },
-      components:{Orgtree, Applybill, tophandle,pieChart},
+      components:{Applypro, Orgtree, Applybill, tophandle,pieChart},
       methods:{
           getData:function(){
             console.log('查询数据');
@@ -360,8 +368,11 @@
         },
         //
         showAuditAdd(val){  //流程编辑
-          this.auditBtn=val;
-          this.auditAddShow=true;
+          this.applyproType=true;
+            if(val=='add'){
+              //this.applyproType=true;
+            }
+
         },
       }
     }
@@ -431,17 +442,17 @@
   .rightPanel .el-card__body{
     padding: 5px;
   }
-  #applydialog .el-dialog{
+  .applydialog .el-dialog{
     padding: 0 10px;
     width: 90%;
     height: 600px;
     margin:auto;
   }
-  #applydialog .el-dialog__header{
+  .applydialog .el-dialog__header{
     text-align: left;
     border-bottom: 1px solid #ccc;
   }
-  #applydialog .el-dialog__body{
+  .applydialog .el-dialog__body{
     padding: 10px 20px 30px;
   }
 </style>
