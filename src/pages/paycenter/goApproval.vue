@@ -17,7 +17,7 @@
             <span style="float:right;color:#333;">附单据 0 张</span>
           </div>
           <div class="textare">
-            <el-input type="textarea"></el-input>
+            <el-input type="textarea" v-model="content"></el-input>
           </div>
         </div>
         <div class="sub-table">
@@ -101,6 +101,7 @@ export default {
     return {
       openDialog: false,
       handleValue: '',
+      content: '',
       subData: [
         {
           code: '0001',
