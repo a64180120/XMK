@@ -77,7 +77,11 @@
               <!-- 序号列 -->
               <el-table-column type="index" width="80" header-align="center" align="center">
                 <template slot="header" slot-scope="scope">
-                  <el-checkbox @change="selectAll" v-if="data.itemType == 'notApprove'">序号</el-checkbox>
+                  <el-checkbox
+                    @change="selectAll"
+                    v-model="allSelected"
+                    v-if="data.itemType == 'notApprove'"
+                  >序号</el-checkbox>
                   <template v-else>序号</template>
                 </template>
                 <template slot-scope="scope">
@@ -87,7 +91,11 @@
                     :label="scope.$index"
                     v-model="scope.row.choosed"
                   >{{scope.$index+1}}</el-checkbox>
-                  <template v-else>{{scope.$index+1}}</template>
+                  <template v-else>
+                    <span
+                      :style="data.itemType == 'error'&&scope.row.status!='支付异常'?'padding-left:25px':''"
+                    >{{scope.$index+1}}</span>
+                  </template>
                 </template>
               </el-table-column>
               <!-- 公共列 -->
@@ -102,9 +110,10 @@
                 empty-text="————"
               >
                 <template slot-scope="scope">
+                  <!-- 预算科目  -->
                   <div
                     v-if="scope.column.property=='kemu'&& data.itemType == 'notApprove'"
-                    class="table-select"
+                    class="table-item"
                   >
                     <el-select
                       v-model="scope.row[scope.column.property+'ID']"
@@ -115,9 +124,16 @@
                       <el-option label="501002 活动支出002" value="501002"></el-option>
                     </el-select>
                   </div>
+                  <!-- 收款方账户名称 -->
+                  <div
+                    v-else-if="scope.column.property=='getName'&&data.itemType == 'notApprove'"
+                    class="table-item"
+                    @click="selectBank(scope.row)"
+                  >{{scope.row[scope.column.property]}}</div>
+                  <!-- 支付方式 -->
                   <div
                     v-else-if="scope.column.property=='way'&&data.itemType == 'notApprove'"
-                    class="table-select"
+                    class="table-item"
                   >
                     <el-select
                       v-model="scope.row[scope.column.property+'ID']"
@@ -127,7 +143,7 @@
                       <el-option label="跨行" value="1"></el-option>
                     </el-select>
                   </div>
-                  <template v-else>{{scope.row[scope.column.property]}}</template>
+                  <div class="table-item" v-else>{{scope.row[scope.column.property]}}</div>
                 </template>
               </el-table-column>
               <!-- 支付异常列 -->
@@ -189,8 +205,8 @@
       <pay-error-handle v-if="payErrorHandleData.openDialog" :data="payErrorHandleData"></pay-error-handle>
       <!-- 送审 -->
       <go-approval v-if="approvalData.openDialog" :father="data" :data="approvalData"></go-approval>
-      <!-- 送审 -->
-      <approval-dialog ref="approval" :inner="true"></approval-dialog>
+      <!-- 银行档案 -->
+      <bank-choose :data="bankChooseData"></bank-choose>
     </el-dialog>
   </div>
 </template>
@@ -200,7 +216,7 @@ import applyBill from '@/components/applyBill/applybill'
 import mergePay from './mergePay.vue'
 import payErrorHandle from './payErrorHandle.vue'
 import goApproval from './goApproval.vue'
-import approvalDialog from '../payfundapproval/approvalDialog.vue'
+import bankChoose from './bankChoose'
 
 export default {
   name: 'payList',
@@ -209,7 +225,7 @@ export default {
     mergePay,
     payErrorHandle,
     goApproval,
-    approvalDialog
+    bankChoose
   },
   props: {
     data: {
@@ -225,10 +241,6 @@ export default {
     return {
       kemu: '',
       way: '',
-      approvalData: {
-        openDialog: false,
-        data: {}
-      },
       // 支付单表单
       // 未送审
       payHeaders1: [
@@ -245,7 +257,7 @@ export default {
         {
           name: 'money',
           label: '申请金额（元）',
-          width: '200',
+          width: '150',
           bodyAlign: 'right'
         },
         {
@@ -267,22 +279,22 @@ export default {
         {
           name: 'getName',
           label: '收款方账户名称',
-          width: '120'
+          width: '200'
         },
         {
           name: 'getAccount',
           label: '收款账号',
-          width: '120'
+          width: '200'
         },
         {
           name: 'bankName',
           label: '开户行',
-          width: '120'
+          width: '200'
         },
         {
           name: 'cardId',
           label: '银行行号',
-          width: '120'
+          width: '200'
         }
       ],
       // 支付异常的三列
@@ -404,7 +416,16 @@ export default {
         openDialog: false,
         data: {}
       },
-      reSetting: false
+      approvalData: {
+        openDialog: false,
+        data: {}
+      },
+      bankChooseData: {
+        openDialog: false,
+        data: {}
+      },
+      reSetting: false,
+      allSelected: false
     }
   },
   created() {
@@ -428,10 +449,18 @@ export default {
     },
     // dialog中的check事件
     selectOne($scope) {
-      console.log($scope)
+      console.log($scope.row.choosed)
+      if ($scope.row.choosed) {
+        this.allSelected = this.payList.every(item => item.choosed)
+      } else {
+        this.allSelected = false
+      }
     },
     selectAll(choosed) {
       console.log(choosed)
+      this.payList.forEach(item => {
+        item.choosed = choosed
+      })
     },
     // 支付单详情事件
     save(type) {
@@ -455,6 +484,11 @@ export default {
           this.$refs.approval.changeDialog()
           break
       }
+    },
+    // 选择银行
+    selectBank(item) {
+      console.log(item)
+      this.bankChooseData.openDialog = true
     }
   },
   watch: {}
@@ -529,18 +563,19 @@ export default {
           background-color: #fff;
           border-radius: 10px;
           padding: 10px;
-          .table-select {
+          .table-item {
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
+            line-height: 48px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
             cursor: pointer;
             > .el-select {
               height: 100%;
-              > .el-input {
-                margin-top: 4px;
-              }
             }
           }
         }
@@ -662,10 +697,9 @@ export default {
     .el-radio:not(:last-of-type) {
       margin-bottom: 10px;
     }
-    .table-select {
+    .table-item {
       > .el-select {
         > .el-input {
-          margin-top: 4px;
           > .el-input__inner {
             border: 0;
             background-color: transparent;
