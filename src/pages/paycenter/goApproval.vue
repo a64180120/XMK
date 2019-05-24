@@ -17,7 +17,7 @@
             <span style="float:right;color:#333;">附单据 0 张</span>
           </div>
           <div class="textare">
-            <el-input type="textarea"></el-input>
+            <el-input type="textarea" v-model="content"></el-input>
           </div>
         </div>
         <div class="sub-table">
@@ -68,7 +68,11 @@
         </div>
       </div>
       <div class="approval-btn">
-        <el-button size="small" type="primary" @click="cancel()">{{btnGroup.cancelName}}</el-button>
+        <el-button
+          size="small"
+          type="primary"
+          @click="data.openDialog = false"
+        >{{btnGroup.cancelName}}</el-button>
         <el-button size="small" type="primary" @click="submit()">{{btnGroup.onfirmName}}</el-button>
       </div>
     </el-dialog>
@@ -95,12 +99,16 @@ export default {
           onfirmName: '确认'
         }
       }
+    },
+    father: {
+      default: null
     }
   },
   data() {
     return {
       openDialog: false,
       handleValue: '',
+      content: '',
       subData: [
         {
           code: '0001',
@@ -132,7 +140,19 @@ export default {
       this.openDialog = false
     },
     //确认
-    submit() {}
+    submit() {
+      var vm = this
+      this.$msgBox.showMsgBox({
+        content: '送审成功',
+        fn: () => {
+          if (vm.father) vm.father.openDialog = false
+          vm.data.openDialog = false
+        }
+      })
+    }
+  },
+  created() {
+    console.log(this.father)
   }
 }
 </script>
@@ -152,6 +172,7 @@ export default {
   height: 228px;
   overflow: auto;
   > .handle {
+    margin-bottom: 10px;
     > .title {
       color: $btnColor;
       text-align: left;
@@ -163,6 +184,7 @@ export default {
           width: 0.12rem;
           height: 0.12rem;
           background-color: $btnColor;
+          margin-right: 5px;
         }
         color: $btnColor;
       }
@@ -199,6 +221,7 @@ export default {
             display: inline-block;
             width: 0.12rem;
             height: 0.12rem;
+            margin-right: 5px;
             background-color: $btnColor;
           }
         }
@@ -221,6 +244,7 @@ export default {
             display: inline-block;
             width: 0.12rem;
             height: 0.12rem;
+            margin-right: 5px;
             background-color: $btnColor;
           }
         }

@@ -10,70 +10,7 @@
         <div slot="title" class="dialog-title">
           <p>{{title}}</p>
         </div>
-        <div class="content">
-          <div class="sub-table">
-            <!--审批流程-->
-            <div class="sub-approval">
-              <div class="title">
-                <span>■</span>审批流程
-              </div>
-              <div class="table">
-                <el-table class="table-content"
-                          :data="subData"
-                          :border="true" :header-row-class-name="headerRowClass">
-                  <el-table-column prop="code" width="80" align="center" label="流程编码">
-                  </el-table-column>
-                  <el-table-column prop="name" align="center"  label="流程名称">
-                  </el-table-column>
-                  <el-table-column width="60" align="center"  label="查看">
-                    <template slot-scope="scope">
-                      <i class="el-icon-search icon-search" @click="searchFlow(scope.row,scope.column.$index,scope.store)"></i>
-                    </template>
-                  </el-table-column>
-                </el-table>
-              </div>
-            </div>
-            <div class="next-approval">
-              <div class="title">
-                <span>■</span>接受人
-              </div>
-              <div class="table">
-                <el-table class="table-next"
-                          :data="subData"
-                          :border="true"
-                          @select="handleSelect"
-                          @select-all="handleSelectAll"
-                          :header-row-class-name="headerRowClass">
-                  <el-table-column type="selection" width="30">
-                  </el-table-column>
-                  <el-table-column prop="code" align="center"  label="操作员编码">
-                  </el-table-column>
-                  <el-table-column prop="name" align="center"  label="姓名">
-                  </el-table-column>
-                </el-table>
-              </div>
-            </div>
-          </div>
-          <div class="handle">
-            <div class="title">
-              <span>■</span>审批处理
-            </div>
-            <div class="radio">
-              <ul>
-                <li>
-                  <el-radio v-model="handleValue" label="1">同意</el-radio>
-                  <el-radio v-model="handleValue" label="2">不同意</el-radio>
-                </li>
-                <li>
-                  <span>附单据{{}}张</span>
-                </li>
-              </ul>
-            </div>
-            <div class="textare">
-              <el-input type="textarea" v-model="textare"></el-input>
-            </div>
-          </div>
-        </div>
+        <approval-bill></approval-bill>
         <div class="approval-btn">
           <el-button size="small" type="primary" @click="cancel()">{{btnGroup.cancelName}}</el-button>
           <el-button size="small" type="primary" @click="submit()">{{btnGroup.onfirmName}}</el-button>
@@ -83,8 +20,10 @@
 </template>
 
 <script>
+    import ApprovalBill from "../../components/approvalBill/approvalBill";
     export default {
         name: "approvalDialog",
+      components: {ApprovalBill},
       props:{
           title:{
             type:String,

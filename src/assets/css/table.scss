@@ -34,12 +34,15 @@
   bottom: 50px;
 }
 .tableHead{}
+table td{
+  min-width: 20px;
+}
 .tableHead table{
   width: 100%;
   border-collapse:separate;
   border-spacing:0;
   background-color: $listHeader;
-  padding: 0 15px;
+  padding: 0 1%;
   font-size: .15rem;
   color: #333;
   table-layout: fixed;
@@ -72,7 +75,7 @@
   border-spacing:0 12px;
   padding:0 1%;
   font-size: .14rem;
-
+  table-layout: fixed;
 }
 .tableBody table tr{
   border-radius: 8px;

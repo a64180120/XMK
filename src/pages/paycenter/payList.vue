@@ -21,10 +21,13 @@
           </template>
           <template v-if="data.itemType == 'notApprove'">
             <span class="btn btn-large" @click="save('')">保存</span>
-            <span class="btn btn-large" @click="save('approveData')">保存并送审</span>
+            <span class="btn btn-large" style="padding:0" @click="save('approvalData')">保存并送审</span>
           </template>
           <template v-if="data.itemType =='pay'">
             <span class="btn btn-large" @click="save('mergePayData')">支付</span>
+          </template>
+          <template v-if="data.itemType =='approval'">
+            <span class="btn btn-large" @click="save('approval')">审批</span>
           </template>
           <span class="btn btn-large">打印</span>
         </div>
@@ -184,6 +187,10 @@
       ></merge-pay>
       <!-- 异常处理 -->
       <pay-error-handle v-if="payErrorHandleData.openDialog" :data="payErrorHandleData"></pay-error-handle>
+      <!-- 送审 -->
+      <go-approval v-if="approvalData.openDialog" :father="data" :data="approvalData"></go-approval>
+      <!-- 送审 -->
+      <approval-dialog ref="approval" :inner="true"></approval-dialog>
     </el-dialog>
   </div>
 </template>
@@ -192,10 +199,18 @@
 import applyBill from '@/components/applyBill/applybill'
 import mergePay from './mergePay.vue'
 import payErrorHandle from './payErrorHandle.vue'
+import goApproval from './goApproval.vue'
+import approvalDialog from '../payfundapproval/approvalDialog.vue'
 
 export default {
   name: 'payList',
-  components: { applyBill, mergePay, payErrorHandle },
+  components: {
+    applyBill,
+    mergePay,
+    payErrorHandle,
+    goApproval,
+    approvalDialog
+  },
   props: {
     data: {
       type: Object,
@@ -210,6 +225,10 @@ export default {
     return {
       kemu: '',
       way: '',
+      approvalData: {
+        openDialog: false,
+        data: {}
+      },
       // 支付单表单
       // 未送审
       payHeaders1: [
@@ -398,7 +417,7 @@ export default {
     payListClose(done) {
       if (this.reSetting) {
         this.reSetting = false
-        this.data.openDialog = 'error'
+        this.data.itemType = 'error'
       } else {
         this.$forceUpdate()
         done()
@@ -419,10 +438,10 @@ export default {
       console.log(type)
       switch (type) {
         case '':
-          this.message = '保存成功'
-          this.notClosedAll = true
-          this.tishi = true
-        case 'approveData':
+          this.$msgBox.showMsgBox({
+            content: '保存成功'
+          })
+        case 'approvalData':
         case 'payErrorHandleData':
         case 'mergePayData':
           this[type].openDialog = true
@@ -430,6 +449,10 @@ export default {
         case 'new':
           this.reSetting = true
           this.data.itemType = 'notApprove'
+          break
+        case 'approval':
+          debugger
+          this.$refs.approval.changeDialog()
           break
       }
     }
@@ -559,6 +582,7 @@ export default {
       .btn {
         border: 1px solid $btnColor;
         cursor: pointer;
+        line-height: 28px;
         &:not(:last-of-type) {
           margin-right: 10px;
         }
