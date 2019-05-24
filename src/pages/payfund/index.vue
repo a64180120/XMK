@@ -119,28 +119,28 @@
             </colgroup>
             <thead>
               <tr>
-                <td>
+                <td title="序号">
                   <el-checkbox v-model="checked">序号</el-checkbox>
                 </td>
-                <td>
+                <td title="申请单编号">
                   申请单编号
                 </td>
-                <td>
+                <td title="申请单名称">
                   申请单名称
                 </td>
-                <td>
+                <td title="申请单金额（元）">
                   申请单金额（元）
                 </td>
-                <td>
+                <td title="申请日期">
                   申请日期
                 </td>
-                <td>
+                <td title="审批状态">
                   审批状态
                 </td>
-                <td>
+                <td title="支付状态">
                   支付状态
                 </td>
-                <td>
+                <td title="申请说明">
                   申请说明
                 </td>
               </tr>
@@ -159,7 +159,7 @@
               <col width="10%">
               <col width="15%">
             </colgroup>
-            <thead>
+            <tbody>
             <tr v-for="n in 35">
               <td>
                 <el-checkbox v-model="checked">序号</el-checkbox>
@@ -186,7 +186,7 @@
                 申请说明
               </td>
             </tr>
-            </thead>
+            </tbody>
           </table>
         </div>
       </div>
@@ -255,7 +255,7 @@
         @delete="handleDelete"
       ></applybill>
     </el-dialog>
-    <!--申请单弹窗-->
+    <!--组织树弹窗-->
     <el-dialog id="orgdialog" width="350px" title="组织树"
                :visible.sync="orgType">
       <orgtree :currentOrg="searchData.searchorg" @choose="getOrg"></orgtree>
@@ -269,7 +269,7 @@
         </span>
     </el-dialog>
     <!--项目新增修改-->
-    <el-dialog class="applydialog" title="新增项目"
+    <el-dialog class="applydialog" :title="applyproTitle"
                :visible.sync="applyproType"
                >
        <applypro :applyNum="applyNum"  @delete="handleDelete"></applypro>
@@ -322,6 +322,7 @@
             orgType:false,//是否显示组织弹窗
             choosedOrg:{},//选中的组织
             applyproType:false,//显示项目新增修改弹窗
+            applyproTitle:''
           }
       },
       components:{Applypro, Orgtree, Applybill, tophandle,pieChart},
@@ -370,7 +371,9 @@
         showAuditAdd(val){  //流程编辑
           this.applyproType=true;
             if(val=='add'){
-              //this.applyproType=true;
+              this.applyproTitle='新增申请';
+            }else if(val=='update'){
+              this.applyproTitle='修改申请';
             }
 
         },
