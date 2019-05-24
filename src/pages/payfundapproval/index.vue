@@ -28,7 +28,13 @@
                 <el-input size="mini" v-model="form.depart" @focus="openOrg()" style="width: 120px"></el-input>
               </el-form-item>
               <el-form-item label="提留时长" class="top-form-left">
-                <el-input size="mini" v-model="form.long" style="width: 150px"></el-input>
+                <el-input size="mini" v-model="form.long" style="width: 200px">
+                  <el-select v-model="select" slot="prepend" placeholder="类型" style="width: 75px">
+                    <el-option label="大于" value="1"></el-option>
+                    <el-option label="等于" value="2"></el-option>
+                    <el-option label="小于" value="3"></el-option>
+                  </el-select>
+                </el-input>
               </el-form-item>
               <el-form-item label="申报日期" class="top-form-left">
                 <el-date-picker v-model="form.date" style="width: 240px" size="mini" type="daterange" start-placeholder="开始时间" end-placeholder="开始时间"></el-date-picker>
@@ -279,6 +285,7 @@
     components: {Orgtree, Applybill, Auditfollow, ApprovalDialog, SearchInput, HandleBtn, FundDetail},
     data(){
       return{
+        select:"",
         searchorg:{},
         orgType:false,
         openDetailDialog:false,
