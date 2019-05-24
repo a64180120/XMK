@@ -1,6 +1,6 @@
 <template>
     <div class="auditLiuCheng">
-        <topHandle>
+        <topHandle :title="'系统管理在线工作平台'" @refresh="refresh">
             <div class="btnCon">
                 <div @click.stop="showAuditAdd('add')" class="handle">
                     <div class="topIcon"><img src="@/assets/images/xz.png" alt=""></div>
@@ -26,8 +26,8 @@
                         <div class="tableHead " style="border-right:1px solid #fff;" >
                             <table>
                             <colgroup>
-                                <col width="20%">
-                                <col width="50%">
+                                <col width="30%">
+                                <col width="40%">
                                 <col width="30%">
                             </colgroup>
                             <thead>
@@ -49,8 +49,8 @@
                         <div class="tableBody">
                             <table>
                                 <colgroup>
-                                    <col width="20%">
-                                    <col width="50%">
+                                    <col width="30%">
+                                    <col width="40%">
                                     <col width="30%">
                                 
                                 </colgroup>
@@ -90,10 +90,10 @@
                         <div class="tableHead ">
                             <table>
                             <colgroup>
-                                <col width="5%">
+                                <col width="10%">
                                 <col width="15%">
                                 <col width="20%">
-                                <col width="20%">
+                                <col width="15%">
                                 <col width="25%">
                                 <col width="15%">
                             </colgroup>
@@ -124,10 +124,10 @@
                         <div class="tableBody">
                             <table>
                                 <colgroup>
-                                    <col width="5%">
+                                    <col width="10%">
                                     <col width="15%">
                                     <col width="20%">
-                                    <col width="20%">
+                                    <col width="15%">
                                     <col width="25%">
                                     <col width="15%">
                                 </colgroup>
@@ -225,6 +225,9 @@ export default {
         },
         handleSizeChange(val){
              console.log(1111,val)
+        },
+        refresh(){
+            console.log(22222);
         }
     },
     components:{
@@ -274,17 +277,17 @@ export default {
                    left: 10px;
                     right: 0px;
                     top: 0;
-                    bottom: 90px;     
+                    bottom: 50px;     
                 }
                 .typeHandle{
                     position:absolute;
                     left: 10px;
                     right: 0px;
-                    bottom: 55px;  
+                    bottom: 10px;  
                     height:30px;
                     line-height: 30px;
                     >div{
-                        width:80%;
+                        width:100%;
                         margin:0 auto;
                         text-align: center;
                         >div{
@@ -325,7 +328,7 @@ export default {
                    left: 0;
                     right: 4px;
                     top: 0;
-                    bottom: 90px;     
+                    bottom: 50px;     
                 }
             }
         }
@@ -354,7 +357,7 @@ export default {
     }
 }
 .pageArea{
-    bottom:55px;
+    bottom:10px;
 }
 .orgInfo{
     text-decoration: underline;
