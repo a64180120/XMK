@@ -301,28 +301,30 @@ export default {
   mounted() {},
   methods: {
     getData() {
-      console.log('12')
-      debugger
-      this.getAxios('/GKPaymentMstApi/GetPaymentList', {
-        queryfilter: JSON.stringify({
-          'NgInsertDt*date*ge*1': this.sbrq[0] || '',
-          'NgInsertDt*date*le*1': this.sbrq[1] || '',
-          'FDateDt*date*ge*1': this.zfrq[0] || '',
-          'FDateDt*date*le*1': this.zfrq[1] || '',
-          'FApproval*byte*eq*1': this.type,
-          'FState*byte*eq*1': this.status,
-          'FBilltype*str*eq*1': 'zjbf',
-          '[or-dictionary0]*dictionary*or': {
-            'RefbillCode*str*like*1': this.search,
-            'FCode*str*like*1': this.search
-          }
-        }),
-        PageIndex: this.currentPage - 1, //当前第几页，从0开始
-        PageSize: this.pageSize, //每页显示行数
-        uid: '521180820000001', //用户id
-        orgid: '547181121000001', //组织id
-        ryear: '2019'
-      })
+      this.getAxios(
+        '/GKPaymentMstApi/GetPaymentList',
+        {
+          queryfilter: JSON.stringify({
+            'NgInsertDt*date*ge*1': this.sbrq[0] || '',
+            'NgInsertDt*date*le*1': this.sbrq[1] || '',
+            'FDateDt*date*ge*1': this.zfrq[0] || '',
+            'FDateDt*date*le*1': this.zfrq[1] || '',
+            'FApproval*byte*eq*1': this.type,
+            'FState*byte*eq*1': this.status,
+            'FBilltype*str*eq*1': 'zjbf',
+            '[or-dictionary0]*dictionary*or': {
+              'RefbillCode*str*like*1': this.search,
+              'FCode*str*like*1': this.search
+            }
+          }),
+          PageIndex: this.currentPage - 1, //当前第几页，从0开始
+          PageSize: this.pageSize, //每页显示行数
+          uid: '521180820000001', //用户id
+          orgid: '547181121000001', //组织id
+          ryear: '2019'
+        },
+        20000
+      )
         .then(res => {
           console.log(res)
           if (res.Status == 'error') {
