@@ -25,9 +25,9 @@
     </div>
     <div class="orgInfo">
       <div class="count">
-        <img src="" alt="">
+        <img src="@/assets/images/3_03.png" alt="">
         <span>当前在线人数:</span> 
-        <span>23</span>
+        <span class="num">23</span>
       </div>
       <div>
         <span class="mr-2">年度:</span>
@@ -199,7 +199,7 @@
       >li{
         float:left;
         width:65px;
-        height:50px;
+        height:60px;
         padding:10px 0;
         text-align: center;
         cursor:pointer;
@@ -223,6 +223,12 @@
   font-size:0.16rem;
   .count{
     float:left;
+    img{
+      height:22px;
+    }
+    .num{
+      color:red;
+    }
   }
   >div{
     float:right;

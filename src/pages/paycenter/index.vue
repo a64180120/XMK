@@ -5,7 +5,7 @@
         <div class="nav" @click="payNav('payListData')">收付款信息维护</div>
         <div class="nav" @click="payNav('mergePayData')">合并支付</div>
         <div class="nav" @click="payNav('payErrorHandleData')">异常处理</div>
-        <div class="nav" @click="payNav('showApprove')">送审</div>
+        <div class="nav" @click="payNav('approvalData')">送审</div>
       </div>
     </top-handle>
     <!-- 主体内容 -->
@@ -170,9 +170,10 @@
       </div>
     </div>
     <!-- 支付单查看 -->
-    <pay-list :data="payListData"></pay-list>
-    <merge-pay :data="mergePayData"></merge-pay>
-    <pay-error-handle :data="payErrorHandleData"></pay-error-handle>
+    <pay-list v-if="payListData.openDialog" :data="payListData"></pay-list>
+    <merge-pay v-if="mergePayData.openDialog" :data="mergePayData"></merge-pay>
+    <pay-error-handle v-if="payErrorHandleData.openDialog" :data="payErrorHandleData"></pay-error-handle>
+    <go-approval v-if="approvalData.openDialog" :data="approvalData"></go-approval>
     <xm-message :visible.sync="tishi" :message="message" :modal="false"></xm-message>
   </div>
 </template>
@@ -182,9 +183,10 @@ import topHandle from '../../components/topNav/topHandle.vue'
 import payList from './payList.vue'
 import mergePay from './mergePay.vue'
 import payErrorHandle from './payErrorHandle.vue'
+import goApproval from './goApproval.vue'
 export default {
   name: 'pay',
-  components: { topHandle, payList, mergePay, payErrorHandle },
+  components: { topHandle, payList, mergePay, payErrorHandle, goApproval },
   data() {
     return {
       // dialog数据
@@ -199,24 +201,14 @@ export default {
         openDialog: false,
         data: {}
       },
+      approvalData: {
+        openDialog: false,
+        data: {}
+      },
       radio: '',
-      bankType: '',
-      account: '',
-      payWay: '',
       itemType: '',
-      showErrorHandle: false,
-      notClosedAll: true,
-      dialogCheckList: [],
       tishi: false,
       message: '',
-      showApprove: false,
-      showMask: false,
-      paySuccess: false,
-      showMergePay: false,
-      showPassword: false,
-      showPayList: false,
-      index: 1,
-      password: '',
       // 筛选数据
       sbrq: '',
       zfrq: '',
@@ -381,10 +373,6 @@ export default {
   created() {},
   mounted() {},
   methods: {
-    showFundDetail() {
-      this.showMask = false
-      this.fundDetailData.openDialog = true
-    },
     // 主体全选事件
     handleCheckAll(val) {
       this.tableData.forEach(item => {
@@ -398,13 +386,6 @@ export default {
         this.checkAll = this.tableData.every(item => item.checked)
       }
     },
-    // dialog中的check事件
-    selectOne($scope) {
-      console.log($scope)
-    },
-    selectAll(choosed) {
-      console.log(choosed)
-    },
     // 导航栏事件
     payNav(type, item) {
       this.noDataRefresh()
@@ -416,6 +397,8 @@ export default {
           this.payListData.itemType = 'error'
         } else if (item.zfzt == '待支付' && item.spzt == '审批通过') {
           this.payListData.itemType = 'pay'
+        } else if (item.zfzt == '支付成功') {
+          this.payListData.itemType = 'success'
         } else {
           this.payListData.itemType = ''
         }
@@ -466,12 +449,13 @@ export default {
               return
             }
             break
-          case 'showApprove':
+          case 'approvalData':
             if (
               !handleitem.every(item => {
                 return item.spzt == '待送审'
               })
             ) {
+              console.log(123)
               this.errorAlert('只能对待送审的单据进行处理。')
               return
             }
@@ -493,85 +477,10 @@ export default {
     // 主页错误提示
     errorAlert(message) {
       this.notClosedAll = false
-      this.showMask = true
       this.message = message
       this.tishi = true
     },
-    // 支付单详情事件
-    save(type) {
-      console.log(type)
-      switch (type) {
-        case '':
-          this.index = 2
-          this.message = '保存成功'
-          this.notClosedAll = true
-          this.tishi = true
-        case 'showApprove':
-        case 'showErrorHandle':
-        case 'showMergePay':
-          this.index = 2
-          this[type] = true
-          break
-        case 'new':
-          alert('newTable????')
-          break
-      }
-    },
-    // 送审请求
-    songShen() {
-      this.showApprove = false
-      this.showPayList = false
-      this.notClosedAll = false
-      this.tishi = true
-    },
-    // 支付请求
-    pay() {
-      this.showPayList = false
-      this.showMergePay = false
-      this.showPassword = false
-      this.message = '支付操作成功！具体到账情况以银行处理时间为准。'
-      this.tishi = true
-      this.notClosedAll = false
-    },
-    // 异常处理请求
-    errorHandle() {
-      this.message = '操作成功！请在2小时后查看状态。'
-      this.showErrorHandle = false
-      if (this.index == 1) {
-        this.notClosedAll = false
-        this.tishi = true
-      } else {
-        this.notClosedAll = true
-        this.tishi = true
-      }
-    },
-    // 关闭弹窗事件
-    closeDialog(dialog) {
-      this[dialog] = false
-      console.log(dialog)
-      switch (dialog) {
-        case 'showPayList':
-          this.showMask = false
-          break
-        case 'showPassword':
-          this.showMergePay = true
-          break
-        case 'showMergePay':
-        case 'showApprove':
-        case 'showErrorHandle':
-          if (this.index > 1) {
-            this.index--
-          } else {
-            this.showMask = false
-          }
-          break
-      }
-    },
-    // 打开输入密码
-    enterPassword() {
-      this.showMergePay = false
-      this.showPassword = true
-    },
+
     // 筛选
     selectType(cur) {
       console.log(cur, this.type)
@@ -589,25 +498,6 @@ export default {
     changePage(page) {
       console.log(page)
       this.currentPage = page
-    }
-  },
-  watch: {
-    tishi(newVal) {
-      if (!newVal) {
-        if (this.notClosedAll) {
-          this.index--
-        } else {
-          this.index = 1
-          this.showMask = false
-        }
-      }
-    },
-    'fundDetailData.openDialog'(val) {
-      if (val) {
-        this.showMask = false
-      } else {
-        this.showMask = true
-      }
     }
   }
 }
@@ -666,6 +556,7 @@ export default {
       }
       > span + div {
         width: 150px;
+        margin-left: 10px;
         &.large-input {
           width: 210px;
         }

@@ -119,28 +119,28 @@
             </colgroup>
             <thead>
               <tr>
-                <td>
+                <td title="序号">
                   <el-checkbox v-model="checked">序号</el-checkbox>
                 </td>
-                <td>
+                <td title="申请单编号">
                   申请单编号
                 </td>
-                <td>
+                <td title="申请单名称">
                   申请单名称
                 </td>
-                <td>
+                <td title="申请单金额（元）">
                   申请单金额（元）
                 </td>
-                <td>
+                <td title="申请日期">
                   申请日期
                 </td>
-                <td>
+                <td title="审批状态">
                   审批状态
                 </td>
-                <td>
+                <td title="支付状态">
                   支付状态
                 </td>
-                <td>
+                <td title="申请说明">
                   申请说明
                 </td>
               </tr>
@@ -159,7 +159,7 @@
               <col width="10%">
               <col width="15%">
             </colgroup>
-            <thead>
+            <tbody>
             <tr v-for="n in 35">
               <td>
                 <el-checkbox v-model="checked">序号</el-checkbox>
@@ -186,7 +186,7 @@
                 申请说明
               </td>
             </tr>
-            </thead>
+            </tbody>
           </table>
         </div>
       </div>
@@ -248,14 +248,14 @@
 
     <!--申请单弹窗-->
 
-    <el-dialog id="applydialog" title="查看申请"
+    <el-dialog class="applydialog" title="查看申请"
     :visible.sync="applyType"
     :before-close="handleClose">
       <applybill :applyNum="applyNum"
         @delete="handleDelete"
       ></applybill>
     </el-dialog>
-    <!--申请单弹窗-->
+    <!--组织树弹窗-->
     <el-dialog id="orgdialog" width="350px" title="组织树"
                :visible.sync="orgType">
       <orgtree :currentOrg="searchData.searchorg" @choose="getOrg"></orgtree>
@@ -268,6 +268,12 @@
           <button class="confirmBtn" style="margin-left: 30px" @click="confirmOrg">确定</button>
         </span>
     </el-dialog>
+    <!--项目新增修改-->
+    <el-dialog class="applydialog" :title="applyproTitle"
+               :visible.sync="applyproType"
+               >
+       <applypro :applyNum="applyNum"  @delete="handleDelete"></applypro>
+    </el-dialog>
   </div>
 </template>
 
@@ -276,6 +282,7 @@
   import pieChart from '../../components/echart/pieChart'
   import Applybill from "../../components/applyBill/applybill";
   import Orgtree from "../../components/orgtree/index";
+  import Applypro from "../../components/applyPro/applyPro";
     export default {
         name: "index",
       data(){
@@ -313,10 +320,12 @@
             applyType:false,//是否显示查看申请弹窗
             applyNum:'',//当前查看申请单的编号
             orgType:false,//是否显示组织弹窗
-            choosedOrg:{}//选中的组织
+            choosedOrg:{},//选中的组织
+            applyproType:false,//显示项目新增修改弹窗
+            applyproTitle:''
           }
       },
-      components:{Orgtree, Applybill, tophandle,pieChart},
+      components:{Applypro, Orgtree, Applybill, tophandle,pieChart},
       methods:{
           getData:function(){
             console.log('查询数据');
@@ -360,8 +369,13 @@
         },
         //
         showAuditAdd(val){  //流程编辑
-          this.auditBtn=val;
-          this.auditAddShow=true;
+          this.applyproType=true;
+            if(val=='add'){
+              this.applyproTitle='新增申请';
+            }else if(val=='update'){
+              this.applyproTitle='修改申请';
+            }
+
         },
       }
     }
@@ -431,17 +445,17 @@
   .rightPanel .el-card__body{
     padding: 5px;
   }
-  #applydialog .el-dialog{
+  .applydialog .el-dialog{
     padding: 0 10px;
     width: 90%;
     height: 600px;
     margin:auto;
   }
-  #applydialog .el-dialog__header{
+  .applydialog .el-dialog__header{
     text-align: left;
     border-bottom: 1px solid #ccc;
   }
-  #applydialog .el-dialog__body{
+  .applydialog .el-dialog__body{
     padding: 10px 20px 30px;
   }
 </style>
