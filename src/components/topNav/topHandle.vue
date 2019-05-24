@@ -1,8 +1,8 @@
 <template>
   <div class="handleBtnCon msFixed" style="z-index: 9;">
-    <div style="z-index:9" v-show="orgTreeShow" class="model" @click.stop="orgTreeShow=false">
+    <!-- <div style="z-index:9" v-show="orgTreeShow" class="model" @click.stop="orgTreeShow=false"> -->
 
-    </div>
+    <!-- </div> -->
     <div class="handleBtn">
       <p>{{title}}</p>
       <div class="btnContainer">
@@ -43,22 +43,33 @@
       <div class="orgSelect clear">
         <span class="fl mr-2">单位:</span>
         <div class="fl">
-          <p @click="orgTreeInit" class="orgName">{{orgName}}</p>
+          <el-popover
+            width="200"
+            trigger="click">
+            <el-tree
+              ref="orgtree"
+              node-key="label"
+              :props="defaultProps"
+              :data="orgList"
+              :expand-on-click-node="false"
+              @node-click="orgChange"
+              >
+            </el-tree>
+            <p @click="orgTreeInit" slot="reference" class="orgName">{{orgName}}</p>
+            
+          </el-popover>
+          <!-- <p @click="orgTreeInit" class="orgName">{{orgName}}</p>
           <div v-show="orgTreeShow" class="treeCon" style="z-index:9;">
             <el-tree
               ref="orgtree"
-              :props="props"
-              :load="loadNode1"
-              node-key="Phid"
-              lazy
-              show-checkbox
-              :check-strictly="true"
-              :check-on-click-node="false"
-              
-              @check="orgChange"
+              node-key="label"
+              :props="defaultProps"
+              :data="orgList"
+              :expand-on-click-node="false"
+              @node-click="orgChange"
               >
-            </el-tree>
-          </div>
+            </el-tree> -->
+          <!-- </div> -->
         </div>
         
       </div>
@@ -91,11 +102,34 @@
             year: '2018',//年度
             orgName:'组织名aklshdflhas',//组织=名
             orgTreeShow:false,//显示组织树
-            props: {  //组织树懒加载配置
-              label: 'OrgName',
-              children: 'zones',
-              isLeaf: 'isLast'
-            },
+            orgList:[{
+              label: '一级 1',
+              name:'455',
+              children: [{
+                 name:'555',
+                label: '二级 1-1',
+                children: [{
+                  label: '三级 1-1-1'
+                }]
+              }]
+            }, {
+              label: '一级 2',
+              children: [{
+                label: '二级 2-1',
+                children: [{
+                  label: '三级 2-1-1'
+                }]
+              }, {
+                label: '二级 2-2',
+                children: [{
+                  label: '三级 2-2-1'
+                }]
+              }]
+            }],
+            defaultProps: {
+              children: 'children',
+              label: 'label'
+            }
           }
         },
         mounted(){
@@ -218,7 +252,7 @@
   }
 }
 .orgInfo{
-  height:30px;
+  height:50px;
   padding:10px 23px;
   font-size:0.16rem;
   .count{
@@ -249,6 +283,9 @@
   .orgSelect{
     height:100%;
     margin-right:20px;
+    .fl{
+      line-height: 30px;
+    }
     >span{
       height:100%;
       line-height: 30px;

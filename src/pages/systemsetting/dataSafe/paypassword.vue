@@ -1,6 +1,6 @@
 <template>
     <div class="paypassword">
-        <topHandle>
+        <topHandle :title="'系统管理在线工作平台'">
         </topHandle>
         <div class="container">
             <div>
