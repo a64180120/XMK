@@ -11,14 +11,19 @@
             <div class="topIcon"><img src="@/assets/images/zj2.png" alt=""></div>
             修改
           </div>
-          <div class="handle">
+          <div @click.stop="showAuditAdd('update')" class="handle">
             <div class="topIcon"><img src="@/assets/images/zj3.png" alt=""></div>
             删除
           </div>
-          <div class="handle">
-            <div class="topIcon" @click.stop="approvalData.openDialog=true"><img src="@/assets/images/sp.png" alt=""></div>
+          <div @click.stop="showAuditAdd('SS')" class="handle">
+            <div class="topIcon"><img src="@/assets/images/sp.png" alt=""></div><!-- @click.stop="approvalDataS.openDialog=true"-->
             送审
           </div>
+          <div @click.stop="showAuditAdd('SC')" class="handle" style="width: 80px;">
+            <div class="topIcon"><img src="@/assets/images/sc.png" alt=""></div><!-- @click="creatPayItem()"-->
+            生成支付单
+          </div>
+
           <!--<div class="nav" @click="payNav('approvalData')">送审</div>-->
         </div>
       </tophandle>
@@ -176,9 +181,9 @@
               <col width="15%">
             </colgroup>
             <tbody>
-            <tr v-for="item,index in dataList.data">
+            <tr v-for="(item,index) in dataList.data">
               <td>
-                <el-checkbox v-model="checked">{{index+1}}</el-checkbox>
+                <el-checkbox v-model="checkList[index]">{{index+1}}</el-checkbox>
               </td>
               <td @click="showApply(item.billNum)">
                 {{item.billNum}}
@@ -192,7 +197,7 @@
               <td>
                 {{item.billDate}}
               </td>
-              <td>
+              <td class="atype" @click="openAuditfollow">
                 {{spTypeList[item.billSpType].label}}
               </td>
               <td>
@@ -291,7 +296,11 @@
        <applypro :applyNum="applyNum"  @delete="handleDelete"></applypro>
     </el-dialog>
 
-    <go-approval  v-if="approvalData.openDialog" :data="approvalData"></go-approval>
+    <go-approval  :data="approvalDataS"></go-approval>
+    <!--生成支付单-->
+    <approval-dialog ref="approvalDialog" :title="appDialog.title" :btn-group="appDialog.btnGroup" :data="approvalData" ></approval-dialog>
+    <!--查看审批流程-->
+    <auditfollow :visible="visible" @update:visible="closeAuditFollow()"></auditfollow>
   </div>
 </template>
 
@@ -301,15 +310,82 @@
   import Applybill from "../../components/applyBill/applybill";
   import Orgtree from "../../components/orgtree/index";
   import Applypro from "../../components/applyPro/applyPro";
-  import goApproval from '../paycenter/goApproval.vue'
+  import goApproval from '../paycenter/goApproval.vue';
+  import Auditfollow from "../../components/auditFollow/auditfollow";
+  import ApprovalDialog from "../payfundapproval/approvalDialog";
     export default {
         name: "index",
       data(){
           return{
             checked:false,//多选选择框
+            checkList:[],//选择框列表
             dataList:{
-              total:200,
-              data:[],
+              total:7,
+              data:[
+                {
+                  billDate: "2019-5-27",
+                  billMoney: 90434.53,
+                  billName: "专家授课课酬支付申请",
+                  billNote: "",
+                  billNum: "1558946679753TRIN",
+                  billSpType: 0,
+                  billZfType: 0
+                },
+                {
+                  billDate: "2019-5-22",
+                  billMoney: 7647.67,
+                  billName: "专家授课课酬支付申请",
+                  billNote: "",
+                  billNum: "1558946890819E",
+                  billSpType: 1,
+                  billZfType: 0
+                },
+                {
+                  billDate: "2019-5-21",
+                  billMoney: 3000,
+                  billName: "办公设备打印机购买",
+                  billNote: "",
+                  billNum: "1558946890819QX",
+                  billSpType: 2,
+                  billZfType: 0
+                },
+                {
+                  billDate: "2019-5-21",
+                  billMoney: 3000,
+                  billName: "办公设备打印机购买",
+                  billNote: "",
+                  billNum: "1558946890819QX",
+                  billSpType: 3,
+                  billZfType: 1
+                },
+                {
+                  billDate: "2019-5-21",
+                  billMoney: 3000,
+                  billName: "部门聚餐申请",
+                  billNote: "",
+                  billNum: "1558946890819QX",
+                  billSpType: 3,
+                  billZfType: 1
+                },
+                {
+                  billDate: "2019-5-27",
+                  billMoney: 90434.53,
+                  billName: "专家授课课酬支付申请",
+                  billNote: "",
+                  billNum: "1558946679753TR",
+                  billSpType: 3,
+                  billZfType: 2
+                },
+                {
+                  billDate: "2019-5-22",
+                  billMoney: 7647.67,
+                  billName: "专家授课课酬支付申请",
+                  billNote: "",
+                  billNum: "1558946890819WE",
+                  billSpType: 3,
+                  billZfType: 3
+                },
+              ],
             },
             searchData:{
               approvalType:0,
@@ -332,8 +408,8 @@
             payList:[{value:0,label:'全部'},{value:1,label:'待支付'},{value:2,label:'支付异常'},{value:3,label:'支付成功'}],
             bmList:[{value:0,label:'办公室'},{value:1,label:'女工部'},{value:2,label:'财务与资产部'}],
             bzList:[{value:0,label:'全部'},{value:1,label:'XXX项目1'},{value:2,label:'XXX项目2'}],
-            spTypeList:[{value:0,label:'待送审'},{value:1,label:'审批中'},{value:2,label:'审批通过'},{value:3,label:'未通过'}],
-            payTypeList:[{value:0,label:'—'},{value:1,label:'待支付'},{value:2,label:'支付成功'}],
+            spTypeList:[{value:0,label:'待送审'},{value:1,label:'审批中'},{value:2,label:'审批中'},{value:3,label:'审批通过'},{value:4,label:'未通过'}],
+            payTypeList:[{value:0,label:'—'},{value:1,label:'待支付'},{value:2,label:'支付异常'},{value:3,label:'支付成功'}],
             visiable:false,//高级搜索框显示隐藏
             chartData:[],//图表数据
             applyType:false,//是否显示查看申请弹窗
@@ -342,21 +418,61 @@
             choosedOrg:{},//选中的组织
             applyproType:false,//显示项目新增修改弹窗
             applyproTitle:'',
-            approvalData: {
+            approvalDataS: {
               openDialog: false,
               data: {}
             },
+            visible:false,//审批流程
+            appDialog:{
+              title:'',
+              btnGroup: {
+                cancelName:"",
+                onfirmName:""
+              }
+            },
+            approvalData:{
+            },
           }
       },
-      components:{Applypro, Orgtree, Applybill, tophandle,pieChart,goApproval},
+      components:{Applypro, Orgtree, Applybill, tophandle,pieChart,goApproval,Auditfollow,ApprovalDialog},
       mounted(){
-          this.dataFuc();
+          //this.dataFuc();
+        this.getCheckList(this.dataList.total);
+      },
+      watch:{
+        checked:function(val){
+          //数组快速修改，方法一
+          this.checkList.forEach((item,index,array)=>{
+            this.checkList[index]=val;
+          })
+          //方法二
+         /* for(var i in this.checkList){
+            this.checkList[i]=val
+          }
+          this.$forceUpdate(this.checkList);*/
+        },
       },
       methods:{
-
+          //根据数据的长度生成checkList
+        getCheckList:function(n){
+          let checkList=[];
+          for(var i=0 ; i<n ; i++){
+            checkList.push(false);
+          }
+          this.checkList=checkList;
+        },
+        //获取当前选中的数组
+        getCheckedList:function(){
+          let checkedList=[];
+          this.checkList.forEach((item,index,array)=>{
+            if(item){
+              checkedList.push(this.dataList.data[index])
+            }
+          })
+        },
           //数据随机生成方法，懒得造数据。。
         dataFuc:function(){
-          let len=Math.floor(Math.random()*1000+10);
+          let len=Math.floor(Math.random()*10+10);
           let billList=[];
           for(var i=0 ; i<len ; i++){
             let sp=Math.floor(Math.random()*3);
@@ -437,13 +553,42 @@
         },
         //
         showAuditAdd(val){  //流程编辑
-          this.applyproType=true;
-            if(val=='add'){
-              this.applyproTitle='新增申请';
-            }else if(val=='update'){
-              this.applyproTitle='修改申请';
-            }
 
+          switch (val) {
+            case 'add':
+              this.applyproTitle='新增申请';
+              this.applyproType=true;
+              break;
+            case 'update':
+              this.applyproTitle='修改申请';
+              this.applyproType=true;
+              break;
+            case 'SS':
+              //this.applyproTitle='修改申请';
+              this.approvalDataS.openDialog=true
+              break;
+            case 'SC':
+              this.appDialog.title = '审批并生成支付单'
+              this.appDialog.btnGroup.cancelName = '取消'
+              this.appDialog.btnGroup.onfirmName = '生成支付单'
+              this.$refs.approvalDialog.changeDialog()
+              break;
+            default:
+              break;
+          }
+        },
+        closeAuditFollow(){
+          this.visible = false
+        },
+        openAuditfollow(){
+          this.visible = true
+        },
+        //生成支付单弹框
+        creatPayItem(){
+          this.appDialog.title = '审批并生成支付单'
+          this.appDialog.btnGroup.cancelName = '取消'
+          this.appDialog.btnGroup.onfirmName = '生成支付单'
+          this.$refs.approvalDialog.changeDialog()
         },
       }
     }
