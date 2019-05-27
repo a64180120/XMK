@@ -4,12 +4,15 @@
       <el-row :gutter="10">
         <el-col :span="24">
           <div class="top-btn">
-            <el-button class="btn" size="mini">生成支付单</el-button>
-            <el-button class="btn" size="mini">送审</el-button>
-            <el-button class="btn" size="mini" @click="msgType=true">删除</el-button>
-            <!--<el-button class="btn" size="mini">审批</el-button>
-            <el-button class="btn" size="mini">取消审批</el-button>-->
-            <el-button class="btn" size="mini">打印</el-button>
+            <slot name="btn-group">
+
+            </slot>
+<!--            <el-button class="btn" size="mini">生成支付单</el-button>-->
+<!--            <el-button class="btn" size="mini">送审</el-button>-->
+<!--            <el-button class="btn" size="mini" @click="msgType=true">删除</el-button>-->
+<!--            <el-button class="btn" size="mini">审批</el-button>-->
+<!--            <el-button class="btn" size="mini">取消审批</el-button>-->
+<!--            <el-button class="btn" size="mini">打印</el-button>-->
           </div>
         </el-col>
       </el-row>
@@ -25,7 +28,7 @@
                 <div class="appendix-item" v-for="(item,idx) in projectItem">
                   <span class="title"><i class="el-icon-s-order"></i>{{item.projectName}}</span>
                   <ul>
-                    <li v-for="(folder,idx) in item.projectFolder">{{folder}}</li>
+                    <li v-for="(folder,idx) in item.projectFolder" @click="clickFolder(folder)">{{folder}}</li>
                   </ul>
                 </div>
               </div>
@@ -259,6 +262,10 @@
             }
             //this.$forceUpdate();
           },1000)
+        },
+        //点击文件列表
+        clickFolder(file){
+          this.$emit('showImg',file)
         }
       }
     }

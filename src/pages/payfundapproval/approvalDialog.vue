@@ -5,15 +5,15 @@
         width="37.5%"
         :close-on-click-modal="false"
         class="dialog"
-        :append-to-body="inner"
+        :append-to-body="true"
       >
         <div slot="title" class="dialog-title">
-          <p>{{title}}</p>
+          <p>查看</p>
         </div>
         <approval-bill></approval-bill>
         <div class="approval-btn">
-          <el-button size="small" type="primary" @click="cancel()">{{btnGroup.cancelName}}</el-button>
-          <el-button size="small" type="primary" @click="submit()">{{btnGroup.onfirmName}}</el-button>
+          <el-button size="small" type="primary" @click="cancel()">取消</el-button>
+          <el-button size="small" type="primary" @click="submit()">确认</el-button>
         </div>
       </el-dialog>
     </section>
@@ -25,10 +25,7 @@
         name: "approvalDialog",
       components: {ApprovalBill},
       props:{
-          title:{
-            type:String,
-            default:'查看'
-          },
+
          data:{
            type:Object,
            default:function () {
@@ -36,19 +33,7 @@
              }
            }
          },
-        inner:{
-           type: Boolean,
-          default:false
-        },
-        btnGroup:{
-            type:Object,
-          default:function () {
-            return {
-              cancelName:"取消",
-              onfirmName:'确认'
-            }
-          }
-        }
+
       },
       data(){
           return{

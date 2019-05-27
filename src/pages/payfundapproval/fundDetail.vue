@@ -209,7 +209,7 @@
   }
 
   .left-card {
-    background-color: $primaryColor;
+    background-color:  #00B8EE;
     height: 200px;
     max-width: 100%;
     border-radius: 8px;
