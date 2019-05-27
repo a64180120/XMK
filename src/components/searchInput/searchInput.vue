@@ -1,7 +1,7 @@
 <template>
     <section>
-      <el-input class="input" v-model="value" :size="size" :style="inputStyle" :placeholder="placeholder" @keyup.enter.native="btnClick()"></el-input>
-      <el-button class="button" :size="size"  :type="type" :style="btnStyle"  @click="btnClick()">{{label}}</el-button>
+      <el-input class="input" v-model="inputValue" :size="size" :style="inputStyle" :placeholder="placeholder" @keyup.enter.native="btnClick(inputValue)"></el-input>
+      <el-button class="button" :size="size"  :type="type" :style="btnStyle"  @click="btnClick(inputValue)">{{label}}</el-button>
     </section>
 </template>
 
@@ -48,16 +48,28 @@
             }
           }
         },
+        value:{
+          type:String,
+          default:''
+        }
       },
       data(){
           return{
-            value:""
+            inputValue:this.value
           }
       },
+    watch:{
+      value(newValue){
+            this.inputValue = newValue
+          },
+      inputValue(newValue){
+            this.$emit('input',newValue)
+          }
+    },
       methods:{
-        btnClick(){
-          this.$emit('btnClick',this.value)
-        }
+        btnClick(a){
+          this.$emit('btnClick')
+        },
       }
     }
 </script>

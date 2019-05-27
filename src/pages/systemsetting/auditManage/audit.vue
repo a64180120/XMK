@@ -147,7 +147,7 @@
                                         <!-- <img src="@/assets/images/cha.svg" alt=""> -->
                                         </td>
                                         <td >
-                                            <span>启用组织</span>
+                                            <span @click="orgVisible=true" class="orgInfo">启用组织</span>
                                         </td>
                                         <td>
                                         备注
@@ -172,7 +172,11 @@
                 </div>
             </div>
         </div>
-        <el-dialog title="组织选择">
+        <el-dialog title="组织选择" :visible.sync="orgVisible">
+            <p>
+                <span class="whiteBtn">取消</span>
+                <span class="btn">确定</span>
+            </p>
              <el-tree
                 ref="orgtree"
                 node-key="label"
@@ -220,6 +224,7 @@ export default {
             pageSize:30,
             pageIndex:1,
             total:0,
+            orgVisible:false,
             orgList:[{
                 "RelatId": "",
                 "OCode": "10200301",
