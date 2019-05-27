@@ -19,6 +19,7 @@
             v-model="type"
             placeholder="请选择"
             size="mini"
+            style="width:110px"
           >
             <el-option
               v-for="item in typeList"
@@ -87,10 +88,14 @@
             </colgroup>
             <thead>
               <tr>
-                <td>
+                <td title="序号">
                   <el-checkbox v-model="checkAll" @change="handleCheckAll">序号</el-checkbox>
                 </td>
-                <td v-for="(item,index) in tableHeader" :key="index">{{item.label}}</td>
+                <td
+                  v-for="(item,index) in tableHeader"
+                  :key="index"
+                  :title="item.label"
+                >{{item.label}}</td>
               </tr>
             </thead>
           </table>
@@ -260,7 +265,7 @@ export default {
       // 搜索数据
       search: '',
       // 分页
-      pageSize: 2,
+      pageSize: 3,
       currentPage: 1,
       total: 0,
       // 首页表格数据
@@ -506,7 +511,9 @@ export default {
     border-spacing: 0;
     padding: 0 15px;
   }
+
   .container {
+    min-width: 1300px;
     .selects {
       text-align: left;
       line-height: 30px;
@@ -516,13 +523,19 @@ export default {
       font-size: 0.12rem;
       color: #757575;
       > span:not(:first-of-type) {
-        margin-left: 20px;
+        margin-left: 0px;
+        @media screen and (min-width: 1410px) {
+          margin-left: 10px;
+        }
       }
       > span + div {
         width: 150px;
-        margin-left: 10px;
+        margin-left: 0px;
+        @media screen and (min-width: 1410px) {
+          margin-left: 10px;
+        }
         &.large-input {
-          width: 210px;
+          width: 280px;
         }
       }
       .btns {
@@ -677,7 +690,7 @@ export default {
       line-height: 30px;
     }
     .search .el-input {
-      width: auto;
+      width: 150px;
       font-size: 0.12rem;
     }
     .search .el-input__inner {
@@ -699,6 +712,18 @@ export default {
     .el-range-editor--mini .el-range-input {
       font-size: 0.12rem;
       color: #757575;
+    }
+    .el-date-editor {
+      padding: 3px 0;
+      .el-input__icon.el-range__icon.el-icon-time {
+        display: none;
+      }
+      .el-range-separator {
+        width: 10%;
+      }
+      .el-range-input {
+        width: 45%;
+      }
     }
   }
   .el-pagination {
