@@ -15,6 +15,11 @@
             <div class="topIcon"><img src="@/assets/images/zj3.png" alt=""></div>
             删除
           </div>
+          <div class="handle">
+            <div class="topIcon" @click.stop="approvalData.openDialog=true"><img src="@/assets/images/sp.png" alt=""></div>
+            送审
+          </div>
+          <!--<div class="nav" @click="payNav('approvalData')">送审</div>-->
         </div>
       </tophandle>
     </div>
@@ -24,38 +29,49 @@
 
       <div class="formArea">
         <div class="btnArea">
-          <label>
-            <span>审批状态：</span>
-            <el-select size="small" v-model="searchData.approvalType">
-              <el-option v-for="item in approvalList"
-                         :key="item.value"
-                         :label="item.label"
-                         :value="item.value">
-              </el-option>
-            </el-select>
-          </label>
-          <label>
-            <span>支付状态：</span>
-            <el-select size="small" v-model="searchData.payType">
-              <el-option v-for="item in payList"
-                         :key="item.value"
-                         :label="item.label"
-                         :value="item.value">
-              </el-option>
-            </el-select>
-          </label>
-          <el-button size="small" @click="showOrg">{{searchData.searchorg.label}}</el-button>
-          <div style="float: right;display: flex">
+          <div style="width: auto;white-space: nowrap;display: table-cell">
             <label>
-              <el-input size="small" placeholder="请输入内容" style="border-top-right-radius: 0;border-bottom-right-radius: 0" v-model="searchData.searchValue">
+              <span>审批状态：</span>
+              <el-select size="small" v-model="searchData.approvalType">
+                <el-option v-for="item in approvalList"
+                           :key="item.value"
+                           :label="item.label"
+                           :value="item.value">
+                </el-option>
+              </el-select>
+            </label>
+            <label>
+              <span>支付状态：</span>
+              <el-select size="small" v-model="searchData.payType">
+                <el-option v-for="item in payList"
+                           :key="item.value"
+                           :label="item.label"
+                           :value="item.value">
+                </el-option>
+              </el-select>
+            </label>
+            <label>
+              <span>申请金额</span>
+              <el-input size="small" v-model="searchData.money.smoney"></el-input>
+              <span>至</span>
+              <el-input size="small" v-model="searchData.money.emoney"></el-input>
+            </label>
+            <label class="searchArea" style="float: right">
+              <el-input size="small" placeholder="请输入内容" style="border-radius: 25px;width: 250px;overflow: hidden" v-model="searchData.searchValue">
                 <el-button slot="append" size="small" style="background-color: #3294e8;color: #fff;border-top-left-radius: 0;border-bottom-left-radius: 0">搜索</el-button>
               </el-input>
             </label>
+          </div>
+
+          <!--<el-button size="small" @click="showOrg">{{searchData.searchorg.label}}</el-button>-->
+          <!--搜索、高级-->
+          <!--<div style="float: right;display: flex" class="searchArea">
+
             <label>
               <el-popover trigger="click" placement="bottom-start" width="412" v-model="visiable" :hide-on-click="false">
-                <!--<span class=" el-dropdown-link">
+                &lt;!&ndash;<span class=" el-dropdown-link">
               下拉菜单<i class="el-icon-arrow-down el-icon&#45;&#45;right"></i>
-              </span>-->
+              </span>&ndash;&gt;
                 <el-button size="small" slot="reference" style="margin-left:20px;background-color: #39b49b;border-color: #39b49b;color: #fff">高级</el-button>
                 <ul class="sinor">
                   <li>
@@ -102,7 +118,7 @@
                 </ul>
               </el-popover>
             </label>
-          </div>
+          </div>-->
 
         </div>
         <div class="tableHead">
@@ -160,30 +176,30 @@
               <col width="15%">
             </colgroup>
             <tbody>
-            <tr v-for="n in 35">
+            <tr v-for="item,index in dataList.data">
               <td>
-                <el-checkbox v-model="checked">序号</el-checkbox>
+                <el-checkbox v-model="checked">{{index+1}}</el-checkbox>
               </td>
-              <td @click="showApply(n)">
-                申请单编号
-              </td>
-              <td>
-                申请单名称
+              <td @click="showApply(item.billNum)">
+                {{item.billNum}}
               </td>
               <td>
-                申请单金额（元）
+                {{item.billName}}
               </td>
               <td>
-                申请日期
+                {{item.billMoney}}
               </td>
               <td>
-                {{spTypeList[n%4].label}}
+                {{item.billDate}}
               </td>
               <td>
-                {{payTypeList[n%3].label}}
+                {{spTypeList[item.billSpType].label}}
               </td>
               <td>
-                申请说明
+                {{payTypeList[item.billZfType].label}}
+              </td>
+              <td>
+                {{item.billNote}}
               </td>
             </tr>
             </tbody>
@@ -274,6 +290,8 @@
                >
        <applypro :applyNum="applyNum"  @delete="handleDelete"></applypro>
     </el-dialog>
+
+    <go-approval  v-if="approvalData.openDialog" :data="approvalData"></go-approval>
   </div>
 </template>
 
@@ -283,6 +301,7 @@
   import Applybill from "../../components/applyBill/applybill";
   import Orgtree from "../../components/orgtree/index";
   import Applypro from "../../components/applyPro/applyPro";
+  import goApproval from '../paycenter/goApproval.vue'
     export default {
         name: "index",
       data(){
@@ -322,14 +341,63 @@
             orgType:false,//是否显示组织弹窗
             choosedOrg:{},//选中的组织
             applyproType:false,//显示项目新增修改弹窗
-            applyproTitle:''
+            applyproTitle:'',
+            approvalData: {
+              openDialog: false,
+              data: {}
+            },
           }
       },
-      components:{Applypro, Orgtree, Applybill, tophandle,pieChart},
+      components:{Applypro, Orgtree, Applybill, tophandle,pieChart,goApproval},
+      mounted(){
+          this.dataFuc();
+      },
       methods:{
-          getData:function(){
-            console.log('查询数据');
-          },
+
+          //数据随机生成方法，懒得造数据。。
+        dataFuc:function(){
+          let len=Math.floor(Math.random()*1000+10);
+          let billList=[];
+          for(var i=0 ; i<len ; i++){
+            let sp=Math.floor(Math.random()*3);
+            let bill={
+              billNum:this.getbillNum(),
+              billName:this.getbillName(),
+              billMoney:Math.random()*10000000000,
+              billDate:new Date().getFullYear()+'-'+(new Date().getMonth()+1)+'-'+new Date().getDate(),
+              billSpType:sp,
+              billZfType:sp==3?Math.floor(Math.random()*1+1):0,
+              billNote:this.getbillName()
+            }
+            billList.push(bill);
+          }
+          console.log(billList);
+          this.dataList.total=len;
+          this.dataList.data=billList;
+        },
+        //生成订单号
+        getbillNum:function(){
+          let len=Math.floor(Math.random()*4+1);
+          let billNum=new Date().getTime()+'';
+          for(var i=0 ; i<len ; i++){
+            billNum+=String.fromCharCode((65+Math.floor(Math.random()*26)));
+          }
+          return billNum;
+        },
+        //生成订单名
+        getbillName:function(){
+          //获取随机中文字符（19968-40869  20901）
+          let len=Math.floor(Math.random()*10+1);
+          let billName='';
+          for(var i=0 ; i<len ; i++){
+            billName+= String.fromCharCode((19968+Math.floor(Math.random()*20902)));
+          }
+          return billName;
+        },
+
+        getData:function(){
+          console.log('查询数据');
+        },
         //分页pagesize修改触发事件
         handleSizeChange:function(){},
         //当前页码修改触发事件
@@ -387,7 +455,7 @@
     right: 300px;
   }
   .rightPanel{
-  width: 260px;
+  width: 270px;
   position: absolute;
   right: 20px;
   top: 8px;
