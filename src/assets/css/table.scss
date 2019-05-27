@@ -14,10 +14,22 @@
 }
 .container .btnArea{
   height: 40px;
-  padding: 5px 20px;
-  line-height: 40px;
+  padding: 5px 0px;
   text-align: left;
   overflow: hidden;
+}
+.container .btnArea label{
+  margin-right: 15px;
+}
+.container .btnArea .el-input{
+  width: 150px;
+}
+.container .btnArea .searchArea{
+  position: relative;
+  right: 0;
+}
+.container .btnArea .searchArea .el-input__inner{
+  border-radius: 25px 0 0 25px;
 }
 .container .pageArea{
   position: absolute;
@@ -33,7 +45,9 @@
   top: 8px;
   bottom: 50px;
 }
-.tableHead{}
+.tableHead{
+  margin-top: 3px;
+}
 table td{
   min-width: 20px;
 }
@@ -64,7 +78,7 @@ table td{
   bottom: 0;
   left: 0;
   right: -17px;
-  top: 100px;
+  top: 90px;
   overflow-y: scroll;
   overflow-x: hidden;
 
@@ -93,7 +107,9 @@ table td{
   white-space: normal;
   overflow: hidden;
 }
-
+.tableHead .el-checkbox__label,.tableBody .el-checkbox__label{
+  padding-left: 3px;
+}
 
 .cancelBtn{
   cursor: pointer;

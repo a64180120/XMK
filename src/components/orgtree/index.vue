@@ -3,10 +3,14 @@
     <div style="height: 350px;overflow-y: auto">
       <el-tree
         ref="elt"
-        :data="orgList"
-        :props="{ children: 'children',label: 'label' }"
+        :data="data"
+        :props="{ children: 'children',label: 'OName' }"
+        node-key="OCode"
+        :default-checked-keys="checkedOrg!=null?checkedOrg:['1']"
         :highlight-current="true"
-        @node-click="handleNodeClick">
+        :show-checkbox="true"
+        :check-strictly="true"
+        @check-change="handleNodeClick">
       </el-tree>
     </div>
 
@@ -20,7 +24,7 @@
       data(){
           return {
             choosenOrg:{label:''},
-            orgList:[
+            /*orgList:[
               { label: '浙江省总工会', children:
                   [
                     { label: '省级本公会',
@@ -46,17 +50,23 @@
                   [
                     { label: 'XX市总工会'}
                   ]
-              }]
+              }]*/
           }
       },
       props:{
-          currentOrg:{
-            type:Object,
+          data:{
+            type:Array,
+            default(){
+              return {}
+            }
+          },
+          checkedOrg:{
+            type:Array,
             default(){
               return {}
             }
           }
-          },
+      },
       watch:{
         currentOrg(){
           //alert(this.currentOrg.label);
@@ -74,7 +84,7 @@
       },
       methods:{
         handleNodeClick:function(data){
-          console.log(data)
+          data=this.$refs.elt.getCheckedNodes();
           this.$emit('choose',data)
         }
       }
