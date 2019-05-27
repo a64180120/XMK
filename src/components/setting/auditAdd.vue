@@ -339,6 +339,7 @@ export default {
 <style>
     .listContent input{
         border:none;
+        height:100%;
     }
     .condition .el-input{
         width:30%;

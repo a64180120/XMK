@@ -41,18 +41,18 @@
                             <table>
                             <colgroup>
                                 <col width="5%">
-                                <col width="12%">
+                                <col width="10%">
                                 <col width="14%">
                                 <col width="12%">
                                 <col width="15%">
                                 <col width="15%">
                                 <col width="15%">
-                                <col width="12%">
+                                <col width="14%">
                             </colgroup>
                             <thead>
                                 <tr>
                                     <td style="padding: 0 5px;">
-                                    <el-checkbox v-model="checked">序号</el-checkbox>
+                                    <el-checkbox @change="allChecked" :indeterminate="indeterminate" v-model="checked">序号</el-checkbox>
                                     </td>
                                     <td>
                                     岗位代码
@@ -83,18 +83,18 @@
                             <table>
                                 <colgroup>
                                     <col width="5%">
-                                    <col width="12%">
+                                    <col width="10%">
                                     <col width="14%">
                                     <col width="12%">
                                     <col width="15%">
                                     <col width="15%">
                                     <col width="15%">
-                                    <col width="12%">
+                                    <col width="14%">
                                 </colgroup>
                                 <thead>
-                                    <tr v-for="n in 35">
+                                    <tr v-for="(post,n) in postList" :key="n">
                                         <td style="padding: 0 5px;">
-                                        <el-checkbox v-model="checked">序号</el-checkbox>
+                                        <el-checkbox @change="choose(post)" v-model="post.checked">{{n+1}}</el-checkbox>
                                         </td>
                                         <td>
                                         岗位代码
@@ -114,7 +114,7 @@
                                         <td>
                                         备注
                                         </td>
-                                        <td>
+                                        <td class="postRadio">
                                         <el-radio v-model="checked" value='0'>启用</el-radio>
                                         <el-radio v-model="checked" value='1'>停用</el-radio>
                                         </td>
@@ -153,7 +153,10 @@ export default {
     data(){
         return{
             options:[],
+            indeterminate:false,
             checked:false,
+            postList:[{Phid:111},{Phid:222},{Phid:333}],
+            choosedItem:[],
             postAddShow:false,
             postBtn:'',
             pageSize:30,
@@ -178,7 +181,49 @@ export default {
         },
         addCancle(){
             this.postAddShow=false;
-        }
+        },
+         //流程选择
+        choose(val,index){
+            if(val.checked){
+                this.choosedItem.push(val);
+            }else{
+                this.choosedItem.map((ch,i,arr)=>{
+                    if(ch.Phid==val.Phid){
+                        this.choosedItem.splice(i,1);
+                    }
+                });
+                
+            }
+            let allCheck=this.postList.every((acc)=>{
+                return acc.checked==true;
+            })
+            if(allCheck){
+                this.checked=true;
+                this.indeterminate=false;
+            }else{
+                this.checked=false;
+                this.indeterminate=false;
+                if(this.choosedItem.length>0){
+                    this.indeterminate=true;
+                }
+            }
+            console.log(this.choosedItem)
+        },
+        //流程全选
+        allChecked(val){
+            this.indeterminate=false;
+            if(val){
+                this.postList.map(arr=>{
+                    this.$set(arr,'checked',true); 
+                    this.choosedItem=JSON.parse(JSON.stringify(this.postList));
+                })
+            }else{
+                this.postList.map(arr=>{
+                     this.$set(arr,'checked',false);
+                     this.choosedItem=[];
+                })
+            }
+        },
     },
     components:{
       topHandle,
@@ -191,6 +236,7 @@ export default {
 
 <style lang="scss" scoped>
 .post{
+    height:100%;
     .btnCon{
 
         .handle{
@@ -254,7 +300,12 @@ export default {
     border-spacing: 0;
     padding: 0 15px;
 }
-
+.postRadio{
+    >label{
+        margin-right:10px;
+        
+    }
+}
 </style>
 <style>
 .post  .el-dialog__header {
