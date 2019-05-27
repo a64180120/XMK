@@ -47,6 +47,12 @@ const staticRoute = [
         component: () =>
           import(/* webpackChunkName:'approvalcenter'*/ '../pages/paylistapproval/index'),
         meta: { requireAuth: true, type: 'page', name: '支付单审批' }
+      },
+      {
+        path: '/bankaccount',
+        component: () =>
+          import(/* webpackChunkName:'bankorder'*/ '../pages/bankaccount'),
+        meta: { requireAuth: true, type: 'page', name: '银行账户档案' }
       }
     ]
   },{

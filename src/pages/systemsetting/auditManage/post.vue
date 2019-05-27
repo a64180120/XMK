@@ -1,6 +1,6 @@
 <template>
     <div class="post">  
-        <topHandle>
+        <topHandle :title="'系统管理在线工作平台'">
             <div class="btnCon">
                 <div @click.stop="showPostAdd('add')" class="handle">
                     <div class="topIcon"><img src="@/assets/images/xz.png" alt=""></div>
