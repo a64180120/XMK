@@ -199,5 +199,13 @@ export default {
     vertical-align: middle;
     height: 100%;
   }
+  .account_bank .content .orgList {
+    width: 19%;
+    margin-top: -40px;
+  }
+  .account_bank .content .account {
+    float: right;
+    overflow: hidden;
+  }
 }
 </style>

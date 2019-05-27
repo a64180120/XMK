@@ -169,7 +169,7 @@
             </el-table>
           </div>
           <div class="bottom">
-            <span>
+            <span @click="showAuditfollow = true">
               <template v-if="data.itemType == 'notApprove'">待送审</template>
               <template v-else-if="data.itemType == ''">审批中</template>
               <template v-else>审批通过</template>
@@ -207,6 +207,7 @@
       <go-approval v-if="approvalData.openDialog" :father="data" :data="approvalData"></go-approval>
       <!-- 银行档案 -->
       <bank-choose :data="bankChooseData"></bank-choose>
+      <auditfollow :visible="showAuditfollow" @update:visible="closeAuditFollow()"></auditfollow>
     </el-dialog>
   </div>
 </template>
@@ -217,6 +218,7 @@ import mergePay from './mergePay.vue'
 import payErrorHandle from './payErrorHandle.vue'
 import goApproval from './goApproval.vue'
 import bankChoose from './bankChoose'
+import auditfollow from '../../components/auditFollow/auditfollow'
 
 export default {
   name: 'payList',
@@ -225,7 +227,8 @@ export default {
     mergePay,
     payErrorHandle,
     goApproval,
-    bankChoose
+    bankChoose,
+    auditfollow
   },
   props: {
     data: {
@@ -241,6 +244,7 @@ export default {
     return {
       kemu: '',
       way: '',
+      showAuditfollow: false,
       // 支付单表单
       // 未送审
       payHeaders1: [
@@ -435,6 +439,9 @@ export default {
     console.log('paylist mounted')
   },
   methods: {
+    closeAuditFollow() {
+      this.showAuditfollow = false
+    },
     payListClose(done) {
       if (this.reSetting) {
         this.reSetting = false

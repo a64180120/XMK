@@ -68,8 +68,7 @@
           ></el-date-picker>
           <div class="btns">
             <div class="search">
-              <el-input v-model="search" placeholder="申请单编号/名称"></el-input>
-              <span class="btn" @click="getData">搜索</span>
+              <search-input></search-input>
             </div>
           </div>
         </div>
@@ -122,7 +121,7 @@
                   <div @click="payNav('payListData',item)" style="cursor:pointer">{{item.FCode}}</div>
                 </td>
                 <td>
-                  <div>{{item.FAmountTotal}}</div>
+                  <div>{{item.FAmountTotal | NumFormat}}</div>
                 </td>
                 <td>
                   <div>{{item.FBilltype}}</div>
@@ -162,10 +161,12 @@
         <el-pagination
           :current-page.sync="currentPage"
           :page-size="pageSize"
-          layout="slot, jumper"
+          @size-change="handleSizeChange"
+          layout="total,sizes,prev,pager,next,jumper"
+          @current-change="getData"
           :total="total"
         >
-          <span>当前 第 {{currentPage}} 页</span>
+          <!-- <span>当前 第 {{currentPage}} 页</span>
           <span>共 {{Math.ceil(total/pageSize)}} 页</span>
           <span
             @click="currentPage!=1?changePage(1):'javascirpt:;'"
@@ -182,7 +183,7 @@
           <span
             @click="currentPage!=(total%pageSize>0?total%pageSize+1:total%pageSize)?currentPage=(Math.ceil(total/pageSize)):'javascirpt:;'"
             :class="{changePage:true,unclickable:currentPage==Math.ceil(total/pageSize)}"
-          >最后一页</span>
+          >最后一页</span>-->
         </el-pagination>
       </div>
     </div>
@@ -196,13 +197,21 @@
 
 <script>
 import topHandle from '../../components/topNav/topHandle.vue'
+import searchInput from '../../components/searchInput/searchInput'
 import payList from './payList.vue'
 import mergePay from './mergePay.vue'
 import payErrorHandle from './payErrorHandle.vue'
 import goApproval from './goApproval.vue'
 export default {
   name: 'pay',
-  components: { topHandle, payList, mergePay, payErrorHandle, goApproval },
+  components: {
+    topHandle,
+    payList,
+    mergePay,
+    payErrorHandle,
+    goApproval,
+    searchInput
+  },
   data() {
     return {
       // dialog数据
@@ -265,7 +274,7 @@ export default {
       // 搜索数据
       search: '',
       // 分页
-      pageSize: 3,
+      pageSize: 10,
       currentPage: 1,
       total: 0,
       // 首页表格数据
@@ -378,7 +387,10 @@ export default {
         }, 0)
         if (handleitem.length < 1) {
           this.$msgBox.showMsgBox({
-            content: '请至少选择一条数据进行操作。'
+            content: '请至少选择一条数据进行操作。',
+            fn: () => {
+              console.log('test fn')
+            }
           })
           return
         }
@@ -454,6 +466,8 @@ export default {
     // 分页
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`)
+      this.pageSize = val
+      this.getData()
     },
     handleCurrentChange(val) {
       console.log(`当前页: ${val}`)
@@ -516,8 +530,8 @@ export default {
     min-width: 1300px;
     .selects {
       text-align: left;
-      line-height: 30px;
-      height: 30px;
+      line-height: 28px;
+      height: 28px;
       margin: 8px;
       box-sizing: border-box;
       font-size: 0.12rem;
@@ -540,16 +554,6 @@ export default {
       }
       .btns {
         float: right;
-        .search > span.btn {
-          float: right;
-          margin-left: -5px;
-          position: relative;
-          z-index: 2;
-          height: 30px;
-          cursor: pointer;
-          border-radius: 0;
-          background-color: $btnColor;
-        }
       }
     }
     .pages {
@@ -654,7 +658,7 @@ export default {
         }
         .payId {
           float: left;
-          line-height: 30px;
+          line-height: 28px;
         }
       }
       .el-collapse {
@@ -686,25 +690,12 @@ export default {
   }
   .selects {
     .el-input--mini .el-input__inner {
-      height: 30px;
-      line-height: 30px;
-    }
-    .search .el-input {
-      width: 150px;
-      font-size: 0.12rem;
-    }
-    .search .el-input__inner {
-      font-size: 0.12rem;
-      border: 1px #bbb9b9 solid;
-      border-bottom-left-radius: 20px;
-      border-top-left-radius: 20px;
-      height: 30px;
-      line-height: 30px;
-      color: #333;
+      height: 28px;
+      line-height: 28px;
     }
     .el-range-editor--mini.el-input__inner {
-      height: 30px;
-      line-height: 30px;
+      height: 28px;
+      line-height: 28px;
     }
     .el-input--mini,
     .el-select-dropdown__item,
