@@ -76,7 +76,7 @@
       props:{
         isApproval:{//送审true 审核 false
           type:Boolean,
-          default:true
+          default:false
         }
       },
       data(){

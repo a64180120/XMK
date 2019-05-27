@@ -140,14 +140,14 @@
                                         流程代码
                                         </td>
                                         <td>
-                                        流程名称
+                                        {{audit.name}}
                                         </td>
                                         <td class="enable">
                                         <img src="@/assets/images/gou.svg" alt="">
                                         <!-- <img src="@/assets/images/cha.svg" alt=""> -->
                                         </td>
                                         <td >
-                                            <span>启用组织</span>
+                                            <span @click="orgTree(audit.org)" class="orgInfo">{{audit.org.OName}}</span>
                                         </td>
                                         <td>
                                         备注
@@ -172,19 +172,9 @@
                 </div>
             </div>
         </div>
-        <el-dialog title="组织选择">
-             <el-tree
-                ref="orgtree"
-                node-key="label"
-                :props="defaultProps"
-                :data="orgList"
-                :expand-on-click-node="false"
-                show-checkbox
-                :check-strictly="true"
-                @check-change="orgChange"
-                >
-            </el-tree>
-        </el-dialog>
+        <!--组织树弹窗   visible:显示,,,,@confirm接收选中的值   data组织列表  checked-org当前选中的组织的code列表-->
+        <orgtree :visible.sync="orgVisible"  @confirm="getOrg" :data="orgList" :checked-org="orgSelected"></orgtree>
+ 
         <fDialog :title="(auditBtn=='add'?'新增':'修改')+'审批流'" :visible.sync="auditAddShow">
             <audit-add :type="auditBtn" @add-cancle="addCancle"></audit-add>
         </fDialog>
@@ -197,7 +187,7 @@
 <script>
 import auditAdd from "@/components/setting/auditAdd"
 import audittypeAdd from "@/components/setting/auditTypeAdd"
-
+import Orgtree from "@/components/orgtree/index";
 import fDialog from "@/components/attechment/dialog"
 import topHandle from '@/components/topNav/topHandle'
 import search from '@/components/searchInput/searchInput'
@@ -212,7 +202,7 @@ export default {
             choosedItem:[],//选中的行
             checked:false,//全选状态
             indeterminate:false,//半选状态
-            auditList:[{Phid:333,},{Phid:444,}],//流程列表
+            auditList:[{name:'流程11111',org:{"OCode": "10200301","OrgId": "32619123123","OName": "温州市总本级",}},{name:'流程2222',org:{ "OCode": "10200301.01","OrgId": "326190107000009","OName": "财务部",}}],//流程列表
             auditAddShow:false,//工作流编辑
             auditTypeAddShow:false,//类型编辑
             auditBtn:'',
@@ -220,6 +210,8 @@ export default {
             pageSize:30,
             pageIndex:1,
             total:0,
+            orgVisible:false,
+            orgSelected:[],
             orgList:[{
                 "RelatId": "",
                 "OCode": "10200301",
@@ -4657,8 +4649,12 @@ export default {
         refresh(){
             console.log(22222);
         },
-        orgChange(data, checked, indeterminate){
-            console.log(data, checked, indeterminate)
+        orgTree(val){
+             this.orgSelected=[val.OCode];//需要code的列表
+             this.orgVisible=true;
+        },
+        getOrg(val){
+             console.log(val);
         },
         //流程选择
         choose(val,index){
@@ -4750,7 +4746,8 @@ export default {
         search,
         fDialog,
         auditAdd,
-        audittypeAdd
+        audittypeAdd,
+        Orgtree
     }
 }
 </script>

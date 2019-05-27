@@ -1,0 +1,169 @@
+<template>
+  <div class="messageDialog">
+    <el-dialog
+      append-to-body
+      :visible.sync="openDialog"
+      width="390px"
+      :close-on-click-modal="false"
+      :before-close="close"
+      class="saasMsgCon"
+    >
+      <div slot="title" class="dialog-title">
+        <span style="float: left">{{title}}</span>
+      </div>
+      <div class="saasMsg">
+        <div>
+          <div class="imgCon">
+            <img src="../../assets/images/message.png">
+          </div>
+          <span style="float:right;width:290px">{{content}} &nbsp;({{count}}s) 后自动关闭</span>
+        </div>
+        <div>
+          <button @click="close" class="btn">{{cancelBtnText}}</button>
+        </div>
+      </div>
+    </el-dialog>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'mergePay',
+  components: {},
+  props: {
+    title: {
+      type: String,
+      default: '提示'
+    },
+    fn: {
+      type: Function,
+      default: () => {}
+    },
+    content: {
+      type: String,
+      default: '这是弹框内容'
+    },
+    cancelBtnText: {
+      type: String,
+      default: '立即关闭'
+    }
+  },
+  data() {
+    return {
+      openDialog: false,
+      interval: null,
+      count: 3
+    }
+  },
+  mounted() {},
+  methods: {
+    close(done) {
+      console.log('close')
+      this.openDialog = false
+      this.fn()
+      if (this.interval) {
+        clearInterval(this.interval)
+        this.interval = null
+      }
+    },
+    showMsgBox: function() {
+      console.log('show')
+      this.count = 3
+      this.openDialog = true
+      this.$nextTick(() => {
+        this.beginCount()
+      })
+    },
+    beginCount: function() {
+      var that = this
+      this.interval = setInterval(() => {
+        that.count--
+        if (that.count == 0) {
+          that.close()
+        }
+      }, 1000)
+    }
+  }
+}
+</script>
+<style lang="scss" scoped>
+.saasMsgCon {
+  color: #333;
+  font-size: 0.16rem;
+  .dialog-title {
+    overflow: hidden;
+    > span {
+      width: 100%;
+      text-align: left;
+      font-size: 0.18rem;
+      border-bottom: 1px solid #eaeaea;
+    }
+  }
+  .saasMsg {
+    text-align: left;
+    display: inline-block;
+    vertical-align: middle;
+    background: #fff;
+    font-size: 14px;
+    > div {
+      display: flex;
+      align-items: center;
+      &:first-of-type {
+        height: 60%;
+        font-size: 16px;
+        overflow-y: auto;
+      }
+      &:nth-of-type(2) {
+        margin-top: 10px;
+        justify-content: flex-end;
+      }
+      > .imgCon {
+        float: left;
+        width: 60px;
+        height: 55px;
+        > img {
+          width: 100%;
+          height: 100%;
+        }
+      }
+    }
+  }
+  .btn {
+    cursor: pointer;
+    background: #00b7ee;
+    color: #fff;
+    text-align: center;
+    border: 1px solid #00b7ee;
+    border-radius: 5px;
+    height: 30px;
+    line-height: 30px;
+    width: 90px;
+  }
+  .btn:hover {
+    background: #fff;
+    color: #00b7ee;
+  }
+}
+</style>
+
+<style lang='scss'>
+.saasMsgCon {
+  .el-dialog {
+    display: inline-block;
+    margin: 0 !important;
+    vertical-align: middle;
+    .el-dialog__body {
+      padding: 20px;
+    }
+  }
+  &.el-dialog__wrapper {
+    text-align: center;
+  }
+  &.el-dialog__wrapper::after {
+    display: inline-block;
+    content: '';
+    vertical-align: middle;
+    height: 100%;
+  }
+}
+</style>

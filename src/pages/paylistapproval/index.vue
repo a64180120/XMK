@@ -13,7 +13,7 @@
       </div>
     </handle-btn>
     <div>
-      <div class="container">
+      <div class="container content-body">
         <div class="formArea">
           <!--搜索栏-->
           <div class="btnArea">
@@ -385,6 +385,10 @@
   }
 </script>
 <style scoped>
+  .content-body{
+    min-width: 1200px;
+    min-height: 500px;
+  }
   .top{
     position: absolute;
     top: 50%;

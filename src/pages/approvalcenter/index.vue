@@ -1,67 +1,71 @@
 <template>
-    <section>
-      <el-row>
-        <el-col :span="24">
-          <top-handle title="审批中心在线工作平台"></top-handle>
-        </el-col>
-      </el-row>
-      <div style="clear:both"></div>
-      <section class="container">
-        <!--搜索框-->
-        <el-row class="search-box">
-          <el-col :span="24" class="search">
-            <search-input @btnClick="search"></search-input>
-          </el-col>
-        </el-row>
-        <!--待我审批类型-->
+    <section >
+      <div>
         <el-row>
           <el-col :span="24">
-            <div class="approval-type">
-              <div class="title">
-                <span>待我审批类型</span>
-              </div>
-              <div class="content">
-                <div class="content-item" v-for="(item,idx) in myApproval" @click="openApprovalList(item.path,item.label)">
-                    <img v-if="idx === 0" src="../../assets/images/yk1.png">
-                    <img v-else-if="idx === 1" src="../../assets/images/yk.png">
-                    <img v-else-if="idx === 2" src="../../assets/images/pz.png">
-                    <img v-else-if="idx === 3" src="../../assets/images/y1.png">
-                    <img v-else-if="idx === 4" src="../../assets/images/ys.png">
-                    <span>{{item.label}}</span>
-                    <div v-if="item.approvalValue>0" class="badge">
-                      <span v-if="item.approvalValue<100">{{item.approvalValue}}</span>
-                      <span v-else>99+</span>
-                    </div>
-                </div>
-              </div>
-            </div>
+            <top-handle title="审批中心在线工作平台"></top-handle>
           </el-col>
         </el-row>
-        <!--我已审批-->
-        <el-row>
-          <el-row :span="24">
-            <div class="approvaled">
-              <div class="title">
-                <span>我<br />已<br />审<br/>批</span>
-              </div>
-              <div class="approval-content">
-                <div class="content-item">
-                  <ul>
-                    <li  v-for="(item,idx) in approvaled">
-                      <span class="item-value" :class="[idx === 0?'blue':(idx === 1?'green':'orange')]">{{item.value}}</span>
-                      <br>
-                      <span class="item-title" @click="approvaledClick(item.path)">{{item.label}}</span>
-                    </li>
-                  </ul>
-                </div>
-                <div class="detail-all">
-                  <span>查看全部</span>
-                </div>
-              </div>
+        <div style="clear:both"></div>
+          <section class="">
+            <div class="container content-body">
+              <!--搜索框-->
+              <el-row class="search-box">
+                <el-col :span="24" class="search">
+                  <search-input @btnClick="search"></search-input>
+                </el-col>
+              </el-row>
+              <!--待我审批类型-->
+              <el-row>
+                <el-col :span="24">
+                  <div class="approval-type">
+                    <div class="title">
+                      <span>待我审批类型</span>
+                    </div>
+                    <div class="content">
+                      <div class="content-item" v-for="(item,idx) in myApproval" @click="openApprovalList(item.path,item.label)">
+                        <img v-if="idx === 0" src="../../assets/images/yk1.png">
+                        <img v-else-if="idx === 1" src="../../assets/images/yk.png">
+                        <img v-else-if="idx === 2" src="../../assets/images/pz.png">
+                        <img v-else-if="idx === 3" src="../../assets/images/y1.png">
+                        <img v-else-if="idx === 4" src="../../assets/images/ys.png">
+                        <span>{{item.label}}</span>
+                        <div v-if="item.approvalValue>0" class="badge">
+                          <span v-if="item.approvalValue<100">{{item.approvalValue}}</span>
+                          <span v-else>99+</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </el-col>
+              </el-row>
+              <!--我已审批-->
+              <el-row>
+                <el-row :span="24">
+                  <div class="approvaled">
+                    <div class="title">
+                      <span>我<br />已<br />审<br/>批</span>
+                    </div>
+                    <div class="approval-content">
+                      <div class="content-item">
+                        <ul>
+                          <li  v-for="(item,idx) in approvaled">
+                            <span class="item-value" :class="[idx === 0?'blue':(idx === 1?'green':'orange')]">{{item.value}}</span>
+                            <br>
+                            <span class="item-title" @click="approvaledClick(item.path)">{{item.label}}</span>
+                          </li>
+                        </ul>
+                      </div>
+                      <div class="detail-all">
+                        <span>查看全部</span>
+                      </div>
+                    </div>
+                  </div>
+                </el-row>
+              </el-row>
             </div>
-          </el-row>
-        </el-row>
-      </section>
+          </section>
+      </div>
     </section>
 </template>
 
@@ -128,13 +132,17 @@
           this.$router.push({
             path:path,
             query:{
-              value:false
+              approval:false
             }})
         }
       }
     }
 </script>
 <style lang="scss" scoped>
+  .content-body{
+    min-width: 1200px;
+    min-height: 500px;
+  }
   .search-box{
     margin: 10px;
     >.search{
@@ -144,7 +152,7 @@
   .approval-type{
     background-color:#EFEFEF;
     max-width: 100%;
-    height: 300px;
+    height: 330px;
     margin: 0 20px;
     border-radius: 20px;
     padding: 10px 20px;
@@ -161,11 +169,11 @@
   }
   .content{
     max-width: 100%;
-    height: 230px;
+    height: 270px;
     margin: 20px 10px;
     >.content-item{
-      width:21%;
-      margin:0 1.5% 20px 1.5%;
+      width:22%;
+      margin:0 1.5% 35px 1.5%;
       height: 100px;
       background-color: #ffffff;
       border-radius: 5px;
@@ -178,7 +186,8 @@
         cursor: pointer;
       }
       >img{
-        transform: scale(0.6,0.6);
+        margin-left: -25px;
+        transform: scale(0.5,0.5);
         margin-top: 0px;
         width: 100px;
       }
@@ -192,7 +201,7 @@
         margin-left: -15px;
         height: 100px;
         line-height: 100px;
-        font-size: 0.25rem;
+        font-size: 0.24rem;
         font-family: 宋体;
         font-weight: 800;
       }
@@ -220,8 +229,8 @@
       float: left;
     }
     >.title{
-      padding-top: 12px;
-      height: 110px;
+      padding-top: 18px;
+      height: 135px;
       width: 5%;
       background-color: #B7302D;
       border-radius: 8px 0 0 8px;
@@ -236,7 +245,7 @@
     }
     >.approval-content{
       width: 94%;
-      height: 122px;
+      height: 135px;
       border: 2px solid #B7302D;
       border-radius: 0 8px 8px 0;
       display: flex;
@@ -250,7 +259,7 @@
           >li{
             display: inline-block;
             margin-left: 20px;
-            padding: 20px;
+            padding: 25px;
             >.item-value{
               line-height: 50px;
               font-size: 0.36rem;
@@ -280,7 +289,6 @@
         display: flex;
         justify-content: center;
         align-items: flex-end;
-        padding-bottom: 15px;
         >span{
           color:#B7302D;
           font-size: 0.16rem;
