@@ -25,15 +25,14 @@
                             <col width="20%">
                             <col width="15%">
                             <col width="15%">
-
                             <col width="15%">
-                            <col width="15%">
-                            <col width="15%">
+                            <col v-if="type=='handle'" width="15%">
+                            <col v-if="type=='handle'" width="15%">
                         </colgroup>
                         <thead>
                             <tr>
                                 <td style="padding: 0 5px;">
-                                <el-checkbox v-model="checked">序号</el-checkbox>
+                                <el-checkbox v-model="checked" @change="allChecked" :indeterminate="indeterminate">序号</el-checkbox>
                                 </td>
                                 <td>
                                 银行账户名称
@@ -47,13 +46,12 @@
                                 <td >
                                 银行行号
                                 </td>
-                                <td >
+                                <td v-if="type=='handle'">
                                 所在城市名称
                                 </td>
-                                <td >
+                                <td v-if="type=='handle'">
                                 停用/启用
                                 </td>
-                                
                             </tr>
                         </thead>
                         </table>
@@ -67,14 +65,14 @@
                                 <col width="15%">
 
                                 <col width="15%">
-                                <col width="15%">
-                                <col width="15%">
+                                <col v-if="type=='handle'" width="15%">
+                                <col v-if="type=='handle'" width="15%">
                             
                             </colgroup>
                             <thead>
-                                <tr v-for="n in 20">
+                                <tr v-for="(item,index) in accountList" :key="index">
                                     <td style="padding: 0 5px;">
-                                    <el-checkbox v-model="checked">序号</el-checkbox>
+                                    <el-checkbox @change="choose(item,index)" v-model="item.checked" >{{index+1}}</el-checkbox>
                                     </td>
                                     <td>
                                     saas
@@ -88,10 +86,10 @@
                                     <td>
                                     adasda 
                                     </td>
-                                    <td>
+                                    <td v-if="type=='handle'">
                                     adasda 
                                     </td>
-                                    <td>
+                                    <td v-if="type=='handle'">
                                     adasda 
                                     </td>
                                 </tr>
@@ -100,7 +98,7 @@
                         
                     </div>
                 </div>
-                <div class="pageArea">
+                <!-- <div class="pageArea">
                         <el-pagination
                             @size-change="handleSizeChange"
                             @current-change="handleCurrentChange"
@@ -111,7 +109,7 @@
                             :total="total"
                         >
                         </el-pagination>
-                    </div>
+                    </div> -->
             </div>
         </div>
     </div>
@@ -121,37 +119,49 @@
 import search from '@/components/searchInput/searchInput'
 export default {
     name:"accountbank",
+    props:{
+        type:{
+            type:String,
+            default:''
+        }
+    },
     data(){
         return{
-            checked:false,
+            choosedItem:[],//选中的行
+            checked:false,//全选状态
+            indeterminate:false,//半选状态
             orgList:[{
-              label: '一级 1',
-              name:'455',
-              children: [{
-                 name:'555',
-                label: '二级 1-1',
+                label: '一级 1',
+                name:'455',
                 children: [{
-                  label: '三级 1-1-1'
+                    name:'555',
+                    label: '二级 1-1',
+                    children: [{
+                    label: '三级 1-1-1'
+                    }]
                 }]
-              }]
-            }, {
-              label: '一级 2',
-              children: [{
-                label: '二级 2-1',
+                }, {
+                label: '一级 2',
                 children: [{
-                  label: '三级 2-1-1'
+                    label: '二级 2-1',
+                    children: [{
+                    label: '三级 2-1-1'
+                    }]
+                }, {
+                    label: '二级 2-2',
+                    children: [{
+                    label: '三级 2-2-1'
+                    }]
                 }]
-              }, {
-                label: '二级 2-2',
-                children: [{
-                  label: '三级 2-2-1'
-                }]
-              }]
             }],
             defaultProps: {
               children: 'children',
               label: 'label'
             },
+            accountList:[
+                {Phid:11111,OrgPhid:3333,FBankname:'中国银行1',FAccount:'银行账户',},
+                {Phid:222,OrgPhid:3333,FBankname:'中国银行2',FAccount:'银行账户',},
+                {Phid:3333,OrgPhid:3333,FBankname:'中国银行3',FAccount:'银行账户',}],
             pageSize:30,
             pageIndex:1,
             total:0
@@ -170,7 +180,49 @@ export default {
         },
         handleCurrentChange(){
 
+        },
+        choose(val,index){
+            if(val.checked){
+                this.choosedItem.push(val);
+            }else{
+                this.choosedItem.map((ch,i,arr)=>{
+                    if(ch.Phid==val.Phid){
+                        this.choosedItem.splice(i,1);
+                    }
+                });
+                
+            }
+            let allCheck=this.accountList.every((acc)=>{
+                return acc.checked==true;
+            })
+            if(allCheck){
+                this.checked=true;
+                this.indeterminate=false;
+            }else{
+                this.checked=false;
+                this.indeterminate=false;
+                if(this.choosedItem.length>0){
+                    this.indeterminate=true;
+                }
+            }
+        },
+        allChecked(val){
+            this.indeterminate=false;
+            if(val){
+                this.accountList.map(arr=>{
+                    this.$set(arr,'checked',true); 
+                    this.choosedItem=JSON.parse(JSON.stringify(this.accountList));
+                })
+            }else{
+                this.accountList.map(arr=>{
+                     this.$set(arr,'checked',false);
+                     this.choosedItem=[];
+                })
+            }
         }
+    },
+    watch:{
+        
     },
     components:{
         search
@@ -193,8 +245,8 @@ export default {
             width:20%;
             padding-bottom:40px;
             >p{
-                height:40px;
-                line-height:40px;
+                height:48px;
+                line-height:48px;
                 color:#fff;
                 font-size:0.16rem;
                 background:$btnColor;
@@ -212,6 +264,7 @@ export default {
             .formArea{
                 top:0;
                 right:0;
+                bottom:0;
                 .tableBody{
                     top:48px;
                 }

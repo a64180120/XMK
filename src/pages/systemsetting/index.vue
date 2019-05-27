@@ -17,6 +17,8 @@ export default {
 
 <style lang="scss" scoped>
 .sys-setting{
-
+    min-width: 1200px;
+    position: relative;
+    height:100%;
 }
 </style>

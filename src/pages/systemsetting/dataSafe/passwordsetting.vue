@@ -72,11 +72,11 @@ export default {
     data(){
         return {
             showSetting:true,
-            newPasswordCanSee:'text',
-            newPassword:1115,
-            confirmPasswordCanSee:'text',
+            newPasswordCanSee:false,
+            newPassword:123456,
+            confirmPasswordCanSee:false,
             confirmPassword:'',
-            radio:1,
+            radio:0,
             disabled:true, //不可编辑
         }
     },
@@ -145,6 +145,7 @@ export default {
             ~ .passwordContent {
               .eye {
                 top: 8px;
+                cursor: pointer;
               }
             }
           }
