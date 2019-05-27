@@ -60,7 +60,7 @@ export default {
         },
       model:{  //黑色遮罩层
             type:Boolean,
-            default:false
+            default:true
         },
       message:String, //信息
       visible:{type:Boolean}
