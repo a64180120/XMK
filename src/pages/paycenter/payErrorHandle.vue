@@ -20,7 +20,7 @@
         </div>
         <div class="btns">
           <span class="btn" @click="data.openDialog = false">取消</span>
-          <span class="btn">确定</span>
+          <span class="btn" @click="errorHandle">确定</span>
         </div>
       </div>
     </el-dialog>
@@ -48,36 +48,12 @@ export default {
   created() {},
   mounted() {},
   methods: {
-    showFundDetail() {
-      this.showMask = false
-      this.fundDetailData.openDialog = true
-    },
-    // dialog中的check事件
-    selectOne($scope) {
-      console.log($scope)
-    },
-    selectAll(choosed) {
-      console.log(choosed)
-    },
-    // 支付单详情事件
-    save(type) {
-      console.log(type)
-      switch (type) {
-        case '':
-          this.index = 2
-          this.message = '保存成功'
-          this.notClosedAll = true
-          this.tishi = true
-        case 'showApprove':
-        case 'showErrorHandle':
-        case 'showMergePay':
-          this.index = 2
-          this[type] = true
-          break
-        case 'new':
-          alert('newTable????')
-          break
-      }
+    errorHandle() {
+      this.data.openDialog = false
+      this.$msgBox.showMsgBox({
+        title: '添加分类',
+        content: '请填写分类名称'
+      })
     }
   },
   watch: {}

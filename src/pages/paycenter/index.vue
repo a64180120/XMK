@@ -43,30 +43,32 @@
               :value="item.value"
             ></el-option>
           </el-select>
-          <span class="demonstration">申报日期</span>
+          <span>申报日期</span>
           <el-date-picker
             v-model="sbrq"
-            type="daterange"
+            type="datetimerange"
             range-separator="至"
             start-placeholder="开始日期"
             end-placeholder="结束日期"
             size="mini"
             class="large-input"
+            value-format="yyyy-MM-dd HH:mm:ss"
           ></el-date-picker>
-          <span class="demonstration">支付日期</span>
+          <span>支付日期</span>
           <el-date-picker
             v-model="zfrq"
-            type="daterange"
+            type="datetimerange"
             range-separator="至"
             start-placeholder="开始日期"
             end-placeholder="结束日期"
             size="mini"
             class="large-input"
+            value-format="yyyy-MM-dd HH:mm:ss"
           ></el-date-picker>
           <div class="btns">
             <div class="search">
               <el-input v-model="search" placeholder="申请单编号/名称"></el-input>
-              <span class="btn">搜索</span>
+              <span class="btn" @click="getData">搜索</span>
             </div>
           </div>
         </div>
@@ -112,28 +114,39 @@
                   <el-checkbox v-model="item.checked" @change="handleCheckOne(item)">{{index+1}}</el-checkbox>
                 </td>
                 <td>
-                  <div @click="payNav('payListData',item)" style="cursor:pointer">{{item.zfdbh}}</div>
+                  <div @click="payNav('payListData',item)" style="cursor:pointer">{{item.FCode}}</div>
                 </td>
                 <td>
-                  <div>{{item.zfje}}</div>
+                  <div>{{item.FAmountTotal}}</div>
                 </td>
                 <td>
-                  <div>{{item.djlx}}</div>
+                  <div>{{item.FBilltype}}</div>
                 </td>
                 <td>
-                  <div>{{item.sqdbh}}</div>
+                  <div>{{item.RefbillCode}}</div>
                 </td>
                 <td>
-                  <div>{{item.sbrq}}</div>
+                  <div>{{item.NgInsertDt}}</div>
                 </td>
                 <td>
-                  <div>{{item.spzt}}</div>
+                  <div>
+                    <template v-if="item.FApproval==0">待送审</template>
+                    <template v-else-if="item.FApproval==1">待审批</template>
+                    <template v-else-if="item.FApproval==2">未通过</template>
+                    <template v-else-if="item.FApproval==9">审批通过</template>
+                    <template v-else>————</template>
+                  </div>
                 </td>
                 <td>
-                  <div>{{item.zfzt}}</div>
+                  <div>
+                    <template v-if="item.FState==0">待支付</template>
+                    <template v-else-if="item.FState==1">支付成功</template>
+                    <template v-else-if="item.FState==2">支付异常</template>
+                    <template v-else>————</template>
+                  </div>
                 </td>
                 <td>
-                  <div>{{item.zfrq}}</div>
+                  <div>{{item.FDate||"————"}}</div>
                 </td>
               </tr>
             </thead>
@@ -142,29 +155,28 @@
       </div>
       <div class="pages">
         <el-pagination
-          @size-change="handleSizeChange"
-          :current-page="currentPage"
-          :page-size="12"
+          :current-page.sync="currentPage"
+          :page-size="pageSize"
           layout="slot, jumper"
           :total="total"
         >
           <span>当前 第 {{currentPage}} 页</span>
-          <span>共 {{total%pageSize>0?total%pageSize+1:total%pageSize}} 页</span>
+          <span>共 {{Math.ceil(total/pageSize)}} 页</span>
           <span
             @click="currentPage!=1?changePage(1):'javascirpt:;'"
             :class="{changePage:true,unclickable:currentPage==1}"
           >首页</span>
           <span
-            @click="currentPage!=1?changePage(currentPage-1):'javascirpt:;'"
+            @click="currentPage!=1?currentPage--:'javascirpt:;'"
             :class="{changePage:true,unclickable:currentPage==1}"
           >上一页</span>
           <span
-            @click="currentPage!=(total%pageSize>0?total%pageSize+1:total%pageSize)?changePage(currentPage+1):'javascirpt:;'"
-            :class="{changePage:true,unclickable:currentPage==(total%pageSize>0?total%pageSize+1:total%pageSize)}"
+            @click="currentPage!=(Math.ceil(total/pageSize))?(currentPage++):'javascirpt:;'"
+            :class="{changePage:true,unclickable:currentPage==(Math.ceil(total/pageSize))}"
           >下一页</span>
           <span
-            @click="currentPage!=(total%pageSize>0?total%pageSize+1:total%pageSize)?changePage(total%pageSize>0?total%pageSize+1:total%pageSize):'javascirpt:;'"
-            :class="{changePage:true,unclickable:currentPage==(total%pageSize>0?total%pageSize+1:total%pageSize)}"
+            @click="currentPage!=(total%pageSize>0?total%pageSize+1:total%pageSize)?currentPage=(Math.ceil(total/pageSize)):'javascirpt:;'"
+            :class="{changePage:true,unclickable:currentPage==Math.ceil(total/pageSize)}"
           >最后一页</span>
         </el-pagination>
       </div>
@@ -174,7 +186,6 @@
     <merge-pay v-if="mergePayData.openDialog" :data="mergePayData"></merge-pay>
     <pay-error-handle v-if="payErrorHandleData.openDialog" :data="payErrorHandleData"></pay-error-handle>
     <go-approval v-if="approvalData.openDialog" :data="approvalData"></go-approval>
-    <xm-message :visible.sync="tishi" :message="message" :modal="false"></xm-message>
   </div>
 </template>
 
@@ -210,8 +221,8 @@ export default {
       tishi: false,
       message: '',
       // 筛选数据
-      sbrq: '',
-      zfrq: '',
+      sbrq: [],
+      zfrq: [],
       typeList: [
         {
           value: 0,
@@ -226,14 +237,14 @@ export default {
           label: '项目支出单'
         }
       ],
-      type: null,
+      type: '',
       statusList: [
         {
-          value: 0,
+          value: '',
           label: '全部'
         },
         {
-          value: 1,
+          value: 0,
           label: '待支付'
         },
         {
@@ -241,138 +252,94 @@ export default {
           label: '支付异常'
         },
         {
-          value: 3,
+          value: 1,
           label: '支付成功'
         }
       ],
-      status: [],
+      status: '',
       // 搜索数据
       search: '',
       // 分页
-      pageSize: 12,
+      pageSize: 2,
       currentPage: 1,
-      total: 100,
+      total: 0,
       // 首页表格数据
       tableHeader: [
         {
           label: '支付单编号',
-          name: 'zfdbh',
           width: 200
         },
         {
-          label: '支付金额',
-          name: 'zfje'
+          label: '支付金额'
         },
         {
-          label: '单据类型',
-          name: 'djlx'
+          label: '单据类型'
         },
         {
-          label: '申请单编号',
-          name: 'sqdbh'
+          label: '申请单编号'
         },
         {
-          label: '申报日期',
-          name: 'sbrq'
+          label: '申报日期'
         },
         {
-          label: '审批状态',
-          name: 'spzt'
+          label: '审批状态'
         },
         {
-          label: '支付状态',
-          name: 'zfzt'
+          label: '支付状态'
         },
         {
-          label: '支付日期',
-          name: 'zfrq'
+          label: '支付日期'
         }
       ],
-      tableData: [
-        {
-          checked: false,
-          zfdbh: 201904180001,
-          zfje: '4,567.90',
-          djlx: '资金拨付单',
-          sqdbh: '201901300008',
-          sbrq: '2019-04-17 15：21',
-          spzt: '待送审',
-          zfzt: '待支付',
-          zfrq: '——'
-        },
-        {
-          checked: false,
-          zfdbh: 201904180001,
-          zfje: '4,567.90',
-          djlx: '资金拨付单',
-          sqdbh: '201901300008',
-          sbrq: '2019-04-17 15：21',
-          spzt: '审批中',
-          zfzt: '待支付',
-          zfrq: '——'
-        },
-        {
-          checked: false,
-          zfdbh: 201904180001,
-          zfje: '4,567.90',
-          djlx: '资金拨付单',
-          sqdbh: '201901300008',
-          sbrq: '2019-04-17 15：21',
-          spzt: '未通过',
-          zfzt: '待支付',
-          zfrq: '——'
-        },
-        {
-          zfdbh: 201904180001,
-          zfje: '4,567.90',
-          djlx: '资金拨付单',
-          checked: false,
-          sqdbh: '201901300008',
-          sbrq: '2019-04-17 15：21',
-          spzt: '审批通过',
-          zfzt: '待支付',
-          zfrq: '——'
-        },
-        {
-          zfdbh: 201904180002,
-          zfje: '4,567.90',
-          djlx: '资金拨付单',
-          checked: false,
-          sqdbh: '201901300008',
-          sbrq: '2019-04-17 15：21',
-          spzt: '审批通过',
-          zfzt: '待支付',
-          zfrq: '——'
-        },
-        {
-          zfdbh: 201904180001,
-          zfje: '4,567.90',
-          checked: false,
-          djlx: '资金拨付单',
-          sqdbh: '201901300008',
-          sbrq: '2019-04-17 15：21',
-          spzt: '审批通过',
-          zfzt: '支付异常',
-          zfrq: '——'
-        },
-        {
-          zfdbh: 201904180001,
-          zfje: '4,567.90',
-          djlx: '资金拨付单',
-          checked: false,
-          sqdbh: '201901300008',
-          sbrq: '2019-04-17 15：21',
-          spzt: '审批通过',
-          zfzt: '支付成功',
-          zfrq: '2019-04-17 15:23'
-        }
-      ],
+      tableData: [],
       checkAll: false
     }
   },
-  created() {},
+  created() {
+    this.getData()
+  },
   mounted() {},
   methods: {
+    getData() {
+      this.getAxios(
+        '/GKPaymentMstApi/GetPaymentList',
+        {
+          queryfilter: JSON.stringify({
+            'NgInsertDt*date*ge*1': this.sbrq[0] || '',
+            'NgInsertDt*date*le*1': this.sbrq[1] || '',
+            'FDateDt*date*ge*1': this.zfrq[0] || '',
+            'FDateDt*date*le*1': this.zfrq[1] || '',
+            'FApproval*byte*eq*1': this.type,
+            'FState*byte*eq*1': this.status,
+            'FBilltype*str*eq*1': 'zjbf',
+            '[or-dictionary0]*dictionary*or': {
+              'RefbillCode*str*like*1': this.search,
+              'FCode*str*like*1': this.search
+            }
+          }),
+          PageIndex: this.currentPage - 1, //当前第几页，从0开始
+          PageSize: this.pageSize, //每页显示行数
+          uid: '521180820000001', //用户id
+          orgid: '547181121000001', //组织id
+          ryear: '2019'
+        },
+        20000
+      )
+        .then(res => {
+          console.log(res)
+          if (res.Status == 'error') {
+            return
+          }
+          this.total = res.totalRows
+          this.tableData = res.Record.map(item => {
+            item.checked = false
+            return item
+          })
+        })
+        .catch(err => {
+          console.log(err)
+        })
+    },
     // 主体全选事件
     handleCheckAll(val) {
       this.tableData.forEach(item => {
@@ -391,13 +358,13 @@ export default {
       this.noDataRefresh()
       if (item) {
         console.log(item)
-        if (item.spzt == '待送审' || item.spzt == '未通过') {
+        if (item.FApproval == 0 || item.FApproval == 2) {
           this.payListData.itemType = 'notApprove'
-        } else if (item.zfzt == '支付异常') {
+        } else if (item.FState == 2) {
           this.payListData.itemType = 'error'
-        } else if (item.zfzt == '待支付' && item.spzt == '审批通过') {
+        } else if (item.FState == 0 && item.FApproval == 9) {
           this.payListData.itemType = 'pay'
-        } else if (item.zfzt == '支付成功') {
+        } else if (item.FState == 1) {
           this.payListData.itemType = 'success'
         } else {
           this.payListData.itemType = ''
@@ -409,31 +376,33 @@ export default {
           return prev + cur.checked
         }, 0)
         if (handleitem.length < 1) {
-          this.errorAlert('请至少选择一条数据进行操作。')
+          this.$msgBox.showMsgBox({
+            content: '请至少选择一条数据进行操作。'
+          })
           return
         }
         switch (type) {
           case 'payListData':
             if (checkedCount != 1) {
-              this.errorAlert('请选择一条数据进行维护。')
+              this.$msgBox.showMsgBox('请选择一条数据进行维护。')
               return
             } else if (
-              handleitem[0].spzt == '待送审' ||
-              handleitem[0].spzt == '未通过'
+              handleitem[0].FApproval == 0 ||
+              handleitem[0].FApproval == 2
             ) {
               this.payListData.itemType = 'notApprove'
             } else {
-              this.errorAlert(`单据已经${handleitem[0].spzt}。`)
+              this.$msgBox.showMsgBox(`单据已经${handleitem[0].FApproval}。`)
               return
             }
             break
           case 'mergePayData':
             if (
               !handleitem.every(item => {
-                return item.spzt == '审批通过' && item.zfzt == '待支付'
+                return item.FApproval == 9 && item.FState == 0
               })
             ) {
-              this.errorAlert(
+              this.$msgBox.showMsgBox(
                 '只有审批状态为“审批通过”，支付状态为“待支付”的单据，才可以使用【合并支付】。'
               )
               return
@@ -442,21 +411,21 @@ export default {
           case 'payErrorHandleData':
             if (
               !handleitem.every(item => {
-                return item.zfzt == '支付异常'
+                return item.FState == '支付异常'
               })
             ) {
-              this.errorAlert('只能对支付异常的单据进行处理。')
+              this.$msgBox.showMsgBox('只能对支付异常的单据进行处理。')
               return
             }
             break
           case 'approvalData':
             if (
               !handleitem.every(item => {
-                return item.spzt == '待送审'
+                return item.FApproval == 0
               })
             ) {
               console.log(123)
-              this.errorAlert('只能对待送审的单据进行处理。')
+              this.$msgBox.showMsgBox('只能对待送审的单据进行处理。')
               return
             }
             break
@@ -474,13 +443,6 @@ export default {
         return
       }
     },
-    // 主页错误提示
-    errorAlert(message) {
-      this.notClosedAll = false
-      this.message = message
-      this.tishi = true
-    },
-
     // 筛选
     selectType(cur) {
       console.log(cur, this.type)
@@ -498,6 +460,12 @@ export default {
     changePage(page) {
       console.log(page)
       this.currentPage = page
+    }
+  },
+  watch: {
+    currentPage() {
+      console.log(123)
+      this.getData()
     }
   }
 }
@@ -568,6 +536,7 @@ export default {
           margin-left: -5px;
           position: relative;
           z-index: 2;
+          height: 30px;
           cursor: pointer;
           border-radius: 0;
           background-color: $btnColor;
