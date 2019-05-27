@@ -19,7 +19,7 @@
       </div>
     </handle-btn>
     <div>
-      <div class="container">
+      <div class="container content-body">
         <div class="formArea">
           <!--搜索栏-->
           <div class="btnArea">
@@ -40,7 +40,7 @@
                 <el-date-picker v-model="form.date" style="width: 240px" size="mini" type="daterange" start-placeholder="开始时间" end-placeholder="开始时间"></el-date-picker>
               </el-form-item>
               <el-form-item label="" class="top-form-right">
-                <search-input @btnClick="search()"></search-input>
+                <search-input @btnClick="search()" v-model="searchValue"></search-input>
               </el-form-item>
             </el-form>
           </div>
@@ -61,7 +61,7 @@
               <thead>
               <tr>
                 <td>
-                  <el-checkbox v-model="checked">序号</el-checkbox>
+                  <el-checkbox v-model="checkedAll" :indeterminate="IsIndeterminate">序号</el-checkbox>
                 </td>
                 <td>
                   申报部门
@@ -107,7 +107,7 @@
               <tbody>
               <tr v-for="(item,idx) in tableData"  :key="idx">
                 <td>
-                  <el-checkbox v-model="checked" >{{idx}}</el-checkbox>
+                  <el-checkbox v-model="check[idx]"  >{{idx}}</el-checkbox>
                 </td>
                 <td @click="handleRowClick(item,idx)" class="apply-epart">
                   {{item.applyDepart}}
@@ -156,7 +156,7 @@
               <thead>
               <tr>
                 <td>
-                  <el-checkbox v-model="checked">序号</el-checkbox>
+                  <el-checkbox v-model="checkedAll" :indeterminate="IsIndeterminate">序号</el-checkbox>
                 </td>
                 <td>
                   申报部门/单位
@@ -198,7 +198,7 @@
               <tbody>
               <tr v-for="(item,idx) in tableData"  :key="idx">
                 <td>
-                  <el-checkbox v-model="checked" >{{idx}}</el-checkbox>
+                  <el-checkbox v-model="check[idx]"  >{{idx}}</el-checkbox>
                 </td>
                 <td @click="handleRowClick(item,idx)" class="apply-epart">
                   {{item.applyDepart}}
@@ -238,28 +238,34 @@
         </div>
       </div>
       <!--详情弹框-->
-      <fund-detail ref="fundDetail" :data="detailData" ></fund-detail>
-      <!--详情弹框-->
-<!--      <el-dialog-->
-<!--        :visible.sync="openDetailDialog"-->
-<!--        width="94%"-->
-<!--        class="detail-dialog"-->
-<!--        :close-on-click-modal="false"-->
-<!--        >-->
-<!--        <div slot="title" class="dialog-title">-->
-<!--          <span style="float: left">查看</span>-->
-<!--        </div>-->
-<!--        <applybill></applybill>-->
-<!--        &lt;!&ndash;内层弹框&ndash;&gt;-->
-<!--        <approval-dialog ref="approvalInnerDialog" :inner="true"></approval-dialog>-->
-<!--      </el-dialog>-->
+      <el-dialog class="dialog detail-dialog" :visible.sync="detailDialog" :close-on-click-modal="false" width="90%">
+        <div slot="title" class="dialog-title">
+          <span style="float: left">查看申请</span>
+        </div>
+          <applybill @showImg="showImg">
+            <div slot="btn-group">
+              <el-button class="btn" size="mini" @click="aprovalItem">审批</el-button>
+              <el-button class="btn" size="mini" style="width: 90px" @click="creatPayItem">生成支付单</el-button>
+              <el-button class="btn" size="mini">打印</el-button>
+            </div>
+          </applybill>
+      </el-dialog>
+      <!--图片预览-->
+      <el-dialog class="dialog img-dialog" :visible.sync="imgDialog" :close-on-click-modal="false" width="60%">
+        <div slot="title" class="dialog-title">
+          <span style="float: left">查看附件</span>
+          <img-view v-if="imgDialog" class="img-view"></img-view>
+        </div>
+      </el-dialog>
       <!--审批弹框-->
       <approval-dialog ref="approvalDialog" :title="appDialog.title" :btn-group="appDialog.btnGroup" :data="approvalData" ></approval-dialog>
+      <!--生成支付单弹框-->
+      <paylist-dialog ref="paylistDialog" :data="approvalData" ></paylist-dialog>
       <!--查看审批流程-->
       <auditfollow :visible="visible" @update:visible="closeAuditFollow()"></auditfollow>
       <!--组织树-->
       <el-dialog id="orgdialog" :currentOrg="searchorg" width="350px" title="组织树"
-                 :visible.sync="orgType">
+                 :visible.sync="orgType" :close-on-click-modal="false">
         <orgtree :currentOrg="searchorg"  @choose="getOrg"></orgtree>
         <span slot="footer"   style="text-align: center">
           <button class="cancelBtn"  @click="orgType=false">取消</button>
@@ -280,17 +286,27 @@
   import Auditfollow from "../../components/auditFollow/auditfollow";
   import Applybill from "../../components/applyBill/applybill";
   import Orgtree from "../../components/orgtree/index";
+  import { selection} from "./selection";
+  import ImgView from "../../components/imgView/imgView";
+  import PaylistDialog from "./paylistDialog";
+
   export default {
     name: "index",
-    components: {Orgtree, Applybill, Auditfollow, ApprovalDialog, SearchInput, HandleBtn, FundDetail},
+    components: {
+      PaylistDialog,
+      ImgView, Orgtree, Applybill, Auditfollow, ApprovalDialog, SearchInput, HandleBtn, FundDetail},
     data(){
       return{
-        select:"",
-        searchorg:{},
-        orgType:false,
-        openDetailDialog:false,
-        detailData:{
-        },
+        searchValue:'',
+        checkedAll:false, //是否全选
+        IsIndeterminate:false, //列表中是否有选中的值并且不是全选
+        check:[],//列表所有选中状态
+        selection:[],//选中后的值
+        select:"", //选择停留时间类型
+        searchorg:{}, //工会组织需要传递的对象
+        orgType:false,//控制组织树的展示与隐藏
+        orgName:'',//组织名称
+        detailData:{},
         approvalData:{
         },
         openApprovalDialog:false,
@@ -314,13 +330,15 @@
             onfirmName:""
           }
         },
-        openDialog:false,//打开详情弹框
+        detailDialog:false,//打开详情弹框
+        imgDialog:false,//图片预览弹框
         openInnerDialog:false,//打开详情内层弹框
 
         //判断显示为已审批页面还是未审批页面
         isApproval:""
       }
     },
+
     mounted() {
       this.isApproval = this.$route.query.approval
       console.log(this.isApproval)
@@ -362,17 +380,35 @@
         } else {
           this.tableData[i] = data3
         }
+        this.check.push(false)
       }
     },
     watch:{
-      checked(val,oldval){
-        console.log(val)
-      }
+      check(val,oldval){
+        this.selection = selection(this.check,this.tableData)
+        if (this.selection.length !==0 && this.selection.length !== this.tableData.length){
+          this.IsIndeterminate = true
+        }else if (this.selection.length === this.tableData.length) {
+          this.IsIndeterminate = false
+          this.checkedAll = true
+        }else if(this.selection.length ===0){
+          this.IsIndeterminate = false
+          this.checkedAll = false
+        }
+      },
+      checkedAll(val,ovlval){
+        this.IsIndeterminate = false
+        if(val){
+          this.check = this.check.map((item,index,array)=> true)
+        }else {
+          this.check = this.check.map((item,index,array)=> false)
+        }
+      },
     },
     methods:{
       //搜索框事件
-      search(val){
-
+      search(){
+        console.log(1)
       },
       //单行选中事件
       handleSelect(selection,row){
@@ -384,8 +420,8 @@
       },
       //单行点击事件
       handleRowClick(row,idx){
-        this.$refs.fundDetail.changeDialog()
-        // this.openDetailDialog = true;
+        // this.$refs.fundDetail.changeDialog()
+        this.detailDialog = true
         this.detailData = row
       },
       //当前页显示多少条数据
@@ -409,10 +445,7 @@
       },
       //生成支付单弹框
       creatPayItem(){
-        this.appDialog.title = '审批并生成支付单'
-        this.appDialog.btnGroup.cancelName = '取消'
-        this.appDialog.btnGroup.onfirmName = '生成支付单'
-        this.$refs.approvalDialog.changeDialog()
+        this.$refs.paylistDialog.changeDialog()
       },
       closeAuditFollow(){
         this.visible = false
@@ -422,21 +455,30 @@
       },
       //确认按钮
       confirmOrg(){
-
+        this.form.depart = this.orgName.label
+        this.orgType = false
       },
       //获取组织树
       getOrg(e){
-        console.log(e)
-        this
+        this.orgName = e
       },
       //打开组织树
       openOrg(){
         this.orgType =true
+      },
+      //打开图片预览
+      showImg(file){
+        console.log(file)
+        this.imgDialog= true
       }
     }
   }
 </script>
 <style scoped>
+  .content-body{
+    min-width: 1200px;
+    min-height: 500px;
+  }
   .top{
     position: absolute;
     top: 50%;
@@ -497,15 +539,29 @@
     font-size: 0.16rem;
     border-bottom: 1px solid #eaeaea;
   }
-  .detail-dialog>>>.el-dialog{
+  .dialog>>>.el-dialog{
     position: absolute;
     top: 50%;
     left: 50%;
     margin: 0 !important;
     transform: translate(-50%,-50%);
+  }
+  .detail-dialog>>>.el-dialog{
     height: 600px;
+  }
+  .img-dialog>>>.el-dialog{
+    height: 650px;
   }
   .hidden{
     display: none;
+  }
+  .dialog-title span {
+    width: 100%;
+    text-align: left;
+    font-size: 0.16rem;
+    border-bottom: 1px solid #eaeaea;
+  }
+  .img-view >>> .viewer-container{
+      top: 150px;
   }
 </style>
