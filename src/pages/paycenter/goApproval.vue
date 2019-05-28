@@ -4,7 +4,7 @@
       :visible.sync="data.openDialog"
       width="37.5%"
       :close-on-click-modal="false"
-      class="dialog"
+      class="dialog goApproval"
       append-to-body
     >
       <div slot="title" class="dialog-title">
@@ -31,7 +31,7 @@
                 class="table-content"
                 :data="subData"
                 :border="true"
-                :header-row-class-name="headerRowClass"
+                header-row-class-name="table-header"
               >
                 <el-table-column prop="code" width="80" align="center" label="流程编码"></el-table-column>
                 <el-table-column prop="name" align="center" label="流程名称"></el-table-column>
@@ -57,7 +57,7 @@
                 :border="true"
                 @select="handleSelect"
                 @select-all="handleSelectAll"
-                :header-row-class-name="headerRowClass"
+                header-row-class-name="table-header"
               >
                 <el-table-column type="selection" width="30"></el-table-column>
                 <el-table-column prop="code" align="center" label="操作员编码"></el-table-column>
@@ -73,15 +73,19 @@
           type="primary"
           @click="data.openDialog = false"
         >{{btnGroup.cancelName}}</el-button>
-        <el-button size="small" type="primary" @click="submit()">{{btnGroup.onfirmName}}</el-button>
+        <el-button size="small" type="primary" @click="submit">{{btnGroup.onfirmName}}</el-button>
       </div>
+      <auditfollow :visible="showAuditfollow" @update:visible="closeAuditFollow()"></auditfollow>
     </el-dialog>
   </section>
 </template>
 
 <script>
+import auditfollow from '../../components/auditFollow/auditfollow'
+
 export default {
   name: 'approvalDialog',
+  components: { auditfollow },
   props: {
     data: {
       type: Object,
@@ -106,6 +110,7 @@ export default {
   },
   data() {
     return {
+      showAuditfollow: false,
       openDialog: false,
       handleValue: '',
       content: '',
@@ -122,15 +127,16 @@ export default {
     }
   },
   methods: {
+    closeAuditFollow() {
+      this.showAuditfollow = false
+    },
     changeDialog() {
       this.openDialog = true
     },
-    //表头样式回调
-    headerRowClass(val) {
-      return 'table-header'
-    },
     //查看详细流程
-    searchFlow(row, column, index, store) {},
+    searchFlow(row, column, index, store) {
+      this.showAuditfollow = true
+    },
     //表格单选
     handleSelect(selection, row) {},
     //表格全选
@@ -142,7 +148,7 @@ export default {
     //确认
     submit() {
       var vm = this
-      this.$msgBox.showMsgBox({
+      this.$msgBox.show({
         content: '送审成功',
         fn: () => {
           if (vm.father) vm.father.openDialog = false
@@ -151,9 +157,7 @@ export default {
       })
     }
   },
-  created() {
-    console.log(this.father)
-  }
+  created() {}
 }
 </script>
 
@@ -275,11 +279,7 @@ export default {
 .dialog {
 }
 .dialog >>> .el-dialog {
-  position: absolute;
-  top: 50%;
-  left: 50%;
   margin: 0 !important;
-  transform: translate(-50%, -50%);
   height: 310px;
 }
 .dialog >>> .el-dialog__header {
@@ -310,5 +310,26 @@ export default {
 .table-next >>> tr td {
   padding: 5px 0;
   font-size: 0.12rem;
+}
+</style>
+<style lang="less">
+.goApproval {
+  .el-dialog {
+    display: inline-block;
+    margin: 0 !important;
+    vertical-align: middle;
+    .el-dialog__body {
+      padding-top: 0px;
+    }
+  }
+  &.el-dialog__wrapper {
+    text-align: center;
+  }
+  &.el-dialog__wrapper::after {
+    display: inline-block;
+    content: '';
+    vertical-align: middle;
+    height: 100%;
+  }
 }
 </style>

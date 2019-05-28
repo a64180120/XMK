@@ -187,9 +187,7 @@ export default {
       ]
     }
   },
-  created() {
-    console.log('merge')
-  },
+  created() {},
   mounted() {},
   methods: {
     setPassword() {

@@ -10,7 +10,7 @@
       data(){
           return {
             target:'',
-            chart:[
+           /* chart:[
               {
                 value:255,
                 name:'视频广告'
@@ -27,16 +27,28 @@
                 value:275,
                 name:'直接访问'
               },
-            ]
+            ],
+            title:['视频广告','联盟广告','邮件营销','直接访问']*/
           }
       },
       props: {
-        chartData: Array
+        chart:{
+          type:Array,
+          default(){
+            return {}
+          }
+        },
+        title:{
+          type:Array,
+          default(){
+            return {}
+          }
+        },
       },
       watch:{
-        chartData(){
-          if(this.chartData){
-            this.chart=this.chartData;
+        chart(val){
+          if(val){
+
             this.draw();
           }
         },
@@ -58,7 +70,7 @@
             let option={
               tooltip:{},
               legend:{
-                data:['视频广告','联盟广告','邮件营销','直接访问'],
+                data:this.title,
                 bottom:20
               },
 

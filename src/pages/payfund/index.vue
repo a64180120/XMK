@@ -11,7 +11,7 @@
             <div class="topIcon"><img src="@/assets/images/zj2.png" alt=""></div>
             修改
           </div>
-          <div @click.stop="showAuditAdd('update')" class="handle">
+          <div @click.stop="showAuditAdd('delete')" class="handle">
             <div class="topIcon"><img src="@/assets/images/zj3.png" alt=""></div>
             删除
           </div>
@@ -57,9 +57,9 @@
             </label>
             <label>
               <span>申请金额</span>
-              <el-input size="small" v-model="searchData.money.smoney"></el-input>
+              <el-input-number size="small" :precision="2" :controls="false" v-model="searchData.money.smoney" style="width:auto"></el-input-number>
               <span>至</span>
-              <el-input size="small" v-model="searchData.money.emoney"></el-input>
+              <el-input-number size="small" :precision="2" :controls="false" v-model="searchData.money.emoney"style="width: auto"></el-input-number>
             </label>
             <label class="searchArea" style="float: right">
               <el-input size="small" placeholder="请输入内容" style="border-radius: 25px;width: 250px;overflow: hidden" v-model="searchData.searchValue">
@@ -181,7 +181,7 @@
               <col width="15%">
             </colgroup>
             <tbody>
-            <tr v-for="(item,index) in dataList.data">
+            <tr v-for="(item,index) in dataList.data" v-if="(searchData.approvalType==0&&searchData.payType==0)||(searchData.approvalType==0&&searchData.payType==item.billZfType)||(searchData.payType==0&&searchData.approvalType==item.billSpType)||(searchData.payType==item.billZfType&&searchData.approvalType==item.billSpType)">
               <td>
                 <el-checkbox v-model="checkList[index]">{{index+1}}</el-checkbox>
               </td>
@@ -198,10 +198,10 @@
                 {{item.billDate}}
               </td>
               <td class="atype" @click="openAuditfollow">
-                {{spTypeList[item.billSpType].label}}
+                {{spTypeList[item.billSpType]}}
               </td>
               <td>
-                {{payTypeList[item.billZfType].label}}
+                {{payTypeList[item.billZfType]}}
               </td>
               <td>
                 {{item.billNote}}
@@ -236,7 +236,7 @@
             <div style="border-bottom: 1px solid #ccc">
               <span>对下补助项目名称：</span>
               <!--部门选择-->
-              <el-select size="small" style="width: 100px" v-model="searchData.bzType">
+              <el-select size="small" style="width: 100px" v-model="searchData.bzType" @change="getChartList">
                 <el-option v-for="item in bzList"
                            :key="item.value"
                            :label="item.label"
@@ -246,7 +246,7 @@
             </div>
             <div>
               <!--echartArea-->
-              <pie-chart :chartData="chartData"></pie-chart>
+              <pie-chart :chart="chartData.chart" :title="chartData.title"></pie-chart>
             </div>
           </el-card>
         </div>
@@ -328,7 +328,7 @@
                   billName: "专家授课课酬支付申请",
                   billNote: "",
                   billNum: "1558946679753TRIN",
-                  billSpType: 0,
+                  billSpType: 3,
                   billZfType: 0
                 },
                 {
@@ -355,7 +355,7 @@
                   billName: "办公设备打印机购买",
                   billNote: "",
                   billNum: "1558946890819QX",
-                  billSpType: 3,
+                  billSpType: 4,
                   billZfType: 1
                 },
                 {
@@ -364,7 +364,7 @@
                   billName: "部门聚餐申请",
                   billNote: "",
                   billNum: "1558946890819QX",
-                  billSpType: 3,
+                  billSpType: 4,
                   billZfType: 1
                 },
                 {
@@ -373,7 +373,7 @@
                   billName: "专家授课课酬支付申请",
                   billNote: "",
                   billNum: "1558946679753TR",
-                  billSpType: 3,
+                  billSpType: 4,
                   billZfType: 2
                 },
                 {
@@ -382,7 +382,7 @@
                   billName: "专家授课课酬支付申请",
                   billNote: "",
                   billNum: "1558946890819WE",
-                  billSpType: 3,
+                  billSpType: 4,
                   billZfType: 3
                 },
               ],
@@ -404,14 +404,17 @@
               },
               searchorg:{label:'女工部'}
             },
-            approvalList:[{value:0,label:'全部'},{value:1,label:'待审批'},{value:2,label:'审批中'},{value:3,label:'审批未通过'},{value:4,label:'审批通过'}],
+            approvalList:[{value:0,label:'全部'},{value:1,label:'待送审'},{value:2,label:'审批中'},{value:3,label:'审批未通过'},{value:4,label:'审批通过'}],
             payList:[{value:0,label:'全部'},{value:1,label:'待支付'},{value:2,label:'支付异常'},{value:3,label:'支付成功'}],
             bmList:[{value:0,label:'办公室'},{value:1,label:'女工部'},{value:2,label:'财务与资产部'}],
             bzList:[{value:0,label:'全部'},{value:1,label:'XXX项目1'},{value:2,label:'XXX项目2'}],
-            spTypeList:[{value:0,label:'待送审'},{value:1,label:'审批中'},{value:2,label:'审批中'},{value:3,label:'审批通过'},{value:4,label:'未通过'}],
-            payTypeList:[{value:0,label:'—'},{value:1,label:'待支付'},{value:2,label:'支付异常'},{value:3,label:'支付成功'}],
+            spTypeList:{'1':'待送审','2':'审批中','3':'未通过','4':'审批通过'},
+            payTypeList:{'0':'—','1':'待支付','2':'支付异常','3':'支付成功'},
             visiable:false,//高级搜索框显示隐藏
-            chartData:[],//图表数据
+            chartData:{
+              chart:[{name:'可申请',value:13210},{name:'冻结',value:1200},{name:'已使用',value:2301}],
+              title:['可申请','冻结','已使用'],
+            },//图表数据
             applyType:false,//是否显示查看申请弹窗
             applyNum:'',//当前查看申请单的编号
             orgType:false,//是否显示组织弹窗
@@ -459,7 +462,7 @@
           for(var i=0 ; i<n ; i++){
             checkList.push(false);
           }
-          this.checkList=checkList;
+
         },
         //获取当前选中的数组
         getCheckedList:function(){
@@ -469,7 +472,28 @@
               checkedList.push(this.dataList.data[index])
             }
           })
+          return checkedList;
         },
+        //q切换右侧项目是进行并状态数据切换
+        getChartList:function(val){
+          console.log(val);
+          switch(val){
+            case 0:
+              this.chartData.chart=[{name:'可申请',value:13210},{name:'冻结',value:1200},{name:'已使用',value:2301}];
+              break;
+            case 1:
+              this.chartData.chart=[{name:'可申请',value:6210},{name:'冻结',value:4100},{name:'已使用',value:2101}];
+              break;
+            case 2:
+              this.chartData.chart=[{name:'可申请',value:7000},{name:'冻结',value:5200},{name:'已使用',value:5001}];
+              break;
+            default:
+              this.$msgBox.show({
+                content: '数据获取错误'
+              })
+          }
+        },
+
           //数据随机生成方法，懒得造数据。。
         dataFuc:function(){
           let len=Math.floor(Math.random()*10+10);
@@ -562,6 +586,25 @@
             case 'update':
               this.applyproTitle='修改申请';
               this.applyproType=true;
+              break;
+            case 'delete':
+              let delList=this.getCheckedList();
+              console.log(delList);
+              if(delList.length==0){
+                this.$msgBox.show({
+                  content: '请选择要删除的数据。',
+                  fn: () => {
+                    console.log('test fn')
+                  }
+                })
+              }else{
+                this.$msgBox.show({
+                  content: '删除成功。',
+                  fn: () => {
+                    console.log('test fn')
+                  }
+                })
+              }
               break;
             case 'SS':
               //this.applyproTitle='修改申请';

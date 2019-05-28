@@ -3,13 +3,19 @@
     <top-handle @refresh="getData" title="支付中心在线工作平台">
       <div class="navs">
         <div class="nav" @click="payNav('payListData')">
-          <img src="../../assets/images/3_03.png" alt>
+          <img src="../../assets/images/sfk.png" alt>
           <div>收付款信息维护</div>
         </div>
-        <div class="nav" @click="payNav('mergePayData')">合并支付</div>
-        <div class="nav" @click="payNav('payErrorHandleData')">异常处理</div>
+        <div class="nav" @click="payNav('mergePayData')">
+          <img src="../../assets/images/hb.png" alt>
+          <div>合并支付</div>
+        </div>
+        <div class="nav" @click="payNav('payErrorHandleData')">
+          <img src="../../assets/images/yc.png" alt>
+          <div>异常处理</div>
+        </div>
         <div class="nav" @click="payNav('approvalData')">
-          <img src="../../assets/images/zj6.png" alt>
+          <img src="../../assets/images/ss.png" alt>
           <div>送审</div>
         </div>
       </div>
@@ -226,7 +232,7 @@ export default {
       payListData: {
         openDialog: false,
         data: {},
-        itemType: 'error'
+        itemType: 'notApprove'
       },
       payErrorHandleData: {
         openDialog: false,
@@ -376,7 +382,7 @@ export default {
     payNav(type, item) {
       this.noDataRefresh()
       if (item) {
-        console.log(item)
+        this
         if (item.FApproval == 0 || item.FApproval == 2) {
           this.payListData.itemType = 'notApprove'
         } else if (item.FState == 2) {
@@ -446,13 +452,13 @@ export default {
                 return item.FApproval == 0
               })
             ) {
-              console.log(123)
               this.$msgBox.show('只能对待送审的单据进行处理。')
               return
             }
             break
         }
       }
+      this[type].data = item || handleitem
       this[type].openDialog = true
     },
     // tableData无数据处理
@@ -484,12 +490,6 @@ export default {
     changePage(page) {
       console.log(page)
       this.currentPage = page
-    }
-  },
-  watch: {
-    currentPage() {
-      console.log(123)
-      this.getData()
     }
   }
 }

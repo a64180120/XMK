@@ -9,42 +9,31 @@
         <div style="clear:both"></div>
           <section class="">
             <div class="container content-body">
-              <!--搜索框-->
-              <el-row class="search-box">
-                <el-col :span="24" class="search">
-                  <search-input @btnClick="search"></search-input>
-                </el-col>
-              </el-row>
-              <!--待我审批类型-->
-              <el-row style="height: 60%;min-height: 400px">
-                <el-col :span="24" style="height: 100%">
+              <el-row class="approval-body">
+                <el-col :span="20">
+                  <!--待我审批类型-->
                   <div class="approval-type">
                     <div class="title">
                       <span>待我审批类型</span>
                     </div>
                     <div class="content">
-                      <div class="content-item" v-for="(item,idx) in myApproval" @click="openApprovalList(item.path,item.label)">
-                        <img v-if="idx === 0" src="../../assets/images/yk1.png">
-                        <img v-else-if="idx === 1" src="../../assets/images/yk.png">
-                        <img v-else-if="idx === 2" src="../../assets/images/pz.png">
-                        <img v-else-if="idx === 3" src="../../assets/images/y1.png">
-                        <img v-else-if="idx === 4" src="../../assets/images/ys.png">
-                        <span>{{item.label}}</span>
-                        <div v-if="item.approvalValue>0" class="badge">
-                          <span v-if="item.approvalValue<100">{{item.approvalValue}}</span>
-                          <span v-else>99+</span>
-                        </div>
-                      </div>
+                      <ul>
+                        <li class="content-item" v-for="i in 7">
+                          <div class="item-box">
+                            <img src="../../assets/images/yk1.png">
+                            <p>资金拨付审批</p>
+                            <div class="triangle"></div>
+                          </div>
+                        </li>
+                      </ul>
                     </div>
                   </div>
                 </el-col>
-              </el-row>
-              <!--我已审批-->
-              <el-row style="height: 25%;min-height: 150px;padding: 20px">
-                <el-row :span="24" style="height: 100%">
+                <el-col :span="4">
+                  <!--我已审批-->
                   <div class="approvaled">
                     <div class="title">
-                      <span>我<br />已<br />审<br/>批</span>
+                      <span>我已审批</span>
                     </div>
                     <div class="approval-content">
                       <div class="content-item">
@@ -61,7 +50,7 @@
                       </div>
                     </div>
                   </div>
-                </el-row>
+                </el-col>
               </el-row>
             </div>
           </section>
@@ -140,22 +129,88 @@
 </script>
 <style lang="scss" scoped>
   .content-body{
+    box-shadow: none;
     min-width: 1200px;
-    min-height: 500px;
+    min-height: 750px;
   }
   .search-box{
-    margin: 10px;
+    box-shadow: 0 0px 14px #cbcbcb;
+    margin:10px 15px;
+    padding:0 15px;
+    border-radius: 8px;
     >.search{
+      margin: 10px;
       text-align: right;
     }
   }
+  .approval-body{
+    padding: 15px;
+  }
   .approval-type{
-    background-color:#EFEFEF;
-    max-width: 100%;
-    height: 100%;
-    margin: 0 20px;
-    border-radius: 20px;
-    padding: 10px 20px;
+    box-shadow: 0 0px 14px #cbcbcb;
+    position: relative;
+    margin: 0 20px 0 0;
+    min-height: 700px;
+    border-radius: 8px;
+    padding: 10px 10px;
+    >.title{
+      height: 0.25rem;
+      text-align: left;
+      >span{
+        font-weight: 800;
+        font-size: 0.20rem;
+        margin-left: 8px;
+        color: #4F9DD5;
+      }
+    }
+    >.content{
+      >ul{
+        list-style: none;
+        width: 100%;
+        text-align: left;
+        >.content-item{
+          display: inline-block;
+          width: 20%;
+          margin:50px 0 0 0;
+          padding: 0 2.5%;
+          >.item-box{
+            width: 100%;
+            height: 250px;
+            background-color: #7AB396;
+            border-radius: 8px;
+            text-align: center;
+            padding-top: 70px;
+            >img{
+              width: 100px;
+            }
+            >p{
+              color: #ffffff;
+              font-size: 0.24rem;
+              line-height: 0.24rem;
+              margin-top: 20px;
+            }
+            >.triangle{
+              width: 0;
+              height: 0;
+              border: 50px s;
+
+            }
+          }
+        }
+      }
+    }
+  }
+  .approvaled{
+    border-radius: 8px;
+    padding:10px 20px;
+    width: 100%;
+    min-height: 650px;
+    box-shadow: 0 0px 14px #cbcbcb;
+    text-align: left;
+    position: relative;
+    >div{
+      display: inline-block;
+    }
     >.title{
       border-left: 10px solid #FF9900;
       height: 0.25rem;
@@ -166,104 +221,17 @@
         color: #4F9DD5;
       }
     }
-  }
-  .content{
-    max-width: 100%;
-    height: 80%;
-    margin: 20px 10px;
-    >.content-item{
-      width:22%;
-      margin:0 1.5% 55px 1.5%;
-      height: 40%;
-      background-color: #ffffff;
-      border-radius: 5px;
-      display: inline-block;
-      float: left;
-      position: relative;
-      border: 2px solid #ffffff;
-      &:hover{
-        border: 2px solid #1F6CFC;
-        cursor: pointer;
-      }
-      >img{
-        margin-left: -25px;
-        transform: scale(0.5,0.5);
-        margin-top: 15px;
-        width: 100px;
-      }
-      >i{
-        height: 100px;
-        line-height: 100px;
-        font-size: 0.35rem;
-        color:$primaryColor
-      }
-      >span{
-        margin-left: -15px;
-        height: 130px;
-        line-height: 130px;
-        font-size: 0.24rem;
-        font-family: 宋体;
-        font-weight: 800;
-      }
-      >.badge{
-        position: absolute;
-        top: -18px;
-        right: -18px;
-        height: 36px;
-        width: 36px;
-        z-index: 1;
-        border-radius: 18px;
-        background-color: #1F6CFC;
-        >span{
-          color: #ffffff;
-          line-height: 36px;
-          font-size: 0.16rem;
-        }
-      }
-    }
-  }
-  .approvaled{
-    /*margin:30px 1.5%;*/
-    width: 100%;
-    height: 100%;
-    >div{
-      display: inline-block;
-      float: left;
-    }
-    >.title{
-      /*padding-top: 18px;*/
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100%;
-      width: 5%;
-      background-color: #B7302D;
-      border-radius: 8px 0 0 8px;
-      border: 2px solid #B7302D;
-      >span{
-        color: #ffffff;
-        width: 50px;
-        font-size: 0.20rem;
-        line-height: 0.30rem;
-      }
-
-    }
     >.approval-content{
       min-height: 90%;
-      width: 95%;
       height: 100%;
-      border: 2px solid #B7302D;
-      border-radius: 0 8px 8px 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
       >.content-item{
-        width:90% ;
         display: inline-block;
         >ul{
           list-style: none;
           float: left;
           >li{
+            text-align: center;
+            width: 100%;
             display: inline-block;
             margin-left: 20px;
             padding: 25px;
@@ -291,11 +259,9 @@
         }
       }
       >.detail-all{
-        height: 85%;
-        width: 10%;
-        display: flex;
-        justify-content: center;
-        align-items: flex-end;
+        position: absolute;
+        bottom: 20px;
+        right:20px;
         >span{
           color:#B7302D;
           font-size: 0.16rem;
