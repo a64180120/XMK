@@ -5,7 +5,7 @@
         width="37.5%"
         :close-on-click-modal="false"
         class="dialog"
-        :append-to-body="true"
+        :append-to-body="false"
       >
         <div slot="title" class="dialog-title">
           <p>查看</p>
@@ -75,7 +75,14 @@
         },
         //确认
         submit(){
-
+          let that= this
+          this.$msgBox.show({
+            content:'审批支付单成功',
+            fn:function () {
+              that.openDialog = false
+              that.$emit('subSuc')
+            }
+          })
         }
       }
     }

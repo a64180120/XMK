@@ -14,7 +14,7 @@
       </div>
       <div class="payCenterDialog">
         <div class="btns">
-          <span class="payId">支付单号：{{detail.FCode}}</span>
+          <span class="payId">支付单号：201904180001</span>
           <template v-if="data.itemType == 'error'">
             <span class="btn btn-large" @click="save('payErrorHandleData')">异常处理</span>
             <span class="btn btn-large" @click="save('new')">重新支付</span>
@@ -44,22 +44,23 @@
                     v-model="account"
                     placeholder="请选择"
                   >
-                    <el-option v-for="item in accountList" :label="item.label" :value="item.value"></el-option>
+                    <el-option label="账号A" value="1"></el-option>
+                    <el-option label="账号B" value="2"></el-option>
+                    <el-option label="XXXXX" value="3"></el-option>
                   </el-select>
                 </template>
-                <div
-                  class="el-select"
-                  v-else
-                >{{accountList.find(item=>item.value == account).label}}</div>
+                <div class="el-select" v-else>{{account}}</div>
               </span>
               <span>
                 支付方式：
                 <template v-if="data.itemType == 'notApprove'">
                   <el-select popper-class="payList-largeSelects" v-model="payWay" placeholder="请选择">
-                    <el-option v-for="item in payWayList" :label="item.label" :value="item.value"></el-option>
+                    <el-option label="网银" value="1"></el-option>
+                    <el-option label="现金" value="2"></el-option>
+                    <el-option label="支票" value="3"></el-option>
                   </el-select>
                 </template>
-                <div class="el-select" v-else>{{payWayList.find(item=>item.value == account).label}}</div>
+                <div class="el-select" v-else>{{payWay}}</div>
               </span>
             </h2>
           </div>
@@ -72,7 +73,7 @@
                 <el-option label="跨行" value="2"></el-option>
               </el-select>
             </div>
-            <el-table max-height="200px" style="margin-top:10px;" :data="payList" border>
+            <el-table max-height="250px" style="margin-top:10px;" :data="payList" border>
               <!-- 序号列 -->
               <el-table-column type="index" width="80" header-align="center" align="center">
                 <template slot="header" slot-scope="scope">
@@ -109,31 +110,18 @@
                 empty-text="————"
               >
                 <template slot-scope="scope">
-                  <!-- 申请金额 -->
-                  <div
-                    v-if="scope.column.property=='money'"
-                    :title="scope.row[scope.column.property]"
-                    class="table-item"
-                  >{{scope.row[scope.column.property] | NumFormat}}</div>
                   <!-- 预算科目  -->
                   <div
-                    v-else-if="scope.column.property=='kemu'&& data.itemType == 'notApprove'"
-                    class="table-item nopadding"
+                    v-if="scope.column.property=='kemu'&& data.itemType == 'notApprove'"
+                    class="table-item"
                   >
-                    <el-select v-model="scope.row[scope.column.property]" placeholder="请选择预算科目">
-                      <el-option label="501 活动支出" :value="501" disabled></el-option>
-                      <el-option label="501001 活动支出001" :value="501001"></el-option>
-                      <el-option label="501002 活动支出002" :value="501002"></el-option>
-                    </el-select>
-                  </div>
-                  <!-- 支付方式 -->
-                  <div
-                    v-else-if="scope.column.property=='way'&&data.itemType == 'notApprove'"
-                    class="table-item nopadding"
-                  >
-                    <el-select v-model="scope.row[scope.column.property]" placeholder="请选择支付方式">
-                      <el-option label="同行" :value="0"></el-option>
-                      <el-option label="跨行" :value="1"></el-option>
+                    <el-select
+                      v-model="scope.row[scope.column.property+'ID']"
+                      placeholder="请选择预算科目"
+                    >
+                      <el-option label="501 活动支出" value="501"></el-option>
+                      <el-option label="501001 活动支出001" value="501001"></el-option>
+                      <el-option label="501002 活动支出002" value="501002"></el-option>
                     </el-select>
                   </div>
                   <!-- 收款方账户名称 -->
@@ -142,12 +130,20 @@
                     class="table-item"
                     @click="selectBank(scope.row)"
                   >{{scope.row[scope.column.property]}}</div>
-                  <!-- 其他 -->
+                  <!-- 支付方式 -->
                   <div
-                    :title="scope.row[scope.column.property]"
+                    v-else-if="scope.column.property=='way'&&data.itemType == 'notApprove'"
                     class="table-item"
-                    v-else
-                  >{{scope.row[scope.column.property]}}</div>
+                  >
+                    <el-select
+                      v-model="scope.row[scope.column.property+'ID']"
+                      placeholder="请选择支付方式"
+                    >
+                      <el-option label="同行" value="0"></el-option>
+                      <el-option label="跨行" value="1"></el-option>
+                    </el-select>
+                  </div>
+                  <div class="table-item" v-else>{{scope.row[scope.column.property]}}</div>
                 </template>
               </el-table-column>
               <!-- 支付异常列 -->
@@ -176,19 +172,18 @@
             <span @click="showAuditfollow = true">
               <template v-if="data.itemType == 'notApprove'">待送审</template>
               <template v-else-if="data.itemType == ''">审批中</template>
-              <template v-else-if="data.itemType == 'approval'">待审批</template>
               <template v-else>审批通过</template>
             </span>
-            <span v-if="data.itemType != 'approval'">
+            <span>
               <template v-if="data.itemType == 'error'">支付异常</template>
               <template v-else-if="data.itemType=='success'">支付成功</template>
               <template v-else>待支付</template>
             </span>
-            <span @click="showFundDetail">点击查看关联申请单信息（申请编号：{{detail.RefbillCode}}）</span>
+            <span @click="showFundDetail">点击查看关联申请单信息（申请编号：20191010201212）</span>
           </div>
         </div>
       </div>
-      <!-- 关联申请单信息查看 -->
+      <!-- 支付单查看 -->
       <el-dialog
         append-to-body
         :visible.sync="fundDetailData.openDialog"
@@ -212,37 +207,28 @@
       <go-approval v-if="approvalData.openDialog" :father="data" :data="approvalData"></go-approval>
       <!-- 银行档案 -->
       <bank-choose :data="bankChooseData"></bank-choose>
-      <auditfollow :visible="showAuditfollow" @update:visible="closeAuditFollow"></auditfollow>
-      <!-- 审批弹框 -->
-      <approval-dialog
-        ref="approvalDialog"
-        :title="appDialog.title"
-        :btn-group="appDialog.btnGroup"
-        :data="approvalData"
-      ></approval-dialog>
+      <auditfollow :visible="showAuditfollow" @update:visible="closeAuditFollow()"></auditfollow>
     </el-dialog>
   </div>
 </template>
 
 <script>
 import applyBill from '@/components/applyBill/applybill'
-import mergePay from './mergePay.vue'
-import payErrorHandle from './payErrorHandle.vue'
-import goApproval from './goApproval.vue'
-import bankChoose from './bankChoose'
+import mergePay from '../paycenter/mergePay.vue'
+import payErrorHandle from '../paycenter/payErrorHandle.vue'
+import goApproval from '../paycenter/goApproval.vue'
+import bankChoose from '../paycenter/bankChoose'
 import auditfollow from '../../components/auditFollow/auditfollow'
-import approvalDialog from '../payfundapproval/approvalDialog.vue'
 
 export default {
-  name: 'payList',
+  name: 'paylist',
   components: {
     applyBill,
     mergePay,
     payErrorHandle,
     goApproval,
     bankChoose,
-    auditfollow,
-    approvalDialog
+    auditfollow
   },
   props: {
     data: {
@@ -250,7 +236,7 @@ export default {
       default: {
         openDialog: false,
         data: {},
-        itemType: '' //'':审批中,error':支付异常,'notApprove':待送审、未通过,'success':支付成功,'approval':审批,
+        itemType: ''
       }
     }
   },
@@ -336,72 +322,21 @@ export default {
           bodyAlign: 'center'
         }
       ],
-      account: 1,
-      accountList: [
-        {
-          label: '账号A',
-          value: 1
-        },
-        {
-          label: '账号B',
-          value: 2
-        },
-        {
-          label: 'XXXXX',
-          value: 3
-        }
-      ],
-      payWay: 1,
-      payWayList: [
-        {
-          label: '网银',
-          value: 1
-        },
-        {
-          label: '现金',
-          value: 2
-        },
-        {
-          label: '支票',
-          value: 3
-        }
-      ],
+      account: '账号A',
+      payWay: '网银',
       bankType: '',
-      kemuList: [
-        {
-          label: '501 活动支出',
-          value: 501,
-          disabled: true
-        },
-        {
-          label: '501001 活动支出001',
-          value: 501001
-        },
-        {
-          label: '501002 活动支出002',
-          value: 501002
-        }
-      ],
-      wayList: [
-        {
-          label: '同行',
-          value: 0
-        },
-        {
-          label: '跨行',
-          value: 1
-        }
-      ],
       payList: [
         {
           choosed: false,
           depart: '杭州市总工会',
           proName: 'XXXXX',
-          money: '2345.98',
-          descrilbe: '备注内容',
-          kemu: 501001,
-          way: 0,
+          money: '99999',
+          descrilbe: 'beizhu',
+          kemu: '501 活动支出',
+          way: '同行',
+          wayID: '同行',
           getName: '123',
+          kemuID: '501',
           getAccount: '321',
           bankName: '123',
           cardId: '321',
@@ -413,108 +348,64 @@ export default {
           choosed: false,
           depart: '杭州市总工会',
           proName: 'XXXXX',
-          money: '2345.98',
-          descrilbe: '备注内容',
-          kemu: 501001,
-          way: 0,
-          getName: '123',
-          getAccount: '321',
-          bankName: '123',
-          cardId: '321',
+          money: '99999',
+          descrilbe: 'beizhu',
+          kemu: '501 活动支出',
+          kemuID: '501',
+          wayID: '同行',
+          way: '同行',
+          getName: '312312',
+          getAccount: '12312',
+          bankName: '3123',
+          cardId: '123123'
+        },
+        {
+          choosed: false,
+          depart: '杭州市总工会',
+          proName: 'XXXXX',
+          money: '99999',
+          descrilbe: 'beizhu',
+          kemuID: '501',
+          kemu: '501 活动支出',
+          wayID: '同行',
+          way: '同行',
+          getName: '1',
+          getAccount: '1',
+          bankName: '1',
+          cardId: '1',
           status: '支付异常',
           reason: '支付请求响应失败/对方账号不存在',
           reID: '201904180002'
         },
         {
           choosed: false,
-          depart: '绍兴市市总工会',
-          proName: 'XX',
-          money: '22243.9',
-          descrilbe: '备注内容多备注内容多备注内容多备注内容多备注内容多',
-          kemu: 501001,
-          way: 0,
-          getName: '312312',
-          getAccount: '12312',
-          bankName: '3123',
-          cardId: '123123'
+          depart: '杭州市总工会',
+          proName: 'XXXXX',
+          money: '99999',
+          descrilbe: 'beizhu',
+          kemu: '501 活动支出',
+          kemuID: '501',
+          wayID: '同行',
+          way: '同行',
+          getName: 1,
+          getAccount: '1',
+          bankName: 1,
+          cardId: '1'
         },
         {
           choosed: false,
-          depart: '绍兴市市总工会',
-          proName: 'XX',
-          money: '22243.9',
-          descrilbe: '备注内容多备注内容多备注内容多备注内容多备注内容多',
-          kemu: 501001,
-          way: 0,
-          getName: '312312',
-          getAccount: '12312',
-          bankName: '3123',
-          cardId: '123123'
-        },
-        {
-          choosed: false,
-          depart: '绍兴市市总工会',
-          proName: 'XX',
-          money: '22243.9',
-          descrilbe: '备注内容多备注内容多备注内容多备注内容多备注内容多',
-          kemu: 501001,
-          way: 0,
-          getName: '312312',
-          getAccount: '12312',
-          bankName: '3123',
-          cardId: '123123'
-        },
-        {
-          choosed: false,
-          depart: '绍兴市市总工会',
-          proName: 'XX',
-          money: '22243.9',
-          descrilbe: '备注内容多备注内容多备注内容多备注内容多备注内容多',
-          kemu: 501001,
-          way: 0,
-          getName: '312312',
-          getAccount: '12312',
-          bankName: '3123',
-          cardId: '123123'
-        },
-        {
-          choosed: false,
-          depart: '绍兴市市总工会',
-          proName: 'XX',
-          money: '22243.9',
-          descrilbe: '备注内容多备注内容多备注内容多备注内容多备注内容多',
-          kemu: 501001,
-          way: 0,
-          getName: '312312',
-          getAccount: '12312',
-          bankName: '3123',
-          cardId: '123123'
-        },
-        {
-          choosed: false,
-          depart: '绍兴市市总工会',
-          proName: 'XX',
-          money: '22243.9',
-          descrilbe: '备注内容多备注内容多备注内容多备注内容多备注内容多',
-          kemu: 501001,
-          way: 0,
-          getName: '312312',
-          getAccount: '12312',
-          bankName: '3123',
-          cardId: '123123'
-        },
-        {
-          choosed: false,
-          depart: '绍兴市市总工会',
-          proName: 'XX',
-          money: '22243.9',
-          descrilbe: '备注内容多备注内容多备注内容多备注内容多备注内容多',
-          kemu: 501001,
-          way: 0,
-          getName: '312312',
-          getAccount: '12312',
-          bankName: '3123',
-          cardId: '123123'
+          depart: '杭州市总工会',
+          proName: 'XXXXX',
+          money: '99999',
+          descrilbe: 'beizhu',
+          kemuID: '501',
+          kemu: '501 活动支出',
+          wayID: '同行',
+          way: '同行',
+          getName: '1',
+          getAccount: '1',
+          bankName: '1',
+          cardId: '1'
         }
       ],
       fundDetailData: {
@@ -538,22 +429,11 @@ export default {
         data: {}
       },
       reSetting: false,
-      allSelected: false,
-      detail: {},
-      appDialog: {
-        title: '',
-        btnGroup: {
-          cancelName: '',
-          onfirmName: ''
-        }
-      }
+      allSelected: false
     }
   },
   created() {
     console.log('paylist created')
-    this.detail = Array.isArray(this.data.data)
-      ? this.data.data[0]
-      : this.data.data
   },
   mounted() {
     console.log('paylist mounted')
@@ -567,6 +447,7 @@ export default {
         this.reSetting = false
         this.data.itemType = 'error'
       } else {
+        this.$forceUpdate()
         done()
       }
     },
@@ -593,11 +474,9 @@ export default {
       console.log(type)
       switch (type) {
         case '':
-          this.$msgBox.show({
-            content: '保存成功。'
+          this.$msgBox.showMsgBox({
+            content: '保存成功'
           })
-          return
-          break
         case 'approvalData':
         case 'payErrorHandleData':
         case 'mergePayData':
@@ -608,10 +487,8 @@ export default {
           this.data.itemType = 'notApprove'
           break
         case 'approval':
-          this.appDialog.title = '查看'
-          this.appDialog.btnGroup.cancelName = '取消'
-          this.appDialog.btnGroup.onfirmName = '确认'
-          this.$refs.approvalDialog.changeDialog()
+          debugger
+          this.$refs.approval.changeDialog()
           break
       }
     },
@@ -694,7 +571,6 @@ export default {
           border-radius: 10px;
           padding: 10px;
           .table-item {
-            padding: 0 15px;
             position: absolute;
             top: 0;
             left: 0;
@@ -705,9 +581,6 @@ export default {
             text-overflow: ellipsis;
             white-space: nowrap;
             cursor: pointer;
-            &.nopadding {
-              padding: 0;
-            }
             > .el-select {
               height: 100%;
             }
@@ -846,7 +719,6 @@ export default {
     display: inline-block;
     margin: 0 !important;
     vertical-align: middle;
-    max-height: 86%;
     .el-dialog__body {
       padding-top: 0px;
     }

@@ -7,7 +7,7 @@
           :data="data"
           :props="{ children: 'children',label: 'OName' }"
           node-key="OCode"
-          :default-checked-keys="checkedOrg!=null?checkedOrg:['1']"
+          :default-checked-keys="checkedOrg!=null?checkedOrg:[]"
           :highlight-current="true"
           :show-checkbox="true"
           :check-strictly="true"
@@ -27,7 +27,6 @@
         name: "orgtree",
       data(){
           return {
-            choosenOrg:{label:''},
             visible2:false,
            selected:[],
             /*orgList:[

@@ -20,7 +20,7 @@
             <div class="type">
                 <p>字典类型</p>
                 <ul>
-                    <li>支付方式</li>
+                    <li @click="selectType(ind)" :class="{active:ind==selected}" v-for="(type,ind) of typeList" :key="ind">{{type.name}}</li>
                 </ul>
             </div>
             <div class="content">
@@ -38,40 +38,40 @@
                 </div>
                 <div class="list listBodyCon">
                     <div class="listBody">
-                        <ul :class="{update:!disabled}" v-for="n of 35">
-                            <li>{{n}}</li>
+                        <ul :class="{update:!disabled}" v-for="(item,n) of typeInfoList">
+                            <li>{{n+1}}</li>
                             <li>
-                                <div v-show="disabled">类型编码</div> 
+                                <div v-show="disabled">{{item.code}}</div> 
                                 <div v-show="!disabled">
-                                    <el-input v-model="test" placeholder="请输入类型编码"></el-input>
+                                    <el-input v-model="item.code" placeholder="请输入类型编码"></el-input>
                                 </div>
                             </li>
                             <li>
-                                <div v-show="disabled">类型名称</div>
+                                <div v-show="disabled">{{item.name}}</div>
                                 <div v-show="!disabled">
-                                    <el-input v-model="test" placeholder="请输入类型名称"></el-input>
+                                    <el-input v-model="item.name" placeholder="请输入类型名称"></el-input>
                                 </div>
                             </li>
                             <li>
-                                <div v-show="disabled">备注</div>
+                                <div v-show="disabled">{{item.msg}}</div>
                                 <div v-show="!disabled">
-                                    <el-input v-model="test" placeholder="请输入备注"></el-input>
+                                    <el-input v-model="item.msg" placeholder="请输入备注"></el-input>
                                 </div>
                             </li>
                             <li class="enable">
                                 <div v-show="disabled">
-                                    <img v-show="enable=='0'" src="@/assets/images/gou.svg" alt="">
-                                    <img v-show="enable=='1'" src="@/assets/images/cha.svg" alt=""> 
+                                    <img v-show="item.enable=='0'" src="@/assets/images/gou.svg" alt="">
+                                    <img v-show="item.enable=='1'" src="@/assets/images/cha.svg" alt=""> 
                                 </div>
                                 <div v-show="!disabled">
-                                    <el-radio v-model="enable" label="0">启用</el-radio>
-                                    <el-radio v-model="enable" label="1">停用</el-radio>
+                                    <el-radio v-model="item.enable" label="0">启用</el-radio>
+                                    <el-radio v-model="item.enable" label="1">停用</el-radio>
                                 </div> 
                                 <div class="icon active">
-                                    <div>
+                                    <div @click="addInfo(n)">
                                         <img src="@/assets/images/jia.png" alt="">
                                     </div>
-                                    <div>
+                                    <div @click="deleteInfo(n,item)">
                                          <img src="@/assets/images/jian.png" alt="">
                                     </div>
                                 </div>   
@@ -93,14 +93,37 @@ export default {
     data(){
         return{
             disabled:true,//不可编辑,修改
-            enable:"0",
-            test:'',
+            typeList:[{name:'支付方式',code:1},{name:'网银',code:2}],//字典类型列表
+            typeInfoList:[
+                {enable:'0',code:'001',name:'mingc',msg:''},
+                 {enable:'1',code:'002',name:'安抚',msg:'阿斯顿发生的发'},
+                  {enable:'0',code:'003',name:'是的发生',msg:''}
+            ],//类型信息列表
+            deleteList:[],//删除的数据
+            selected:''
         }
     },
     methods:{
         getData(){
             console.log(222)
         },
+        selectType(index){
+            this.selected=index;
+            this.getData();
+        },
+        //类型信息新增
+        addInfo(index){
+            this.typeInfoList.splice(index+1,0,{enable:'0'})
+        },
+        //类型信息删除
+        deleteInfo(index,item){
+            if(this.typeInfoList.length>1){
+                if(item.Phid){
+                    this.deleteList.push(item);
+                }
+                this.typeInfoList.splice(index,1);
+            }
+        }
     },
     components:{
         topHandle

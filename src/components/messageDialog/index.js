@@ -12,7 +12,7 @@ MessageBox.install = function(Vue, options) {
   }
   // 在Vue的原型上添加实例方法，以全局调用
   Vue.prototype.$msgBox = {
-    showMsgBox(options) {
+    show(options) {
       if (!currentMsg) {
         initInstance()
       }

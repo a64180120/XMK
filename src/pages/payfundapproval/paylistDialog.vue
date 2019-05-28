@@ -48,7 +48,11 @@
     },
     methods:{
       changeDialog(){
-        this.openDialog = true
+        if (this.openDialog) {
+          this.openDialog = false
+        }else {
+          this.openDialog = true
+        }
       },
       //表头样式回调
       headerRowClass(val){
@@ -72,6 +76,14 @@
       },
       //生成支付单
       submit(){
+        let that = this
+        this.$msgBox.show({
+          content:'生成支付单成功',
+          fn:function () {
+            that.openDialog = false
+            that.$emit('subSuc')
+          }
+        })
         let now = new Date().getTime().toString();
         let addData = {
           "uid": 521180820000001,     //用户id
@@ -168,8 +180,10 @@
             ]
           }
         };
-        this.postAxios('/GKPaymentMstApi/PostAdd',addData).then(success=>{
+        this.postAxios('/GKPaymentMstApi/PostAdd',addData)
+          .then(success=>{
           console.log(success)
+
         }).catch(err=>{
           console.log(err)
         })
