@@ -75,7 +75,14 @@
         },
         //确认
         submit(){
-
+          let that= this
+          this.$msgBox.show({
+            content:'审批支付单成功',
+            fn:function () {
+              that.openDialog = false
+              that.$emit('subSuc')
+            }
+          })
         }
       }
     }

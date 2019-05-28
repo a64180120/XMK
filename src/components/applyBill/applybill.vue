@@ -279,8 +279,9 @@
   }
 
   .content {
-    height: 470px;
+    min-height: 470px;
     padding: 20px 0 0 0;
+    height: 100%;
   }
 
   .left-card {
@@ -348,7 +349,7 @@
   }
 
   .detail-table {
-    height: 450px;
+     min-height: 650px;
     overflow: auto;
     width: 100%;
 

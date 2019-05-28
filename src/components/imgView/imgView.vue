@@ -1,5 +1,5 @@
 <template>
-    <section class="body">
+    <section class="img-view">
         <viewer :options="options"
                 :images="images"
                 @inited="inited"
@@ -71,4 +71,22 @@
     padding: 50px;
   }
 
+</style>
+<style>
+  /*修改图片预览内部样式*/
+  .img-view .viewer-backdrop{
+    background-color: #ffffff;
+  }
+  .img-view  .viewer-backdrop .viewer-footer .viewer-navbar{
+    background-color: #ffffff;
+  }
+  .img-view  .viewer-backdrop .viewer-footer .viewer-navbar ul{
+    width: 180px;
+  }
+  .img-view  .viewer-backdrop .viewer-footer .viewer-navbar ul li{
+    width: 50px;
+  }
+  .img-view .viewer-player{
+    background-color: #eaeaea;
+  }
 </style>
