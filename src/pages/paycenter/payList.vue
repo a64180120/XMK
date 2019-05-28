@@ -200,39 +200,35 @@
           </div>
         </div>
       </div>
-      <!-- 关联申请单信息查看 -->
-      <el-dialog
-        append-to-body
-        :visible.sync="fundDetailData.openDialog"
-        width="80%"
-        :close-on-click-modal="false"
-      >
-        <div slot="title" class="dialog-title">
-          <span>查看申请</span>
-        </div>
-        <apply-bill v-if="fundDetailData.openDialog" :data="fundDetailData" :applyNum="1"></apply-bill>
-      </el-dialog>
-      <!-- 合并支付组件 -->
-      <merge-pay
-        v-if="mergePayData.openDialog"
-        v-bind="mergePayData.openDialog"
-        :data="mergePayData"
-      ></merge-pay>
-      <!-- 异常处理 -->
-      <pay-error-handle v-if="payErrorHandleData.openDialog" :data="payErrorHandleData"></pay-error-handle>
-      <!-- 送审 -->
-      <go-approval v-if="approvalData.openDialog" :father="data" :data="approvalData"></go-approval>
-      <!-- 银行档案 -->
-      <bank-choose :data="bankChooseData"></bank-choose>
-      <auditfollow :visible="showAuditfollow" @update:visible="closeAuditFollow"></auditfollow>
-      <!-- 审批弹框 -->
-      <approval-dialog
-        ref="approvalDialog"
-        :title="appDialog.title"
-        :btn-group="appDialog.btnGroup"
-        :data="approvalData"
-      ></approval-dialog>
     </el-dialog>
+    <!-- 关联申请单信息查看 -->
+    <el-dialog
+      append-to-body
+      :visible.sync="fundDetailData.openDialog"
+      width="80%"
+      :close-on-click-modal="false"
+    >
+      <div slot="title" class="dialog-title">
+        <span>查看申请</span>
+      </div>
+      <apply-bill v-if="fundDetailData.openDialog" :data="fundDetailData" :applyNum="1"></apply-bill>
+    </el-dialog>
+    <!-- 合并支付组件 -->
+    <merge-pay v-if="mergePayData.openDialog" v-bind="mergePayData.openDialog" :data="mergePayData"></merge-pay>
+    <!-- 异常处理 -->
+    <pay-error-handle v-if="payErrorHandleData.openDialog" :data="payErrorHandleData"></pay-error-handle>
+    <!-- 送审 -->
+    <go-approval v-if="approvalData.openDialog" :father="data" :data="approvalData"></go-approval>
+    <!-- 银行档案 -->
+    <bank-choose :data="bankChooseData" @getBank="getBank"></bank-choose>
+    <auditfollow :visible="showAuditfollow" @update:visible="closeAuditFollow"></auditfollow>
+    <!-- 审批弹框 -->
+    <approval-dialog
+      ref="approvalDialog"
+      :title="appDialog.title"
+      :btn-group="appDialog.btnGroup"
+      :data="approvalData"
+    ></approval-dialog>
   </div>
 </template>
 
@@ -407,126 +403,37 @@ export default {
       payList: [
         {
           choosed: false,
+          id: 0,
           depart: '杭州市总工会',
           proName: 'XXXXX',
           money: '2345.98',
           descrilbe: '备注内容',
           kemu: 501001,
           way: 0,
-          getName: '123',
-          getAccount: '321',
-          bankName: '123',
-          cardId: '321',
-          status: '支付异常',
-          reason: '支付请求响应失败/对方账号不存在',
-          reID: '201904180002'
+          getName: '',
+          getAccount: '',
+          bankName: '',
+          cardId: '',
+          status: '支付成功',
+          reason: '',
+          reID: ''
         },
         {
           choosed: false,
+          id: 1,
           depart: '杭州市总工会',
           proName: 'XXXXX',
           money: '2345.98',
           descrilbe: '备注内容',
           kemu: 501001,
           way: 0,
-          getName: '123',
-          getAccount: '321',
-          bankName: '123',
-          cardId: '321',
+          getName: '',
+          getAccount: '',
+          bankName: '',
+          cardId: '',
           status: '支付异常',
           reason: '支付请求响应失败/对方账号不存在',
           reID: '201904180002'
-        },
-        {
-          choosed: false,
-          depart: '绍兴市市总工会',
-          proName: 'XX',
-          money: '22243.9',
-          descrilbe: '备注内容多备注内容多备注内容多备注内容多备注内容多',
-          kemu: 501001,
-          way: 0,
-          getName: '312312',
-          getAccount: '12312',
-          bankName: '3123',
-          cardId: '123123'
-        },
-        {
-          choosed: false,
-          depart: '绍兴市市总工会',
-          proName: 'XX',
-          money: '22243.9',
-          descrilbe: '备注内容多备注内容多备注内容多备注内容多备注内容多',
-          kemu: 501001,
-          way: 0,
-          getName: '312312',
-          getAccount: '12312',
-          bankName: '3123',
-          cardId: '123123'
-        },
-        {
-          choosed: false,
-          depart: '绍兴市市总工会',
-          proName: 'XX',
-          money: '22243.9',
-          descrilbe: '备注内容多备注内容多备注内容多备注内容多备注内容多',
-          kemu: 501001,
-          way: 0,
-          getName: '312312',
-          getAccount: '12312',
-          bankName: '3123',
-          cardId: '123123'
-        },
-        {
-          choosed: false,
-          depart: '绍兴市市总工会',
-          proName: 'XX',
-          money: '22243.9',
-          descrilbe: '备注内容多备注内容多备注内容多备注内容多备注内容多',
-          kemu: 501001,
-          way: 0,
-          getName: '312312',
-          getAccount: '12312',
-          bankName: '3123',
-          cardId: '123123'
-        },
-        {
-          choosed: false,
-          depart: '绍兴市市总工会',
-          proName: 'XX',
-          money: '22243.9',
-          descrilbe: '备注内容多备注内容多备注内容多备注内容多备注内容多',
-          kemu: 501001,
-          way: 0,
-          getName: '312312',
-          getAccount: '12312',
-          bankName: '3123',
-          cardId: '123123'
-        },
-        {
-          choosed: false,
-          depart: '绍兴市市总工会',
-          proName: 'XX',
-          money: '22243.9',
-          descrilbe: '备注内容多备注内容多备注内容多备注内容多备注内容多',
-          kemu: 501001,
-          way: 0,
-          getName: '312312',
-          getAccount: '12312',
-          bankName: '3123',
-          cardId: '123123'
-        },
-        {
-          choosed: false,
-          depart: '绍兴市市总工会',
-          proName: 'XX',
-          money: '22243.9',
-          descrilbe: '备注内容多备注内容多备注内容多备注内容多备注内容多',
-          kemu: 501001,
-          way: 0,
-          getName: '312312',
-          getAccount: '12312',
-          bankName: '3123',
-          cardId: '123123'
         }
       ],
       fundDetailData: {
@@ -562,15 +469,28 @@ export default {
     }
   },
   created() {
-    console.log('paylist created')
+    // console.log(this.data.data)
     this.detail = Array.isArray(this.data.data)
       ? this.data.data[0]
       : this.data.data
   },
-  mounted() {
-    console.log('paylist mounted')
-  },
+  mounted() {},
   methods: {
+    getBank(e) {
+      if (this.bankChooseData.data.choosed) {
+        this.payList.forEach(item => {
+          item.getName = '杭州市总工会'
+          item.getAccount = '2019010101'
+          item.bankName = '杭州银行'
+          item.cardId = '2019010101'
+        })
+      } else {
+        this.bankChooseData.data.getName = '杭州市总工会'
+        this.bankChooseData.data.getAccount = '2019010101'
+        this.bankChooseData.data.bankName = '杭州银行'
+        this.bankChooseData.data.cardId = '2019010101'
+      }
+    },
     closeAuditFollow() {
       this.showAuditfollow = false
     },
@@ -595,14 +515,12 @@ export default {
       }
     },
     selectAll(choosed) {
-      console.log(choosed)
       this.payList.forEach(item => {
         item.choosed = choosed
       })
     },
     // 支付单详情事件
     save(type) {
-      console.log(type)
       switch (type) {
         case '':
           this.$msgBox.show({
@@ -629,8 +547,8 @@ export default {
     },
     // 选择银行
     selectBank(item) {
-      console.log(item)
       this.bankChooseData.openDialog = true
+      this.bankChooseData.data = item
     }
   },
   watch: {}

@@ -73,7 +73,7 @@
           type="primary"
           @click="data.openDialog = false"
         >{{btnGroup.cancelName}}</el-button>
-        <el-button size="small" type="primary" @click="submit()">{{btnGroup.onfirmName}}</el-button>
+        <el-button size="small" type="primary" @click="submit">{{btnGroup.onfirmName}}</el-button>
       </div>
       <auditfollow :visible="showAuditfollow" @update:visible="closeAuditFollow()"></auditfollow>
     </el-dialog>
@@ -133,7 +133,6 @@ export default {
     changeDialog() {
       this.openDialog = true
     },
-
     //查看详细流程
     searchFlow(row, column, index, store) {
       this.showAuditfollow = true
@@ -158,9 +157,7 @@ export default {
       })
     }
   },
-  created() {
-    console.log(this.father)
-  }
+  created() {}
 }
 </script>
 
