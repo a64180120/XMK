@@ -48,7 +48,10 @@ export default {
   created() {},
   mounted() {},
   methods: {
-    bankConfirm() {}
+    bankConfirm() {
+      this.data.openDialog = false
+      this.$emit('getBank')
+    }
   },
   watch: {}
 }
