@@ -141,7 +141,7 @@
 <style lang="scss" scoped>
   .content-body{
     min-width: 1200px;
-    min-height: 500px;
+    min-height: 700px;
   }
   .search-box{
     margin: 10px;

@@ -212,7 +212,8 @@ export default {
             total:2,
             orgVisible:false,
             orgSelected:[],
-            orgList:[{
+            orgList:[
+              {
                 "RelatId": "",
                 "OCode": "10200301",
                 "ParentOrg": "",

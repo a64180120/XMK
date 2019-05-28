@@ -15,7 +15,6 @@
         <el-button size="small" type="primary" @click="submit()">生成支付单</el-button>
       </div>
     </el-dialog>
-    <xm-message :message="message" :visible.sync="visible"></xm-message>
   </section>
 </template>
 
@@ -35,8 +34,6 @@
     },
     data(){
       return{
-        message:'生成支付单成功',
-        visible:false,
         textare:'',
         openDialog:false,
         handleValue:'',
@@ -79,8 +76,14 @@
       },
       //生成支付单
       submit(){
-        this.$emit("subSuc")
-        this.visible = true
+        let that = this
+        this.$msgBox.show({
+          content:'生成支付单成功',
+          fn:function () {
+            that.openDialog = false
+            that.$emit('subSuc')
+          }
+        })
         let now = new Date().getTime().toString();
         let addData = {
           "uid": 521180820000001,     //用户id
@@ -180,6 +183,7 @@
         this.postAxios('/GKPaymentMstApi/PostAdd',addData)
           .then(success=>{
           console.log(success)
+
         }).catch(err=>{
           console.log(err)
         })
