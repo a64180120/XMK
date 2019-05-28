@@ -25,10 +25,10 @@
           <div class="btnArea">
             <el-form :inline="true">
               <el-form-item label="申报部门" class="top-form-left">
-                <el-input size="mini" v-model="form.depart" @focus="openOrg()" style="width: 120px"></el-input>
+                <el-input size="mini" v-model="form.depart" @focus="openOrg()" style="width: 120px" placeholder="全部"></el-input>
               </el-form-item>
-              <el-form-item label="提留时长" class="top-form-left">
-                <el-input size="mini" v-model="form.long" style="width: 200px">
+              <el-form-item label="停留时长" class="top-form-left">
+                <el-input size="mini" v-model="form.long" style="width: 200px" placeholder="请输入停留时长">
                   <el-select v-model="select" slot="prepend" placeholder="类型" class="select-input" style="width: 75px">
                     <el-option label="大于" value="1"></el-option>
                     <el-option label="等于" value="2"></el-option>
@@ -40,7 +40,7 @@
                 <el-date-picker v-model="form.date" style="width: 240px" size="mini" type="daterange" start-placeholder="开始时间" end-placeholder="开始时间"></el-date-picker>
               </el-form-item>
               <el-form-item label="" class="top-form-right">
-                <search-input @btnClick="search()" v-model="searchValue"></search-input>
+                <search-input @btnClick="search()" placeholder="申请单名称/编号" v-model="searchValue"></search-input>
               </el-form-item>
             </el-form>
           </div>
