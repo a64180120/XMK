@@ -115,26 +115,37 @@
                     :title="scope.row[scope.column.property]"
                     class="table-item"
                   >{{scope.row[scope.column.property] | NumFormat}}</div>
-                  <!-- 预算科目  -->
+                  <!-- 备注  -->
                   <div
-                    v-else-if="scope.column.property=='kemu'&& data.itemType == 'notApprove'"
+                    v-else-if="scope.column.property=='descrilbe'&& data.itemType == 'notApprove'"
                     class="table-item nopadding"
                   >
-                    <el-select v-model="scope.row[scope.column.property]" placeholder="请选择预算科目">
-                      <el-option label="501 活动支出" :value="501" disabled></el-option>
-                      <el-option label="501001 活动支出001" :value="501001"></el-option>
-                      <el-option label="501002 活动支出002" :value="501002"></el-option>
-                    </el-select>
+                    <el-input v-model="scope.row[scope.column.property]" placeholder></el-input>
+                  </div>
+                  <!-- 预算科目  -->
+                  <div v-else-if="scope.column.property=='kemu'" class="table-item nopadding">
+                    <template v-if="data.itemType == 'notApprove'">
+                      <el-select v-model="scope.row[scope.column.property]" placeholder="请选择预算科目">
+                        <el-option label="501 活动支出" :value="501" disabled></el-option>
+                        <el-option label="501001 活动支出001" :value="501001"></el-option>
+                        <el-option label="501002 活动支出002" :value="501002"></el-option>
+                      </el-select>
+                    </template>
+                    <template
+                      v-else
+                    >{{kemuList.find(item=>item.value==scope.row[scope.column.property]).label}}</template>
                   </div>
                   <!-- 支付方式 -->
-                  <div
-                    v-else-if="scope.column.property=='way'&&data.itemType == 'notApprove'"
-                    class="table-item nopadding"
-                  >
-                    <el-select v-model="scope.row[scope.column.property]" placeholder="请选择支付方式">
-                      <el-option label="同行" :value="0"></el-option>
-                      <el-option label="跨行" :value="1"></el-option>
-                    </el-select>
+                  <div v-else-if="scope.column.property=='way'" class="table-item nopadding">
+                    <template v-if="data.itemType == 'notApprove'">
+                      <el-select v-model="scope.row[scope.column.property]" placeholder="请选择支付方式">
+                        <el-option label="同行" :value="0"></el-option>
+                        <el-option label="跨行" :value="1"></el-option>
+                      </el-select>
+                    </template>
+                    <template
+                      v-else
+                    >{{wayList.find(item=>item.value==scope.row[scope.column.property]).label}}</template>
                   </div>
                   <!-- 收款方账户名称 -->
                   <div
@@ -142,6 +153,7 @@
                     class="table-item"
                     @click="selectBank(scope.row)"
                   >{{scope.row[scope.column.property]}}</div>
+
                   <!-- 其他 -->
                   <div
                     :title="scope.row[scope.column.property]"
@@ -179,12 +191,12 @@
               <template v-else-if="data.itemType == 'approval'">待审批</template>
               <template v-else>审批通过</template>
             </span>
-            <span v-if="data.itemType != 'approval'">
+            <span v-if="data.itemType != 'approval'" :class="{success:data.itemType=='success'}">
               <template v-if="data.itemType == 'error'">支付异常</template>
               <template v-else-if="data.itemType=='success'">支付成功</template>
               <template v-else>待支付</template>
             </span>
-            <span @click="showFundDetail">点击查看关联申请单信息（申请编号：{{detail.RefbillCode}}）</span>
+            <span class="dj" @click="showFundDetail">点击查看关联申请单信息（申请编号：{{detail.RefbillCode}}）</span>
           </div>
         </div>
       </div>
@@ -721,27 +733,33 @@ export default {
         span {
           cursor: pointer;
           margin-right: 20px;
-          &:first-of-type,
+          position: relative;
+          padding-left: 0.3rem;
+          &::before {
+            content: '';
+            display: inline-block;
+            background-image: url('../../assets/images/yk1.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: 0 center;
+            width: 0.2rem;
+            height: 0.2rem;
+            position: absolute;
+            left: 0;
+            top: 50%;
+            margin-top: -0.1rem;
+          }
           &:nth-of-type(2) {
-            position: relative;
-            padding-left: 0.3rem;
             &::before {
-              content: '';
-              display: inline-block;
-              background-image: url('../../assets/images/yk1.png');
-              background-size: contain;
-              background-repeat: no-repeat;
-              background-position: 0 center;
-              width: 0.2rem;
-              height: 0.2rem;
-              position: absolute;
-              left: 0;
-              top: 50%;
-              margin-top: -0.1rem;
+              background-image: url('../../assets/images/wzf.png');
             }
           }
           &:last-of-type {
             float: right;
+            &::before {
+              background-image: url('../../assets/images/dj.png');
+              margin-top: -0.09rem;
+            }
           }
         }
       }
@@ -839,6 +857,11 @@ export default {
             background-color: transparent;
           }
         }
+      }
+      .el-input__inner {
+        font-size: 0.14rem;
+        background-color: transparent;
+        border: 0;
       }
     }
   }

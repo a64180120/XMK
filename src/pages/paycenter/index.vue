@@ -6,8 +6,14 @@
           <img src="../../assets/images/3_03.png" alt>
           <div>收付款信息维护</div>
         </div>
-        <div class="nav" @click="payNav('mergePayData')">合并支付</div>
-        <div class="nav" @click="payNav('payErrorHandleData')">异常处理</div>
+        <div class="nav" @click="payNav('mergePayData')">
+          <img src="../../assets/images/hb.png" alt>
+          <div>合并支付</div>
+        </div>
+        <div class="nav" @click="payNav('payErrorHandleData')">
+          <img src="../../assets/images/yc.png" alt>
+          <div>异常处理</div>
+        </div>
         <div class="nav" @click="payNav('approvalData')">
           <img src="../../assets/images/zj6.png" alt>
           <div>送审</div>
