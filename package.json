@@ -23,6 +23,7 @@
     "print-js": "^1.0.54",
     "qs": "^6.5.2",
     "swiper": "^4.3.5",
+    "v-viewer": "^1.4.0",
     "vue": "^2.5.16",
     "vue-awesome-swiper": "^2.6.7",
     "vue-preview": "^1.1.3",

@@ -51,6 +51,11 @@
 table td{
   min-width: 20px;
 }
+table .atype{
+  color: #3294e8;
+  text-decoration: underline;
+  cursor: pointer;
+}
 .tableHead table{
   width: 100%;
   border-collapse:separate;

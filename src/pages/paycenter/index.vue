@@ -1,11 +1,17 @@
 <template>
   <div class="payIndex">
-    <top-handle title="支付中心在线工作平台">
+    <top-handle @refresh="getData" title="支付中心在线工作平台">
       <div class="navs">
-        <div class="nav" @click="payNav('payListData')">收付款信息维护</div>
+        <div class="nav" @click="payNav('payListData')">
+          <img src="../../assets/images/3_03.png" alt>
+          <div>收付款信息维护</div>
+        </div>
         <div class="nav" @click="payNav('mergePayData')">合并支付</div>
         <div class="nav" @click="payNav('payErrorHandleData')">异常处理</div>
-        <div class="nav" @click="payNav('approvalData')">送审</div>
+        <div class="nav" @click="payNav('approvalData')">
+          <img src="../../assets/images/zj6.png" alt>
+          <div>送审</div>
+        </div>
       </div>
     </top-handle>
     <!-- 主体内容 -->
@@ -19,6 +25,7 @@
             v-model="type"
             placeholder="请选择"
             size="mini"
+            style="width:110px"
           >
             <el-option
               v-for="item in typeList"
@@ -67,8 +74,7 @@
           ></el-date-picker>
           <div class="btns">
             <div class="search">
-              <el-input v-model="search" placeholder="申请单编号/名称"></el-input>
-              <span class="btn" @click="getData">搜索</span>
+              <search-input></search-input>
             </div>
           </div>
         </div>
@@ -87,10 +93,14 @@
             </colgroup>
             <thead>
               <tr>
-                <td>
+                <td title="序号">
                   <el-checkbox v-model="checkAll" @change="handleCheckAll">序号</el-checkbox>
                 </td>
-                <td v-for="(item,index) in tableHeader" :key="index">{{item.label}}</td>
+                <td
+                  v-for="(item,index) in tableHeader"
+                  :key="index"
+                  :title="item.label"
+                >{{item.label}}</td>
               </tr>
             </thead>
           </table>
@@ -117,7 +127,7 @@
                   <div @click="payNav('payListData',item)" style="cursor:pointer">{{item.FCode}}</div>
                 </td>
                 <td>
-                  <div>{{item.FAmountTotal}}</div>
+                  <div>{{item.FAmountTotal | NumFormat}}</div>
                 </td>
                 <td>
                   <div>{{item.FBilltype}}</div>
@@ -157,10 +167,12 @@
         <el-pagination
           :current-page.sync="currentPage"
           :page-size="pageSize"
-          layout="slot, jumper"
+          @size-change="handleSizeChange"
+          layout="total,sizes,prev,pager,next,jumper"
+          @current-change="getData"
           :total="total"
         >
-          <span>当前 第 {{currentPage}} 页</span>
+          <!-- <span>当前 第 {{currentPage}} 页</span>
           <span>共 {{Math.ceil(total/pageSize)}} 页</span>
           <span
             @click="currentPage!=1?changePage(1):'javascirpt:;'"
@@ -177,7 +189,7 @@
           <span
             @click="currentPage!=(total%pageSize>0?total%pageSize+1:total%pageSize)?currentPage=(Math.ceil(total/pageSize)):'javascirpt:;'"
             :class="{changePage:true,unclickable:currentPage==Math.ceil(total/pageSize)}"
-          >最后一页</span>
+          >最后一页</span>-->
         </el-pagination>
       </div>
     </div>
@@ -191,13 +203,21 @@
 
 <script>
 import topHandle from '../../components/topNav/topHandle.vue'
+import searchInput from '../../components/searchInput/searchInput'
 import payList from './payList.vue'
 import mergePay from './mergePay.vue'
 import payErrorHandle from './payErrorHandle.vue'
 import goApproval from './goApproval.vue'
 export default {
   name: 'pay',
-  components: { topHandle, payList, mergePay, payErrorHandle, goApproval },
+  components: {
+    topHandle,
+    payList,
+    mergePay,
+    payErrorHandle,
+    goApproval,
+    searchInput
+  },
   data() {
     return {
       // dialog数据
@@ -260,7 +280,7 @@ export default {
       // 搜索数据
       search: '',
       // 分页
-      pageSize: 2,
+      pageSize: 10,
       currentPage: 1,
       total: 0,
       // 首页表格数据
@@ -301,30 +321,29 @@ export default {
   mounted() {},
   methods: {
     getData() {
-      this.getAxios(
-        '/GKPaymentMstApi/GetPaymentList',
-        {
-          queryfilter: JSON.stringify({
-            'NgInsertDt*date*ge*1': this.sbrq[0] || '',
-            'NgInsertDt*date*le*1': this.sbrq[1] || '',
-            'FDateDt*date*ge*1': this.zfrq[0] || '',
-            'FDateDt*date*le*1': this.zfrq[1] || '',
-            'FApproval*byte*eq*1': this.type,
-            'FState*byte*eq*1': this.status,
-            'FBilltype*str*eq*1': 'zjbf',
-            '[or-dictionary0]*dictionary*or': {
-              'RefbillCode*str*like*1': this.search,
-              'FCode*str*like*1': this.search
-            }
-          }),
-          PageIndex: this.currentPage - 1, //当前第几页，从0开始
-          PageSize: this.pageSize, //每页显示行数
-          uid: '521180820000001', //用户id
-          orgid: '547181121000001', //组织id
-          ryear: '2019'
-        },
-        20000
-      )
+      this.getAxios('/GKPaymentMstApi/GetPaymentList', {
+        queryfilter: JSON.stringify({
+          'NgInsertDt*date*ge*1': this.sbrq[0] || '',
+          'NgInsertDt*date*le*1': this.sbrq[1] || '',
+          'FDateDt*date*ge*1': this.zfrq[0] || '',
+          'FDateDt*date*le*1': this.zfrq[1] || '',
+          'FApproval*byte*eq*1': this.type,
+          'FState*byte*eq*1': this.status,
+          'FBilltype*str*eq*1': 'zjbf',
+          '[or-dictionary0]*dictionary*or': {
+            'RefbillCode*str*like*1': this.search,
+            'FCode*str*like*1': this.search
+          }
+          // '[or-dictionary0]*dictionary*or': {
+          //   'FState*byte*eq*1': 0
+          // }
+        }),
+        PageIndex: this.currentPage - 1, //当前第几页，从0开始
+        PageSize: this.pageSize, //每页显示行数
+        uid: '521180820000001', //用户id
+        orgid: '547181121000001', //组织id
+        ryear: '2019'
+      })
         .then(res => {
           console.log(res)
           if (res.Status == 'error') {
@@ -376,15 +395,18 @@ export default {
           return prev + cur.checked
         }, 0)
         if (handleitem.length < 1) {
-          this.$msgBox.showMsgBox({
-            content: '请至少选择一条数据进行操作。'
+          this.$msgBox.show({
+            content: '请至少选择一条数据进行操作。',
+            fn: () => {
+              console.log('test fn')
+            }
           })
           return
         }
         switch (type) {
           case 'payListData':
             if (checkedCount != 1) {
-              this.$msgBox.showMsgBox('请选择一条数据进行维护。')
+              this.$msgBox.show('请选择一条数据进行维护。')
               return
             } else if (
               handleitem[0].FApproval == 0 ||
@@ -392,7 +414,7 @@ export default {
             ) {
               this.payListData.itemType = 'notApprove'
             } else {
-              this.$msgBox.showMsgBox(`单据已经${handleitem[0].FApproval}。`)
+              this.$msgBox.show(`单据已经${handleitem[0].FApproval}。`)
               return
             }
             break
@@ -402,7 +424,7 @@ export default {
                 return item.FApproval == 9 && item.FState == 0
               })
             ) {
-              this.$msgBox.showMsgBox(
+              this.$msgBox.show(
                 '只有审批状态为“审批通过”，支付状态为“待支付”的单据，才可以使用【合并支付】。'
               )
               return
@@ -414,7 +436,7 @@ export default {
                 return item.FState == '支付异常'
               })
             ) {
-              this.$msgBox.showMsgBox('只能对支付异常的单据进行处理。')
+              this.$msgBox.show('只能对支付异常的单据进行处理。')
               return
             }
             break
@@ -425,7 +447,7 @@ export default {
               })
             ) {
               console.log(123)
-              this.$msgBox.showMsgBox('只能对待送审的单据进行处理。')
+              this.$msgBox.show('只能对待送审的单据进行处理。')
               return
             }
             break
@@ -453,6 +475,8 @@ export default {
     // 分页
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`)
+      this.pageSize = val
+      this.getData()
     },
     handleCurrentChange(val) {
       console.log(`当前页: ${val}`)
@@ -485,19 +509,22 @@ export default {
       &:not(:last-child) {
         margin-right: 60px;
       }
-      &::before {
-        content: '';
-        display: block;
-        width: 100%;
-        height: 27px;
-        background-image: url(../../assets/images/zj6.png);
-        background-repeat: no-repeat;
-        background-size: contain;
-        background-position: center 0;
+      > img {
+        width: 30px;
       }
-      img {
-        width: 100%;
-      }
+      // &::before {
+      //   content: '';
+      //   display: block;
+      //   width: 100%;
+      //   height: 27px;
+      //   background-image: url(../../assets/images/zj6.png);
+      //   background-repeat: no-repeat;
+      //   background-size: contain;
+      //   background-position: center 0;
+      // }
+      // &:first-child::before {
+      //   background-image: url(../../assets/images/3_03.png);
+      // }
     }
   }
   .tableBody table {
@@ -510,43 +537,41 @@ export default {
     border-spacing: 0;
     padding: 0 15px;
   }
+
   .container {
+    min-width: 1300px;
     .selects {
       text-align: left;
-      line-height: 30px;
-      height: 30px;
-      margin: 8px;
+      line-height: 28px;
+      height: 28px;
+      margin: 8px 0;
       box-sizing: border-box;
       font-size: 0.12rem;
       color: #757575;
       > span:not(:first-of-type) {
-        margin-left: 20px;
+        margin-left: 0px;
+        @media screen and (min-width: 1430px) {
+          margin-left: 10px;
+        }
       }
       > span + div {
         width: 150px;
-        margin-left: 10px;
+        margin-left: 0px;
+        @media screen and (min-width: 1430px) {
+          margin-left: 10px;
+        }
         &.large-input {
-          width: 210px;
+          width: 280px;
         }
       }
       .btns {
         float: right;
-        .search > span.btn {
-          float: right;
-          margin-left: -5px;
-          position: relative;
-          z-index: 2;
-          height: 30px;
-          cursor: pointer;
-          border-radius: 0;
-          background-color: $btnColor;
-        }
       }
     }
     .pages {
       position: absolute;
-      bottom: 0;
-      right: 0;
+      bottom: 10px;
+      right: 1%;
     }
   }
   .mask {
@@ -645,7 +670,7 @@ export default {
         }
         .payId {
           float: left;
-          line-height: 30px;
+          line-height: 28px;
         }
       }
       .el-collapse {
@@ -677,25 +702,12 @@ export default {
   }
   .selects {
     .el-input--mini .el-input__inner {
-      height: 30px;
-      line-height: 30px;
-    }
-    .search .el-input {
-      width: auto;
-      font-size: 0.12rem;
-    }
-    .search .el-input__inner {
-      font-size: 0.12rem;
-      border: 1px #bbb9b9 solid;
-      border-bottom-left-radius: 20px;
-      border-top-left-radius: 20px;
-      height: 30px;
-      line-height: 30px;
-      color: #333;
+      height: 28px;
+      line-height: 28px;
     }
     .el-range-editor--mini.el-input__inner {
-      height: 30px;
-      line-height: 30px;
+      height: 28px;
+      line-height: 28px;
     }
     .el-input--mini,
     .el-select-dropdown__item,
@@ -703,6 +715,18 @@ export default {
     .el-range-editor--mini .el-range-input {
       font-size: 0.12rem;
       color: #757575;
+    }
+    .el-date-editor {
+      padding: 3px 0;
+      .el-input__icon.el-range__icon.el-icon-time {
+        display: none;
+      }
+      .el-range-separator {
+        width: 10%;
+      }
+      .el-range-input {
+        width: 45%;
+      }
     }
   }
   .el-pagination {

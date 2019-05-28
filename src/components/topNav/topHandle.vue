@@ -51,13 +51,14 @@
             <el-tree
               ref="orgtree"
               node-key="label"
+         
               :props="defaultProps"
               :data="orgList"
               :expand-on-click-node="false"
               @node-click="orgChange"
               >
             </el-tree>
-            <p @click="orgTreeInit" slot="reference" class="orgName">{{org.orgName}}</p>
+            <p @click="orgTreeInit" slot="reference" class="orgName">{{org.OName}}</p>
             
           </el-popover>
           <!-- <p @click="orgTreeInit" class="orgName">{{orgName}}</p>
@@ -111,7 +112,8 @@
             
             year: '2018',//年度
             org:{
-              orgName:'组织名aklshdflhas'
+               "OCode": "10200301",
+               "OName": "温州市总本级",
             },//组织=名
             // orgTreeShow:false,//显示组织树
             orgList:[{
@@ -4534,11 +4536,13 @@
             
           },
           orgChange(val){ //组织改变
-            console.log(val);//选中的组织
-            this.$emit("year-click",{year:this.year,org:this.org});
+            this.org=val;
+            
+            console.log(val)
+            this.refresh();
           },
            yearChange(){  //年度改变
-            this.$emit("year-click",{year:this.year,org:this.org});
+            this.refresh();
           },
           //设置选中的组织
           setCheckedNodes() {
