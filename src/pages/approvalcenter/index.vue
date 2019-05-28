@@ -16,8 +16,8 @@
                 </el-col>
               </el-row>
               <!--待我审批类型-->
-              <el-row>
-                <el-col :span="24">
+              <el-row style="height: 60%;min-height: 400px">
+                <el-col :span="24" style="height: 100%">
                   <div class="approval-type">
                     <div class="title">
                       <span>待我审批类型</span>
@@ -40,8 +40,8 @@
                 </el-col>
               </el-row>
               <!--我已审批-->
-              <el-row>
-                <el-row :span="24">
+              <el-row style="height: 25%;min-height: 150px;padding: 20px">
+                <el-row :span="24" style="height: 100%">
                   <div class="approvaled">
                     <div class="title">
                       <span>我<br />已<br />审<br/>批</span>
@@ -152,7 +152,7 @@
   .approval-type{
     background-color:#EFEFEF;
     max-width: 100%;
-    height: 330px;
+    height: 100%;
     margin: 0 20px;
     border-radius: 20px;
     padding: 10px 20px;
@@ -169,12 +169,12 @@
   }
   .content{
     max-width: 100%;
-    height: 270px;
+    height: 80%;
     margin: 20px 10px;
     >.content-item{
       width:22%;
-      margin:0 1.5% 35px 1.5%;
-      height: 100px;
+      margin:0 1.5% 55px 1.5%;
+      height: 40%;
       background-color: #ffffff;
       border-radius: 5px;
       display: inline-block;
@@ -188,7 +188,7 @@
       >img{
         margin-left: -25px;
         transform: scale(0.5,0.5);
-        margin-top: 0px;
+        margin-top: 15px;
         width: 100px;
       }
       >i{
@@ -199,8 +199,8 @@
       }
       >span{
         margin-left: -15px;
-        height: 100px;
-        line-height: 100px;
+        height: 130px;
+        line-height: 130px;
         font-size: 0.24rem;
         font-family: 宋体;
         font-weight: 800;
@@ -223,14 +223,19 @@
     }
   }
   .approvaled{
-    margin: 20px;
+    /*margin:30px 1.5%;*/
+    width: 100%;
+    height: 100%;
     >div{
       display: inline-block;
       float: left;
     }
     >.title{
-      padding-top: 18px;
-      height: 135px;
+      /*padding-top: 18px;*/
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
       width: 5%;
       background-color: #B7302D;
       border-radius: 8px 0 0 8px;
@@ -238,20 +243,22 @@
       >span{
         color: #ffffff;
         width: 50px;
-        font-size: 0.16rem;
-        line-height: 25px;
+        font-size: 0.20rem;
+        line-height: 0.30rem;
       }
 
     }
     >.approval-content{
-      width: 94%;
-      height: 135px;
+      min-height: 90%;
+      width: 95%;
+      height: 100%;
       border: 2px solid #B7302D;
       border-radius: 0 8px 8px 0;
       display: flex;
+      justify-content: center;
+      align-items: center;
       >.content-item{
         width:90% ;
-        height: 100%;
         display: inline-block;
         >ul{
           list-style: none;
