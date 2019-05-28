@@ -108,9 +108,8 @@
         },
         //点击组织树确定按钮进行选中组织赋值
         confirmOrg:function(){
-             this.$emit('confirm',this.selected);
-            this.$emit('update:visible',false);
-         
+            this.$emit('confirm',this.selected);//回传数据
+            this.$emit('update:visible',false); //关闭
         },
       }
     }

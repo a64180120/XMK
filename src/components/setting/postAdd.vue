@@ -2,7 +2,7 @@
     <div class="postAdd">
         <div class="title">
             <span @click.stop="$emit('add-cancle')" class="whiteBtn">取消</span>
-            <span class="btn">保存</span>
+            <span @click="update" class="btn">保存</span>
         </div>
         <ul v-show="selected=='1'">
             <li class="auditInfo clear">
@@ -26,8 +26,8 @@
             <li class="auditInfo clear">
                 <div>启用/停用</div>
                 <div>
-                     <el-radio v-model="info.enable" label="1">启用</el-radio>
-                    <el-radio v-model="info.enable" label="2">停用</el-radio>
+                     <el-radio v-model="info.enable" label="0">启用</el-radio>
+                    <el-radio v-model="info.enable" label="1">停用</el-radio>
                 </div>
             </li>
             <li class="auditInfo clear">
@@ -51,7 +51,7 @@
                 </ul>
             </div>
             <div class="list2">
-                <ul v-for="n of 35" class="listContent">
+                <ul v-for="n of 6" class="listContent">
                     <li><el-checkbox v-model="checked"> {{n}}</el-checkbox></li>
                     <li>是是是</li>
                     <li>dasds</li>
@@ -87,7 +87,7 @@ export default {
             label: '双皮奶'
             }],
             info:{
-
+                enable:'0'
             },
             post:{
 
@@ -104,6 +104,9 @@ export default {
         },
         auditerCancle(){
             this.showAddAuditer=false;
+        },
+        update(){  //保存
+            this.$msgBox.show('保存成功!')
         }
     },
     components:{
