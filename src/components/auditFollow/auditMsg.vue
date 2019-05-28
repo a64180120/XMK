@@ -8,22 +8,27 @@
             </li>
             <li>{{info.name}}</li>
             <li>{{info.time.replace('T',' ')}}</li>
-            
+
             <li>意见: {{info.msg}}</li>
             <li >附件: <span @click.stop="showAttech" class="attenchment">{{info.att}}</span></li>
         </ul>
-        <f-dialog :visible.sync="dialogVisible" :title='"附件查看"' :width="'90%'">
-            <p class="attenchBtn"><span class="btn">下载</span></p>
-            <div>
-                <attechment></attechment>
-            </div>
-        </f-dialog>
+
+      <el-dialog class="dialog img-dialog" :visible.sync="dialogVisible" :append-to-body="true" :close-on-click-modal="false" width="40%">
+        <div slot="title" class="dialog-title">
+          <span style="float: left">查看附件</span>
+        </div>
+        <div class="btn-load">
+          <el-button class="btn">下载</el-button>
+        </div>
+        <img-view v-if="dialogVisible"></img-view>
+      </el-dialog>
     </div>
 </template>
 
 <script>
 import fDialog from "../attechment/dialog"
 import attechment from "../attechment/attechment"
+import ImgView from "../imgView/imgView";
 export default {
     name:'auditMsg',
     props:{
@@ -49,6 +54,7 @@ export default {
         },
     },
     components:{
+      ImgView,
         fDialog,
         attechment
     }
@@ -103,5 +109,11 @@ export default {
     >span{
         width:70px;
     }
+}
+.dialog-title span{
+  width: 100%;
+  text-align: left;
+  font-size: 0.16rem;
+  border-bottom: 1px solid #eaeaea;
 }
 </style>
