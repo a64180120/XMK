@@ -142,7 +142,11 @@ export default {
             ],
             orgVisible:false,//组织选择显示
             orgSelected:[],//选择的组织
-            codeList:[],//编码列表
+            codeList:[{value: '选项1',
+                label: '资金拨付审批'
+                }, {
+                value: '选项2',
+                label: '支付单审批'}],//编码列表
                         //组织列表
             orgList:[{
                 "RelatId": "",
@@ -4569,10 +4573,7 @@ export default {
             }
             if(this.selected==1){
                 if((!this.info.name)||(!this.info.code)||(!this.info.org)||(!this.info.type)){//必填信息为空
-                    this.message={
-                        msg:'请完善必填信息!',
-                        visible:true
-                    }
+                     this.$msgBox.show('请完善必填信息!')
                     return;
                 }
             }else if(str==3&&this.selected==2&&this.info.enable==0){
@@ -4580,10 +4581,7 @@ export default {
                    return el.org&&el.msg;
                 })
                 if(!p){
-                    this.message={
-                        msg:'编码与名称不能为空!',
-                        visible:true
-                    }
+                    this.$msgBox.show('编码与名称不能为空!')
                     return;
                 }
             }
@@ -4601,14 +4599,15 @@ export default {
                 if(this.money.enable){
                     if(((this.money.max||this.money.min)&&(this.money.max!=this.money.min))){
                         //执行保存
+                        this.$msgBox.show('保存成功!');
+                        this.$emit('add-cancle');
                     }else{
-                        this.message={
-                            msg:'请至少填写一个金额,且上限金额与下限金额不能相同!',
-                            visible:true
-                        }
+                        this.$msgBox.show('请至少填写一个金额,且上限金额与下限金额不能相同!')
                     }
                 }else{
                     //执行保存
+                    this.$msgBox.show('保存成功!')
+                    this.$emit('add-cancle');
                 }
             }
         },
