@@ -1,11 +1,17 @@
 <template>
   <div class="payIndex">
-    <top-handle title="支付中心在线工作平台">
+    <top-handle @refresh="getData" title="支付中心在线工作平台">
       <div class="navs">
-        <div class="nav" @click="payNav('payListData')">收付款信息维护</div>
+        <div class="nav" @click="payNav('payListData')">
+          <img src="../../assets/images/3_03.png" alt>
+          <div>收付款信息维护</div>
+        </div>
         <div class="nav" @click="payNav('mergePayData')">合并支付</div>
         <div class="nav" @click="payNav('payErrorHandleData')">异常处理</div>
-        <div class="nav" @click="payNav('approvalData')">送审</div>
+        <div class="nav" @click="payNav('approvalData')">
+          <img src="../../assets/images/zj6.png" alt>
+          <div>送审</div>
+        </div>
       </div>
     </top-handle>
     <!-- 主体内容 -->
@@ -328,6 +334,9 @@ export default {
             'RefbillCode*str*like*1': this.search,
             'FCode*str*like*1': this.search
           }
+          // '[or-dictionary0]*dictionary*or': {
+          //   'FState*byte*eq*1': 0
+          // }
         }),
         PageIndex: this.currentPage - 1, //当前第几页，从0开始
         PageSize: this.pageSize, //每页显示行数
@@ -386,7 +395,7 @@ export default {
           return prev + cur.checked
         }, 0)
         if (handleitem.length < 1) {
-          this.$msgBox.showMsgBox({
+          this.$msgBox.show({
             content: '请至少选择一条数据进行操作。',
             fn: () => {
               console.log('test fn')
@@ -397,7 +406,7 @@ export default {
         switch (type) {
           case 'payListData':
             if (checkedCount != 1) {
-              this.$msgBox.showMsgBox('请选择一条数据进行维护。')
+              this.$msgBox.show('请选择一条数据进行维护。')
               return
             } else if (
               handleitem[0].FApproval == 0 ||
@@ -405,7 +414,7 @@ export default {
             ) {
               this.payListData.itemType = 'notApprove'
             } else {
-              this.$msgBox.showMsgBox(`单据已经${handleitem[0].FApproval}。`)
+              this.$msgBox.show(`单据已经${handleitem[0].FApproval}。`)
               return
             }
             break
@@ -415,7 +424,7 @@ export default {
                 return item.FApproval == 9 && item.FState == 0
               })
             ) {
-              this.$msgBox.showMsgBox(
+              this.$msgBox.show(
                 '只有审批状态为“审批通过”，支付状态为“待支付”的单据，才可以使用【合并支付】。'
               )
               return
@@ -427,7 +436,7 @@ export default {
                 return item.FState == '支付异常'
               })
             ) {
-              this.$msgBox.showMsgBox('只能对支付异常的单据进行处理。')
+              this.$msgBox.show('只能对支付异常的单据进行处理。')
               return
             }
             break
@@ -438,7 +447,7 @@ export default {
               })
             ) {
               console.log(123)
-              this.$msgBox.showMsgBox('只能对待送审的单据进行处理。')
+              this.$msgBox.show('只能对待送审的单据进行处理。')
               return
             }
             break
@@ -500,19 +509,22 @@ export default {
       &:not(:last-child) {
         margin-right: 60px;
       }
-      &::before {
-        content: '';
-        display: block;
-        width: 100%;
-        height: 27px;
-        background-image: url(../../assets/images/zj6.png);
-        background-repeat: no-repeat;
-        background-size: contain;
-        background-position: center 0;
+      > img {
+        width: 30px;
       }
-      img {
-        width: 100%;
-      }
+      // &::before {
+      //   content: '';
+      //   display: block;
+      //   width: 100%;
+      //   height: 27px;
+      //   background-image: url(../../assets/images/zj6.png);
+      //   background-repeat: no-repeat;
+      //   background-size: contain;
+      //   background-position: center 0;
+      // }
+      // &:first-child::before {
+      //   background-image: url(../../assets/images/3_03.png);
+      // }
     }
   }
   .tableBody table {
@@ -532,20 +544,20 @@ export default {
       text-align: left;
       line-height: 28px;
       height: 28px;
-      margin: 8px;
+      margin: 8px 0;
       box-sizing: border-box;
       font-size: 0.12rem;
       color: #757575;
       > span:not(:first-of-type) {
         margin-left: 0px;
-        @media screen and (min-width: 1410px) {
+        @media screen and (min-width: 1430px) {
           margin-left: 10px;
         }
       }
       > span + div {
         width: 150px;
         margin-left: 0px;
-        @media screen and (min-width: 1410px) {
+        @media screen and (min-width: 1430px) {
           margin-left: 10px;
         }
         &.large-input {
@@ -558,8 +570,8 @@ export default {
     }
     .pages {
       position: absolute;
-      bottom: 0;
-      right: 0;
+      bottom: 10px;
+      right: 1%;
     }
   }
   .mask {

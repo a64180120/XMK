@@ -1,18 +1,18 @@
 <template>
     <section class="body">
-      <viewer :options="options"
-      :images="images"
-      @inited="inited"
-      class="images"
-              :style="{width:width}"
-      ref="viewer"
-      >
-        <template slot-scope="scope">
-          <img   src="../../assets/images/sj2.png"  style="display: none">
-          <img   src="../../assets/images/sj2.png"  style="display: none">
-          <img   src="../../assets/images/sj2.png"  style="display: none">
-        </template>
-      </viewer>
+        <viewer :options="options"
+                :images="images"
+                @inited="inited"
+                class="images"
+                :style="{width:width}"
+                ref="viewer"
+        >
+          <template slot-scope="scope">
+            <img   src="../../assets/images/sj2.png"  style="display: none">
+            <img   src="../../assets/images/by.png"  style="display: none">
+            <img   src="../../assets/logo.png"  style="display: none">
+          </template>
+        </viewer>
     </section>
 </template>
 
@@ -29,15 +29,17 @@
             default:function () {
               return []
             }
-          }
+          },
       },
       data(){
           return{
+            imgDialog:false,
             options:{
               navbar:true,
               inline:true,
               transition:true,
-              button:false
+              button:false,
+              title:false
             },
             width:'100%'
           }
@@ -58,7 +60,7 @@
               vuer.show()
             })
 
-        }
+        },
       }
     }
 </script>
@@ -68,4 +70,5 @@
     height:400px;
     padding: 50px;
   }
+
 </style>
