@@ -474,7 +474,7 @@ export default {
       console.log(type)
       switch (type) {
         case '':
-          this.$msgBox.showMsgBox({
+          this.$msgBox.show({
             content: '保存成功'
           })
         case 'approvalData':

@@ -488,7 +488,7 @@
               this.chartData.chart=[{name:'可申请',value:7000},{name:'冻结',value:5200},{name:'已使用',value:5001}];
               break;
             default:
-              this.$msgBox.showMsgBox({
+              this.$msgBox.show({
                 content: '数据获取错误'
               })
           }
@@ -591,14 +591,14 @@
               let delList=this.getCheckedList();
               console.log(delList);
               if(delList.length==0){
-                this.$msgBox.showMsgBox({
+                this.$msgBox.show({
                   content: '请选择要删除的数据。',
                   fn: () => {
                     console.log('test fn')
                   }
                 })
               }else{
-                this.$msgBox.showMsgBox({
+                this.$msgBox.show({
                   content: '删除成功。',
                   fn: () => {
                     console.log('test fn')

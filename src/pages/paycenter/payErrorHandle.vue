@@ -50,7 +50,7 @@ export default {
   methods: {
     errorHandle() {
       this.data.openDialog = false
-      this.$msgBox.showMsgBox({
+      this.$msgBox.show({
         title: '添加分类',
         content: '请填写分类名称'
       })

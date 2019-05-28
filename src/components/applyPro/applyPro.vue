@@ -98,7 +98,7 @@
                     <template v-else>
                       <td>{{index+1}}</td>
                       <td @click="showOrg(pindex,index)">
-                        {{mx.pdOrg.orgName}}
+                        {{mx.pdOrg.OName}}
                       </td>
                       <td @click="showDetailPro(pindex,index)">{{mx.pdName}}</td>
                       <td>
@@ -145,7 +145,7 @@
     <!--组织树弹窗-->
 <!--    <el-dialog id="orgdialog" width="350px" title="组织树"
                :visible.sync="orgType" :append-to-body="true">-->
-      <orgtree :visible.sync="orgType" :data="orgList" :checked-org="checkedOrgList"  :confirm="projectItem[choosedOrg.index[0]].pdList[choosedOrg.index[1]].pdOrg"></orgtree>
+      <orgtree :visible.sync="orgType" :data="orgList" :checked-org="checkedOrgList"  @confirm="confirmOrg"></orgtree>
      <!-- <span slot="footer"   style="text-align: center">
           <button class="cancelBtn"  @click="orgType=false">取消</button>
           <button class="confirmBtn" style="margin-left: 30px" @click="confirmOrg">确定</button>
@@ -204,8 +204,8 @@
             projectFileNum: 2,
             projectFileList: 2,
             pdList: [
-              {pdOrg:{orgName: '杭州市总工会',orgId:'0001'}, pdName: '未见星河', pdMoney: 1000, pdNode: ''},
-              {pdOrg:{orgName: '杭州市总工会',orgId:'0001'}, pdName: '爱上咖啡', pdMoney: 2000, pdNode: ''},
+              {pdOrg:{OName: '杭州市总工会',OCode:'0001'}, pdName: '未见星河', pdMoney: 1000, pdNode: ''},
+              {pdOrg:{OName: '杭州市总工会',OCode:'0001'}, pdName: '爱上咖啡', pdMoney: 2000, pdNode: ''},
               {countName: '小计', countMoney: 3000, countNode: ''}
             ]
           },
@@ -215,8 +215,8 @@
             projectFileNum: 0,
             projectFileList: 2,
             pdList: [
-              {pdOrg:{orgName: '杭州市总工会',orgId:'0001'}, pdName: '未见星河', pdMoney: 1000, pdNode: ''},
-              {pdOrg:{orgName: '杭州市总工会',orgId:'0001'}, pdName: '爱上咖啡', pdMoney: 2000, pdNode: ''},
+              {pdOrg:{OName: '杭州市总工会',OCode:'0001'}, pdName: '未见星河', pdMoney: 1000, pdNode: ''},
+              {pdOrg:{OName: '杭州市总工会',OCode:'0001'}, pdName: '爱上咖啡', pdMoney: 2000, pdNode: ''},
               {countName: '小计', countMoney: 3000, countNode: ''}
             ]
           }
@@ -253,14 +253,17 @@
       },
       //保存0，保存并送审1，区别：是否调用送审组件
       save:function(type){
-        this.$msgBox.showMsgBox({
+        this.$msgBox.show({
           content: '保存成功。',
           fn: () => {
             console.log('test fn')
           }
         })
         if(type==1){
-          this.approvalDataS.openDialog=true;
+          setTimeout(()=>{
+            this.approvalDataS.openDialog=true;
+          },1000)
+
         }
       },
       //新增项目
@@ -271,7 +274,7 @@
             projectFileNum: 0,
             projectFileList: 0,
             pdList: [
-              {pdOrg:{orgName: '杭州市总工会',orgId:'0001'}, pdName: '', pdMoney: '', pdNode: ''},
+              {pdOrg:{OName: '杭州市总工会',OCode:'0001'}, pdName: '', pdMoney: '', pdNode: ''},
               {countName: '小计', countMoney: 0, countNode: ''}
             ]
           };
@@ -289,7 +292,7 @@
             }
           }
           if(delList.length==0){
-            this.$msgBox.showMsgBox({
+            this.$msgBox.show({
               content: '请选择要删除的项目。',
               fn: () => {
                 console.log('test fn')
@@ -299,7 +302,7 @@
             for(var i=delList.length-1;i>=0;i--){
               this.projectItem.splice(delList[i],1);
             }
-            this.$msgBox.showMsgBox({
+            this.$msgBox.show({
               content: '删除成功。',
               fn: () => {
                 console.log('test fn')
@@ -362,7 +365,15 @@
       },
       //点击组织树确定按钮进行选中组织赋值
       confirmOrg:function(val){
-        console.log(val);
+        this.projectItem[this.choosedOrg.index[0]].pdList[this.choosedOrg.index[1]].pdOrg=val[0];
+        if(val.length>1){
+          for(var i=0; i<val.length-1;i++){
+            let sc={pdOrg:{}, pdName: '爱上咖啡', pdMoney: 2000, pdNode: ''};
+            sc.pdOrg=val[i+1];
+            this.projectItem[this.choosedOrg.index[0]].pdList.splice(this.choosedOrg.index[1],0,sc);
+            sc=null;
+          }
+        }
        /* this.orgType=false;
         this.projectItem[this.choosedOrg.index[0]].pdList[this.choosedOrg.index[1]].pdOrg.orgName=this.choosedOrg.org[0].OName;
         if(this.choosedOrg.org.length>1){
