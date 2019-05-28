@@ -18,7 +18,7 @@
         </topHandle>
         <div class="container">
             <div class="searchCon">
-                <search @btnClick="search"></search>
+                <search placeholder="流程编码/流程名称" @btnClick="search"></search>
             </div>
             <div class="content">
                 <div class="auditType">
@@ -209,7 +209,7 @@ export default {
             typeBtn:'',
             pageSize:30,
             pageIndex:1,
-            total:0,
+            total:2,
             orgVisible:false,
             orgSelected:[],
             orgList:[{

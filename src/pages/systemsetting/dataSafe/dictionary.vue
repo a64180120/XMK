@@ -20,7 +20,7 @@
             <div class="type">
                 <p>字典类型</p>
                 <ul>
-                    <li>支付方式</li>
+                    <li @click="selectType(ind)" :class="{active:ind==selected}" v-for="(type,ind) of typeList" :key="ind">{{type.name}}</li>
                 </ul>
             </div>
             <div class="content">
@@ -93,7 +93,7 @@ export default {
     data(){
         return{
             disabled:true,//不可编辑,修改
-            typeList:[],//字典类型列表
+            typeList:[{name:'支付方式',code:1},{name:'网银',code:2}],//字典类型列表
             typeInfoList:[
                 {enable:'0',code:'001',name:'mingc',msg:''},
                  {enable:'1',code:'002',name:'安抚',msg:'阿斯顿发生的发'},
@@ -106,6 +106,10 @@ export default {
     methods:{
         getData(){
             console.log(222)
+        },
+        selectType(index){
+            this.selected=index;
+            this.getData();
         },
         //类型信息新增
         addInfo(index){
