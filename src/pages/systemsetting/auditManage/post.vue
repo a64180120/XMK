@@ -10,7 +10,7 @@
                     <div class="topIcon"><img src="@/assets/images/zj2.png" alt=""></div>
                     修改
                 </div>
-                <div class="handle">
+                <div @click.stop="deletepost" class="handle">
                     <div class="topIcon"><img src="@/assets/images/zj3.png" alt=""></div>
                     删除
                 </div>
@@ -4599,6 +4599,18 @@ export default {
         },
         addCancle(){
             this.postAddShow=false;
+        },
+        deletepost(){  //岗位删除
+            this.$confirm('此操作将永久删除该岗位, 是否继续?', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+                }).then(()=>{
+                    this.$msgBox.show('删除成功!')
+                }).catch(()=>{
+
+                })
+            
         },
         getData(){
             console.log(2222)

@@ -115,26 +115,37 @@
                     :title="scope.row[scope.column.property]"
                     class="table-item"
                   >{{scope.row[scope.column.property] | NumFormat}}</div>
-                  <!-- 预算科目  -->
+                  <!-- 备注  -->
                   <div
-                    v-else-if="scope.column.property=='kemu'&& data.itemType == 'notApprove'"
+                    v-else-if="scope.column.property=='descrilbe'&& data.itemType == 'notApprove'"
                     class="table-item nopadding"
                   >
-                    <el-select v-model="scope.row[scope.column.property]" placeholder="请选择预算科目">
-                      <el-option label="501 活动支出" :value="501" disabled></el-option>
-                      <el-option label="501001 活动支出001" :value="501001"></el-option>
-                      <el-option label="501002 活动支出002" :value="501002"></el-option>
-                    </el-select>
+                    <el-input v-model="scope.row[scope.column.property]" placeholder></el-input>
+                  </div>
+                  <!-- 预算科目  -->
+                  <div v-else-if="scope.column.property=='kemu'" class="table-item nopadding">
+                    <template v-if="data.itemType == 'notApprove'">
+                      <el-select v-model="scope.row[scope.column.property]" placeholder="请选择预算科目">
+                        <el-option label="501 活动支出" :value="501" disabled></el-option>
+                        <el-option label="501001 活动支出001" :value="501001"></el-option>
+                        <el-option label="501002 活动支出002" :value="501002"></el-option>
+                      </el-select>
+                    </template>
+                    <template
+                      v-else
+                    >{{kemuList.find(item=>item.value==scope.row[scope.column.property]).label}}</template>
                   </div>
                   <!-- 支付方式 -->
-                  <div
-                    v-else-if="scope.column.property=='way'&&data.itemType == 'notApprove'"
-                    class="table-item nopadding"
-                  >
-                    <el-select v-model="scope.row[scope.column.property]" placeholder="请选择支付方式">
-                      <el-option label="同行" :value="0"></el-option>
-                      <el-option label="跨行" :value="1"></el-option>
-                    </el-select>
+                  <div v-else-if="scope.column.property=='way'" class="table-item nopadding">
+                    <template v-if="data.itemType == 'notApprove'">
+                      <el-select v-model="scope.row[scope.column.property]" placeholder="请选择支付方式">
+                        <el-option label="同行" :value="0"></el-option>
+                        <el-option label="跨行" :value="1"></el-option>
+                      </el-select>
+                    </template>
+                    <template
+                      v-else
+                    >{{wayList.find(item=>item.value==scope.row[scope.column.property]).label}}</template>
                   </div>
                   <!-- 收款方账户名称 -->
                   <div
@@ -142,6 +153,7 @@
                     class="table-item"
                     @click="selectBank(scope.row)"
                   >{{scope.row[scope.column.property]}}</div>
+
                   <!-- 其他 -->
                   <div
                     :title="scope.row[scope.column.property]"
@@ -179,48 +191,44 @@
               <template v-else-if="data.itemType == 'approval'">待审批</template>
               <template v-else>审批通过</template>
             </span>
-            <span v-if="data.itemType != 'approval'">
+            <span v-if="data.itemType != 'approval'" :class="{success:data.itemType=='success'}">
               <template v-if="data.itemType == 'error'">支付异常</template>
               <template v-else-if="data.itemType=='success'">支付成功</template>
               <template v-else>待支付</template>
             </span>
-            <span @click="showFundDetail">点击查看关联申请单信息（申请编号：{{detail.RefbillCode}}）</span>
+            <span class="dj" @click="showFundDetail">点击查看关联申请单信息（申请编号：{{detail.RefbillCode}}）</span>
           </div>
         </div>
       </div>
-      <!-- 关联申请单信息查看 -->
-      <el-dialog
-        append-to-body
-        :visible.sync="fundDetailData.openDialog"
-        width="80%"
-        :close-on-click-modal="false"
-      >
-        <div slot="title" class="dialog-title">
-          <span>查看申请</span>
-        </div>
-        <apply-bill v-if="fundDetailData.openDialog" :data="fundDetailData" :applyNum="1"></apply-bill>
-      </el-dialog>
-      <!-- 合并支付组件 -->
-      <merge-pay
-        v-if="mergePayData.openDialog"
-        v-bind="mergePayData.openDialog"
-        :data="mergePayData"
-      ></merge-pay>
-      <!-- 异常处理 -->
-      <pay-error-handle v-if="payErrorHandleData.openDialog" :data="payErrorHandleData"></pay-error-handle>
-      <!-- 送审 -->
-      <go-approval v-if="approvalData.openDialog" :father="data" :data="approvalData"></go-approval>
-      <!-- 银行档案 -->
-      <bank-choose :data="bankChooseData"></bank-choose>
-      <auditfollow :visible="showAuditfollow" @update:visible="closeAuditFollow"></auditfollow>
-      <!-- 审批弹框 -->
-      <approval-dialog
-        ref="approvalDialog"
-        :title="appDialog.title"
-        :btn-group="appDialog.btnGroup"
-        :data="approvalData"
-      ></approval-dialog>
     </el-dialog>
+    <!-- 关联申请单信息查看 -->
+    <el-dialog
+      append-to-body
+      :visible.sync="fundDetailData.openDialog"
+      width="80%"
+      :close-on-click-modal="false"
+    >
+      <div slot="title" class="dialog-title">
+        <span>查看申请</span>
+      </div>
+      <apply-bill v-if="fundDetailData.openDialog" :data="fundDetailData" :applyNum="1"></apply-bill>
+    </el-dialog>
+    <!-- 合并支付组件 -->
+    <merge-pay v-if="mergePayData.openDialog" v-bind="mergePayData.openDialog" :data="mergePayData"></merge-pay>
+    <!-- 异常处理 -->
+    <pay-error-handle v-if="payErrorHandleData.openDialog" :data="payErrorHandleData"></pay-error-handle>
+    <!-- 送审 -->
+    <go-approval v-if="approvalData.openDialog" :father="data" :data="approvalData"></go-approval>
+    <!-- 银行档案 -->
+    <bank-choose :data="bankChooseData" @getBank="getBank"></bank-choose>
+    <auditfollow :visible="showAuditfollow" @update:visible="closeAuditFollow"></auditfollow>
+    <!-- 审批弹框 -->
+    <approval-dialog
+      ref="approvalDialog"
+      :title="appDialog.title"
+      :btn-group="appDialog.btnGroup"
+      :data="approvalData"
+    ></approval-dialog>
   </div>
 </template>
 
@@ -395,126 +403,37 @@ export default {
       payList: [
         {
           choosed: false,
+          id: 0,
           depart: '杭州市总工会',
           proName: 'XXXXX',
           money: '2345.98',
           descrilbe: '备注内容',
           kemu: 501001,
           way: 0,
-          getName: '123',
-          getAccount: '321',
-          bankName: '123',
-          cardId: '321',
-          status: '支付异常',
-          reason: '支付请求响应失败/对方账号不存在',
-          reID: '201904180002'
+          getName: '',
+          getAccount: '',
+          bankName: '',
+          cardId: '',
+          status: '支付成功',
+          reason: '',
+          reID: ''
         },
         {
           choosed: false,
+          id: 1,
           depart: '杭州市总工会',
           proName: 'XXXXX',
           money: '2345.98',
           descrilbe: '备注内容',
           kemu: 501001,
           way: 0,
-          getName: '123',
-          getAccount: '321',
-          bankName: '123',
-          cardId: '321',
+          getName: '',
+          getAccount: '',
+          bankName: '',
+          cardId: '',
           status: '支付异常',
           reason: '支付请求响应失败/对方账号不存在',
           reID: '201904180002'
-        },
-        {
-          choosed: false,
-          depart: '绍兴市市总工会',
-          proName: 'XX',
-          money: '22243.9',
-          descrilbe: '备注内容多备注内容多备注内容多备注内容多备注内容多',
-          kemu: 501001,
-          way: 0,
-          getName: '312312',
-          getAccount: '12312',
-          bankName: '3123',
-          cardId: '123123'
-        },
-        {
-          choosed: false,
-          depart: '绍兴市市总工会',
-          proName: 'XX',
-          money: '22243.9',
-          descrilbe: '备注内容多备注内容多备注内容多备注内容多备注内容多',
-          kemu: 501001,
-          way: 0,
-          getName: '312312',
-          getAccount: '12312',
-          bankName: '3123',
-          cardId: '123123'
-        },
-        {
-          choosed: false,
-          depart: '绍兴市市总工会',
-          proName: 'XX',
-          money: '22243.9',
-          descrilbe: '备注内容多备注内容多备注内容多备注内容多备注内容多',
-          kemu: 501001,
-          way: 0,
-          getName: '312312',
-          getAccount: '12312',
-          bankName: '3123',
-          cardId: '123123'
-        },
-        {
-          choosed: false,
-          depart: '绍兴市市总工会',
-          proName: 'XX',
-          money: '22243.9',
-          descrilbe: '备注内容多备注内容多备注内容多备注内容多备注内容多',
-          kemu: 501001,
-          way: 0,
-          getName: '312312',
-          getAccount: '12312',
-          bankName: '3123',
-          cardId: '123123'
-        },
-        {
-          choosed: false,
-          depart: '绍兴市市总工会',
-          proName: 'XX',
-          money: '22243.9',
-          descrilbe: '备注内容多备注内容多备注内容多备注内容多备注内容多',
-          kemu: 501001,
-          way: 0,
-          getName: '312312',
-          getAccount: '12312',
-          bankName: '3123',
-          cardId: '123123'
-        },
-        {
-          choosed: false,
-          depart: '绍兴市市总工会',
-          proName: 'XX',
-          money: '22243.9',
-          descrilbe: '备注内容多备注内容多备注内容多备注内容多备注内容多',
-          kemu: 501001,
-          way: 0,
-          getName: '312312',
-          getAccount: '12312',
-          bankName: '3123',
-          cardId: '123123'
-        },
-        {
-          choosed: false,
-          depart: '绍兴市市总工会',
-          proName: 'XX',
-          money: '22243.9',
-          descrilbe: '备注内容多备注内容多备注内容多备注内容多备注内容多',
-          kemu: 501001,
-          way: 0,
-          getName: '312312',
-          getAccount: '12312',
-          bankName: '3123',
-          cardId: '123123'
         }
       ],
       fundDetailData: {
@@ -550,15 +469,28 @@ export default {
     }
   },
   created() {
-    console.log('paylist created')
+    // console.log(this.data.data)
     this.detail = Array.isArray(this.data.data)
       ? this.data.data[0]
       : this.data.data
   },
-  mounted() {
-    console.log('paylist mounted')
-  },
+  mounted() {},
   methods: {
+    getBank(e) {
+      if (this.bankChooseData.data.choosed) {
+        this.payList.forEach(item => {
+          item.getName = '杭州市总工会'
+          item.getAccount = '2019010101'
+          item.bankName = '杭州银行'
+          item.cardId = '2019010101'
+        })
+      } else {
+        this.bankChooseData.data.getName = '杭州市总工会'
+        this.bankChooseData.data.getAccount = '2019010101'
+        this.bankChooseData.data.bankName = '杭州银行'
+        this.bankChooseData.data.cardId = '2019010101'
+      }
+    },
     closeAuditFollow() {
       this.showAuditfollow = false
     },
@@ -583,14 +515,12 @@ export default {
       }
     },
     selectAll(choosed) {
-      console.log(choosed)
       this.payList.forEach(item => {
         item.choosed = choosed
       })
     },
     // 支付单详情事件
     save(type) {
-      console.log(type)
       switch (type) {
         case '':
           this.$msgBox.show({
@@ -617,8 +547,8 @@ export default {
     },
     // 选择银行
     selectBank(item) {
-      console.log(item)
       this.bankChooseData.openDialog = true
+      this.bankChooseData.data = item
     }
   },
   watch: {}
@@ -721,27 +651,33 @@ export default {
         span {
           cursor: pointer;
           margin-right: 20px;
-          &:first-of-type,
+          position: relative;
+          padding-left: 0.3rem;
+          &::before {
+            content: '';
+            display: inline-block;
+            background-image: url('../../assets/images/yk1.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: 0 center;
+            width: 0.2rem;
+            height: 0.2rem;
+            position: absolute;
+            left: 0;
+            top: 50%;
+            margin-top: -0.1rem;
+          }
           &:nth-of-type(2) {
-            position: relative;
-            padding-left: 0.3rem;
             &::before {
-              content: '';
-              display: inline-block;
-              background-image: url('../../assets/images/yk1.png');
-              background-size: contain;
-              background-repeat: no-repeat;
-              background-position: 0 center;
-              width: 0.2rem;
-              height: 0.2rem;
-              position: absolute;
-              left: 0;
-              top: 50%;
-              margin-top: -0.1rem;
+              background-image: url('../../assets/images/wzf.png');
             }
           }
           &:last-of-type {
             float: right;
+            &::before {
+              background-image: url('../../assets/images/dj.png');
+              margin-top: -0.09rem;
+            }
           }
         }
       }
@@ -839,6 +775,11 @@ export default {
             background-color: transparent;
           }
         }
+      }
+      .el-input__inner {
+        font-size: 0.14rem;
+        background-color: transparent;
+        border: 0;
       }
     }
   }

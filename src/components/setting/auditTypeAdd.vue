@@ -20,7 +20,7 @@
             </li>
             <li class="btnCon">
                 <span @click.stop="$emit('add-cancle')" class="whiteBtn">取消</span>
-                <span class="btn">确定</span>
+                <span @click="update" class="btn">确定</span>
             </li>
         </ul>
     </div>
@@ -49,7 +49,10 @@ export default {
         }
     },
     methods:{
-
+        update(){  //保存
+            this.$msgBox.show('保存成功!')
+            this.$emit('add-cancle');
+        }
     }
 }
 </script>
