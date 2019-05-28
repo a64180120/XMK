@@ -47,7 +47,7 @@
             width="300"
             placement='left'
             :popper-class="'maxH'"
-            trigger="click">
+            trigger="hover">
             <el-tree
               ref="orgtree"
               node-key="label"
@@ -58,7 +58,7 @@
               @node-click="orgChange"
               >
             </el-tree>
-            <p @click="orgTreeInit" slot="reference" class="orgName">{{org.OName}}</p>
+            <p  slot="reference" class="orgName">{{org.OName}}</p>
             
           </el-popover>
           <!-- <p @click="orgTreeInit" class="orgName">{{orgName}}</p>
@@ -4537,8 +4537,6 @@
           },
           orgChange(val){ //组织改变
             this.org=val;
-            
-            console.log(val)
             this.refresh();
           },
            yearChange(){  //年度改变
@@ -4561,30 +4559,7 @@
           refresh(){ //刷新
             this.$emit('refresh');
           },
-          //组织树懒加载方法
-          loadNode1(node, resolve) {
-            
-            if (node.level === 0) {
-              return resolve([{ Phid:'0000',OrgName:'选中' }]);
-            }
-            if (node.level > 1) return resolve([]);
-
-            setTimeout(() => {
-              const data = [{
-                OrgName: '浙江省总',
-                isLast: true,
-                Phid:'0001',
-                OrgId:'10013'
-              }, {
-                OrgName: '湖南省总',
-                
-                Phid:2,
-                OrgId:'10222'
-              }];
-
-              resolve(data);
-            }, 500);
-          }
+          
         }
     }
 </script>
@@ -4699,6 +4674,10 @@
     }
     .orgName{
       cursor: pointer;
+      max-width: 400px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
   }
 }
@@ -4726,6 +4705,7 @@
 .maxH{
   max-height: 90%;
   overflow-y: auto;
+  overflow-x: hidden;
 }
 </style>
 

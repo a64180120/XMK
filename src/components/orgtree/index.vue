@@ -27,7 +27,6 @@
         name: "orgtree",
       data(){
           return {
-            choosenOrg:{label:''},
             visible2:false,
            selected:[],
             /*orgList:[

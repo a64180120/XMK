@@ -226,7 +226,7 @@ export default {
       payListData: {
         openDialog: false,
         data: {},
-        itemType: 'error'
+        itemType: 'notApprove'
       },
       payErrorHandleData: {
         openDialog: false,
@@ -453,6 +453,7 @@ export default {
             break
         }
       }
+      this[type].data = item || handleitem
       this[type].openDialog = true
     },
     // tableData无数据处理
