@@ -1,6 +1,6 @@
 <template>
   <section>
-    <handle-btn title="审批中心在线工作平台">
+    <handle-btn title="审批中心在线工作平台" :auditBtn="true">
       <div class="top" v-if="isApproval">
          <ul>
            <li @click="aprovalItem()">
@@ -29,7 +29,7 @@
               </el-form-item>
               <el-form-item label="提留时长" class="top-form-left">
                 <el-input size="mini" v-model="form.long" style="width: 200px">
-                  <el-select v-model="select" slot="prepend" placeholder="类型" style="width: 75px">
+                  <el-select v-model="select" slot="prepend" placeholder="类型" class="select-input" style="width: 75px">
                     <el-option label="大于" value="1"></el-option>
                     <el-option label="等于" value="2"></el-option>
                     <el-option label="小于" value="3"></el-option>
@@ -243,7 +243,7 @@
           <span style="float: left">查看申请</span>
         </div>
           <applybill @showImg="showImg">
-            <div slot="btn-group">
+            <div slot="btn-group" >
               <el-button class="btn" size="mini" @click="aprovalItem">审批</el-button>
               <el-button class="btn" size="mini" style="width: 90px" @click="creatPayItem">生成支付单</el-button>
               <el-button class="btn" size="mini">打印</el-button>
@@ -254,13 +254,16 @@
       <el-dialog class="dialog img-dialog" :visible.sync="imgDialog" :close-on-click-modal="false" width="60%">
         <div slot="title" class="dialog-title">
           <span style="float: left">查看附件</span>
-          <img-view v-if="imgDialog" class="img-view"></img-view>
         </div>
+        <div class="btn-load">
+          <el-button class="btn">下载</el-button>
+        </div>
+        <img-view v-if="imgDialog" class="img-view"></img-view>
       </el-dialog>
       <!--审批弹框-->
       <approval-dialog ref="approvalDialog" :title="appDialog.title" :btn-group="appDialog.btnGroup" :data="approvalData" ></approval-dialog>
       <!--生成支付单弹框-->
-      <paylist-dialog ref="paylistDialog" :data="approvalData" ></paylist-dialog>
+      <paylist-dialog ref="paylistDialog" :data="approvalData"  @subSuc="plSubSuc()"></paylist-dialog>
       <!--查看审批流程-->
       <auditfollow :visible="visible" @update:visible="closeAuditFollow()"></auditfollow>
       <!--组织树-->
@@ -307,8 +310,7 @@
         orgType:false,//控制组织树的展示与隐藏
         orgName:'',//组织名称
         detailData:{},
-        approvalData:{
-        },
+        approvalData:{},
         openApprovalDialog:false,
         checked:'',
         form:{
@@ -320,7 +322,7 @@
         page:{
           currentPage:1,//当前页
           pageSize:[20,50,100], //每页显示多少条
-          total:200//总条数
+          total:3//总条数
         },//分页
         visible:false,
         appDialog:{
@@ -372,7 +374,7 @@
         applyDate:'2019-04-17',
         approvalStutas:'3'
       };
-      for (let i = 0;i<20;i++){
+      for (let i = 0;i<3;i++){
         if(i%4 == 1){
           this.tableData[i] = data1
         }else if (i%4 == 2) {
@@ -470,6 +472,11 @@
       showImg(file){
         console.log(file)
         this.imgDialog= true
+      },
+      //生成支付单成功
+      plSubSuc(){
+        this.$refs.paylistDialog.changeDialog()
+        this.detailDialog = false
       }
     }
   }
@@ -561,7 +568,23 @@
     font-size: 0.16rem;
     border-bottom: 1px solid #eaeaea;
   }
-  .img-view >>> .viewer-container{
-      top: 150px;
+  /*修改图片预览内部样式*/
+  .img-view >>> .viewer-backdrop{
+    background-color: #ffffff;
+  }
+  .img-view >>> .viewer-backdrop .viewer-footer .viewer-navbar{
+    background-color: #ffffff;
+  }
+  .img-view >>> .viewer-backdrop .viewer-footer .viewer-navbar ul{
+    width: 180px;
+  }
+  .img-view >>> .viewer-backdrop .viewer-footer .viewer-navbar ul li{
+    width: 50px;
+  }
+  .select-input >>> .el-input--suffix{
+    width: 75px!important;
+  }
+  .btn-load{
+    text-align: right;
   }
 </style>

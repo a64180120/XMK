@@ -5,7 +5,7 @@
         width="37.5%"
         :close-on-click-modal="false"
         class="dialog"
-        :append-to-body="true"
+        :append-to-body="false"
       >
         <div slot="title" class="dialog-title">
           <p>查看</p>

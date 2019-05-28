@@ -35,7 +35,7 @@
                     </el-select>
                 </div>
                  <div class="rightBtn">
-                    <search @btnClick="searchFn"></search>
+                    <search placeholder='岗位代码/岗位名称' @btnClick="searchFn"></search>
                 </div>
                 
             </div>
@@ -119,8 +119,8 @@
                                         备注
                                         </td>
                                         <td class="postRadio">
-                                        <el-radio v-model="post.enable" value='0'>启用</el-radio>
-                                        <el-radio v-model="post.enable" value='1'>停用</el-radio>
+                                        <el-radio v-model="post.enable" label='0'>启用</el-radio>
+                                        <el-radio v-model="post.enable" label='1'>停用</el-radio>
                                         </td>
                                     </tr>
                                 </thead>
@@ -167,13 +167,13 @@ export default {
             search:{org:[]},
             indeterminate:false,
             checked:false,
-            postList:[{Phid:111},{Phid:222},{Phid:333}],
+            postList:[{Phid:111,enable:'0'},{Phid:222,enable:'1'},{Phid:333,enable:'1'}],
             choosedItem:[],
             postAddShow:false,
             postBtn:'',
             pageSize:30,
             pageIndex:1,
-            total:0,
+            total:3,
             orgSelected:[],
             orgList:[{
                 "RelatId": "",

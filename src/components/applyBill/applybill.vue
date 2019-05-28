@@ -188,16 +188,13 @@
             msg:'',//删除提示消息
             time:3,//倒计时
             data:{applyDepart:'浙江省总工会本级办公室',
-              applyDate:new Date().getDate(),
-              applyAmount:'100000'},
+              applyDate:new Date().getFullYear()+"-"+ (new Date().getMonth()+1)+"-"+ new Date().getDate(),
+              applyAmount:'100,000.00'},
             projectItem: [{
               projectName: 'XXXXX项目A',
               projectFolder: ['附件1', '附件2', '附件3', '附件4']
             }, {
               projectName: 'XXXXX项目B',
-              projectFolder: ['附件1', '附件2', '附件3', '附件4']
-            }, {
-              projectName: 'XXXXX项目C',
               projectFolder: ['附件1', '附件2', '附件3', '附件4']
             }]
           }

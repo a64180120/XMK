@@ -29,7 +29,7 @@
             </div>
             <div class="table">
               <el-table class="table-next"
-                        :data="subData"
+                        :data="subPeople"
                         :border="true"
                         @select="handleSelect"
                         @select-all="handleSelectAll"
@@ -58,7 +58,7 @@
                 <el-radio v-if="!isApproval" v-model="handleValue" label="2">不同意</el-radio>
               </li>
               <li>
-                <span>附单据{{}}张</span>
+                <span>附单据 {{list}} 张</span>
               </li>
             </ul>
           </div>
@@ -81,15 +81,23 @@
       },
       data(){
         return{
+          list:2,
           textare:'',
           openDialog:false,
           handleValue:'',
           subData:[{
             code:"0001",
-            name:"ZXXXXX"
+            name:"活动资金"
           },{
-            code:"0001",
-            name:"FASAS"
+            code:"0002",
+            name:"活动资金"
+          }],
+          subPeople:[{
+            code:'0001',
+            name:'王刚'
+          },{
+            code:'0002',
+            name:'李明'
           }]
         }
       },
