@@ -60,10 +60,10 @@
                                         <el-checkbox v-model="type.checked" @change="typechoose(type)">{{n+1}}</el-checkbox>
                                         </td>
                                         <td>
-                                        流程代码
+                                        支付审批
                                         </td>
                                         <td>
-                                        流程名称
+                                        支出单据
                                         </td>
                                     </tr>
                                 </thead>
@@ -187,7 +187,7 @@
 <script>
 import auditAdd from "@/components/setting/auditAdd"
 import audittypeAdd from "@/components/setting/auditTypeAdd"
-import Orgtree from "@/components/orgtree/index";
+import Orgtree from "@/components/orgtree/index"
 import fDialog from "@/components/attechment/dialog"
 import topHandle from '@/components/topNav/topHandle'
 import search from '@/components/searchInput/searchInput'

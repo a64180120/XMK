@@ -39,7 +39,13 @@ export default {
         return{
             orderType:'',
             auditType:'',
-            options:[]
+            options:[
+                {value:'1',label:'资金拨付单'},
+                {value:'2',label:'支付单'},
+                {value:'3',label:'项目用款单'},
+                {value:'4',label:'预算审核单'},
+                {value:'5',label:'项目申报单'}
+            ]
         }
     },
     methods:{

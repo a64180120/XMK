@@ -1,10 +1,10 @@
 <template>
     <div class="navbar">
         <ul>
-            <li @mouseenter="active=true" @mouseleave="active=false" class="navitem active" v-for="(item,index) of navlist" :key="index">
+            <li @mouseenter="liActive(item,true)" @mouseleave="liActive(item,false)" class="navitem active" v-for="(item,index) of navlist" :key="index">
                 <div @click.stop="routerto(item.path)">
-                    <img v-show="!active" src="../../assets/images/1_03.png" alt="">
-                    <img v-show="active" src="../../assets/images/2_03.png" alt="">
+                    <img v-show="!item.active" src="../../assets/images/1_03.png" alt="">
+                    <img v-show="item.active" src="../../assets/images/2_03.png" alt="">
                     <span :title="item.name">{{item.name}}</span>    
                 </div>
                 
@@ -35,6 +35,9 @@ export default {
                 this.$router.push(url);
             }
             
+        },
+        liActive(item,bool){
+            this.$set(item,'active',bool);
         }
     }
 }
@@ -99,6 +102,9 @@ export default {
                         height:40px;
                         line-height: 40px;
                         text-align: center; 
+                        &:active{
+                            background: #59abf1;
+                        }
                     }
                 }
             }
