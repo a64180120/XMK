@@ -17,10 +17,10 @@
             </div>
         </topHandle>
         <div class="container">
-            <order :type="'handle'" ref="order"/>
+            <order :type="'handle'"  ref="order"/>
         </div>
         <el-dialog :title="'银行账号'+(handleBtn=='add'?'新增':'修改')" :visible.sync="accountAddShow">
-            <accountAdd :type="handleBtn"></accountAdd>
+            <accountAdd @add-cancle="addCancle" :type="handleBtn" :info="info"></accountAdd>
         </el-dialog>
     </div>
 </template>
@@ -37,6 +37,7 @@ export default {
         return{ 
             handleBtn:'',
             accountAddShow:false,
+            info:''
         }
     },
     methods:{
@@ -45,7 +46,20 @@ export default {
         },
         showAccountAdd(val){
             this.handleBtn=val;
+            if(val=='update'){
+                 this.info=this.$refs.order.choosedItem[0];
+                 this.info.OCode=this.info.OrgCode;
+                 this.info.FLifecycle=this.info.FLifecycle==0?'0':'1';
+                 console.log(this.info);
+            }else{
+                this.info={FLifecycle:'1'};
+            }
             this.accountAddShow=true;
+        },
+        addCancle(){
+            console.log(1111)
+            this.accountAddShow=false;
+            this.refresh();
         }
     },
     mounted(){
