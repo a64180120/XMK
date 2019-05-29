@@ -203,8 +203,8 @@
               <td>
                 {{item.billName}}
               </td>
-              <td>
-                {{item.billMoney}}
+              <td class="right">
+                {{item.billMoney | NumFormat}}
               </td>
               <td>
                 {{item.billDate}}
@@ -452,7 +452,7 @@
       },
       components:{Applypro, Orgtree, Applybill, tophandle,pieChart,goApproval,Auditfollow,ApprovalDialog},
       mounted(){
-          this.getData();
+          this.getDataC();
           //this.dataFuc();
         this.getCheckList(this.dataList.total);
       },
@@ -548,7 +548,15 @@
           }
           return billName;
         },
+        getDataC:function(){
+          let param={uid:'488181024000001'};
+          this.$axios.get('GQT/CorrespondenceSettings2Api/GetSBUnit',{params:param}).then(res=>{
+            console.log(res);
+          }).catch(err=>{
+            console.log(err);
+          })
 
+        },
         getData:function(){
           let param={
             PageIndex:this.searchData.pageSearch.pageIndex,
@@ -562,7 +570,7 @@
               MaxAmount:this.searchData.money.emoney,
               MinAmount:this.searchData.money.emoney}
           }
-          this.$axios.get('/PaymentMstApi/GetPaymentMstList',{params:param}).then(res=>{
+          this.$axios.get('GBK/PaymentMstApi/GetPaymentMstList',{params:param}).then(res=>{
             console.log(res);
           }).catch(err=>{
             console.log(err);

@@ -10,20 +10,22 @@
         <div slot="title" class="dialog-title">
           <p>查看</p>
         </div>
-        <approval-bill @dialogFlow="searchFlow()"></approval-bill>
+        <approval-bill @dialogFlow="searchFlow()" @nuargeen="backAproval" :backPeople="backPeople"></approval-bill>
         <div class="approval-btn">
           <el-button size="small" type="primary" @click="cancel()">取消</el-button>
           <el-button size="small" type="primary" @click="submit()">确认</el-button>
         </div>
       </el-dialog>
+      <back-approval :visible.sync="visible" @getBackPeople="getBackPeople"></back-approval>
     </section>
 </template>
 
 <script>
     import ApprovalBill from "../../components/approvalBill/approvalBill";
+    import BackApproval from "../../components/backApproval/backApproval";
     export default {
         name: "approvalDialog",
-      components: {ApprovalBill},
+      components: {BackApproval, ApprovalBill},
       props:{
 
          data:{
@@ -37,6 +39,7 @@
       },
       data(){
           return{
+            visible:false,
             textare:'',
             openDialog:false,
             handleValue:'',
@@ -46,7 +49,8 @@
             },{
               code:"0001",
               name:"FASAS"
-            }]
+            }],
+            backPeople:[]
           }
       },
       methods:{
@@ -72,10 +76,12 @@
         //取消
         cancel(){
           this.openDialog = false
+          this.visible = false
         },
         //确认
         submit(){
           let that= this
+          this.visible = false
           this.$msgBox.show({
             content:'审批支付单成功',
             fn:function () {
@@ -83,7 +89,19 @@
               that.$emit('subSuc')
             }
           })
-        }
+        },
+        backAproval(val){
+          if (val[0] != undefined ){
+            this.visible = true
+          } else {
+            this.visible = false
+            this.backPeople = []
+          }
+        },
+        getBackPeople(item){
+          this.$set(this.backPeople,0,item.name)
+          console.log(this.backPeople)
+        },
       }
     }
 </script>
