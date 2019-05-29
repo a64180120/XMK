@@ -109,6 +109,9 @@ export default {
     },
     father: {
       default: null
+    },
+    reSetting: {
+      default: false
     }
   },
   data() {
@@ -182,11 +185,18 @@ export default {
       this.$msgBox.show({
         content: '送审成功',
         fn: () => {
-          if (vm.father) vm.father.openDialog = false
+          if (vm.reSetting) {
+            vm.father.itemType = 'error'
+          } else {
+            vm.father ? (vm.father.openDialog = false) : ''
+          }
           vm.data.openDialog = false
         }
       })
     }
+  },
+  created() {
+    console.log(this.father, this.reSetting)
   },
   mounted() {
     this.$nextTick(() => {

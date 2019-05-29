@@ -9,20 +9,22 @@
       <div slot="title" class="dialog-title">
         <p>审批并生成支付单</p>
       </div>
-      <approval-bill></approval-bill>
+      <approval-bill @dialogFlow="searchFlow()" @nuargeen="backAproval" :backPeople="backPeople"></approval-bill>
       <div class="approval-btn">
         <el-button size="small" type="primary" @click="cancel()">取消</el-button>
         <el-button size="small" type="primary" @click="submit()">生成支付单</el-button>
       </div>
     </el-dialog>
+    <back-approval :visible.sync="visible" @getBackPeople="getBackPeople"></back-approval>
   </section>
 </template>
 
 <script>
   import ApprovalBill from "../../components/approvalBill/approvalBill";
+  import BackApproval from "../../components/backApproval/backApproval";
   export default {
     name: "paylistDialog",
-    components: {ApprovalBill},
+    components: {BackApproval, ApprovalBill},
     props:{
       data:{
         type:Object,
@@ -34,7 +36,9 @@
     },
     data(){
       return{
+        visible:false,
         textare:'',
+        backPeople:[],
         openDialog:false,
         handleValue:'',
         subData:[{
@@ -77,6 +81,7 @@
       //生成支付单
       submit(){
         let that = this
+        this.visible = false
         this.$msgBox.show({
           content:'生成支付单成功',
           fn:function () {
@@ -187,7 +192,19 @@
         }).catch(err=>{
           console.log(err)
         })
-      }
+      },
+      backAproval(val){
+        if (val[0] != undefined ){
+          this.visible = true
+        } else {
+          this.visible = false
+          this.backPeople = []
+        }
+      },
+      getBackPeople(item){
+        this.$set(this.backPeople,0,item.name)
+        console.log(this.backPeople)
+      },
     }
   }
 </script>
