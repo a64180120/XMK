@@ -41,7 +41,7 @@ export default {
     },
     methods:{
         refresh(){
-
+            this.$refs.order.getData();
         },
         showAccountAdd(val){
             this.handleBtn=val;

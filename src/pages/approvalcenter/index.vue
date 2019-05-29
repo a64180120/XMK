@@ -71,28 +71,28 @@
           return{
             myApproval:[{
               label:"资金拨付审批",
-              approvalValue:'6',
+              approvalValue:'12',
               path:'/payfundapproval'
             },{
               label:"支付单审批",
-              approvalValue:'0',
+              approvalValue:'12',
               path:'/paylistapproval'
             },{
               label:"项目用款审批",
-              approvalValue:'88',
+              approvalValue:'0',
               path:''
             },{
               label:"项目申报审批",
-              approvalValue:'10',
+              approvalValue:'100',
               path:''
             },{
               label:"年度预算审批",
-              approvalValue:'0',
+              approvalValue:'1',
               path:''
             },],
             approvaled:[{
               label:"资金拨付单",
-              value:"67",
+              value:"12",
               path:'/payfundapproval'
             },{
               label:"支付单",
@@ -100,7 +100,7 @@
               path:'/paylistapproval'
             },{
               label:"项目用款单",
-              value:"56",
+              value:"0",
               path:''
             }]
           }

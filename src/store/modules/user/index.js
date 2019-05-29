@@ -8,7 +8,9 @@ const state = {
     //用户id
     userid: "",
     //用户名称
-    username: ""
+    username: "",
+    //组织列表
+    orglist:[]
 };
 
 //计算获取取新数据
@@ -31,6 +33,10 @@ const mutations = {
             state.token='';
             Session.removeToken();
         }
+    },
+    //组织列表
+    setOrglist(state,data){
+        state.orglist=data;
     }
 };
 
