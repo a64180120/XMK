@@ -4,20 +4,20 @@
             <li>
                 <div>所属组织:</div>
                 <div class="orgName" @click="orgTree()">
-                    <span v-show="!info.org">请选择组织</span>
-                    <span v-for="org of info.org">{{org.OName}}</span>
+                    <span v-show="!info.OrgName">请选择组织</span>
+                    <span>{{info.OrgName}}</span>
                 </div>
             </li>
             <li>
-                <div>银行账号名称:</div>
+                <div>银行账户名称:</div>
                 <div>
-                    <el-input v-model="info.name" placeholder="请输入银行账户名称"></el-input>
+                    <el-input v-model="info.FBankname" placeholder="请输入银行账户名称"></el-input>
                 </div>
             </li>
             <li>
                 <div>银行账号:</div>
                 <div>
-                    <el-input v-model="info.name" placeholder="请输入银行账号"></el-input>
+                    <el-input v-model="info.FAccount" placeholder="请输入银行账号"></el-input>
                 </div>
             </li>
             <li>
@@ -29,32 +29,47 @@
             <li>
                 <div>银行行号:</div>
                 <div>
-                    <el-input v-model="info.name" placeholder="请输入银行行号"></el-input>
+                    <el-input v-model="info.FBankcode" placeholder="请输入银行行号"></el-input>
                 </div>
             </li>
             <li>
                 <div>所在城市名称:</div>
-                <div></div>
+                <div>
+                    <el-input v-model="info.FCity" placeholder="请输入所在城市"></el-input>
+                </div>
             </li>
             <li>
                 <div>启用/通用:</div>
                 <div>
-                    <el-radio v-model="info.enable" value='0'>启用</el-radio>
-                    <el-radio v-model="info.enable" value='1'>停用</el-radio>
+                    <el-radio v-model="info.FLifecycle" label='1'>启用</el-radio>
+                    <el-radio v-model="info.FLifecycle" label='0'>停用</el-radio>
                 </div>
             </li>
         </ul>
         <p>
-            <span class="whiteBtn">取消</span>
-            <span class="btn">保存</span>
+            <span @click="$emit('add-cancle')" class="whiteBtn">取消</span>
+            <span @click="update" class="btn">保存</span>
         </p>
+         <el-dialog class="bankAddOrg" :append-to-body="true" :visible.sync="orgVisible"  width="30%" title="组织选择">
+            <el-tree
+                ref="orgtree"
+                :props="{ children: 'children',label: 'OName' }"
+                node-key="OCode"
+                :default-checked-keys="info?info:''"
+                :model="false"
+                :data="orgList"
+                :expand-on-click-node="false"
+                @node-click="orgChange"
+                ></el-tree>
+        </el-dialog>
         <!--组织树弹窗   visible:显示,,,,@confirm接收选中的值   data组织列表  checked-org当前选中的组织的code列表-->
-        <orgtree :visible.sync="orgVisible"  @confirm="getOrg" :data="orgList" :checked-org="orgSelected"></orgtree>
+        <!-- <orgtree :visible.sync="orgVisible"  @confirm="getOrg" :data="orgList" :checked-org="orgSelected"></orgtree> -->
     </div>
 </template>
 
 <script>
 import Orgtree from "@/components/orgtree/index"
+import {BankAccountSave} from '@/api/bankaccount'
 import {mapState} from 'Vuex'
 export default {
     name:'bankaccountAdd',
@@ -62,11 +77,16 @@ export default {
         type:{
             type:String,
             default:'add'
+        },
+        info:{
+            type:Object,
+            default(){
+                return {FLifecycle:'1'}
+            }
         }
     },
     data(){
         return{
-            info:{},
             orgVisible:false,
             orgSelected:[],
         }
@@ -77,18 +97,40 @@ export default {
         })
     },
     methods:{
-        getOrg(val){
-            this.info.org=val;  
+        orgChange(val){
+            this.info.OrgPhid=val.PhId; 
+            this.info.OrgCode=val.OCode; 
+            this.info.OrgName=val.OName; 
+            this.orgVisible=false; 
         },
         orgTree(){
-            if(this.info.org){
-                 this.orgSelected=[this.info.org.OCode];//需要code的列表
-            } 
+            // if(this.info.org){
+            //      this.orgSelected=[this.info.org.OCode];//需要code的列表
+            // } 
             this.orgVisible=true;
+        },
+        update(){
+            let data={
+                infoData:[{
+                    OrgPhid:this.info.OrgPhid,
+                    OrgCode:this.info.OrgCode,
+                    FBankname:this.info.FBankname,
+                    FAccount:this.info.FAccount,
+                    FBankcode:this.info.FBankcode,
+                    FCity:this.info.FCity,
+                    FLifecycle:this.info.FLifecycle,
+                    PersistentState:this.type=="add"?'1':'2'
+                }]       
+            }
+            BankAccountSave(data).then(res=>{
+                console.log(res)
+            }).catch(err=>{
+
+            })
         }
     },
     mounted(){
-        
+        console.log(this.info)
     },
     components:{
         Orgtree
@@ -132,3 +174,12 @@ export default {
     height:98%;
 }
 </style>
+<style>
+
+.bankAddOrg .el-dialog .el-dialog__body {
+    overflow: auto;
+    max-height:500px;
+}
+
+</style>
+

@@ -3433,26 +3433,26 @@
             })
         },
         mounted(){
-            // if(!this.orglist){
-            //     this.getOrganize();
-            // }  
+            if(!this.orglist){
+                this.getOrganize();
+            }  
         },
         methods:{
           goHome(){
-            window.open('http://218.108.53.106:80/ghc/web','_self')
+            window.open('http://218.108.53.106/ghc/web','_self')
           },
-            getOrganize(){
-                organizeTree().then(res=>{
-                    if(res.Status=='error'){
-                        this.$msgBox.show(res.Msg);
-                    }else{
-                      console.log(res.Record)
-                        this.$store.commit('user/setOrglist',res.Record);
-                    }
-                }).catch(err=>{
-                     this.$msgBox.show('获取组织列表失败!');
-                })
-            },
+          getOrganize(){
+              this.$store.commit('user/setOrglist',this.orgList);
+              // organizeTree().then(res=>{
+              //     if(res.Status=='error'){
+              //         this.$msgBox.show(res.Msg);
+              //     }else{
+              //         this.$store.commit('user/setOrglist',res.Record);
+              //     }
+              // }).catch(err=>{
+              //      this.$msgBox.show('获取组织列表失败!');
+              // })
+          },
           orgTreeInit(){
             //this.orgTreeShow=true;
             this.$refs.orgtree.setCheckedKeys([]);//清空选择
@@ -3498,7 +3498,7 @@
 }
 .handleBtn {
   width: 100%;
-  height: 100px;
+  height: 110px;
   overflow: hidden;
   background: url(../../assets/images/bj.gif);
   box-shadow: 0px 1px 5px #959595;
@@ -3514,6 +3514,7 @@
     width: 100%;
     height: 60px;
     font-size: 0.16rem;
+    margin-top:10px;
     position: relative;
     > div {
       margin: 0 auto;
