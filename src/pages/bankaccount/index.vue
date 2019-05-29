@@ -47,10 +47,16 @@ export default {
         showAccountAdd(val){
             this.handleBtn=val;
             if(val=='update'){
+             
                  this.info=this.$refs.order.choosedItem[0];
+                 console.log(this.info)
+                    if(this.$refs.order.choosedItem.length>1){
+                        this.$msgBox.show('请只选择一行数据!')
+                        return;
+                    }
                  this.info.OCode=this.info.OrgCode;
                  this.info.FLifecycle=this.info.FLifecycle==0?'0':'1';
-                 console.log(this.info);
+                 
             }else{
                 this.info={FLifecycle:'1'};
             }
