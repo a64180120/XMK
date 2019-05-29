@@ -214,7 +214,7 @@
       <apply-bill v-if="fundDetailData.openDialog" :data="fundDetailData" :applyNum="1"></apply-bill>
     </el-dialog>
     <!-- 合并支付组件 -->
-    <merge-pay v-if="mergePayData.openDialog" v-bind="mergePayData.openDialog" :data="mergePayData"></merge-pay>
+    <merge-pay v-if="mergePayData.openDialog" :father="data" :data="mergePayData"></merge-pay>
     <!-- 异常处理 -->
     <pay-error-handle v-if="payErrorHandleData.openDialog" :data="payErrorHandleData"></pay-error-handle>
     <!-- 送审 -->
@@ -469,10 +469,24 @@ export default {
     }
   },
   created() {
-    // console.log(this.data.data)
+    console.log(this.data.data)
     this.detail = Array.isArray(this.data.data)
       ? this.data.data[0]
       : this.data.data
+    this.getAxios('/GKPaymentMstApi/GetPayment4Zjbf', {
+      // id: this.data.data.Phid,
+      // id: this.data.data.Phid,
+      id: 401190528000001,
+      uid: '521180820000001', //用户id
+      orgid: '547181121000001', //组织id
+      ryear: '2019' //年度
+    })
+      .then(res => {
+        console.log(res)
+      })
+      .catch(err => {
+        console.log(err)
+      })
   },
   mounted() {},
   methods: {
@@ -670,6 +684,9 @@ export default {
           &:nth-of-type(2) {
             &::before {
               background-image: url('../../assets/images/wzf.png');
+            }
+            &.success::before {
+              background-image: url('../../assets/images/zfcg.png');
             }
           }
           &:last-of-type {
