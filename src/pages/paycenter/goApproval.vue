@@ -31,7 +31,10 @@
                 class="table-content"
                 :data="subData"
                 :border="true"
+                highlight-current-row
+                @current-change="handleCurrentChange"
                 header-row-class-name="table-header"
+                ref="content"
               >
                 <el-table-column prop="code" width="80" align="center" label="流程编码"></el-table-column>
                 <el-table-column prop="name" align="center" label="流程名称"></el-table-column>
@@ -53,7 +56,7 @@
             <div class="table">
               <el-table
                 class="table-next"
-                :data="subData"
+                :data="nextData"
                 :border="true"
                 @select="handleSelect"
                 @select-all="handleSelectAll"
@@ -120,9 +123,32 @@ export default {
           name: 'ZXXXXX'
         },
         {
-          code: '0001',
+          code: '0002',
           name: 'FASAS'
         }
+      ],
+      nextData: [],
+      nextDataList: [
+        [
+          {
+            code: '1001',
+            name: '流程103'
+          },
+          {
+            code: '1002',
+            name: '流程101'
+          }
+        ],
+        [
+          {
+            code: '2001',
+            name: '流程203'
+          },
+          {
+            code: '2002',
+            name: '流程201'
+          }
+        ]
       ]
     }
   },
@@ -145,6 +171,11 @@ export default {
     cancel() {
       this.openDialog = false
     },
+    handleCurrentChange(newRow, oldRow) {
+      this.nextData = this.nextDataList[
+        this.subData.findIndex(item => item.code == newRow.code)
+      ]
+    },
     //确认
     submit() {
       var vm = this
@@ -157,7 +188,11 @@ export default {
       })
     }
   },
-  created() {}
+  mounted() {
+    this.$nextTick(() => {
+      this.$refs.content.setCurrentRow(this.subData[0])
+    })
+  }
 }
 </script>
 
