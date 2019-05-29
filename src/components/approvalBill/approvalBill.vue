@@ -25,10 +25,10 @@
           </div>
           <div class="next-approval">
             <div class="title">
-              <span>■</span>接受人
+              <span>■</span>下一审批人
             </div>
             <div class="table">
-              <el-table class="table-next"
+              <el-table v-if="true" class="table-next"
                         :data="subPeople"
                         :border="true"
                         @select="handleSelect"
@@ -41,9 +41,13 @@
                 <el-table-column prop="name" align="center"  label="姓名">
                 </el-table-column>
               </el-table>
+              <div v-else class="sptg">
+                <img src="../../assets/images/sptg.png" >
+              </div>
             </div>
           </div>
         </div>
+        <div style="clear:both"></div>
         <div class="handle">
           <div v-show="!isApproval"  class="title">
             <span>■</span>审批处理
@@ -56,6 +60,7 @@
                 </div>
                 <el-radio v-if="!isApproval" v-model="handleValue" label="1">同意</el-radio>
                 <el-radio v-if="!isApproval" v-model="handleValue" label="2">不同意</el-radio>
+                <span v-if="backPeople[0] !== undefined " style="color: red">(本单据将退回给“{{backPeople[0]}}”)</span>
               </li>
               <li>
                 <span>附单据 {{list}} 张</span>
@@ -79,6 +84,12 @@
         isApproval:{//送审true 审核 false
           type:Boolean,
           default:false
+        },
+        backPeople:{
+          type: Array,
+          default: function () {
+            return []
+          }
         }
       },
       data(){
@@ -101,6 +112,15 @@
             code:'0002',
             name:'李明'
           }]
+        }
+      },
+      watch:{
+        handleValue(val){
+          if(val === "2" ){
+            this.$emit("nuargeen",val)
+          }else {
+            this.$emit("nuargeen",[])
+          }
         }
       },
       methods:{
@@ -187,6 +207,14 @@
         }
         >.table{
           padding-right: 10px;
+          >.sptg{
+            width: 100%;
+            min-height:100px;
+            text-align: center;
+            >img{
+              width: 65%
+            }
+          }
         }
       }
     }
