@@ -18,11 +18,20 @@
                     </div>
                     <div class="content">
                       <ul>
-                        <li class="content-item" v-for="i in 7">
-                          <div class="item-box">
-                            <img src="../../assets/images/yk1.png">
-                            <p>资金拨付审批</p>
-                            <div class="triangle"></div>
+                        <li class="content-item" v-for="(item,idx) in myApproval">
+                          <div class="item-box" @click="openApprovalList(item.path)">
+                            <img v-if="idx === 0" src="../../assets/images/yk1(w).png">
+                            <img v-else-if="idx === 1" src="../../assets/images/yk(w).png">
+                            <img v-else-if="idx === 2" src="../../assets/images/pz(w).png">
+                            <img v-else-if="idx === 3"  src="../../assets/images/y1(w).png">
+                            <img v-else-if="idx === 4" src="../../assets/images/ys(w).png">
+                            <p>{{item.label}}</p>
+                            <div v-if="item.approvalValue != 0" class="triangle"></div>
+                            <div v-if="item.approvalValue != 0" class="inner-triangle"></div>
+                            <div v-if="item.approvalValue >0" class="number" :class="[item.approvalValue< 10?'position1':(item.approvalValue< 100 && item.approvalValue>9?'position2':'position3')]">
+                              <span v-if="item.approvalValue<100">{{item.approvalValue}}</span>
+                              <span v-else>99+</span>
+                            </div>
                           </div>
                         </li>
                       </ul>
@@ -36,18 +45,12 @@
                       <span>我已审批</span>
                     </div>
                     <div class="approval-content">
-                      <div class="content-item">
-                        <ul>
-                          <li  v-for="(item,idx) in approvaled">
-                            <span class="item-value" :class="[idx === 0?'blue':(idx === 1?'green':'orange')]">{{item.value}}</span>
-                            <br>
-                            <span class="item-title" @click="approvaledClick(item.path)">{{item.label}}</span>
-                          </li>
-                        </ul>
-                      </div>
-                      <div class="detail-all">
-                        <span>查看全部</span>
-                      </div>
+                      <ul>
+                        <li v-for="(item,idx) in approvaled" v>
+                          <span :class="[idx %3 === 0 ? 'blue':(idx %3 === 1 ? 'green':'orange')]">{{item.value}}</span>
+                          <p :class="[idx %3 === 0 ? 'blue':(idx %3 === 1 ? 'green':'orange')]" @click="approvaledClick(item.path,item.label)">{{item.label}}</p>
+                        </li>
+                      </ul>
                     </div>
                   </div>
                 </el-col>
@@ -68,28 +71,28 @@
           return{
             myApproval:[{
               label:"资金拨付审批",
-              approvalValue:'6',
+              approvalValue:'12',
               path:'/payfundapproval'
             },{
               label:"支付单审批",
-              approvalValue:'0',
+              approvalValue:'12',
               path:'/paylistapproval'
             },{
               label:"项目用款审批",
-              approvalValue:'6',
+              approvalValue:'0',
               path:''
             },{
               label:"项目申报审批",
-              approvalValue:'200',
+              approvalValue:'100',
               path:''
             },{
               label:"年度预算审批",
-              approvalValue:'0',
+              approvalValue:'1',
               path:''
             },],
             approvaled:[{
               label:"资金拨付单",
-              value:"67",
+              value:"12",
               path:'/payfundapproval'
             },{
               label:"支付单",
@@ -97,7 +100,7 @@
               path:'/paylistapproval'
             },{
               label:"项目用款单",
-              value:"56",
+              value:"0",
               path:''
             }]
           }
@@ -169,17 +172,24 @@
         width: 100%;
         text-align: left;
         >.content-item{
+          vertical-align: bottom;
           display: inline-block;
+          height: 250px;
           width: 20%;
           margin:50px 0 0 0;
           padding: 0 2.5%;
           >.item-box{
             width: 100%;
-            height: 250px;
+            height: 100%;
             background-color: #7AB396;
             border-radius: 8px;
             text-align: center;
             padding-top: 70px;
+            position: relative;
+            &:hover{
+              box-shadow: 0 0 10px #7AB396;
+              cursor: pointer;
+            }
             >img{
               width: 100px;
             }
@@ -192,8 +202,43 @@
             >.triangle{
               width: 0;
               height: 0;
-              border: 50px s;
-
+              border: 30px solid #6c8e8175;
+              border-left: 30px solid transparent;
+              border-bottom: 30px solid transparent;
+              border-radius:0 8px 0 0;
+              position: absolute;
+              top:0;
+              right: 0;
+            }
+            >.inner-triangle{
+              width: 0;
+              height: 0;
+              border: 28px solid #3294E8;
+              border-left: 28px solid transparent;
+              border-bottom: 28px solid transparent;
+              border-radius:0 8px 0 0;
+              position: absolute;
+              top:0;
+              right:0;
+            }
+            >.number{
+              position: absolute;
+              >span{
+                color: #ffffff;
+                font-size: 0.18rem;
+              }
+            }
+            >.position1{
+              top:8px;
+              right: 12px;
+            }
+            >.position2{
+              top:8px;
+              right: 8px;
+            }
+            >.position3{
+              top:8px;
+              right: 6px;
             }
           }
         }
@@ -202,72 +247,59 @@
   }
   .approvaled{
     border-radius: 8px;
-    padding:10px 20px;
+    padding:10px 10px;
+    margin: 0 20px 0 0;
     width: 100%;
-    min-height: 650px;
+    height: 700px;
     box-shadow: 0 0px 14px #cbcbcb;
     text-align: left;
     position: relative;
-    >div{
-      display: inline-block;
-    }
+    overflow-x: hidden;
     >.title{
-      border-left: 10px solid #FF9900;
       height: 0.25rem;
       text-align: left;
       >span{
-        font-size: 0.18rem;
+        font-weight: 800;
+        font-size: 0.20rem;
         margin-left: 8px;
         color: #4F9DD5;
       }
     }
     >.approval-content{
-      min-height: 90%;
-      height: 100%;
-      >.content-item{
-        display: inline-block;
-        >ul{
-          list-style: none;
-          float: left;
-          >li{
-            text-align: center;
-            width: 100%;
-            display: inline-block;
-            margin-left: 20px;
-            padding: 25px;
-            >.item-value{
-              line-height: 50px;
-              font-size: 0.36rem;
-            }
-            >.blue{
-              color: #1F6CFC;
-            }
-            >.green{
-              color:#92C62A
-            }
-            >.orange{
-              color: #FF9900;
-            }
-            >.item-title{
-              font-size:0.18rem ;
-              font-family: 宋体;
-              &:hover{
-                cursor: pointer;
-              }
-            }
+
+      >ul{
+        height: 650px;
+        overflow: auto;
+        margin-right: -27px;
+        padding-right: 27px;
+        >li{
+          width: 100%;
+          height: 200px;
+          border-bottom: 1px solid #e3e3e3;
+          text-align: center;
+          padding-top: 80px;
+          >span{
+            font-size: 0.6rem;
           }
-        }
-      }
-      >.detail-all{
-        position: absolute;
-        bottom: 20px;
-        right:20px;
-        >span{
-          color:#B7302D;
-          font-size: 0.16rem;
-          text-decoration: underline;
-          &:hover{
-            cursor: pointer;
+          >.blue{
+            color: #1F6CFC;
+            text-shadow: 2px 2px 6px #1F6CFC;
+          }
+          >.green{
+            color:#92C62A;
+            text-shadow: 2px 2px 6px #92C62A;
+          }
+          >.orange{
+            color: #FF9900;
+            text-shadow: 2px 2px 6px #FF9900;
+          }
+          >p{
+            font-size: 0.2rem;
+            font-weight: 500;
+            text-shadow:none !important;
+            &:hover{
+              cursor: pointer;
+            }
           }
         }
       }

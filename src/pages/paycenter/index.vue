@@ -80,7 +80,7 @@
           ></el-date-picker>
           <div class="btns">
             <div class="search">
-              <search-input></search-input>
+              <search-input @btnClick="getData"></search-input>
             </div>
           </div>
         </div>
@@ -112,7 +112,7 @@
           </table>
         </div>
         <div class="tableBody">
-          <table>
+          <table v-if="tableData.length">
             <colgroup>
               <col width="5%">
               <col width="13%">
@@ -142,12 +142,12 @@
                   <div>{{item.RefbillCode}}</div>
                 </td>
                 <td>
-                  <div>{{item.NgInsertDt}}</div>
+                  <div>{{item.NgInsertDt.replace('T',' ')}}</div>
                 </td>
                 <td>
                   <div>
                     <template v-if="item.FApproval==0">待送审</template>
-                    <template v-else-if="item.FApproval==1">待审批</template>
+                    <template v-else-if="item.FApproval==1">审批中</template>
                     <template v-else-if="item.FApproval==2">未通过</template>
                     <template v-else-if="item.FApproval==9">审批通过</template>
                     <template v-else>————</template>
@@ -162,11 +162,12 @@
                   </div>
                 </td>
                 <td>
-                  <div>{{item.FDate||"————"}}</div>
+                  <div>{{item.FDate?item.FDate.replace('T',' '):"————"}}</div>
                 </td>
               </tr>
             </thead>
           </table>
+          <div v-else style="height:40px;font-size:0.16rem;line-height:40px;">暂无数据</div>
         </div>
       </div>
       <div class="pages">
@@ -251,15 +252,15 @@ export default {
       zfrq: [],
       typeList: [
         {
-          value: 0,
+          value: '',
           label: '全部'
         },
         {
-          value: 1,
+          value: 'zjbf',
           label: '资金拨付单'
         },
         {
-          value: 2,
+          value: 'xmzc',
           label: '项目支出单'
         }
       ],
@@ -327,23 +328,50 @@ export default {
   mounted() {},
   methods: {
     getData() {
-      this.getAxios('/GKPaymentMstApi/GetPaymentList', {
-        queryfilter: JSON.stringify({
-          'NgInsertDt*date*ge*1': this.sbrq[0] || '',
-          'NgInsertDt*date*le*1': this.sbrq[1] || '',
-          'FDateDt*date*ge*1': this.zfrq[0] || '',
-          'FDateDt*date*le*1': this.zfrq[1] || '',
-          'FApproval*byte*eq*1': this.type,
-          'FState*byte*eq*1': this.status,
-          'FBilltype*str*eq*1': 'zjbf',
-          '[or-dictionary0]*dictionary*or': {
-            'RefbillCode*str*like*1': this.search,
-            'FCode*str*like*1': this.search
+      var query = {
+        'NgInsertDt*date*ge*1': this.sbrq ? this.sbrq[0] || '' : '', //申报日期开始
+        'NgInsertDt*date*le*1': this.sbrq ? this.sbrq[1] || '' : '', //申报日期结束
+        'FDateDt*date*ge*1': this.zfrq ? this.zfrq[0] || '' : '', //支付日期开始
+        'FDateDt*date*le*1': this.zfrq ? this.zfrq[1] || '' : '', //支付日期结束
+        'FApproval*byte*eq*1': '', //审批状态0- 待送审 1-待审批 2- 未通过 9-审批通过
+        'FBilltype*str*eq*1': this.type, //关联单据类型
+        '[or-dictionary0]*dictionary*or': {
+          'RefbillCode*str*like*1': this.search.toString(),
+          'FCode*str*like*1': this.search.toString()
+        }
+        // '[or-dictionary1]*dictionary*or': {
+        //   'FState*byte*eq*1': 0,
+        //   'FState*byte*eq*2': 1
+        // }
+      }
+      function deleteBlank(obj, father) {
+        for (let i in obj) {
+          if (obj[i] === '') {
+            delete obj[i]
+            if (Object.keys(obj).length == 0 && father) {
+              deleteBlank(father)
+            }
+          } else if (typeof obj[i] === 'object') {
+            if (Object.keys(obj[i]).length > 0) {
+              deleteBlank(obj[i], obj)
+            } else {
+              delete obj[i]
+            }
           }
-          // '[or-dictionary0]*dictionary*or': {
-          //   'FState*byte*eq*1': 0
-          // }
-        }),
+        }
+      }
+      if (this.status || this.status.length > 0) {
+        query['[or-dictionary1]*dictionary*or'] = {}
+        this.status.forEach((item, index) => {
+          query['[or-dictionary1]*dictionary*or'][
+            'FState*byte*eq*' + (index + 1)
+          ] = item
+        })
+      }
+      deleteBlank(query)
+      console.log(query)
+      this.getAxios('/GKPaymentMstApi/GetPaymentList', {
+        queryfilter: JSON.stringify(query),
         PageIndex: this.currentPage - 1, //当前第几页，从0开始
         PageSize: this.pageSize, //每页显示行数
         uid: '521180820000001', //用户id
@@ -476,7 +504,15 @@ export default {
       console.log(cur, this.type)
     },
     selectStatus(cur) {
-      console.log(cur, this.type)
+      if (cur && cur.length > 0) {
+        if (cur[cur.length - 1] === '') {
+          this.status = ['']
+        } else if (cur.includes('')) {
+          cur.splice(cur.findIndex(item => item === ''), 1)
+        } else if (cur.length == 3) {
+          this.status = ['']
+        }
+      }
     },
     // 分页
     handleSizeChange(val) {

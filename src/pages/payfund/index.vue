@@ -214,7 +214,7 @@
       <div class="rightPanel">
         <div style="">
           <!--部门选择-->
-          <el-select size="small" style="width: 260px;" v-model="searchData.bmType">
+          <el-select size="small" style="width: 260px;" v-model="searchData.bmType" @change="changeApart">
             <el-option v-for="item in bmList"
                        :key="item.value"
                        :label="item.label"
@@ -224,11 +224,11 @@
           <!--预算显示区域-->
           <el-card>
             <div>
-              <p style="color: #3294e8;">28</p>
+              <p style="color: #3294e8;">{{apartData.count}}</p>
               <div>预算支出项目总数</div>
             </div>
             <div>
-              <p style="color:#f52c1d">1859543.88</p>
+              <p style="color:#f52c1d">{{apartData.money}}</p>
               <div>支出预算总额</div>
             </div>
           </el-card>
@@ -435,6 +435,7 @@
             },
             approvalData:{
             },
+            apartData:{count:28,money:1230989.32}
           }
       },
       components:{Applypro, Orgtree, Applybill, tophandle,pieChart,goApproval,Auditfollow,ApprovalDialog},
@@ -633,6 +634,22 @@
           this.appDialog.btnGroup.onfirmName = '生成支付单'
           this.$refs.approvalDialog.changeDialog()
         },
+        changeApart:function(val){
+          // bmList:[{value:0,label:'办公室'},{value:1,label:'女工部'},{value:2,label:'财务与资产部'}],
+          switch(val){
+            case 0:
+              this.apartData={count:28,money:1230989.32};
+              break;
+            case 1:
+              this.apartData={count:8,money:989.32};
+              break;
+            case 2:
+              this.apartData={count:18,money:120000.13};
+              break;
+            default:
+              break;
+          }
+        }
       }
     }
 </script>

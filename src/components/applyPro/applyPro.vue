@@ -5,7 +5,7 @@
         <el-col :span="24">
           <div class="top-btn">
             <el-button class="btn" size="mini" @click="save(0)">保存</el-button>
-            <el-button class="btn" size="mini" @click="save(1)">保存并送审</el-button>
+            <el-button class="btn" size="mini" @click="save(1)" style="padding: 0">保存并送审</el-button>
             <el-button class="btn" size="mini" @click="add">增加项目</el-button>
             <el-button class="btn" size="mini" @click="delPro">删除项目</el-button>
           </div>
@@ -154,7 +154,7 @@
     <!--二级项目弹窗-->
     <el-dialog width="350px" title="请选择项目明细"
                :visible.sync="orgDetailType" :append-to-body="true">
-        <el-radio-group v-model="choosedPro">
+        <el-radio-group v-model="choosedPro.pro">
             <el-radio v-for="item in projectList"
                       :key="item.proCode"
                       :label="item.proName"
@@ -164,7 +164,7 @@
         </el-radio-group>
       <span slot="footer"   style="text-align: center">
           <button class="cancelBtn"  @click="orgDetailType=false">取消</button>
-          <button class="confirmBtn" style="margin-left: 30px" @click="confirmOrg">保存</button>
+          <button class="confirmBtn" style="margin-left: 30px" @click="confirmOrgDetail">保存</button>
         </span>
     </el-dialog>
     <!--送审-->
@@ -374,31 +374,21 @@
             sc=null;
           }
         }
-       /* this.orgType=false;
-        this.projectItem[this.choosedOrg.index[0]].pdList[this.choosedOrg.index[1]].pdOrg.orgName=this.choosedOrg.org[0].OName;
-        if(this.choosedOrg.org.length>1){
-          for(var i=0; i<this.choosedOrg.org.length-1;i++){
-            let sc=this.projectItem[this.choosedOrg.index[0]].pdList[this.choosedOrg.index[1]];
-            sc.pdOrg.orgName=this.choosedOrg.org[i+1].OName;
-            this.projectItem[this.choosedOrg.index[0]].pdList.splice(this.choosedOrg.index[1],0,sc);
-            sc=null;
-          }
-        }*/
-       /* if(this.choosedOrg.org!==this.projectItem[this.choosedOrg.index[0]].pdList[this.choosedOrg.index[1]]){
-          console.log(this.projectItem[this.choosedOrg.index[0]].pdList[this.choosedOrg.index[1]].pdOrg);
-          console.log(this.choosedOrg.org);
-          this.projectItem[this.choosedOrg.index[0]].pdList[this.choosedOrg.index[1]].pdOrg.orgName=this.choosedOrg.org.label;
-        }*/
+      },
+      confirmOrgDetail:function(){
+        this.orgDetailType=false;
+        console.log(this.choosedPro);
+        this.projectItem[this.choosedPro.index[0]].pdList[this.choosedPro.index[1]].pdName=this.choosedPro.pro;
       },
       //弹出明细项目，pindex表示项目下标，s,表示项目对应pdlist下标
       showDetailPro(f,s){
         this.orgDetailType=true;
         this.choosedPro.index=[f,s];
-        for( var i in this.projectList){
+        /*for( var i in this.projectList){
           if (this.projectList[i].proCode==this.projectItem[f].projectCode){
             this.choosedPro.pro=this.projectList[i];
           }
-        }
+        }*/
       },
     }
   }
