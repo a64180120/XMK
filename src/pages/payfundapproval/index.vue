@@ -238,7 +238,7 @@
         </div>
       </div>
       <!--详情弹框-->
-      <el-dialog class="dialog detail-dialog" :visible.sync="detailDialog" :close-on-click-modal="false" width="90%">
+      <el-dialog class="dialog detail-dialog"  @close="closeDetailDialog" :visible.sync="detailDialog" :close-on-click-modal="false" width="90%">
         <div slot="title" class="dialog-title">
           <span style="float: left">查看申请</span>
         </div>
@@ -261,7 +261,7 @@
         <img-view v-if="imgDialog"></img-view>
       </el-dialog>
       <!--审批弹框-->
-      <approval-dialog ref="approvalDialog" @subSuc="plSubSuc()"></approval-dialog>
+      <approval-dialog ref="approvalDialog" @dialogFlow="openAuditfollow" @subSuc="plSubSuc()"></approval-dialog>
       <!--生成支付单弹框-->
       <paylist-dialog ref="paylistDialog" :data="approvalData"  @subSuc="plSubSuc()"></paylist-dialog>
       <!--查看审批流程-->
@@ -4703,7 +4703,8 @@
             "customsort": null,
             "iconCls": null,
             "disabled": false
-          }], //工会组织列表
+          }
+          ], //工会组织列表
         checkedOrg:[],//设置组织树默认选中项
         orgType:false,//控制组织树的展示与隐藏
         orgName:'',//组织名称
@@ -4826,6 +4827,9 @@
       //单行点击事件
       handleRowClick(row,idx){
         // this.$refs.fundDetail.changeDialog()
+        console.clear()
+        this.selection = row
+        console.log(this.selection)
         this.detailDialog = true
         this.detailData = row
       },
@@ -4903,6 +4907,10 @@
         if( this.form.long==''){
           this.testData()
         }
+      },
+      // 关闭详情弹框事件
+      closeDetailDialog(){
+        this.selection = ''
       }
     }
   }

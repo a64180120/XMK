@@ -10,7 +10,7 @@
         <div slot="title" class="dialog-title">
           <p>查看</p>
         </div>
-        <approval-bill></approval-bill>
+        <approval-bill @dialogFlow="searchFlow()"></approval-bill>
         <div class="approval-btn">
           <el-button size="small" type="primary" @click="cancel()">取消</el-button>
           <el-button size="small" type="primary" @click="submit()">确认</el-button>
@@ -59,7 +59,7 @@
         },
         //查看详细流程
         searchFlow(row,column,index,store){
-
+          this.$emit("dialogFlow")
         },
         //表格单选
         handleSelect(selection,row){
