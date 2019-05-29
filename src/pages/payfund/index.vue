@@ -1,7 +1,7 @@
 <template>
   <div class="self">
     <div style="position: relative">
-      <tophandle title="审批中心在线工作平台">
+      <tophandle title="资金拨付在线工作平台">
         <div class="btnCon">
           <div @click.stop="showAuditAdd('add')" class="handle">
             <div class="topIcon"><img src="@/assets/images/xz.png" alt=""></div>
@@ -56,13 +56,25 @@
               </el-select>
             </label>
             <label>
+              <span>申请日期</span>
+              <el-date-picker
+                size="small"
+                v-model="searchData.date"
+                type="daterange"
+                range-separator="至"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期">
+              </el-date-picker>
+            </label>
+
+            <label>
               <span>申请金额</span>
               <el-input-number size="small" :precision="2" :controls="false" v-model="searchData.money.smoney" style="width:auto"></el-input-number>
               <span>至</span>
               <el-input-number size="small" :precision="2" :controls="false" v-model="searchData.money.emoney"style="width: auto"></el-input-number>
             </label>
             <label class="searchArea" style="float: right">
-              <el-input size="small" placeholder="请输入内容" style="border-radius: 25px;width: 250px;overflow: hidden" v-model="searchData.searchValue">
+              <el-input size="small" placeholder="请输入内容" style="border-radius: 5px;width: 250px;overflow: hidden" v-model="searchData.searchValue">
                 <el-button slot="append" size="small" style="background-color: #3294e8;color: #fff;border-top-left-radius: 0;border-bottom-left-radius: 0">搜索</el-button>
               </el-input>
             </label>
@@ -191,8 +203,8 @@
               <td>
                 {{item.billName}}
               </td>
-              <td>
-                {{item.billMoney}}
+              <td class="right">
+                {{item.billMoney | NumFormat}}
               </td>
               <td>
                 {{item.billDate}}
@@ -440,6 +452,7 @@
       },
       components:{Applypro, Orgtree, Applybill, tophandle,pieChart,goApproval,Auditfollow,ApprovalDialog},
       mounted(){
+          this.getDataC();
           //this.dataFuc();
         this.getCheckList(this.dataList.total);
       },
@@ -535,8 +548,34 @@
           }
           return billName;
         },
+        getDataC:function(){
+          let param={uid:'488181024000001'};
+          this.$axios.get('GQT/CorrespondenceSettings2Api/GetSBUnit',{params:param}).then(res=>{
+            console.log(res);
+          }).catch(err=>{
+            console.log(err);
+          })
 
+        },
         getData:function(){
+          let param={
+            PageIndex:this.searchData.pageSearch.pageIndex,
+            PageSize:this.searchData.pageSearch.pageSize,
+            infoData:{
+              FName:this.searchData.searchValue,
+			        FApproval:this.searchData.approvalType,
+			        IsPay:this.searchData.payType,
+              StartDate:this.searchData.date,
+              EndDate:this.searchData.date,
+              MaxAmount:this.searchData.money.emoney,
+              MinAmount:this.searchData.money.emoney}
+          }
+          this.$axios.get('GBK/PaymentMstApi/GetPaymentMstList',{params:param}).then(res=>{
+            console.log(res);
+          }).catch(err=>{
+            console.log(err);
+          })
+
           console.log('查询数据');
         },
         //分页pagesize修改触发事件

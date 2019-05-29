@@ -5,14 +5,14 @@
         <el-col :span="24">
           <div class="top-btn">
             <slot name="btn-group">
-
+              <el-button class="btn" size="mini" style="padding: 0;" @click="creatApply">生成支付单</el-button>
+              <el-button class="btn" size="mini" @click="postApply">送审</el-button>
+              <el-button class="btn" size="mini" @click="msgType=true">删除</el-button>
+              <!--<el-button class="btn" size="mini" @click="checkApply">审批</el-button>
+              <el-button class="btn" size="mini" @click="cancelApply">取消审批</el-button>-->
+              <el-button class="btn" size="mini" >打印</el-button>
             </slot>
-<!--            <el-button class="btn" size="mini">生成支付单</el-button>-->
-<!--            <el-button class="btn" size="mini">送审</el-button>-->
-<!--            <el-button class="btn" size="mini" @click="msgType=true">删除</el-button>-->
-<!--            <el-button class="btn" size="mini">审批</el-button>-->
-<!--            <el-button class="btn" size="mini">取消审批</el-button>-->
-<!--            <el-button class="btn" size="mini">打印</el-button>-->
+
           </div>
         </el-col>
       </el-row>
@@ -171,15 +171,22 @@
         <button class="confirmBtn"  @click="handleClose">确定</button>
       </span>
     </el-dialog>
+    <!--送审-->
+    <go-approval  :data="approvalDataS"></go-approval>
+    <!--生成支付单-->
+    <approval-dialog ref="approvalDialog" :title="appDialog.title" :btn-group="appDialog.btnGroup" :data="approvalData"></approval-dialog>
   </section>
 
   <!--内层弹框-->
 </template>
 
 <script>
+    import ApprovalDialog from "../../pages/payfundapproval/approvalDialog";
+    import goApproval from '../../pages/paycenter/goApproval.vue';
     export default {
         name: "applybill",
-      props:{applyNum:Number},
+      components: {ApprovalDialog,goApproval},
+      props:{applyNum:String},
       data(){
           return {
             msgType:false,//删除弹窗
@@ -196,7 +203,23 @@
             }, {
               projectName: 'XXXXX项目B',
               projectFolder: ['附件1', '附件2', '附件3', '附件4']
-            }]
+            }],
+            //生成支付单
+            appDialog:{
+              title:'',
+              btnGroup: {
+                cancelName:"",
+                onfirmName:""
+              }
+            },
+            approvalData:{
+            },
+            //送审
+            approvalDataS: {
+              openDialog: false,
+              data: {}
+            },
+            timeF:'',
           }
       },
       watch:{
@@ -218,10 +241,23 @@
         //生成支付单
         creatApply:function(){
           console.log(this.applyNum+'这里添加数据查询方法');
+          this.appDialog.title = '审批并生成支付单'
+          this.appDialog.btnGroup.cancelName = '取消'
+          this.appDialog.btnGroup.onfirmName = '生成支付单'
+          this.$refs.approvalDialog.changeDialog()
         },
         //送审
         postApply:function(){
           console.log(this.applyNum+'这里添加数据查询方法');
+          this.approvalDataS.openDialog=true
+        },
+        //审批
+        checkApply:function(){
+
+        },
+        //取消审批
+        cancelApply:function(){
+
         },
         //删除
         deleteApply:function(){
@@ -244,12 +280,14 @@
         handleClose:function(){
           this.delmsgType=false;
           if(this.delSOD){
+            clearTimeout(this.timeF);
+            this.time=3;
             this.$emit('delete',true)
           };
         },
         //提示窗口倒计时
         timer:function(){
-          setTimeout(()=>{
+          this.timeF=setTimeout(()=>{
             if(this.time>1){
               this.time--;
               this.timer()

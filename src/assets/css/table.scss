@@ -2,7 +2,7 @@
 @import 'reset';
 .container{
   position: absolute;
-  top: 150px;
+  top: 160px;
   bottom: .3rem;
   left: 20px;
   right: 20px;
@@ -29,7 +29,7 @@
   right: 0;
 }
 .container .btnArea .searchArea .el-input__inner{
-  border-radius: 25px 0 0 25px;
+  border-radius: 5px 0 0 5px;
 }
 .container .pageArea{
   position: absolute;
@@ -55,6 +55,12 @@ table .atype{
   color: #3294e8;
   text-decoration: underline;
   cursor: pointer;
+}
+table .right{
+  text-align: right;
+}
+table .left{
+  text-align: left;
 }
 .tableHead table{
   width: 100%;
