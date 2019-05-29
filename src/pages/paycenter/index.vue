@@ -80,7 +80,7 @@
           ></el-date-picker>
           <div class="btns">
             <div class="search">
-              <search-input @btnClick="getData"></search-input>
+              <search-input v-model="search" @btnClick="getData"></search-input>
             </div>
           </div>
         </div>
@@ -283,7 +283,7 @@ export default {
           label: '支付成功'
         }
       ],
-      status: '',
+      status: [0, 2],
       // 搜索数据
       search: '',
       // 分页
@@ -656,7 +656,6 @@ export default {
     payNav(type, item) {
       this.noDataRefresh()
       if (item) {
-        this
         if (item.FApproval == 0 || item.FApproval == 2) {
           this.payListData.itemType = 'notApprove'
         } else if (item.FState == 2) {
@@ -694,7 +693,11 @@ export default {
             ) {
               this.payListData.itemType = 'notApprove'
             } else {
-              this.$msgBox.show(`单据已经${handleitem[0].FApproval}。`)
+              this.$msgBox.show(
+                handleitem[0].FApproval == 1
+                  ? '单据正在审批中。'
+                  : '单据已经审批通过。'
+              )
               return
             }
             break
