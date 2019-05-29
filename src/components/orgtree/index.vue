@@ -1,6 +1,7 @@
 <template>
     <el-dialog  id="orgtreedialog" width="350px" title="组织选择"
                 :visible.sync="visible2" :append-to-body="true">
+      
       <div style="height: 350px;overflow-y: auto">
         <el-tree
           ref="elt"

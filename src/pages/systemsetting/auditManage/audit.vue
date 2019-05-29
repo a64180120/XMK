@@ -4674,7 +4674,10 @@ export default {
             console.log(22222);
         },
         orgTree(val){
-             this.orgSelected=[val.OCode];//需要code的列表
+            if(val){
+                 this.orgSelected=[val.OCode];//需要code的列表
+            }
+            
              this.orgVisible=true;
         },
         getOrg(val){

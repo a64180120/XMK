@@ -71,8 +71,10 @@
 </template>
 
 <script>
+    import Auditfollow from "../auditFollow/auditfollow";
     export default {
         name: "approvalBill",
+      components: {Auditfollow},
       props:{
         isApproval:{//送审true 审核 false
           type:Boolean,
@@ -111,7 +113,7 @@
         },
         //查看详细流程
         searchFlow(row,column,index,store){
-
+          this.$emit("dialogFlow",row)
         },
         //表格单选
         handleSelect(selection,row){
@@ -238,5 +240,9 @@
   .table-next >>>tr td{
     padding: 5px 0;
     font-size: 0.12rem
+  }
+  .icon-search{
+    font-size: 0.16rem;
+    color: #0099FF;
   }
 </style>

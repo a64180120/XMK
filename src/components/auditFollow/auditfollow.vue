@@ -1,5 +1,5 @@
 <template>
-    <div v-show="visible" class="auditfollow msFixed">
+    <div v-show="visible" style="z-index: 3000;" class="auditfollow msFixed">
         <p class="title">
             <span>{{title}}</span>  
             <i @click="close"></i>  
@@ -68,7 +68,6 @@ export default {
     top:0;
     bottom:0;
     width:240px;
-    z-index: 99;
     background: #fff;
     box-shadow: -4px 1px 9px #3294e894;
     .title{

@@ -21,7 +21,6 @@ MessageBox.install = function(Vue, options) {
       } else if (typeof options === 'object') {
         Object.assign(currentMsg, options)
       }
-      console.log('123')
       return currentMsg.showMsgBox()
     }
   }

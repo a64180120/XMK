@@ -68,7 +68,8 @@
           </div>
           <div class="btns">
             <span class="btn btn-cancel" @click="beforeClose('btn')">取消</span>
-            <span class="btn" :class="{'btn-disable':openPassword}">支付</span>
+            <span class="btn btn-disable" v-if="openPassword">支付</span>
+            <span class="btn" v-else @click="pay">支付</span>
           </div>
         </div>
       </div>
@@ -144,6 +145,9 @@ export default {
         data: {},
         itemType: ''
       }
+    },
+    father: {
+      default: null
     }
   },
   data() {
@@ -213,6 +217,16 @@ export default {
     goSetting() {
       this.showPassword = false
       this.showSetting = true
+    },
+    pay() {
+      var vm = this
+      this.$msgBox.show({
+        content: '支付操作成功！具体到账情况以银行处理时间为准。',
+        fn: () => {
+          if (vm.father) vm.father.openDialog = false
+          vm.data.openDialog = false
+        }
+      })
     }
   },
   computed: {
