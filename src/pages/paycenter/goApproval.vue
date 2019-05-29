@@ -190,7 +190,7 @@ export default {
   },
   mounted() {
     this.$nextTick(() => {
-      this.$refs.content.setCurrentRow(this.subData[0])
+      //this.$refs.content.setCurrentRow(this.subData[0])
     })
   }
 }

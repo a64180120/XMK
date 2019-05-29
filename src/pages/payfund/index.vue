@@ -34,52 +34,57 @@
 
       <div class="formArea">
         <div class="btnArea">
-          <div style="width: auto;white-space: nowrap;display: table-cell">
-            <label>
-              <span>审批状态：</span>
-              <el-select size="small" v-model="searchData.approvalType">
-                <el-option v-for="item in approvalList"
-                           :key="item.value"
-                           :label="item.label"
-                           :value="item.value">
-                </el-option>
-              </el-select>
-            </label>
-            <label>
-              <span>支付状态：</span>
-              <el-select size="small" v-model="searchData.payType">
-                <el-option v-for="item in payList"
-                           :key="item.value"
-                           :label="item.label"
-                           :value="item.value">
-                </el-option>
-              </el-select>
-            </label>
-            <label>
-              <span>申请日期</span>
-              <el-date-picker
-                size="small"
-                v-model="searchData.date"
-                type="daterange"
-                range-separator="至"
-                start-placeholder="开始日期"
-                end-placeholder="结束日期">
-              </el-date-picker>
-            </label>
+          <i class="el-icon-d-arrow-left iicon" style="position:absolute;left:0;" @click.stop="unionStateScroll(false)"></i>
+          <i class="el-icon-d-arrow-right iicon" style="position:absolute;right:275px;" @click.stop="unionStateScroll(true)"></i>
+          <div class="scrollNav">
+            <div>
+              <label>
+                <span>审批状态：</span>
+                <el-select size="small" v-model="searchData.approvalType">
+                  <el-option v-for="item in approvalList"
+                             :key="item.value"
+                             :label="item.label"
+                             :value="item.value">
+                  </el-option>
+                </el-select>
+              </label>
+              <label>
+                <span>支付状态：</span>
+                <el-select size="small" v-model="searchData.payType">
+                  <el-option v-for="item in payList"
+                             :key="item.value"
+                             :label="item.label"
+                             :value="item.value">
+                  </el-option>
+                </el-select>
+              </label>
+              <label>
+                <span>申请日期</span>
+                <el-date-picker
+                  size="small"
+                  v-model="searchData.date"
+                  type="daterange"
+                  range-separator="至"
+                  start-placeholder="开始日期"
+                  end-placeholder="结束日期">
+                </el-date-picker>
+              </label>
 
-            <label>
-              <span>申请金额</span>
-              <el-input-number size="small" :precision="2" :controls="false" v-model="searchData.money.smoney" style="width:auto"></el-input-number>
-              <span>至</span>
-              <el-input-number size="small" :precision="2" :controls="false" v-model="searchData.money.emoney"style="width: auto"></el-input-number>
-            </label>
-            <label class="searchArea" style="float: right">
-              <el-input size="small" placeholder="请输入内容" style="border-radius: 5px;width: 250px;overflow: hidden" v-model="searchData.searchValue">
-                <el-button slot="append" size="small" style="background-color: #3294e8;color: #fff;border-top-left-radius: 0;border-bottom-left-radius: 0">搜索</el-button>
-              </el-input>
-            </label>
+              <label>
+                <span>申请金额</span>
+                <el-input-number size="small" :precision="2" :controls="false" v-model="searchData.money.smoney" style="width:auto"></el-input-number>
+                <span>至</span>
+                <el-input-number size="small" :precision="2" :controls="false" v-model="searchData.money.emoney"style="width: auto"></el-input-number>
+              </label>
+            </div>
+
+
           </div>
-
+          <label class="searchArea" style="float: right">
+            <el-input size="small" placeholder="请输入内容" style="border-radius: 5px;width: 250px;overflow: hidden" v-model="searchData.searchValue">
+              <el-button slot="append" size="small" style="background-color: #3294e8;color: #fff;border-top-left-radius: 0;border-bottom-left-radius: 0">搜索</el-button>
+            </el-input>
+          </label>
           <!--<el-button size="small" @click="showOrg">{{searchData.searchorg.label}}</el-button>-->
           <!--搜索、高级-->
           <!--<div style="float: right;display: flex" class="searchArea">
@@ -226,7 +231,7 @@
       <div class="rightPanel">
         <div style="">
           <!--部门选择-->
-          <el-select size="small" style="width: 260px;" v-model="searchData.bmType" @change="changeApart">
+          <el-select size="small" style="width: 250px;" v-model="searchData.bmType" @change="changeApart">
             <el-option v-for="item in bmList"
                        :key="item.value"
                        :label="item.label"
@@ -452,7 +457,7 @@
       },
       components:{Applypro, Orgtree, Applybill, tophandle,pieChart,goApproval,Auditfollow,ApprovalDialog},
       mounted(){
-          this.getDataC();
+          //this.getData();
           //this.dataFuc();
         this.getCheckList(this.dataList.total);
       },
@@ -470,6 +475,52 @@
         },
       },
       methods:{
+        //滚动
+        unionStateScroll(bool){
+          var union=document.getElementsByClassName('scrollNav')[0];
+          var unionStateCon=document.getElementsByClassName('scrollNav')[0].firstElementChild;
+          let eleChildren=unionStateCon.childNodes;
+          let unionStateConWidth=0;
+          let scrollWidth=200;
+          for(var i in eleChildren ){
+
+            if(eleChildren[i].nodeType==1){
+              console.log(eleChildren[i].clientWidth);
+              unionStateConWidth+=eleChildren[i].clientWidth+15;
+            }
+
+          }
+          unionStateCon.style.width=unionStateConWidth+'px';
+          console.log(unionStateConWidth);
+
+          var pWidth=parseInt(window.getComputedStyle(union).width);//父级宽度
+          //return;
+          let gap=unionStateConWidth-pWidth;
+
+          if(!parseInt(unionStateCon.style.right)) {
+            unionStateCon.style.right='0px';
+          }
+          if(bool){
+            if(parseInt(unionStateCon.style.right)>gap){
+              return;
+            }else{
+              let rig=parseInt(unionStateCon.style.right);
+              if(rig+scrollWidth>gap){
+                rig=gap;
+              }else{
+                rig=rig+scrollWidth;
+              }
+              unionStateCon.style.right=rig+'px';
+            }
+          }else{
+            if(parseInt(unionStateCon.style.right)<=0){
+              return;
+            }else{
+
+              unionStateCon.style.right=(parseInt(unionStateCon.style.right)<scrollWidth)?0:(parseInt(unionStateCon.style.right)-scrollWidth)+'px';
+            }
+          }
+        },
           //根据数据的长度生成checkList
         getCheckList:function(n){
           let checkList=[];
@@ -508,46 +559,7 @@
           }
         },
 
-          //数据随机生成方法，懒得造数据。。
-        dataFuc:function(){
-          let len=Math.floor(Math.random()*10+10);
-          let billList=[];
-          for(var i=0 ; i<len ; i++){
-            let sp=Math.floor(Math.random()*3);
-            let bill={
-              billNum:this.getbillNum(),
-              billName:this.getbillName(),
-              billMoney:Math.random()*10000000000,
-              billDate:new Date().getFullYear()+'-'+(new Date().getMonth()+1)+'-'+new Date().getDate(),
-              billSpType:sp,
-              billZfType:sp==3?Math.floor(Math.random()*1+1):0,
-              billNote:this.getbillName()
-            }
-            billList.push(bill);
-          }
-          console.log(billList);
-          this.dataList.total=len;
-          this.dataList.data=billList;
-        },
-        //生成订单号
-        getbillNum:function(){
-          let len=Math.floor(Math.random()*4+1);
-          let billNum=new Date().getTime()+'';
-          for(var i=0 ; i<len ; i++){
-            billNum+=String.fromCharCode((65+Math.floor(Math.random()*26)));
-          }
-          return billNum;
-        },
-        //生成订单名
-        getbillName:function(){
-          //获取随机中文字符（19968-40869  20901）
-          let len=Math.floor(Math.random()*10+1);
-          let billName='';
-          for(var i=0 ; i<len ; i++){
-            billName+= String.fromCharCode((19968+Math.floor(Math.random()*20902)));
-          }
-          return billName;
-        },
+
         getDataC:function(){
           let param={uid:'488181024000001'};
           this.$axios.get('GQT/CorrespondenceSettings2Api/GetSBUnit',{params:param}).then(res=>{
@@ -561,16 +573,18 @@
           let param={
             PageIndex:this.searchData.pageSearch.pageIndex,
             PageSize:this.searchData.pageSearch.pageSize,
-            infoData:{
-              FName:this.searchData.searchValue,
-			        FApproval:this.searchData.approvalType,
-			        IsPay:this.searchData.payType,
-              StartDate:this.searchData.date,
-              EndDate:this.searchData.date,
-              MaxAmount:this.searchData.money.emoney,
-              MinAmount:this.searchData.money.emoney}
+            FName:this.searchData.searchValue,
+            FApprovalBz:this.searchData.approvalType,
+            PayBz:this.searchData.payType,
+            StartDate:this.searchData.date,
+            EndDate:this.searchData.date,
+            MaxAmount:this.searchData.money.smoney==0?'':this.searchData.money.smoney,
+            MinAmount:this.searchData.money.emoney==0?'':this.searchData.money.emoney,
+            FOrgphid: 521180820000002,
+            FDepphid:288180827000002,
+            FYear:2019
           }
-          this.$axios.get('GBK/PaymentMstApi/GetPaymentMstList',{params:param}).then(res=>{
+          this.getAxios('GBK/PaymentMstApi/GetPaymentMstList',param).then(res=>{
             console.log(res);
           }).catch(err=>{
             console.log(err);
@@ -694,7 +708,6 @@
 </script>
 
 <style scoped>
-
   .formArea,.pageArea{
     right: 300px;
   }
@@ -705,7 +718,7 @@
   top: 8px;
   bottom: 20px;
   box-shadow: 0 0 7px #ccc;
-  padding: 5px;
+  padding: 10px;
   background-color: #58a5e6;
   overflow-y: auto;
   font-size: 0.12rem;
@@ -749,7 +762,7 @@
     width: 164px;
   }
   .container .el-card{
-    margin: 5px 0 0 0;
+    margin: 10px 0 0 0;
   }
   .rightPanel .el-input--small .el-input__inner{
     border: 0;
