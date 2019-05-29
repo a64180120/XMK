@@ -56,6 +56,12 @@ table .atype{
   text-decoration: underline;
   cursor: pointer;
 }
+table .right{
+  text-align: right;
+}
+table .left{
+  text-align: left;
+}
 .tableHead table{
   width: 100%;
   border-collapse:separate;

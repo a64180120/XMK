@@ -6,7 +6,7 @@ import moment from 'moment'
  */
 Vue.filter('NumFormat', function (value, decimals = 2, decPoint = '.', thousandsSep = ',') {
   if (!value) return '0.00';
-  value = (value + '').replace(/[^0-9+-Ee.]/g, '')
+  value = (value + '').replace(/[^0-9+-Ee.]/g, '');
   let n = !isFinite(+value) ? 0 : +value;
   let prec = !isFinite(+decimals) ? 0 : Math.abs(decimals);
   let sep = (typeof thousandsSep === 'undefined') ? ',' : thousandsSep;

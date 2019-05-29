@@ -15,13 +15,13 @@
         <el-col :span="5">
           <div class="left-card">
             <p>申请单名称：</p>
-            <el-input placeholder="30字以内" maxlength="30"></el-input>
+            <el-input placeholder="30字以内" maxlength="30" v-model="data.applyBillName"></el-input>
             <div>
               <!--申请信息-->
               <div class="apply-info">
                 <ul>
                   <li><span>申报部门：</span><span>{{data.applyDepart}}</span></li>
-                  <li><span>金额合计：</span><span>{{data.applyDate}}</span></li>
+                  <li><span>金额合计：</span><span>{{data.applyDate| NumFormat}}</span></li>
                 </ul>
                 <el-card class="payText">
                   <div slot="header">
@@ -42,7 +42,7 @@
               </span>
               <span style="float: right">
                 <span>附单据 {{item.projectFileNum}} 张</span>
-                <span class="">图</span>
+                <span class=""></span>
                 <span style="margin-left: 20px" @click="delPro(pindex)"><i class="el-icon-close"></i></span>
               </span>
 
@@ -192,6 +192,7 @@
           {proCode:'003',proName:'可持续发展项目',children:[{proCode:'00101',proName:'可持续发展项目1'},{proCode:'00102',proName:'可持续发展项目2'}]},
           {proCode:'004',proName:'新能源项目',children:[{proCode:'00101',proName:'新能源项目1'},{proCode:'00102',proName:'新能源项目2'}]}],//可选择项目
         data: {
+          applyBillName:'',
           applyDepart: '浙江省总工会本级办公室',
           applyDate: new Date().getDate(),
           applyAmount: '100000',
@@ -200,7 +201,7 @@
         projectItem: [
           {
             checked: false,
-            projectCode: '001',
+            projectCode: '20190528001',
             projectFileNum: 2,
             projectFileList: 2,
             pdList: [
@@ -211,7 +212,7 @@
           },
           {
             checked: false,
-            projectCode: '001',
+            projectCode: '20190528002',
             projectFileNum: 0,
             projectFileList: 2,
             pdList: [
@@ -270,7 +271,7 @@
       add(){
         let obj={
             checked: false,
-            projectCode: '001',
+            projectCode: '2019052800'+(this.projectItem.length+1),
             projectFileNum: 0,
             projectFileList: 0,
             pdList: [
