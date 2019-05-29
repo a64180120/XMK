@@ -10,7 +10,7 @@
                     <div class="topIcon"><img src="@/assets/images/zj2.png" alt=""></div>
                     修改
                 </div>
-                <div class="handle">
+                <div @click.stop="deleteAudit" class="handle">
                     <div class="topIcon"><img src="@/assets/images/zj3.png" alt=""></div>
                     删除
                 </div>
@@ -79,7 +79,7 @@
                             <div @click.stop="showAuditTypeAdd('update')" class="typeUpdate">
                                 <img src="@/assets/images/update.png" alt="">   <span>修改</span> 
                             </div>
-                            <div @click.stop="AuditTypeDelete" class="typeDelete">
+                            <div @click.stop="deletetype" class="typeDelete">
                                 <img src="@/assets/images/del.png" alt="">   <span>删除</span> 
                             </div>
                        </div>
@@ -4627,9 +4627,32 @@ export default {
         search(val){
             console.log(val)
         },
+        deleteAudit(){  //流程删除
+            this.$confirm('此操作将永久删除该流程, 是否继续?', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+                }).then(()=>{
+                    this.$msgBox.show('删除成功!')
+                }).catch(()=>{
+
+                })
+            
+        },
         showAuditAdd(val){  //流程编辑
             this.auditBtn=val;
             this.auditAddShow=true;
+        },
+        deletetype(){
+            this.$confirm('此操作将永久删除该类型, 是否继续?', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+                }).then(()=>{
+                    this.$msgBox.show('删除成功!')
+                }).catch(()=>{
+
+                })
         },
         showAuditTypeAdd(val){ //类型编辑
             this.typeBtn=val;

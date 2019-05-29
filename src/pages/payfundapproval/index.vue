@@ -25,10 +25,10 @@
           <div class="btnArea">
             <el-form :inline="true">
               <el-form-item label="申报部门" class="top-form-left">
-                <el-input size="mini" v-model="form.depart" @focus="openOrg()" style="width: 120px" placeholder="全部"></el-input>
+                <el-input size="mini" v-model="form.depart" @focus="openOrg()" @change="changeInput()" style="width: 120px" placeholder="全部"></el-input>
               </el-form-item>
               <el-form-item label="停留时长" class="top-form-left">
-                <el-input size="mini" v-model="form.long" style="width: 200px" placeholder="请输入停留时长">
+                <el-input size="mini" v-model="form.long" style="width: 200px" placeholder="请输入停留时长" @change="changeInput()">
                   <el-select v-model="select" slot="prepend" placeholder="类型" class="select-input" style="width: 75px">
                     <el-option label="大于" value="1"></el-option>
                     <el-option label="等于" value="2"></el-option>
@@ -37,7 +37,7 @@
                 </el-input>
               </el-form-item>
               <el-form-item label="申报日期" class="top-form-left">
-                <el-date-picker v-model="form.date" style="width: 240px" size="mini" type="daterange" start-placeholder="开始时间" end-placeholder="开始时间"></el-date-picker>
+                <el-date-picker v-model="form.date" @change="changeInput()" style="width: 240px" size="mini" type="daterange" start-placeholder="开始时间" end-placeholder="开始时间"></el-date-picker>
               </el-form-item>
               <el-form-item label="" class="top-form-right">
                 <search-input @btnClick="search()" placeholder="申请单名称/编号" v-model="searchValue"></search-input>
@@ -107,7 +107,7 @@
               <tbody>
               <tr v-for="(item,idx) in tableData"  :key="idx">
                 <td>
-                  <el-checkbox v-model="check[idx]"  >{{idx}}</el-checkbox>
+                  <el-checkbox v-model="check[idx]"  >{{idx+1}}</el-checkbox>
                 </td>
                 <td @click="handleRowClick(item,idx)" class="apply-epart">
                   {{item.applyDepart}}
@@ -198,7 +198,7 @@
               <tbody>
               <tr v-for="(item,idx) in tableData"  :key="idx">
                 <td>
-                  <el-checkbox v-model="check[idx]"  >{{idx}}</el-checkbox>
+                  <el-checkbox v-model="check[idx]"  >{{idx+1}}</el-checkbox>
                 </td>
                 <td @click="handleRowClick(item,idx)" class="apply-epart">
                   {{item.applyDepart}}
@@ -4720,7 +4720,7 @@
         page:{
           currentPage:1,//当前页
           pageSize:[20,50,100], //每页显示多少条
-          total:3//总条数
+          total:12//总条数
         },//分页
         visible:false,
         appDialog:{
@@ -4742,50 +4742,13 @@
     mounted() {
       this.isApproval = this.$route.query.approval
       console.log(this.isApproval)
-      let data1 = {
-        applyDepart:'实业中心',
-        applyCode:'201904180001',
-        applyName:'专家授课课酬支付申请',
-        itemCode:'20190000007',
-        itemName:'与行业协会合作共同展开...',
-        applyAmount:'4,567.90',
-        applyDate:'2019-04-17',
-        approvalStutas:'1'
-      };
-      let data2 = {
-        applyDepart:'广东省工人医院',
-        applyCode:'201904180001',
-        applyName:'专家授课课酬支付申请',
-        itemCode:'20190000007',
-        itemName:'与行业协会合作共同展开...',
-        applyAmount:'4,567.90',
-        applyDate:'2019-04-17',
-        approvalStutas:'2'
-      };
-      let data3 = {
-        applyDepart:'财务与资产管理部',
-        applyCode:'201904180001',
-        applyName:'专家授课课酬支付申请',
-        itemCode:'20190000007',
-        itemName:'与行业协会合作共同展开...',
-        applyAmount:'4,567.90',
-        applyDate:'2019-04-17',
-        approvalStutas:'3'
-      };
-      for (let i = 0;i<3;i++){
-        if(i%4 == 1){
-          this.tableData[i] = data1
-        }else if (i%4 == 2) {
-          this.tableData[i] = data2
-        } else {
-          this.tableData[i] = data3
-        }
-        this.check.push(false)
-      }
+      this.testData()
     },
     watch:{
       check(val,oldval){
+        console.log(val)
         this.selection = selection(this.check,this.tableData)
+        console.log(this.selection)
         if (this.selection.length !==0 && this.selection.length !== this.tableData.length){
           this.IsIndeterminate = true
         }else if (this.selection.length === this.tableData.length) {
@@ -4806,6 +4769,48 @@
       },
     },
     methods:{
+      testData(){
+        let data1 = {
+          applyDepart:'实业中心',
+          applyCode:'201904180001',
+          applyName:'专家授课课酬支付申请',
+          itemCode:'20190000007',
+          itemName:'与行业协会合作共同展开...',
+          applyAmount:'4,567.90',
+          applyDate:'2019-04-17',
+          approvalStutas:'1'
+        };
+        let data2 = {
+          applyDepart:'广东省工人医院',
+          applyCode:'201904180001',
+          applyName:'专家授课课酬支付申请',
+          itemCode:'20190000007',
+          itemName:'与行业协会合作共同展开...',
+          applyAmount:'4,567.90',
+          applyDate:'2019-04-17',
+          approvalStutas:'2'
+        };
+        let data3 = {
+          applyDepart:'财务与资产管理部',
+          applyCode:'201904180001',
+          applyName:'专家授课课酬支付申请',
+          itemCode:'20190000007',
+          itemName:'与行业协会合作共同展开...',
+          applyAmount:'4,567.90',
+          applyDate:'2019-04-17',
+          approvalStutas:'3'
+        };
+        for (let i = 0;i<12;i++){
+          if(i%4 == 1){
+            this.tableData[i] = data1
+          }else if (i%5 == 2) {
+            this.tableData[i] = data2
+          } else {
+            this.tableData[i] = data3
+          }
+          this.check.push(false)
+        }
+      },
       //搜索框事件
       search(){
         console.log(1)
@@ -4838,14 +4843,22 @@
       },
       //打开审批弹框
       aprovalItem(){
-        this.appDialog.title = '查看'
-        this.appDialog.btnGroup.cancelName = '取消'
-        this.appDialog.btnGroup.onfirmName = '确认'
-        this.$refs.approvalDialog.changeDialog()
+        if (this.selection.length ===0 ){
+            this.$msgBox.show('请选择需要审批的审批单')
+        }else {
+          this.appDialog.title = '查看'
+          this.appDialog.btnGroup.cancelName = '取消'
+          this.appDialog.btnGroup.onfirmName = '确认'
+          this.$refs.approvalDialog.changeDialog()
+        }
       },
       //生成支付单弹框
       creatPayItem(){
-        this.$refs.paylistDialog.changeDialog()
+        if (this.selection.length ===0 ){
+          this.$msgBox.show('请选择需要生成支付单的审批单')
+        }else{
+          this.$refs.paylistDialog.changeDialog()
+        }
       },
       closeAuditFollow(){
         this.visible = false
@@ -4874,6 +4887,22 @@
       //生成支付单成功
       plSubSuc(){
         this.detailDialog = false
+      },
+      //输入框值改变
+      changeInput(){
+        this.tableData = [{
+          applyDepart:'广东省工人医院',
+          applyCode:'201904180001',
+          applyName:'专家授课课酬支付申请',
+          itemCode:'20190000007',
+          itemName:'与行业协会合作共同展开...',
+          applyAmount:'4,567.90',
+          applyDate:'2019-04-17',
+          approvalStutas:'2'
+        }]
+        if( this.form.long==''){
+          this.testData()
+        }
       }
     }
   }
