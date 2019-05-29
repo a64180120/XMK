@@ -3,7 +3,10 @@
         <ul>
             <li>
                 <div>所属组织:</div>
-                <div></div>
+                <div class="orgName" @click="orgTree()">
+                    <span v-show="!info.org">请选择组织</span>
+                    <span v-for="org of info.org">{{org.OName}}</span>
+                </div>
             </li>
             <li>
                 <div>银行账号名称:</div>
@@ -45,12 +48,14 @@
             <span class="whiteBtn">取消</span>
             <span class="btn">保存</span>
         </p>
+        <!--组织树弹窗   visible:显示,,,,@confirm接收选中的值   data组织列表  checked-org当前选中的组织的code列表-->
+        <orgtree :visible.sync="orgVisible"  @confirm="getOrg" :data="orgList" :checked-org="orgSelected"></orgtree>
     </div>
 </template>
 
 <script>
-
-
+import Orgtree from "@/components/orgtree/index"
+import {mapState} from 'Vuex'
 export default {
     name:'bankaccountAdd',
     props:{
@@ -61,18 +66,32 @@ export default {
     },
     data(){
         return{
-            info:{}
+            info:{},
+            orgVisible:false,
+            orgSelected:[],
         }
     },
+    computed:{
+        ...mapState({
+            orgList : state => state.user.orglist
+        })
+    },
     methods:{
-        refresh(){
-
+        getOrg(val){
+            this.info.org=val;  
+        },
+        orgTree(){
+            if(this.info.org){
+                 this.orgSelected=[this.info.org.OCode];//需要code的列表
+            } 
+            this.orgVisible=true;
         }
     },
     mounted(){
         
     },
     components:{
+        Orgtree
     }
 }
 </script>
@@ -107,5 +126,9 @@ export default {
             }
         }
     }
+}
+.orgName{
+    border-bottom:1px solid #C0C4CC;
+    height:98%;
 }
 </style>
