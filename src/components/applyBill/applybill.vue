@@ -392,13 +392,19 @@
     width: 100%;
 
     > .title {
+      background-color: #3294e8;
+      border-radius: 6px 6px 0 0;
+      height: 35px;
       > span {
         font-size: 0.2rem;
+        line-height: 35px;
+        color: #ffffff;
       }
     }
 
     > .top {
       > ul {
+        margin: 8px 0;
         list-style: none;
         float: left;
         width: 100%;

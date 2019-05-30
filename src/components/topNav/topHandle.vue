@@ -3432,13 +3432,13 @@
         },
         computed:{
             ...mapState({
-                // orgList: state=>state.user.orglist
+                //  orgList: state=>state.user.orglist
             })
         },
         mounted(){
-            if(!this.orglist){
-                this.getOrganize();
-            }  
+            // if(!this.orgList){
+            //     this.getOrganize();
+            // }  
         },
         methods:{
           orgTreeShow(){
