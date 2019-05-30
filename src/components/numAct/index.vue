@@ -7,18 +7,19 @@
         name: "num",
       props:{
           vv:{
-          type:String,
+            type:String,
             default:'000.00'
         }
       },
       data(){
           return{
-            oldValue:0,
+            oldValue:'1,000,000,00',
             newValue:0,
             html:''
           }
       },
       mounted(){
+        this.newValue=this.vv;
         this.changeMove(this.oldValue,this.newValue);
         this.$refs.number.innerHTML=this.html;
       },

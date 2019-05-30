@@ -48,17 +48,20 @@
       </div>
       <div class="orgSelect clear">
         <span class="fl mr-2">单位:</span>
-        <div class="fl">
-          <el-popover width="300" placement="left" :popper-class="'maxH'" trigger="hover">
+        <div @click.stop="orgTreeShow" class="fl">
+          <el-popover width="300" placement="bottom" :popper-class="'maxH'" trigger="click">
             <el-tree
               ref="orgtree"
-              node-key="label"
+              node-key="OCode"
+              :highlight-current="true"
               :props="defaultProps"
+              
+              :default-expanded-keys="[org.OCode]"
               :data="orgList"
               :expand-on-click-node="false"
               @node-click="orgChange"
             ></el-tree>
-            <p slot="reference" class="orgName">{{org.OName}}</p>
+            <p  slot="reference" class="orgName">{{org.OName}}</p>
           </el-popover>
           <!-- <p @click="orgTreeInit" class="orgName">{{orgName}}</p>
           <div v-show="orgTreeShow" class="treeCon" style="z-index:9;">
@@ -108,10 +111,10 @@
                 label: '2018'
             }],
             
-            year: '2018',//年度
+            year: '2019',//年度
             org:{
-               "OCode": "10200301",
-               "OName": "浙江省总工会",
+               "OCode": "101",
+               "OName": "浙江省总本级",
             },//组织=名
             orgList: [{
               "PhId": 488181024000001,
@@ -3438,6 +3441,10 @@
             // }  
         },
         methods:{
+          orgTreeShow(){
+            this.$refs.orgtree.setCurrentNode({OCode:this.org.OCode});
+            
+          },
           goHome(){
             window.open('http://218.108.53.106/ghc/web','_self')
           },
@@ -3460,6 +3467,8 @@
           },
           orgChange(val){ //组织改变
             this.org=val;
+            let p = document.querySelector('.handleBtnCon .orgName');
+            p.click();
             this.refresh();
           },
            yearChange(){  //年度改变
@@ -3495,6 +3504,7 @@
   left: 0;
   right: 0;
   color: #676767;
+  background: #fff;
 }
 .handleBtn {
   width: 100%;
@@ -3513,7 +3523,7 @@
   .btnContainer {
     width: 100%;
     height: 60px;
-    font-size: 0.16rem;
+    font-size: 0.14rem;
     margin-top:10px;
     position: relative;
     > div {
@@ -3524,12 +3534,12 @@
       overflow: hidden;
       position: absolute;
       right: 20px;
-      top: -10px;
+      top: -2px; 
       > li {
         float: left;
-        width: 65px;
-        height: 60px;
-        padding: 10px 0;
+        width: 60px;
+        height: 50px;
+        padding: 0;
         text-align: center;
         cursor: pointer;
         &:active {
@@ -3538,7 +3548,8 @@
         > div {
           text-align: center;
           > img {
-            width: 30px;
+            width: 28px;
+            margin:2px 0 ;
           }
         }
 
@@ -3618,6 +3629,10 @@
 }
 </style>
 <style>
+.handleBtnCon .btnContainer{
+    font-size:0.14rem;
+  }
+
 .orgInfo .el-input--suffix .el-input__inner {
   height: 30px;
 }

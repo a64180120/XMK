@@ -108,6 +108,10 @@ table .left{
   padding: 10px 0;
   box-shadow: 0 3px 8px #cbcbcb;
 }
+.tableBody table tr.trActive,
+.tableBody table tr:hover{
+  box-shadow: 0 0px 9px #409eff;
+}
 .tableBody table td:nth-of-type(1){
   border-left: 0;
   margin-left: 10px;
