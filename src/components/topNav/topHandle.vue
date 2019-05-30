@@ -3537,10 +3537,9 @@
       top: -2px; 
       > li {
         float: left;
-        width: 65px;
-        height: 60px;
+        width: 60px;
+        height: 50px;
         padding: 0;
-
         text-align: center;
         cursor: pointer;
         &:active {
