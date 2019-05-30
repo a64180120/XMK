@@ -653,7 +653,6 @@ export default {
         this.checkAll = this.tableData.every(item => item.checked)
       }
     },
-
     // 导航栏事件
     payNav(type, item) {
       this.noDataRefresh()
@@ -688,7 +687,13 @@ export default {
         switch (type) {
           case 'payListData':
             if (checkedCount != 1) {
-              this.$msgBox.show('请选择一条数据进行维护。')
+              this.$msgBox.show({
+                content: '请选择一条数据进行维护。',
+                fn: () => {}
+              })
+              this.tableData.forEach(item => {
+                item.checked = false
+              })
               return
             } else if (
               handleitem[0].FApproval == 0 ||
@@ -696,11 +701,16 @@ export default {
             ) {
               this.payListData.itemType = 'notApprove'
             } else {
-              this.$msgBox.show(
-                handleitem[0].FApproval == 1
-                  ? '单据正在审批中。'
-                  : '单据已经审批通过。'
-              )
+              this.$msgBox.show({
+                content:
+                  handleitem[0].FApproval == 1
+                    ? '单据正在审批中。'
+                    : '单据已经审批通过。',
+                fn: () => {}
+              })
+              this.tableData.forEach(item => {
+                item.checked = false
+              })
               return
             }
             break
@@ -710,9 +720,14 @@ export default {
                 return item.FApproval == 9 && item.FState == 0
               })
             ) {
-              this.$msgBox.show(
-                '只有审批状态为“审批通过”，支付状态为“待支付”的单据，才可以使用【合并支付】。'
-              )
+              this.$msgBox.show({
+                content:
+                  '只有审批状态为“审批通过”，支付状态为“待支付”的单据，才可以使用【合并支付】。',
+                fn: () => {}
+              })
+              this.tableData.forEach(item => {
+                item.checked = false
+              })
               return
             }
             break
@@ -723,6 +738,9 @@ export default {
               })
             ) {
               this.$msgBox.show('只能对支付异常的单据进行处理。')
+              this.tableData.forEach(item => {
+                item.checked = false
+              })
               return
             }
             break
@@ -733,6 +751,9 @@ export default {
               })
             ) {
               this.$msgBox.show('只能对待送审的单据进行处理。')
+              this.tableData.forEach(item => {
+                item.checked = false
+              })
               return
             }
             break

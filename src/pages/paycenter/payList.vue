@@ -289,7 +289,11 @@
     <!-- 合并支付组件 -->
     <merge-pay :father="data" :data="mergePayData"></merge-pay>
     <!-- 异常处理 -->
-    <pay-error-handle v-if="payErrorHandleData.openDialog" :data="payErrorHandleData"></pay-error-handle>
+    <pay-error-handle
+      :father="data"
+      v-if="payErrorHandleData.openDialog"
+      :data="payErrorHandleData"
+    ></pay-error-handle>
     <!-- 送审 -->
     <go-approval
       v-if="approvalData.openDialog"
@@ -792,6 +796,7 @@ export default {
     },
     payListClose(done) {
       if (this.reSetting) {
+        console.log('setting')
         this.reSetting = false
         this.data.itemType = 'error'
         this.detail.Dtls.unshift(this.oldDtls)

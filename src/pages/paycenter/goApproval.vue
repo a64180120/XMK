@@ -187,6 +187,8 @@ export default {
         fn: () => {
           if (vm.reSetting) {
             vm.father.itemType = 'error'
+            vm.$parent.reSetting = false
+            vm.$parent.detail.Dtls.unshift(vm.$parent.oldDtls)
           } else {
             vm.father ? (vm.father.openDialog = false) : ''
           }
