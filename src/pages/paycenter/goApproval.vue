@@ -2,7 +2,7 @@
   <section>
     <el-dialog
       :visible.sync="data.openDialog"
-      width="37.5%"
+      width="540px"
       :close-on-click-modal="false"
       class="dialog goApproval"
       append-to-body
@@ -87,14 +87,14 @@
 import auditfollow from '../../components/auditFollow/auditfollow'
 
 export default {
-  name: 'approvalDialog',
+  name: 'goApproval',
   components: { auditfollow },
   props: {
     data: {
       type: Object,
       default: {
         openDialog: false,
-        data: {},
+        data: null,
         itemType: ''
       }
     },
@@ -123,11 +123,11 @@ export default {
       subData: [
         {
           code: '0001',
-          name: 'ZXXXXX'
+          name: '资金拨付流程1'
         },
         {
           code: '0002',
-          name: 'FASAS'
+          name: '资金拨付流程2'
         }
       ],
       nextData: [],
@@ -135,21 +135,21 @@ export default {
         [
           {
             code: '1001',
-            name: '流程103'
+            name: '王官官'
           },
           {
             code: '1002',
-            name: '流程101'
+            name: '王管管'
           }
         ],
         [
           {
             code: '2001',
-            name: '流程203'
+            name: '王罐罐'
           },
           {
             code: '2002',
-            name: '流程201'
+            name: '王关关'
           }
         ]
       ]
@@ -191,6 +191,13 @@ export default {
             vm.father ? (vm.father.openDialog = false) : ''
           }
           vm.data.openDialog = false
+          if (Array.isArray(this.data.data)) {
+            this.data.data.forEach(item => {
+              item.FApproval = 1
+            })
+          } else {
+            this.data.data.FApproval = 1
+          }
         }
       })
     }
@@ -198,10 +205,14 @@ export default {
   created() {
     console.log(this.father, this.reSetting)
   },
-  mounted() {
-    this.$nextTick(() => {
-      this.$refs.content.setCurrentRow(this.subData[0])
-    })
+  watch: {
+    'data.openDialog'(newVal) {
+      if (newVal) {
+        this.$nextTick(() => {
+          this.$refs.content.setCurrentRow(this.subData[0])
+        })
+      }
+    }
   }
 }
 </script>
@@ -357,7 +368,7 @@ export default {
   font-size: 0.12rem;
 }
 </style>
-<style lang="less">
+<style lang="scss">
 .goApproval {
   .el-dialog {
     display: inline-block;
@@ -365,6 +376,9 @@ export default {
     vertical-align: middle;
     .el-dialog__body {
       padding-top: 0px;
+    }
+    .el-table__body tr.current-row > td {
+      background-color: $primaryColor;
     }
   }
   &.el-dialog__wrapper {
