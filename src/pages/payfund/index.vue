@@ -34,8 +34,8 @@
 
       <div class="formArea">
         <div class="btnArea">
-          <i class="el-icon-d-arrow-left iicon" style="position:absolute;left:0;" @click.stop="unionStateScroll(false)"></i>
-          <i class="el-icon-d-arrow-right iicon" style="position:absolute;right:275px;" @click.stop="unionStateScroll(true)"></i>
+          <i class="el-icon-d-arrow-left iicon" style="position:absolute;left:0;" @click.stop="$stateScroll(false)"></i>
+          <i class="el-icon-d-arrow-right iicon" style="position:absolute;right:275px;" @click.stop="$stateScroll(true)"></i>
           <div class="scrollNav">
             <div>
               <label>
@@ -477,6 +477,7 @@
       methods:{
         //滚动
         unionStateScroll(bool){
+
           var union=document.getElementsByClassName('scrollNav')[0];
           var unionStateCon=document.getElementsByClassName('scrollNav')[0].firstElementChild;
           let eleChildren=unionStateCon.childNodes;
