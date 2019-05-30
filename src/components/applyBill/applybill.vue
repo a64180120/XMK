@@ -242,10 +242,10 @@
             },
             projectItem: [{
               projectName: '预算款报表项目',
-              projectFolder: ['附件资料图片.png', '附件资料图片.png', '附件资料图片.png', '附件资料图片.png']
+              projectFolder: ['附件资料图片1.png', '附件资料图片2.png', '附件资料图片3.png', '附件资料图片4.png']
             }, {
               projectName: '往来款报表项目',
-              projectFolder: ['附件资料图片.png', '附件资料图片.png', '附件资料图片.png']
+              projectFolder: ['附件资料图片1.png', '附件资料图片2.png', '附件资料图片3.png']
             }],
             //生成支付单
             appDialog:{
