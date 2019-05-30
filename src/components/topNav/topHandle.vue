@@ -3534,12 +3534,12 @@
       overflow: hidden;
       position: absolute;
       right: 20px;
-      top: -10px;
+      top: -2px; 
       > li {
         float: left;
-        width: 65px;
-        height: 60px;
-        padding: 10px 0;
+        width: 60px;
+        height: 50px;
+        padding: 0;
         text-align: center;
         cursor: pointer;
         &:active {
@@ -3548,7 +3548,8 @@
         > div {
           text-align: center;
           > img {
-            width: 30px;
+            width: 28px;
+            margin:2px 0 ;
           }
         }
 
@@ -3628,6 +3629,10 @@
 }
 </style>
 <style>
+.handleBtnCon .btnContainer{
+    font-size:0.14rem;
+  }
+
 .orgInfo .el-input--suffix .el-input__inner {
   height: 30px;
 }

@@ -455,7 +455,7 @@
             },
             approvalData:{
             },
-            apartData:{count:28,money:'1,230,989.32'}
+            apartData:{count:28,money:'30,989.32'}
           }
       },
       components:{Applypro, Orgtree, Applybill, tophandle,pieChart,goApproval,Auditfollow,ApprovalDialog,num},
@@ -696,7 +696,7 @@
           // bmList:[{value:0,label:'办公室'},{value:1,label:'女工部'},{value:2,label:'财务与资产部'}],
           switch(val){
             case 0:
-              this.apartData={count:28,money:'1,230,989.32'};
+              this.apartData={count:28,money:'30,989.32'};
               break;
             case 1:
               this.apartData={count:8,money:'2,459.32'};
