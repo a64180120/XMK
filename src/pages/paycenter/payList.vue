@@ -6,7 +6,7 @@
       :visible.sync="data.openDialog"
       width="80%"
       :close-on-click-modal="false"
-      class="payCenter"
+      class="payCenter payList"
       :before-close="payListClose"
     >
       <div slot="title" class="dialog-title">
@@ -79,9 +79,19 @@
           <div class="getDetail">
             <div v-if="data.itemType == 'notApprove'">
               批量设置转账方式
-              <el-select v-model="bankType" placeholder="请选择">
-                <el-option label="同行" value="1"></el-option>
-                <el-option label="跨行" value="2"></el-option>
+              <el-select
+                @focus="selectFSamebankFocus"
+                @visible-change="selectFSamebankBlur"
+                v-model="bankType"
+                placeholder="请选择"
+                ref="selectFSamebank"
+              >
+                <el-option
+                  v-for="(item,index) in FSamebankList"
+                  :label="item.label"
+                  :value="item.value"
+                  :key="index"
+                ></el-option>
               </el-select>
             </div>
             <el-table
@@ -198,7 +208,8 @@
                       <template>{{FStateList.find(item=>item.value==scope.row[scope.column.property]).label}}</template>
                     </div>
                     <div :title="scope.row[scope.column.property]" class="table-item" v-else>
-                      <span>{{scope.row[scope.column.property]}}</span>
+                      <span v-if="scope.row.FState == 1">————</span>
+                      <span v-else>{{scope.row[scope.column.property]}}</span>
                     </div>
                   </template>
                 </el-table-column>
@@ -214,7 +225,8 @@
                 >
                   <template slot-scope="scope">
                     <div v-if="scope.column.property=='FState'" class="table-item">
-                      <template>{{FStateList.find(item=>item.value==scope.row[scope.column.property]).label}}</template>
+                      <!-- <template>{{FStateList.find(item=>item.value==scope.row[scope.column.property]).label}}</template> -->
+                      支付成功
                     </div>
                   </template>
                 </el-table-column>
@@ -250,7 +262,7 @@
       class="dialog detail-dialog payCenter"
     >
       <div slot="title" class="dialog-title">
-        <span>查看申请</span>
+        <span style="float: left;">查看申请</span>
       </div>
       <apply-bill :data="fundDetailData" @showImg="showImg">
         <div slot="btn-group">
@@ -275,7 +287,7 @@
       <img-view v-if="imgDialog"></img-view>
     </el-dialog>
     <!-- 合并支付组件 -->
-    <merge-pay v-if="mergePayData.openDialog" :father="data" :data="mergePayData"></merge-pay>
+    <merge-pay :father="data" :data="mergePayData"></merge-pay>
     <!-- 异常处理 -->
     <pay-error-handle v-if="payErrorHandleData.openDialog" :data="payErrorHandleData"></pay-error-handle>
     <!-- 送审 -->
@@ -333,7 +345,6 @@ export default {
   data() {
     return {
       imgDialog: false, //图片预览弹框
-
       showAuditfollow: false,
       // 支付单表单
       // 未送审
@@ -367,7 +378,7 @@ export default {
           bodyAlign: 'right'
         },
         {
-          name: 'descrilbe',
+          name: 'FDescribe',
           label: '备注',
           width: '300'
         },
@@ -428,15 +439,15 @@ export default {
       account: 1,
       accountList: [
         {
-          label: '账号A',
+          label: '浙江省总工会',
           value: 1
         },
         {
-          label: '账号B',
+          label: '浙江省总工会政治部',
           value: 2
         },
         {
-          label: 'XXXXX',
+          label: '浙江省总工会财务部',
           value: 3
         }
       ],
@@ -549,6 +560,7 @@ export default {
         },
         Dtls: [
           {
+            choosed: false,
             depart: '杭州市总工会',
             PhId: '216190528000009',
             MstPhid: '216190528000005',
@@ -557,15 +569,15 @@ export default {
             RefbillPhid: '6',
             RefbillCode: 'zfbbf0006',
             RefbillDtlPhid: '1',
-            RefbillDtlPhid2: '1',
-            FAmount: 1000.0,
+            RefbillDtlPhid2: '2161905280009999',
+            FAmount: 2000.0,
             FCurrency: '001',
             FPayAcntname: '付款账户1',
             FPayAcnt: '111001',
-            FPayBankcode: '',
-            FRecAcntname: '',
-            FRecAcnt: '',
-            FRecBankcode: '',
+            FPayBankcode: '杭州市工商银行',
+            FRecAcntname: '杭州市总工会党支部',
+            FRecAcnt: '6221233216248914675',
+            FRecBankcode: '31455',
             FRecCityname: '杭州市',
             FSamecity: 0,
             FSamebank: 1,
@@ -574,17 +586,17 @@ export default {
             FUsage: '用途信息',
             FPostscript: '附言：xxx',
             FExplation: '摘要',
-            FDescribe: '描述',
+            FDescribe: '打印机已坏',
             FSubmitdate: null,
             FSeqno: null,
             FBkSn: null,
             FResult: null,
-            FResultmsg: 'testtest',
+            FResultmsg: '支付请求响应失败',
             FState: 2,
             FNewCode: null,
-            XmProjcode: 'XM0002',
-            XmProjname: '项目0002',
-            BudgetdtlName: '预算明细项目001',
+            XmProjcode: '201905200002',
+            XmProjname: '办公室设备购买',
+            BudgetdtlName: '办公设备打印机购买',
             FDepartmentcode: null,
             FDepartmentname: null,
             QtKmdm: 501001,
@@ -598,7 +610,8 @@ export default {
             CurOrgId: '547181121000001'
           },
           {
-            depart: '杭州市总工会',
+            choosed: false,
+            depart: '绍兴市市总工会',
             PhId: '216190528000009',
             MstPhid: '216190528000005',
             OrgPhid: '547181121000001',
@@ -606,15 +619,15 @@ export default {
             RefbillPhid: '6',
             RefbillCode: 'zfbbf0006',
             RefbillDtlPhid: '1',
-            RefbillDtlPhid2: '1',
+            RefbillDtlPhid2: '2161905280009999',
             FAmount: 1000.0,
             FCurrency: '001',
             FPayAcntname: '付款账户1',
             FPayAcnt: '111001',
-            FPayBankcode: '',
-            FRecAcntname: '',
-            FRecAcnt: '',
-            FRecBankcode: '',
+            FPayBankcode: '绍兴市农业银行',
+            FRecAcntname: '绍兴市市总工会女工部',
+            FRecAcnt: '6228481268248914675',
+            FRecBankcode: '67455',
             FRecCityname: '杭州市',
             FSamecity: 0,
             FSamebank: 1,
@@ -623,118 +636,20 @@ export default {
             FUsage: '用途信息',
             FPostscript: '附言：xxx',
             FExplation: '摘要',
-            FDescribe: '描述',
+            FDescribe: '碎纸机已坏',
             FSubmitdate: null,
             FSeqno: null,
             FBkSn: null,
             FResult: null,
-            FResultmsg: null,
-            FState: 1,
+            FResultmsg: '对方账号不存在',
+            FState: 2,
             FNewCode: null,
-            XmProjcode: 'XM0002',
-            XmProjname: '项目0002',
-            BudgetdtlName: '预算明细项目002',
+            XmProjcode: '201905200002',
+            XmProjname: '办公室设备购买',
+            BudgetdtlName: '办公设备碎纸机购买',
             FDepartmentcode: null,
             FDepartmentname: null,
             QtKmdm: 501001,
-            QtKmmc: null,
-            PersistentState: 0,
-            NgRecordVer: 1,
-            NgInsertDt: '2019-05-28 10:58:03',
-            NgUpdateDt: '2019-05-28 10:58:03',
-            Creator: '521180820000001',
-            Editor: '521180820000001',
-            CurOrgId: '547181121000001'
-          },
-          {
-            PhId: '216190528000010',
-            MstPhid: '216190528000005',
-            OrgPhid: '547181121000001',
-            depart: '杭州市总工会',
-            OrgCode: '1',
-            RefbillPhid: '6',
-            RefbillCode: 'zfbbf0006',
-            RefbillDtlPhid: '1',
-            RefbillDtlPhid2: '1',
-            FAmount: 1006.0,
-            FCurrency: '001',
-            FPayAcntname: '付款账户2',
-            FPayAcnt: '111002',
-            FPayBankcode: '',
-            FRecAcntname: '',
-            FRecAcnt: '',
-            FRecBankcode: '',
-            FRecCityname: '杭州市',
-            FSamecity: 0,
-            FSamebank: 1,
-            FIsurgent: 1,
-            FCorp: 1,
-            FUsage: '用途信息2',
-            FPostscript: '附言：xxx2',
-            FExplation: '摘要2',
-            FDescribe: '描述2',
-            FSubmitdate: null,
-            FSeqno: null,
-            FBkSn: null,
-            FResult: null,
-            FResultmsg: null,
-            FState: 1,
-            FNewCode: null,
-            XmProjcode: 'XM0001',
-            XmProjname: '项目0001',
-            BudgetdtlName: '预算明细项目003',
-            FDepartmentcode: null,
-            FDepartmentname: null,
-            QtKmdm: 501001,
-            QtKmmc: null,
-            PersistentState: 0,
-            NgRecordVer: 1,
-            NgInsertDt: '2019-05-28 10:58:03',
-            NgUpdateDt: '2019-05-28 10:58:03',
-            Creator: '521180820000001',
-            Editor: '521180820000001',
-            CurOrgId: '547181121000001'
-          },
-          {
-            PhId: '216190528000010',
-            MstPhid: '216190528000005',
-            OrgPhid: '547181121000001',
-            OrgCode: '1',
-            depart: '杭州市总工会',
-            RefbillPhid: '6',
-            RefbillCode: 'zfbbf0006',
-            RefbillDtlPhid: '1',
-            RefbillDtlPhid2: '1',
-            FAmount: 1006.0,
-            FCurrency: '001',
-            FPayAcntname: '付款账户2',
-            FPayAcnt: '111002',
-            FPayBankcode: '',
-            FRecAcntname: '',
-            FRecAcnt: '',
-            FRecBankcode: '',
-            FRecCityname: '杭州市',
-            FSamecity: 0,
-            FSamebank: 0,
-            FIsurgent: 1,
-            FCorp: 1,
-            FUsage: '用途信息2',
-            FPostscript: '附言：xxx2',
-            FExplation: '摘要2',
-            FDescribe: '描述2',
-            FSubmitdate: null,
-            FSeqno: null,
-            FBkSn: null,
-            FResult: null,
-            FResultmsg: null,
-            FState: 1,
-            FNewCode: null,
-            XmProjcode: 'XM0001',
-            XmProjname: '项目0001',
-            BudgetdtlName: '预算明细项目004',
-            FDepartmentcode: null,
-            FDepartmentname: null,
-            QtKmdm: 501002,
             QtKmmc: null,
             PersistentState: 0,
             NgRecordVer: 1,
@@ -764,6 +679,25 @@ export default {
   },
   mounted() {},
   methods: {
+    // 批量设置转账方式
+    selectFSamebankFocus() {
+      if (this.detail.Dtls.every(item => item.choosed === false)) {
+        this.$refs.selectFSamebank.blur()
+        this.$msgBox.show('请先选择要设置的项目。')
+      }
+    },
+    selectFSamebankBlur(visible) {
+      console.log(123)
+      if (this.bankType !== '' && !visible) {
+        console.log(this.bankType)
+        this.detail.Dtls.forEach(item => {
+          if (item.choosed) {
+            console.log(item)
+            item.FSamebank = this.bankType
+          }
+        })
+      }
+    },
     //打开图片预览
     showImg(file) {
       console.log(file)
@@ -833,16 +767,18 @@ export default {
     getBank(e) {
       if (this.bankChooseData.data.choosed) {
         this.detail.Dtls.forEach(item => {
-          item.FRecAcntname = '杭州市总工会'
-          item.FRecAcnt = '2019010101'
-          item.FPayBankcode = '杭州银行'
-          item.FRecBankcode = '2019010101'
+          if (item.choosed) {
+            item.FRecAcntname = '杭州市总工会'
+            item.FRecAcnt = '6228481268248914675'
+            item.FPayBankcode = '杭州市工商银行'
+            item.FRecBankcode = '64841'
+          }
         })
       } else {
         this.bankChooseData.data.FRecAcntname = '杭州市总工会'
-        this.bankChooseData.data.FRecAcnt = '2019010101'
-        this.bankChooseData.data.FPayBankcode = '杭州银行'
-        this.bankChooseData.data.FRecBankcode = '2019010101'
+        this.bankChooseData.data.FRecAcnt = '6228481268248914675'
+        this.bankChooseData.data.FPayBankcode = '杭州市工商银行'
+        this.bankChooseData.data.FRecBankcode = '64841'
       }
     },
     closeAuditFollow() {
@@ -896,6 +832,7 @@ export default {
         case 'payErrorHandleData':
         case 'mergePayData':
           this[type].openDialog = true
+          this[type].data = this.data.data
           break
         case 'new':
           this.reSetting = true
@@ -1177,7 +1114,10 @@ export default {
     display: inline-block;
     margin: 0 !important;
     vertical-align: middle;
-    min-height: 60%;
+    &.payList {
+      min-height: 60%;
+    }
+
     .el-dialog__body {
       padding-top: 0px;
     }
