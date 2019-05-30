@@ -16,7 +16,10 @@
           <div class="imgCon">
             <img src="../../assets/images/message.png">
           </div>
-          <span style="float:right;width:290px">{{content}} &nbsp;({{count}}s) 后自动关闭</span>
+          <span style="float:right;width:290px">
+            <span v-html="content"></span>
+            &nbsp;({{count}}s) 后自动关闭
+          </span>
         </div>
         <div>
           <button @click="close" class="btn">{{cancelBtnText}}</button>
