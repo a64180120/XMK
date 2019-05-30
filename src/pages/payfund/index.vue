@@ -34,8 +34,8 @@
 
       <div class="formArea">
         <div class="btnArea">
-          <i class="el-icon-d-arrow-left iicon" style="position:absolute;left:0;" @click.stop="$stateScroll(false)"></i>
-          <i class="el-icon-d-arrow-right iicon" style="position:absolute;right:275px;" @click.stop="$stateScroll(true)"></i>
+          <i class="el-icon-d-arrow-left iicon" style="position:absolute;left:0;" @click.stop="unionStateScroll(false)"></i>
+          <i class="el-icon-d-arrow-right iicon" style="position:absolute;right:275px;" @click.stop="unionStateScroll(true)"></i>
           <div class="scrollNav">
             <div>
               <label>

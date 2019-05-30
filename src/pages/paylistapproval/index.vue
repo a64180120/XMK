@@ -4754,6 +4754,7 @@
         } else {
           this.tableData[i] = data3
         }
+        this.check.push(false)
       }
     },
     watch:{
