@@ -209,7 +209,7 @@
                 <td>
                   {{item.applyName}}
                 </td>
-                <td>
+                <td style="text-align: right">
                   {{item.applyAmount}}
                 </td>
                 <td>
