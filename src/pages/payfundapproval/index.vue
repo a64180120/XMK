@@ -105,7 +105,7 @@
                 <col width="25%">
               </colgroup>
               <tbody>
-              <tr v-for="(item,idx) in tableData"  :key="idx">
+              <tr :class="{trActive:check[idx]}" v-for="(item,idx) in tableData"  :key="idx">
                 <td>
                   <el-checkbox v-model="check[idx]"  >{{idx+1}}</el-checkbox>
                 </td>
@@ -211,7 +211,7 @@
                 <col width="30%">
               </colgroup>
               <tbody>
-              <tr v-for="(item,idx) in tableData"  :key="idx">
+              <tr :class="{trActive:check[idx]}" v-for="(item,idx) in tableData"  :key="idx">
                 <td>
                   <el-checkbox v-model="check[idx]"  >{{idx+1}}</el-checkbox>
                 </td>
