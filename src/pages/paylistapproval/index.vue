@@ -56,7 +56,7 @@
               <thead>
               <tr>
                 <td>
-                  <el-checkbox v-model="checked">序号</el-checkbox>
+                  <el-checkbox v-model="checkedAll" :indeterminate="IsIndeterminate">序号</el-checkbox>
                 </td>
                 <td>
                   申报部门/单位
@@ -102,7 +102,7 @@
               <tbody>
               <tr v-for="(item,idx) in tableData"  :key="idx">
                 <td>
-                  <el-checkbox v-model="checked" >{{idx}}</el-checkbox>
+                  <el-checkbox v-model="check[idx]" >{{idx}}</el-checkbox>
                 </td>
                 <td @click="handleRowClick(item,idx)" class="apply-epart">
                   {{item.applyDepart}}
@@ -110,7 +110,7 @@
                 <td>
                   {{item.payListCode}}
                 </td>
-                <td>
+                <td style="text-align: right">
                   {{item.applyAmount}}
                 </td>
                 <td>
@@ -155,7 +155,7 @@
               <thead>
               <tr>
                 <td>
-                  <el-checkbox v-model="checked">序号</el-checkbox>
+                  <el-checkbox v-model="checkedAll" :indeterminate="IsIndeterminate">序号</el-checkbox>
                 </td>
                 <td>
                   申报部门/单位
@@ -199,7 +199,7 @@
               <tbody>
               <tr v-for="(item,idx) in tableData"  :key="idx">
                 <td>
-                  <el-checkbox v-model="checked" >{{idx}}</el-checkbox>
+                  <el-checkbox v-model="check[idx]" >{{idx}}</el-checkbox>
                 </td>
                 <td @click="handleRowClick(item,idx)" class="apply-epart">
                   {{item.applyDepart}}
@@ -262,11 +262,14 @@
   import ApprovalDialog from "../payfundapproval/approvalDialog";
   import Orgtree from "../../components/orgtree/index";
   import Paylist from "./payList";
+  import { selection} from "../payfundapproval/selection";
   export default {
     name: "index",
     components: {Paylist, Orgtree, ApprovalDialog, Applybill, Auditfollow, SearchInput, HandleBtn},
     data(){
       return{
+        checkedAll:false, //是否全选
+        IsIndeterminate:false, //列表中是否有选中的值并且不是全选
         payListData: {
           openDialog: false,
           data: {},
@@ -279,7 +282,7 @@
         approvalData:{
         },
         openApprovalDialog:false,
-        checked:'',
+        check:[],
         form:{
           depart:'',
           long:'',
@@ -4743,7 +4746,7 @@
         applyDate:'2019-04-17',
         approvalStutas:'3'
       };
-      for (let i = 0;i<3;i++){
+      for (let i = 0;i<12;i++){
         if(i%4 == 1){
           this.tableData[i] = data1
         }else if (i%4 == 2) {
@@ -4754,9 +4757,28 @@
       }
     },
     watch:{
-      checked(val,oldval){
+      check(val,oldval){
         console.log(val)
-      }
+        this.selection = selection(this.check,this.tableData)
+        console.log(this.selection)
+        if (this.selection.length !==0 && this.selection.length !== this.tableData.length){
+          this.IsIndeterminate = true
+        }else if (this.selection.length === this.tableData.length) {
+          this.IsIndeterminate = false
+          this.checkedAll = true
+        }else if(this.selection.length ===0){
+          this.IsIndeterminate = false
+          this.checkedAll = false
+        }
+      },
+      checkedAll(val,ovlval){
+        this.IsIndeterminate = false
+        if(val){
+          this.check = this.check.map((item,index,array)=> true)
+        }else {
+          this.check = this.check.map((item,index,array)=> false)
+        }
+      },
     },
     methods:{
       //搜索框事件
@@ -4773,6 +4795,9 @@
       },
       //单行点击事件
       handleRowClick(row,idx){
+        console.clear()
+        this.selection = row
+        console.log(this.selection)
         this.payListData.openDialog =true
 
         this.detailData = row
