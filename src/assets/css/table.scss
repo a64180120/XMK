@@ -107,6 +107,7 @@ table .left{
   border-radius: 8px;
   padding: 10px 0;
   box-shadow: 0 3px 8px #cbcbcb;
+  transition: all 0.2s linear;
 }
 .tableBody table tr.trActive,
 .tableBody table tr:hover{

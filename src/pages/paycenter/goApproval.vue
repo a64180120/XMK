@@ -187,8 +187,24 @@ export default {
         fn: () => {
           if (vm.reSetting) {
             vm.father.itemType = 'error'
+            vm.$parent.reSetting = false
+            vm.$parent.detail.Dtls.unshift(vm.$parent.oldDtls)
           } else {
             vm.father ? (vm.father.openDialog = false) : ''
+          }
+          console.log(this.data.data)
+          if (Array.isArray(this.data.data)) {
+            this.data.data.forEach(item => {
+              if (item.FApproval !== 9) {
+                item.checked = false
+                item.FApproval = 1
+              }
+            })
+          } else {
+            if (this.data.data.FApproval !== 9) {
+              this.data.data.checked = false
+              this.data.data.FApproval = 1
+            }
           }
           vm.data.openDialog = false
         }

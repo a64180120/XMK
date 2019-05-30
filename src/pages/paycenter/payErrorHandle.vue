@@ -38,6 +38,9 @@ export default {
         openDialog: false,
         data: {}
       }
+    },
+    father: {
+      default: null
     }
   },
   data() {
@@ -56,7 +59,18 @@ export default {
       this.data.openDialog = false
       this.$msgBox.show({
         content: '处理成功',
-        fn: () => {}
+        fn: () => {
+          if (this.father) this.father.openDialog = false
+          if (Array.isArray(this.data.data)) {
+            this.data.data.forEach(item => {
+              item.checked = false
+              item.FState = 1
+            })
+          } else {
+            this.data.data.checked = false
+            this.data.data.FState = 1
+          }
+        }
       })
     }
   },

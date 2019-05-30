@@ -20,8 +20,7 @@ function apiAxios(method, url, params, hastimeout) {
 
   var appinfo = {
     //sql 数据库
-    // DbName: 'NG0002',
-    DbName: 'NG0001',
+    DbName: 'NG0002',
     OrgId: '547181121000001',
     OrgName: '',
     OCode: '',
@@ -35,8 +34,8 @@ function apiAxios(method, url, params, hastimeout) {
     SessionKey: '',
     UName: ''
   }
-  var url1 = 'http://127.0.0.1:8020',
-    // var url1 = 'http://127.0.0.1:8028',
+  // var url1 = 'http://127.0.0.1:8020',
+  var url1 = 'http://127.0.0.1:8028',
     //oracle 数据库
     // var appKey = 'D31B7F91-3068-4A49-91EE-F3E13AE5C48C',
     //     appSecret = '103CB639-840C-4E4F-8812-220ECE3C4E4D',
