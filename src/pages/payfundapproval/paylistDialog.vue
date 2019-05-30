@@ -84,7 +84,7 @@
         let that = this
         this.visible = false
         this.$msgBox.show({
-          content:'生成支付单成功',
+          content:'操作成功',
           fn:function () {
             that.openDialog = false
             that.$emit('subSuc')
@@ -186,7 +186,7 @@
             ]
           }
         };
-        this.postAxios('/GKPaymentMstApi/PostAdd',addData)
+        this.getAxios('/GKPaymentMstApi/PostAdd',addData)
           .then(success=>{
           console.log(success)
 

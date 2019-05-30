@@ -100,11 +100,11 @@
                 <col width="23%">
               </colgroup>
               <tbody>
-              <tr v-for="(item,idx) in tableData"  :key="idx">
+              <tr :class="{trActive:check[idx]}" v-for="(item,idx) in tableData"  :key="idx">
                 <td>
                   <el-checkbox v-model="check[idx]" >{{idx}}</el-checkbox>
                 </td>
-                <td @click="handleRowClick(item,idx)" class="apply-epart">
+                <td @click="handleRowClick(item,idx)" class="apply-epart cell-click">
                   {{item.applyDepart}}
                 </td>
                 <td>
@@ -123,9 +123,9 @@
                   {{item.applyDate}}
                 </td>
                 <td>
-                  <span style="cursor: pointer" v-if="item.approvalStutas ==1 " @click.stop="openApproval(item,idx)">申请中</span>
-                  <span style="cursor: pointer" v-if="item.approvalStutas ==2 " @click.stop="openApproval(item,idx)">申请完成</span>
-                  <span style="cursor: pointer" v-if="item.approvalStutas ==3 " @click.stop="openApproval(item,idx)">申请完成</span>
+                  <span class="cell-click" v-if="item.approvalStutas ==1 " @click.stop="openApproval(item,idx)">申请中</span>
+                  <span class="cell-click" v-if="item.approvalStutas ==2 " @click.stop="openApproval(item,idx)">申请完成</span>
+                  <span class="cell-click" v-if="item.approvalStutas ==3 " @click.stop="openApproval(item,idx)">申请完成</span>
                 </td>
                 <td>
                   <div @click="openAuditfollow()">
@@ -197,11 +197,11 @@
                 <col width="28%">
               </colgroup>
               <tbody>
-              <tr v-for="(item,idx) in tableData"  :key="idx">
+              <tr :class="{trActive:check[idx]}" v-for="(item,idx) in tableData"  :key="idx">
                 <td>
                   <el-checkbox v-model="check[idx]" >{{idx}}</el-checkbox>
                 </td>
-                <td @click="handleRowClick(item,idx)" class="apply-epart">
+                <td @click="handleRowClick(item,idx)" class="apply-epart cell-click">
                   {{item.applyDepart}}
                 </td>
                 <td>
@@ -220,9 +220,9 @@
                   {{item.applyDate}}
                 </td>
                 <td>
-                  <span style="cursor: pointer" v-if="item.approvalStutas ==1 " @click.stop="openApproval(item,idx)">申请中</span>
-                  <span style="cursor: pointer" v-if="item.approvalStutas ==2 " @click.stop="openApproval(item,idx)">申请完成</span>
-                  <span style="cursor: pointer" v-if="item.approvalStutas ==3 " @click.stop="openApproval(item,idx)">申请完成</span>
+                  <span class="cell-click" v-if="item.approvalStutas ==1 " @click.stop="openApproval(item,idx)">申请中</span>
+                  <span class="cell-click" v-if="item.approvalStutas ==2 " @click.stop="openApproval(item,idx)">申请完成</span>
+                  <span class="cell-click" v-if="item.approvalStutas ==3 " @click.stop="openApproval(item,idx)">申请完成</span>
                 </td>
                 <td></td>
               </tr>
@@ -4922,5 +4922,10 @@
   }
   .select-input >>> .el-input--suffix{
     width: 75px!important;
+  }
+  .cell-click{
+    color: #409EFF;
+    cursor: pointer;
+    text-decoration: underline;
   }
 </style>

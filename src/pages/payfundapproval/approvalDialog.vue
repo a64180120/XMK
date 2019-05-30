@@ -90,7 +90,7 @@
           let that= this
           this.visible = false
           this.$msgBox.show({
-            content:'审批支付单成功',
+            content:'审批成功',
             fn:function () {
               that.openDialog = false
               that.$emit('subSuc')
