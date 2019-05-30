@@ -28,7 +28,7 @@
                 <div class="appendix-item" v-for="(item,idx) in projectItem">
                   <span class="title"><i class="el-icon-s-order"></i>{{item.projectName}}</span>
                   <ul>
-                    <li v-for="(folder,idx) in item.projectFolder" @click="clickFolder(folder)">{{folder}}</li>
+                    <li  v-for="(folder,idx) in item.projectFolder" @click="clickFolder(folder)">{{folder}}</li>
                   </ul>
                 </div>
               </div>
@@ -44,7 +44,7 @@
               <ul>
                 <li>申报单位/部门：{{data.applyDepart}}</li>
                 <li>申报日期：{{data.applyDate}}</li>
-                <li>单位：元</li>
+                <li>单位：4396.00元</li>
               </ul>
             </div>
             <div class="content">
@@ -57,7 +57,7 @@
                   <tbody>
                   <tr>
                     <td>申请单号</td>
-                    <td>{{applyNum}}</td>
+                    <td>{{data.BNum}}</td>
                   </tr>
                   <tr>
                     <td>申请单位名称</td>
@@ -77,7 +77,7 @@
                   <tbody>
                   <tr>
                     <td>申请说明</td>
-                    <td></td>
+                    <td>{{data.BDescribe}}</td>
                     <td>申请金额合计</td>
                     <td>{{data.applyAmount}}</td>
                   </tr>
@@ -129,13 +129,17 @@
                     <col width="16%">
                   </colgroup>
                   <tbody>
-                  <tr v-for="i in 6">
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
+                  <tr v-for="(item,idx) in data.table">
+                    <td :rowspan="idx%3==0 ?'3':'1'" v-if="idx%3==0">
+                      {{item.id}}
+                    </td>
+                    <td :rowspan="idx%3==0 ?'3':'1'" v-if="idx%3==0">
+                      {{item.BName}}
+                    </td>
+                    <td>{{item.depart}}</td>
+                    <td>{{item.name}}</td>
+                    <td style="text-align: right">{{item.amount}}</td>
+                    <td >{{item.remark}}</td>
                   </tr>
                   </tbody>
                 </table>
@@ -196,13 +200,52 @@
             time:3,//倒计时
             data:{applyDepart:'浙江省总工会本级办公室',
               applyDate:new Date().getFullYear()+"-"+ (new Date().getMonth()+1)+"-"+ new Date().getDate(),
-              applyAmount:'100,000.00'},
+              applyAmount:'4,567.90',
+              BNum:'201904180001',
+              BDescribe:'本申请款用于工会基础设施建设使用',
+              table:[{
+                id:'2019050300001',
+                BName:'预算款报表项目申请',
+                depart:'宁波市总工会',
+                name:'预算款报表',
+                amount:"22,384.00",
+                remark:''
+              },{
+                id:'2019050300001',
+                BName:'预算款报表项目申请',
+                depart:'杭州市总工会',
+                name:'预算款报表',
+                amount:"384.40",
+                remark:''
+              },{
+                id:'2019050300001',
+                BName:'预算款报表项目申请',
+                depart:'舟山市总工会女工部',
+                name:'预算款报表',
+                amount:"26.60",
+                remark:''
+              },{
+                id:'2019050300001',
+                BName:'往来明细款项目申请',
+                depart:'宁波市总工会',
+                name:'往来明细款',
+                amount:"4,320.40",
+                remark:''
+              },{
+                id:'2019050300001',
+                BName:'往来明细款项目申请',
+                depart:'杭州市总工会',
+                name:'往来明细款',
+                amount:"30.40",
+                remark:''
+              }]
+            },
             projectItem: [{
-              projectName: 'XXXXX项目A',
-              projectFolder: ['附件1', '附件2', '附件3', '附件4']
+              projectName: '预算款报表项目',
+              projectFolder: ['附件资料图片.png', '附件资料图片.png', '附件资料图片.png', '附件资料图片.png']
             }, {
-              projectName: 'XXXXX项目B',
-              projectFolder: ['附件1', '附件2', '附件3', '附件4']
+              projectName: '往来款报表项目',
+              projectFolder: ['附件资料图片.png', '附件资料图片.png', '附件资料图片.png']
             }],
             //生成支付单
             appDialog:{
@@ -377,8 +420,13 @@
             padding: 0 20px;
 
             > li {
+              text-decoration: underline;
+              color: #3294E8;
               text-align: left;
               margin-bottom: 5px;
+              &:hover{
+                cursor: pointer;
+              }
             }
           }
         }

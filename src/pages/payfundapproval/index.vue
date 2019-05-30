@@ -110,39 +110,47 @@
                   <el-checkbox v-model="check[idx]"  >{{idx+1}}</el-checkbox>
                 </td>
                 <td @click="handleRowClick(item,idx)" class="apply-epart cell-click">
-                  {{item.applyDepart}}
+                  {{item.OrgName}}
                 </td>
                 <td>
-                  {{item.applyCode}}
+                  {{item.OrgCode}}
                 </td>
                 <td>
-                  {{item.applyName}}
+                  {{item.BName}}
                 </td>
                 <td style="text-align: right">
-                  {{item.applyAmount}}
+                  {{item.BAccount}}
                 </td>
                 <td>
-                  {{item.applyDate}}
+                  {{item.BDate}}
                 </td>
                 <td>
-                  <span class="cell-click" v-if="item.approvalStutas ==1 " @click.stop="openAuditfollow(item,idx)">待审核</span>
-                  <span class="cell-click" v-if="item.approvalStutas ==2 " @click.stop="openAuditfollow(item,idx)">审批中</span>
-                  <span class="cell-click" v-if="item.approvalStutas ==3 " @click.stop="openAuditfollow(item,idx)">审批通过</span>
+                  <span class="cell-click" v-if="item.BStatus ==0 " @click.stop="openAuditfollow(item,idx)">未审批</span>
+                  <span class="cell-click" v-if="item.BStatus ==1 " @click.stop="openAuditfollow(item,idx)">待审批</span>
+                  <span class="cell-click" v-if="item.BStatus ==2 " @click.stop="openAuditfollow(item,idx)">未通过</span>
+                  <span class="cell-click" v-if="item.BStatus ==9 " @click.stop="openAuditfollow(item,idx)">审批通过</span>
                 </td>
                 <td>
                   <div>
-                    <el-tooltip v-if="item.approvalStutas == 1" class="" effect="dark" content="已经停留6小时" placement="bottom-start">
+                    <el-tooltip v-if="item.BStatus == 0" class="" effect="dark" :content="'已经停留'+item.StopHour +'小时'" placement="bottom-start">
                       <img  src="../../assets/images/sj2.png" class="img-icon">
                     </el-tooltip>
-                    <el-tooltip v-else-if="item.approvalStutas == 2"  class="" effect="dark" content="已经停留10小时" placement="bottom-start">
+                    <el-tooltip v-else-if="item.BStatus == 1"  class="" effect="dark" :content="'已经停留'+item.StopHour +'小时'" placement="bottom-start">
                       <img  src="../../assets/images/sj2.png" class="img-icon">
                     </el-tooltip>
-                    <el-tooltip v-else-if="item.approvalStutas == 3" class="" effect="dark" content="已经停留5小时" placement="bottom-start">
+                    <el-tooltip v-else-if="item.BStatus == 2" class="" effect="dark" :content="'已经停留'+item.StopHour +'小时'" placement="bottom-start">
+                      <img  src="../../assets/images/sj1.png" class="img-icon">
+                    </el-tooltip>
+                    <el-tooltip v-else-if="item.BStatus == 10" class="" effect="dark" :content="'已经停留'+item.StopHour +'小时'" placement="bottom-start">
                       <img  src="../../assets/images/sj1.png" class="img-icon">
                     </el-tooltip>
                   </div>
                 </td>
-                <td></td>
+                <td>
+                  <p class="BDescribe">
+                    {{item.BDescribe}}
+                  </p>
+                </td>
               </tr>
               </tbody>
             </table>
@@ -207,27 +215,32 @@
                 <td>
                   <el-checkbox v-model="check[idx]"  >{{idx+1}}</el-checkbox>
                 </td>
-                <td @click="handleRowClick(item,idx)" class="apply-epart">
-                  {{item.applyDepart}}
+                <td @click="handleRowClick(item,idx)" class="apply-epart cell-click">
+                  {{item.OrgName}}
                 </td>
                 <td>
-                  {{item.applyCode}}
+                  {{item.OrgCode}}
                 </td>
                 <td>
-                  {{item.applyName}}
+                  {{item.BName}}
                 </td>
                 <td style="text-align: right">
-                  {{item.applyAmount}}
+                  {{item.BAccount}}
                 </td>
                 <td>
-                  {{item.applyDate}}
+                  {{item.BDate}}
                 </td>
                 <td>
-                  <span style="cursor: pointer" v-if="item.approvalStutas ==1 " @click.stop="openApproval(item,idx)">待审核</span>
-                  <span style="cursor: pointer" v-if="item.approvalStutas ==2 " @click.stop="openApproval(item,idx)">审批中</span>
-                  <span style="cursor: pointer" v-if="item.approvalStutas ==3 " @click.stop="openApproval(item,idx)">审批通过</span>
+                  <span class="cell-click" v-if="item.BStatus ==0 " @click.stop="openAuditfollow(item,idx)">未审批</span>
+                  <span class="cell-click" v-if="item.BStatus ==1 " @click.stop="openAuditfollow(item,idx)">待审批</span>
+                  <span class="cell-click" v-if="item.BStatus ==2 " @click.stop="openAuditfollow(item,idx)">未通过</span>
+                  <span class="cell-click" v-if="item.BStatus ==9 " @click.stop="openAuditfollow(item,idx)">审批通过</span>
                 </td>
-                <td></td>
+                <td>
+                  <p class="BDescribe">
+                    {{item.BDescribe}}
+                  </p>
+                </td>
               </tr>
               </tbody>
             </table>
@@ -4751,6 +4764,7 @@
       this.isApproval = this.$route.query.approval
       console.log(this.isApproval)
       this.testData()
+      // this.loadData()
     },
     watch:{
       check(val,oldval){
@@ -4777,36 +4791,57 @@
       },
     },
     methods:{
+      loadData(){
+        let data = {
+          Uid:7,
+          OrgCode:'100',
+          Year:'2019',
+          PageIndex:1,
+          PageSize:10,
+          BType:'001'
+        }
+        this.getAxios('/GAppvalRecord/GetUnDoRecordList',data).then(success=>{
+          console.log(success)
+          if (success && success.Status === "success") {
+            this.tableData = success.Data
+            this.page.total = success.Total
+          }else {
+            this.$msgBox.show(success.Msg)
+          }
+        }).catch(err=>{
+
+        })
+      },
       testData(){
         let data1 = {
-          applyDepart:'实业中心',
-          applyCode:'201904180001',
-          applyName:'专家授课课酬支付申请',
-          itemCode:'20190000007',
-          itemName:'与行业协会合作共同展开...',
-          applyAmount:'4,567.90',
-          applyDate:'2019-04-17',
-          approvalStutas:'1'
+          OrgName:'实业中心',
+          OrgCode:'201904180001',
+          BName:'专家授课课酬支付申请',
+          BAccount:'4,567.90',
+          BDate:'2019-04-17',
+          BStatus:'1',
+          StopHour:'1',
+          BDescribe:''
         };
         let data2 = {
-          applyDepart:'广东省工人医院',
-          applyCode:'201904180001',
-          applyName:'专家授课课酬支付申请',
-          itemCode:'20190000007',
-          itemName:'与行业协会合作共同展开...',
-          applyAmount:'4,567.90',
-          applyDate:'2019-04-17',
-          approvalStutas:'2'
+          OrgName:'广东省工人医院',
+          OrgCode:'201904180001',
+          BName:'专家授课课酬支付申请',
+          BAccount:'4,567.90',
+          BDate:'2019-04-17',
+          BStatus:'1',
+          StopHour:'3',
+          BDescribe:''
         };
         let data3 = {
-          applyDepart:'财务与资产管理部',
-          applyCode:'201904180001',
-          applyName:'专家授课课酬支付申请',
-          itemCode:'20190000007',
-          itemName:'与行业协会合作共同展开...',
-          applyAmount:'4,567.90',
-          applyDate:'2019-04-17',
-          approvalStutas:'3'
+          OrgName:'财务与资产管理部',
+          OrgCode:'201904180001',
+          BName:'专家授课课酬支付申请',
+          BAccount:'4,567.90',
+          BDate:'2019-04-17',
+          BStatus:'2',
+          StopHour:'1',
+          BDescribe:''
         };
         for (let i = 0;i<12;i++){
           if(i%4 == 1){
@@ -4855,7 +4890,7 @@
       //打开审批弹框
       aprovalItem(){
         if (this.selection.length ===0 ){
-            this.$msgBox.show('请选择需要审批的审批单')
+            this.$msgBox.show('请选择需要审批的单据')
         }else {
           this.appDialog.title = '查看'
           this.appDialog.btnGroup.cancelName = '取消'
@@ -4866,7 +4901,7 @@
       //生成支付单弹框
       creatPayItem(){
         if (this.selection.length ===0 ){
-          this.$msgBox.show('请选择需要生成支付单的审批单')
+          this.$msgBox.show('请选择需要生成支付单的单据')
         }else{
           this.$refs.paylistDialog.changeDialog()
         }
@@ -5020,5 +5055,10 @@
   }
   .btn-load{
     text-align: right;
+  }
+  .BDescribe{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 </style>
