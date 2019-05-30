@@ -6,6 +6,7 @@
         :close-on-click-modal="false"
         class="dialog"
         :append-to-body="true"
+        @close="closeDialog"
       >
         <div slot="title" class="dialog-title">
           <p>查看</p>
@@ -78,6 +79,12 @@
           this.openDialog = false
           this.visible = false
         },
+        //关闭弹框
+        closeDialog(){
+          this.openDialog = false
+          this.visible = false
+        },
+
         //确认
         submit(){
           let that= this
