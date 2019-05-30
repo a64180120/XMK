@@ -77,7 +77,7 @@
                   申请日期
                 </td>
                 <td>
-                  申请状态
+                  审批状态
                 </td>
                 <td v-if="isApproval">停留时长</td>
                 <td>申报说明</td>
