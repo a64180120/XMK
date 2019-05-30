@@ -17,7 +17,7 @@
         <div class="payCenterDialog">
           <div class="content">
             <img src="@/assets/images/mergepay.png" alt>
-            <span>合计支付1982,834.24元？</span>
+            <span>合计支付{{money | NumFormat}}元？</span>
           </div>
           <div class="btns">
             <span class="btn btn-cancel" @click="beforeClose('btn')">取消</span>
@@ -31,7 +31,16 @@
               <el-table max-height="200px" :data="gridData" border>
                 <el-table-column type="index" label="序号" width="50"></el-table-column>
                 <el-table-column property="date" label="收款方姓名"></el-table-column>
-                <el-table-column property="name" label="待付金额" width="150"></el-table-column>
+                <el-table-column
+                  property="name"
+                  header-align="center"
+                  align="right"
+                  label="待付金额"
+                  width="150"
+                  class-name="pr15"
+                >
+                  <template slot-scope="scope">{{scope.row[scope.column.property] | NumFormat}}</template>
+                </el-table-column>
               </el-table>
             </el-collapse-item>
           </el-collapse>
@@ -153,6 +162,7 @@ export default {
   data() {
     return {
       radio: 0,
+      money: 1982834.24,
       newPassword: '',
       newPasswordCanSee: false,
       confirmPassword: '',
@@ -167,27 +177,22 @@ export default {
         {
           xuhao: 1,
           date: '浙江省总工会本级女工部',
-          name: '20121254',
-          address: '上海市普陀区金沙江上海市普陀18 弄'
+          name: '20121254'
         },
         {
           xuhao: 1,
           date: '浙江省总工会本级女工部',
-          name: '20121254',
-          address: '上海市普陀区金沙江上海市路 1518 弄'
-        },
-        {
-          xuhao: 1,
-          date: '浙江省总工会本级女工部',
-          name: '20121254',
-          address: '上海市普陀普区金路 1518 弄'
-        },
-        {
-          xuhao: 1,
-          date: '浙江省总工会本级女工部',
-          name: '20121254',
-          address: '上海市普陀区金沙江上金路 1518 弄'
+          name: '20121254'
         }
+        // {
+        //   xuhao: 1,
+        //   date: '浙江省总工会本级女工部',
+        // },
+        // {
+        //   xuhao: 1,
+        //   date: '浙江省总工会本级女工部',
+        //   name: '20121254',
+        // }
       ]
     }
   },
@@ -421,6 +426,11 @@ export default {
     }
     .el-collapse-item__content {
       padding-bottom: 0;
+      .el-table__body {
+        .pr15 {
+          padding-right: 15px !important;
+        }
+      }
     }
     .el-table__header-wrapper thead .el-checkbox__label {
       color: #fff;

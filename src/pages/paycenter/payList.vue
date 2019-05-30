@@ -210,8 +210,14 @@
                   :label="payHeaders2[0].label"
                   :width="payHeaders2[0].width||''"
                   :header-align="payHeaders2[0].headerAlign||'center'"
-                  :align="item.bodyAlign||'left'"
-                ></el-table-column>
+                  :align="payHeaders2[0].bodyAlign||'left'"
+                >
+                  <template slot-scope="scope">
+                    <div v-if="scope.column.property=='FState'" class="table-item">
+                      <template>{{FStateList.find(item=>item.value==scope.row[scope.column.property]).label}}</template>
+                    </div>
+                  </template>
+                </el-table-column>
               </template>
             </el-table>
           </div>
@@ -241,11 +247,32 @@
       :visible.sync="fundDetailData.openDialog"
       width="80%"
       :close-on-click-modal="false"
+      class="dialog detail-dialog payCenter"
     >
       <div slot="title" class="dialog-title">
         <span>查看申请</span>
       </div>
-      <apply-bill v-if="fundDetailData.openDialog" :data="fundDetailData" :applyNum="1"></apply-bill>
+      <apply-bill :data="fundDetailData" @showImg="showImg">
+        <div slot="btn-group">
+          <el-button class="btn" size="mini">打印</el-button>
+        </div>
+      </apply-bill>
+    </el-dialog>
+    <!--图片预览-->
+    <el-dialog
+      class="dialog img-dialog payCenter"
+      :visible.sync="imgDialog"
+      :close-on-click-modal="false"
+      width="60%"
+      height="600px"
+    >
+      <div slot="title" class="dialog-title">
+        <span style="float: left">查看附件</span>
+      </div>
+      <div class="btn-load" style="text-align:right;">
+        <el-button class="btn">下载</el-button>
+      </div>
+      <img-view v-if="imgDialog"></img-view>
     </el-dialog>
     <!-- 合并支付组件 -->
     <merge-pay v-if="mergePayData.openDialog" :father="data" :data="mergePayData"></merge-pay>
@@ -278,6 +305,7 @@ import payErrorHandle from './payErrorHandle.vue'
 import goApproval from './goApproval.vue'
 import bankChoose from './bankChoose'
 import auditfollow from '../../components/auditFollow/auditfollow'
+import ImgView from '../../components/imgView/imgView'
 import approvalDialog from '../payfundapproval/approvalDialog.vue'
 
 export default {
@@ -289,7 +317,8 @@ export default {
     goApproval,
     bankChoose,
     auditfollow,
-    approvalDialog
+    approvalDialog,
+    ImgView
   },
   props: {
     data: {
@@ -303,6 +332,8 @@ export default {
   },
   data() {
     return {
+      imgDialog: false, //图片预览弹框
+
       showAuditfollow: false,
       // 支付单表单
       // 未送审
@@ -363,7 +394,7 @@ export default {
           width: '200'
         },
         {
-          name: 'bankName',
+          name: 'FPayBankcode',
           label: '开户行',
           width: '200'
         },
@@ -598,7 +629,7 @@ export default {
             FBkSn: null,
             FResult: null,
             FResultmsg: null,
-            FState: 0,
+            FState: 1,
             FNewCode: null,
             XmProjcode: 'XM0002',
             XmProjname: '项目0002',
@@ -647,7 +678,7 @@ export default {
             FBkSn: null,
             FResult: null,
             FResultmsg: null,
-            FState: 0,
+            FState: 1,
             FNewCode: null,
             XmProjcode: 'XM0001',
             XmProjname: '项目0001',
@@ -696,7 +727,7 @@ export default {
             FBkSn: null,
             FResult: null,
             FResultmsg: null,
-            FState: 0,
+            FState: 1,
             FNewCode: null,
             XmProjcode: 'XM0001',
             XmProjname: '项目0001',
@@ -733,6 +764,11 @@ export default {
   },
   mounted() {},
   methods: {
+    //打开图片预览
+    showImg(file) {
+      console.log(file)
+      this.imgDialog = true
+    },
     tabelColspan({ row, column, rowIndex, columnIndex }) {
       if (this.detail.Dtls.length == 0) return
       if (columnIndex === 1 || columnIndex === 2) {
@@ -799,13 +835,13 @@ export default {
         this.detail.Dtls.forEach(item => {
           item.FRecAcntname = '杭州市总工会'
           item.FRecAcnt = '2019010101'
-          item.bankName = '杭州银行'
+          item.FPayBankcode = '杭州银行'
           item.FRecBankcode = '2019010101'
         })
       } else {
         this.bankChooseData.data.FRecAcntname = '杭州市总工会'
         this.bankChooseData.data.FRecAcnt = '2019010101'
-        this.bankChooseData.data.bankName = '杭州银行'
+        this.bankChooseData.data.FPayBankcode = '杭州银行'
         this.bankChooseData.data.FRecBankcode = '2019010101'
       }
     },
@@ -1141,7 +1177,7 @@ export default {
     display: inline-block;
     margin: 0 !important;
     vertical-align: middle;
-    max-height: 90%;
+    min-height: 60%;
     .el-dialog__body {
       padding-top: 0px;
     }

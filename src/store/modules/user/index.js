@@ -36,6 +36,7 @@ const mutations = {
     },
     //组织列表
     setOrglist(state,data){
+
         state.orglist=data;
     }
 };

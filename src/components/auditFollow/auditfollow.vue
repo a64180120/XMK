@@ -69,7 +69,7 @@ export default {
     bottom:0;
     width:240px;
     background: #fff;
-    box-shadow: -4px 1px 9px #3294e894;
+    box-shadow: 0px 1px 9px #1b4a7394;
     .title{
         text-align: center;
         color:#fff;

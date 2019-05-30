@@ -1,5 +1,5 @@
 <template>
-  <div class="messageDialog">
+  <div class="messageDialog" v-if="openDialog">
     <el-dialog
       append-to-body
       :visible.sync="openDialog"
