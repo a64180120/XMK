@@ -205,6 +205,7 @@ export default {
   created() {
     console.log(this.father, this.reSetting)
   },
+<<<<<<< HEAD
   watch: {
     'data.openDialog'(newVal) {
       if (newVal) {
@@ -213,6 +214,12 @@ export default {
         })
       }
     }
+=======
+  mounted() {
+    this.$nextTick(() => {
+      //this.$refs.content.setCurrentRow(this.subData[0])
+    })
+>>>>>>> 76c85f9f809abcc86d9aa3fa2861b59783cc80c4
   }
 }
 </script>
