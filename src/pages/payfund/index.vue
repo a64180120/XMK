@@ -245,7 +245,9 @@
               <div>预算支出项目总数</div>
             </div>
             <div>
-              <p style="color:#f52c1d">{{apartData.money}}</p>
+              <p style="color:#f52c1d">
+                <num :vv="apartData.money"></num>
+                <!--{{apartData.money}}--></p>
               <div>支出预算总额</div>
             </div>
           </el-card>
@@ -324,6 +326,7 @@
 <script>
   import tophandle from '../../components/topNav/topHandle'
   import pieChart from '../../components/echart/pieChart'
+  import num from '../../components/numAct/index'
   import Applybill from "../../components/applyBill/applybill";
   import Orgtree from "../../components/orgtree/index";
   import Applypro from "../../components/applyPro/applyPro";
@@ -452,10 +455,10 @@
             },
             approvalData:{
             },
-            apartData:{count:28,money:1230989.32}
+            apartData:{count:28,money:'1,230,989.32'}
           }
       },
-      components:{Applypro, Orgtree, Applybill, tophandle,pieChart,goApproval,Auditfollow,ApprovalDialog},
+      components:{Applypro, Orgtree, Applybill, tophandle,pieChart,goApproval,Auditfollow,ApprovalDialog,num},
       mounted(){
           //this.getData();
           //this.dataFuc();
@@ -464,7 +467,7 @@
       watch:{
         checked:function(val){
           //数组快速修改，方法一
-          this.checkList.forEach((item,index,array)=>{
+         this.checkList.forEach((item,index,array)=>{
             this.checkList[index]=val;
           })
           //方法二
@@ -528,6 +531,7 @@
           for(var i=0 ; i<n ; i++){
             checkList.push(false);
           }
+          this.checkList=checkList;
 
         },
         //获取当前选中的数组
@@ -692,13 +696,13 @@
           // bmList:[{value:0,label:'办公室'},{value:1,label:'女工部'},{value:2,label:'财务与资产部'}],
           switch(val){
             case 0:
-              this.apartData={count:28,money:1230989.32};
+              this.apartData={count:28,money:'1,230,989.32'};
               break;
             case 1:
-              this.apartData={count:8,money:989.32};
+              this.apartData={count:8,money:'2,459.32'};
               break;
             case 2:
-              this.apartData={count:18,money:120000.13};
+              this.apartData={count:18,money:'120,000.13'};
               break;
             default:
               break;
