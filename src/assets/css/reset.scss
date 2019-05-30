@@ -147,3 +147,21 @@ $borderColor_ccc:#ccc;//表格线#ccc
     background: #fff;
     cursor: pointer;
 }
+
+
+//el-dialog  居中
+.el-dialog__wrapper{
+    text-align: center;
+    >.el-dialog{
+        display: inline-block !important;
+        vertical-align: middle;
+        margin-top:0 !important;
+    }
+    &:after{
+        display: inline-block;
+        vertical-align: middle;
+        width:0;
+        height:100%;
+        content:"";
+    }
+}
