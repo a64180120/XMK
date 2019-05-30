@@ -77,7 +77,7 @@
                             
                             </colgroup>
                             <thead>
-                                <tr v-for="(item,index) in accountList" :key="index">
+                                <tr :class="{trActive:item.checked}" v-for="(item,index) in accountList" :key="index">
                                     <td style="padding: 0 5px;">
                                     <el-checkbox @change="choose(item,index)" v-model="item.checked" >{{index+1}}</el-checkbox>
                                     </td>

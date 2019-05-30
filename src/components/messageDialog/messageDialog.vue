@@ -129,6 +129,7 @@ export default {
     }
   }
   .btn {
+
     cursor: pointer;
     background: #00b7ee;
     color: #fff;
