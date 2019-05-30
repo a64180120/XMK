@@ -168,7 +168,7 @@
         :title="appDialog.title"
         :btn-group="appDialog.btnGroup"
         :data="approvalData"
-        :inner="true"
+        :inner="false"
       ></approval-dialog>
     </el-dialog>
   </div>

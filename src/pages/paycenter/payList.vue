@@ -108,7 +108,7 @@
                   <el-checkbox
                     @change="selectAll"
                     v-model="allSelected"
-                    v-if="data.itemType == 'notApprove'"
+                    v-if="data.itemType == 'notApprove'||data.itemType == 'error'"
                   >序号</el-checkbox>
                   <template v-else>序号</template>
                 </template>
@@ -289,7 +289,11 @@
     <!-- 合并支付组件 -->
     <merge-pay :father="data" :data="mergePayData"></merge-pay>
     <!-- 异常处理 -->
-    <pay-error-handle v-if="payErrorHandleData.openDialog" :data="payErrorHandleData"></pay-error-handle>
+    <pay-error-handle
+      :father="data"
+      v-if="payErrorHandleData.openDialog"
+      :data="payErrorHandleData"
+    ></pay-error-handle>
     <!-- 送审 -->
     <go-approval
       v-if="approvalData.openDialog"
@@ -569,7 +573,7 @@ export default {
             RefbillPhid: '6',
             RefbillCode: 'zfbbf0006',
             RefbillDtlPhid: '1',
-            RefbillDtlPhid2: '2161905280009999',
+            RefbillDtlPhid2: '',
             FAmount: 2000.0,
             FCurrency: '001',
             FPayAcntname: '付款账户1',
@@ -591,8 +595,8 @@ export default {
             FSeqno: null,
             FBkSn: null,
             FResult: null,
-            FResultmsg: '支付请求响应失败',
-            FState: 2,
+            FResultmsg: '',
+            FState: 1,
             FNewCode: null,
             XmProjcode: '201905200002',
             XmProjname: '办公室设备购买',
@@ -619,7 +623,7 @@ export default {
             RefbillPhid: '6',
             RefbillCode: 'zfbbf0006',
             RefbillDtlPhid: '1',
-            RefbillDtlPhid2: '2161905280009999',
+            RefbillDtlPhid2: '————',
             FAmount: 1000.0,
             FCurrency: '001',
             FPayAcntname: '付款账户1',
@@ -661,6 +665,7 @@ export default {
           }
         ]
       },
+      oldDtls: [],
       appDialog: {
         title: '',
         btnGroup: {
@@ -671,11 +676,16 @@ export default {
     }
   },
   created() {
-    console.log(this.data.data)
     this.detail.Mst = Array.isArray(this.data.data)
       ? this.data.data[0]
       : this.data.data
-    // this.getData()
+    if (this.detail.Mst.FApproval == 0) {
+      var Dtls = JSON.parse(JSON.stringify(this.detail.Dtls))
+      Dtls.forEach(item => {
+        this.clearItems(item)
+      })
+      this.detail.Dtls = Dtls
+    }
   },
   mounted() {},
   methods: {
@@ -786,8 +796,10 @@ export default {
     },
     payListClose(done) {
       if (this.reSetting) {
+        console.log('setting')
         this.reSetting = false
         this.data.itemType = 'error'
+        this.detail.Dtls.unshift(this.oldDtls)
       } else {
         done()
       }
@@ -799,6 +811,11 @@ export default {
     selectOne($scope) {
       console.log($scope.row.choosed)
       if ($scope.row.choosed) {
+        if (this.data.itemType == 'error') {
+          var newDtls = this.detail.Dtls.filter(item => item.FState == 2)
+          this.allSelected = newDtls.every(item => item.choosed)
+          return
+        }
         this.allSelected = this.detail.Dtls.every(item => item.choosed)
       } else {
         this.allSelected = false
@@ -819,6 +836,7 @@ export default {
               fn: () => {
                 this.reSetting = false
                 this.data.itemType = 'error'
+                this.detail.Dtls.unshift(this.oldDtls)
               }
             })
             return
@@ -837,6 +855,9 @@ export default {
         case 'new':
           this.reSetting = true
           this.data.itemType = 'notApprove'
+          this.oldDtls = this.detail.Dtls[0]
+          this.detail.Dtls.splice(0, 1)
+          this.detail.Dtls[0].RefbillDtlPhid2 = 2161905280009999
           break
         case 'approval':
           this.appDialog.title = '查看'
@@ -846,14 +867,37 @@ export default {
           break
       }
     },
-    // 选择银行
+    // 测试用 选择银行
     selectBank(item) {
       console.log(123)
       this.bankChooseData.openDialog = true
       this.bankChooseData.data = item
+    }, // 测试用,清空select
+    clearItems(item) {
+      item['QtKmdm'] = ''
+      item['FSamebank'] = ''
+      item['FRecAcntname'] = ''
+      item['FRecAcnt'] = ''
+      item['FPayBankcode'] = ''
+      item['FRecBankcode'] = ''
     }
   },
-  watch: {}
+  watch: {
+    // 'data.openDialog'(newVal) {
+    //   if (newVal) {
+    //     this.detail.Mst = Array.isArray(this.data.data)
+    //       ? this.data.data[0]
+    //       : this.data.data
+    //     if (this.detail.Mst.FApproval == 0) {
+    //       var Dtls = JSON.parse(JSON.stringify(this.detail.Dtls))
+    //       Dtls.forEach(item => {
+    //         this.clearItems(item)
+    //       })
+    //       this.detail.Dtls = Dtls
+    //     }
+    //   }
+    // }
+  }
 }
 </script>
 <style lang="scss" scoped>

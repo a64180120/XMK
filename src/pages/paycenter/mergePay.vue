@@ -23,7 +23,7 @@
             <span class="btn btn-cancel" @click="beforeClose('btn')">取消</span>
             <span class="btn" @click="enterPassword">确定</span>
           </div>
-          <el-collapse>
+          <el-collapse accordion>
             <el-collapse-item name="1">
               <template slot="title">
                 <i class="header-icon el-icon-menu" style="margin-left:10px;"></i>点击查看详细收款信息
@@ -162,6 +162,7 @@ export default {
   data() {
     return {
       radio: 0,
+      activeName: '',
       newPassword: '',
       newPasswordCanSee: false,
       confirmPassword: '',
@@ -174,23 +175,18 @@ export default {
       gridData: [
         {
           xuhao: 1,
-          date: '浙江省总工会本级女工部',
+          date: '杭州市总工会',
           name: '2254'
         },
         {
           xuhao: 1,
-          date: '浙江省总工会本级政治部',
-          name: '21999254'
+          date: '绍兴市市总工会',
+          name: '1000'
         },
         {
           xuhao: 1,
-          name: '29999',
-          date: '浙江省总工会本级男工部'
-        },
-        {
-          xuhao: 1,
-          date: '浙江省总工会本级党支部',
-          name: '20121254'
+          name: '20000',
+          date: '杭州市总工会本级党支部'
         }
       ]
     }
@@ -231,12 +227,45 @@ export default {
         fn: () => {
           this.showPassword = false
           this.showMergePay = true
+          function Format(d) {
+            var year = d.getFullYear()
+            var month = change(d.getMonth() + 1)
+            var day = change(d.getDate())
+            var hour = change(d.getHours())
+            var minute = change(d.getMinutes())
+            var second = change(d.getSeconds())
+            function change(t) {
+              if (t < 10) {
+                return '0' + t
+              } else {
+                return t
+              }
+            }
+            var time =
+              year +
+              '-' +
+              month +
+              '-' +
+              day +
+              ' ' +
+              hour +
+              ':' +
+              minute +
+              ':' +
+              second
+            return time
+          }
           if (Array.isArray(this.data.data)) {
             this.data.data.forEach(item => {
               item.FState = 1
+              item.checked = false
+              // 时间格式化
+              item.FDate = Format(new Date())
             })
           } else {
             this.data.data.FState = 1
+            this.data.data.checked = false
+            this.data.data.FDate = Format(new Date())
           }
           if (vm.father) vm.father.openDialog = false
           vm.data.openDialog = false
@@ -265,9 +294,15 @@ export default {
     },
     needSet() {
       return this.$parent.needSet || this.$parent.$parent.needSet
+    },
+    'data.openDialog'(newVal) {
+      this.activeName = ''
     }
   },
-  watch: {}
+  watch: {
+    // 隐藏后关闭弹框
+    'data.openDialog'(newVal) {}
+  }
 }
 </script>
 <style lang="scss" scoped>

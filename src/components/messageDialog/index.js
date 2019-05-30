@@ -29,7 +29,7 @@ MessageBox.install = function(Vue, options) {
         Object.assign(currentMsg, options)
       }
       return currentMsg.showMsgBox()
-    }
+    },
   }
 }
 export default MessageBox

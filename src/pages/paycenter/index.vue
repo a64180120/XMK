@@ -99,7 +99,7 @@
             </colgroup>
             <thead>
               <tr>
-                <td title="序号">
+                <td :class="{trActive:checkAll}" title="序号">
                   <el-checkbox v-model="checkAll" @change="handleCheckAll">序号</el-checkbox>
                 </td>
                 <td
@@ -125,7 +125,7 @@
               <col width="13%">
             </colgroup>
             <thead>
-              <tr v-for="(item,index) in tableData" :key="index">
+              <tr :class="{trActive:item.checked}" v-for="(item,index) in tableData" :key="index">
                 <td>
                   <el-checkbox v-model="item.checked" @change="handleCheckOne(item)">{{index+1}}</el-checkbox>
                 </td>
@@ -201,7 +201,7 @@
     </div>
     <!-- 支付单查看 -->
     <pay-list v-if="payListData.openDialog" :data="payListData"></pay-list>
-    <merge-pay :data="mergePayData"></merge-pay>
+    <merge-pay v-if="mergePayData.openDialog" :data="mergePayData"></merge-pay>
     <pay-error-handle v-if="payErrorHandleData.openDialog" :data="payErrorHandleData"></pay-error-handle>
     <go-approval v-if="approvalData.openDialog" :data="approvalData"></go-approval>
   </div>
@@ -550,7 +550,7 @@ export default {
             FApproval: 9,
             FState: 1,
             FDescribe: '单元测试-1559096718686',
-            FDate: '',
+            FDate: '2019-05-30T10:25:22',
             FBilltype: '资金拨付单',
             FYear: null,
             PersistentState: 0,
@@ -659,6 +659,7 @@ export default {
       if (item) {
         if (item.FApproval == 0 || item.FApproval == 2) {
           this.payListData.itemType = 'notApprove'
+          // 测试 待送审删除信息
         } else if (item.FState == 2) {
           this.payListData.itemType = 'error'
         } else if (item.FState == 0 && item.FApproval == 9) {
@@ -686,7 +687,13 @@ export default {
         switch (type) {
           case 'payListData':
             if (checkedCount != 1) {
-              this.$msgBox.show('请选择一条数据进行维护。')
+              this.$msgBox.show({
+                content: '请选择一条数据进行维护。',
+                fn: () => {}
+              })
+              this.tableData.forEach(item => {
+                item.checked = false
+              })
               return
             } else if (
               handleitem[0].FApproval == 0 ||
@@ -694,11 +701,16 @@ export default {
             ) {
               this.payListData.itemType = 'notApprove'
             } else {
-              this.$msgBox.show(
-                handleitem[0].FApproval == 1
-                  ? '单据正在审批中。'
-                  : '单据已经审批通过。'
-              )
+              this.$msgBox.show({
+                content:
+                  handleitem[0].FApproval == 1
+                    ? '单据正在审批中。'
+                    : '单据已经审批通过。',
+                fn: () => {}
+              })
+              this.tableData.forEach(item => {
+                item.checked = false
+              })
               return
             }
             break
@@ -708,9 +720,14 @@ export default {
                 return item.FApproval == 9 && item.FState == 0
               })
             ) {
-              this.$msgBox.show(
-                '只有审批状态为“审批通过”，支付状态为“待支付”的单据，才可以使用【合并支付】。'
-              )
+              this.$msgBox.show({
+                content:
+                  '只有审批状态为“审批通过”，支付状态为“待支付”的单据，才可以使用【合并支付】。',
+                fn: () => {}
+              })
+              this.tableData.forEach(item => {
+                item.checked = false
+              })
               return
             }
             break
@@ -721,6 +738,9 @@ export default {
               })
             ) {
               this.$msgBox.show('只能对支付异常的单据进行处理。')
+              this.tableData.forEach(item => {
+                item.checked = false
+              })
               return
             }
             break
@@ -731,6 +751,9 @@ export default {
               })
             ) {
               this.$msgBox.show('只能对待送审的单据进行处理。')
+              this.tableData.forEach(item => {
+                item.checked = false
+              })
               return
             }
             break
@@ -789,11 +812,10 @@ export default {
     height: 60px;
     > .nav {
       display: inline-block;
-      font-size: 0.12rem;
       color: #676767;
       cursor: pointer;
       &:not(:last-child) {
-        margin-right: 60px;
+        margin-right: 10px;
       }
       > img {
         width: 30px;
@@ -832,7 +854,7 @@ export default {
       height: 28px;
       margin: 8px 0;
       box-sizing: border-box;
-      font-size: 0.12rem;
+      font-size: 0.14rem;
       color: #757575;
       > span:not(:first-of-type) {
         margin-left: 0px;
@@ -984,7 +1006,7 @@ export default {
     font-size: 0.14rem;
   }
   .tableBody .el-checkbox__label {
-    font-size: 0.12rem;
+    font-size: 0.14rem;
   }
   .selects {
     .el-input--mini .el-input__inner {
@@ -999,7 +1021,7 @@ export default {
     .el-select-dropdown__item,
     .el-range-editor--mini .el-range-separator,
     .el-range-editor--mini .el-range-input {
-      font-size: 0.12rem;
+      font-size: 0.14rem;
       color: #757575;
     }
     .el-date-editor {
