@@ -3570,15 +3570,18 @@ export default {
             height:100%;
             width:20%;
             padding-bottom:50px;
+            border-radius:5px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px #959595a1;
             >p{
                 height:48px;
                 line-height:48px;
                 color:#fff;
-                font-size:0.16rem;
+                font-size:0.18rem;
                 background:$btnColor;
             }
             >div{
-                border:1px solid $borderColor_ccc;
+                // border:1px solid $borderColor_ccc;
                 height:100%;
                 overflow: auto;
             }
