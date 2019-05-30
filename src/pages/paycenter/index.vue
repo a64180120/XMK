@@ -130,7 +130,10 @@
                   <el-checkbox v-model="item.checked" @change="handleCheckOne(item)">{{index+1}}</el-checkbox>
                 </td>
                 <td>
-                  <div @click="payNav('payListData',item)" style="cursor:pointer">{{item.FCode}}</div>
+                  <div
+                    @click="payNav('payListData',item)"
+                    style="cursor:pointer;text-decoration:underline;"
+                  >{{item.FCode}}</div>
                 </td>
                 <td>
                   <div>{{item.FAmountTotal | NumFormat}}</div>
@@ -145,21 +148,17 @@
                   <div>{{item.NgInsertDt.replace('T',' ')}}</div>
                 </td>
                 <td>
-                  <div>
-                    <template v-if="item.FApproval==0">待送审</template>
-                    <template v-else-if="item.FApproval==1">审批中</template>
-                    <template v-else-if="item.FApproval==2">未通过</template>
-                    <template v-else-if="item.FApproval==9">审批通过</template>
-                    <template v-else>————</template>
-                  </div>
+                  <div v-if="item.FApproval==0">待送审</div>
+                  <div v-else-if="item.FApproval==1">审批中</div>
+                  <div v-else-if="item.FApproval==2">未通过</div>
+                  <div v-else-if="item.FApproval==9">审批通过</div>
+                  <div v-else>————</div>
                 </td>
                 <td>
-                  <div>
-                    <template v-if="item.FState==0">待支付</template>
-                    <template v-else-if="item.FState==1">支付成功</template>
-                    <template v-else-if="item.FState==2">支付异常</template>
-                    <template v-else>————</template>
-                  </div>
+                  <div v-if="item.FState==0">待支付</div>
+                  <div v-else-if="item.FState==1">支付成功</div>
+                  <div v-else-if="item.FState==2">支付异常</div>
+                  <div v-else>————</div>
                 </td>
                 <td>
                   <div>{{item.FDate?item.FDate.replace('T',' '):"————"}}</div>
@@ -548,8 +547,8 @@ export default {
             FCode: 'P1559096718686',
             FPaymethod: 2,
             FAmountTotal: 2006.0,
-            FApproval: 0,
-            FState: 0,
+            FApproval: 9,
+            FState: 1,
             FDescribe: '单元测试-1559096718686',
             FDate: '',
             FBilltype: '资金拨付单',

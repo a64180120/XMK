@@ -262,7 +262,7 @@
       class="dialog detail-dialog payCenter"
     >
       <div slot="title" class="dialog-title">
-        <span>查看申请</span>
+        <span style="float: left;">查看申请</span>
       </div>
       <apply-bill :data="fundDetailData" @showImg="showImg">
         <div slot="btn-group">
@@ -569,7 +569,7 @@ export default {
             RefbillPhid: '6',
             RefbillCode: 'zfbbf0006',
             RefbillDtlPhid: '1',
-            RefbillDtlPhid2: '1',
+            RefbillDtlPhid2: '2161905280009999',
             FAmount: 2000.0,
             FCurrency: '001',
             FPayAcntname: '付款账户1',
@@ -619,7 +619,7 @@ export default {
             RefbillPhid: '6',
             RefbillCode: 'zfbbf0006',
             RefbillDtlPhid: '1',
-            RefbillDtlPhid2: '1',
+            RefbillDtlPhid2: '2161905280009999',
             FAmount: 1000.0,
             FCurrency: '001',
             FPayAcntname: '付款账户1',
@@ -769,16 +769,16 @@ export default {
         this.detail.Dtls.forEach(item => {
           if (item.choosed) {
             item.FRecAcntname = '杭州市总工会'
-            item.FRecAcnt = '2019010101'
-            item.FPayBankcode = '杭州银行'
-            item.FRecBankcode = '2019010101'
+            item.FRecAcnt = '6228481268248914675'
+            item.FPayBankcode = '杭州市工商银行'
+            item.FRecBankcode = '64841'
           }
         })
       } else {
         this.bankChooseData.data.FRecAcntname = '杭州市总工会'
-        this.bankChooseData.data.FRecAcnt = '2019010101'
-        this.bankChooseData.data.FPayBankcode = '杭州银行'
-        this.bankChooseData.data.FRecBankcode = '2019010101'
+        this.bankChooseData.data.FRecAcnt = '6228481268248914675'
+        this.bankChooseData.data.FPayBankcode = '杭州市工商银行'
+        this.bankChooseData.data.FRecBankcode = '64841'
       }
     },
     closeAuditFollow() {

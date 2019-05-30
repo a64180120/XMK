@@ -56,15 +56,7 @@ export default {
       this.data.openDialog = false
       this.$msgBox.show({
         content: '处理成功',
-        fn: () => {
-          if (Array.isArray(this.data.data)) {
-            this.data.data.forEach(item => {
-              item.FState = 1
-            })
-          } else {
-            this.data.data.FState = 1
-          }
-        }
+        fn: () => {}
       })
     }
   },

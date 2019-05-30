@@ -191,21 +191,19 @@ export default {
             vm.father ? (vm.father.openDialog = false) : ''
           }
           vm.data.openDialog = false
-          if (Array.isArray(this.data.data)) {
-            this.data.data.forEach(item => {
-              item.FApproval = 1
-            })
-          } else {
-            this.data.data.FApproval = 1
-          }
         }
       })
     }
   },
   created() {
     console.log(this.father, this.reSetting)
+    this.nextData = this.nextDataList[0]
+    if (this.data.openDialog) {
+      this.$nextTick(() => {
+        this.$refs.content.setCurrentRow(this.subData[0])
+      })
+    }
   },
-<<<<<<< HEAD
   watch: {
     'data.openDialog'(newVal) {
       if (newVal) {
@@ -214,12 +212,6 @@ export default {
         })
       }
     }
-=======
-  mounted() {
-    this.$nextTick(() => {
-      //this.$refs.content.setCurrentRow(this.subData[0])
-    })
->>>>>>> 76c85f9f809abcc86d9aa3fa2861b59783cc80c4
   }
 }
 </script>
