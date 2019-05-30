@@ -20,6 +20,7 @@
 }
 .container .btnArea label{
   margin-right: 15px;
+  display: inline-block;
 }
 .container .btnArea .el-input{
   width: 150px;
@@ -145,3 +146,31 @@ table .left{
   background: #fff!important;
 }
 
+.btnArea i{
+  vertical-align: middle;
+  font-size: 0.3rem;
+  color: #58a5e6;
+  opacity: .5;
+}
+.btnArea i:hover{
+  opacity: 1;
+  text-shadow: 0 0 3px #60bdff;
+}
+.scrollNav{
+  position: absolute;
+  white-space: nowrap;
+  left: 30px;
+  right: 300px;
+  overflow: hidden;
+  div{
+    width: auto;
+    overflow: visible;
+    white-space: nowrap;
+    position: relative;
+    -webkit-transition: all 0.3s linear;
+    -moz-transition: all 0.3s linear;
+    -ms-transition: all 0.3s linear;
+    -o-transition: all 0.3s linear;
+    transition: all 0.3s linear;
+  }
+}

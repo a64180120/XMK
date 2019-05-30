@@ -25,7 +25,7 @@
                 </ul>
                 <el-card class="payText">
                   <div slot="header">
-                    <span>拨付说明</span>
+                    <span>申报说明</span>
                   </div>
                   <el-input type="textarea" placeholder="100字以内" resize="none" maxlength="100" v-model="data.applyText"></el-input>
                 </el-card>
@@ -38,7 +38,7 @@
             <div slot="header" style="padding: 0 10px;text-align: left">
               <span>
                  <el-checkbox v-model="item.checked"></el-checkbox>
-                  <span>拨付说明</span>
+                  <span>申报项目</span>
               </span>
               <span style="float: right">
                 <span>附单据 {{item.projectFileNum}} 张</span>
@@ -92,7 +92,7 @@
                     <template v-if="index==item.pdList.length-1">
                       <td></td>
                       <td colspan="2">小计</td>
-                      <td>{{mx.countMoney}}</td>
+                      <td>{{mx.countMoney| NumFormat}}</td>
                       <td>{{mx.countNode}}</td>
                     </template>
                     <template v-else>
@@ -102,7 +102,8 @@
                       </td>
                       <td @click="showDetailPro(pindex,index)">{{mx.pdName}}</td>
                       <td>
-                        <input v-model="mx.pdMoney">
+                        <span class="num">{{mx.pdMoney | NumFormat}}</span>
+                        <input class="numInput" v-model="mx.pdMoney">
                       </td>
                       <td>
                         <input v-model="mx.pdNode"></input>
@@ -205,8 +206,8 @@
             projectFileNum: 2,
             projectFileList: 2,
             pdList: [
-              {pdOrg:{OName: '杭州市总工会',OCode:'0001'}, pdName: '未见星河', pdMoney: 1000, pdNode: ''},
-              {pdOrg:{OName: '杭州市总工会',OCode:'0001'}, pdName: '爱上咖啡', pdMoney: 2000, pdNode: ''},
+              {pdOrg:{OName: '杭州市总工会',OCode:'0001'}, pdName: '政府扶贫项目', pdMoney: 1000, pdNode: ''},
+              {pdOrg:{OName: '杭州市总工会',OCode:'0001'}, pdName: '可持续发展项目', pdMoney: 2000, pdNode: ''},
               {countName: '小计', countMoney: 3000, countNode: ''}
             ]
           },
@@ -216,8 +217,8 @@
             projectFileNum: 0,
             projectFileList: 2,
             pdList: [
-              {pdOrg:{OName: '杭州市总工会',OCode:'0001'}, pdName: '未见星河', pdMoney: 1000, pdNode: ''},
-              {pdOrg:{OName: '杭州市总工会',OCode:'0001'}, pdName: '爱上咖啡', pdMoney: 2000, pdNode: ''},
+              {pdOrg:{OName: '杭州市总工会',OCode:'0001'}, pdName: '可持续发展项目', pdMoney: 1000, pdNode: ''},
+              {pdOrg:{OName: '杭州市总工会',OCode:'0001'}, pdName: '新能源项目', pdMoney: 2000, pdNode: ''},
               {countName: '小计', countMoney: 3000, countNode: ''}
             ]
           }
@@ -396,6 +397,15 @@
 </script>
 
 <style scoped lang="scss">
+  td .numInput{
+    display: none;
+  }
+  td:hover .numInput{
+    display: block;
+  }
+  td:hover .num{
+    display: none;
+  }
   .dialog-title {
     > span {
       width: 100%;
