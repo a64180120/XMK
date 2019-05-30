@@ -46,8 +46,8 @@
                     </div>
                     <div class="approval-content">
                       <ul>
-                        <li v-for="(item,idx) in approvaled" >
-                          <span :class="[idx %3 === 0 ? 'blue':(idx %3 === 1 ? 'green':'orange')]" @click="approvaledClick(item.path,item.label)">{{item.value}}</span>
+                        <li v-for="(item,idx) in approvaled" v>
+                          <span :class="[idx %3 === 0 ? 'blue':(idx %3 === 1 ? 'green':'orange')]">{{item.value}}</span>
                           <p :class="[idx %3 === 0 ? 'blue':(idx %3 === 1 ? 'green':'orange')]" @click="approvaledClick(item.path,item.label)">{{item.label}}</p>
                         </li>
                       </ul>
@@ -89,7 +89,7 @@
               label:"年度预算审批",
               approvalValue:'1',
               path:''
-            }],
+            },],
             approvaled:[{
               label:"资金拨付单",
               value:"12",
@@ -153,7 +153,7 @@
     box-shadow: 0 0px 14px #cbcbcb;
     position: relative;
     margin: 0 20px 0 0;
-    min-height: 650px;
+    min-height: 700px;
     border-radius: 8px;
     padding: 10px 10px;
     >.title{
@@ -250,11 +250,11 @@
     padding:10px 10px;
     margin: 0 20px 0 0;
     width: 100%;
-    height: 650px;
+    height: 700px;
     box-shadow: 0 0px 14px #cbcbcb;
     text-align: left;
     position: relative;
-    /*overflow-x: hidden;*/
+    overflow-x: hidden;
     >.title{
       height: 0.25rem;
       text-align: left;
@@ -266,12 +266,12 @@
       }
     }
     >.approval-content{
-      overflow-x: hidden;
+
       >ul{
-        height: 600px;
+        height: 650px;
         overflow: auto;
         margin-right: -27px;
-        padding-right: 12px;
+        padding-right: 27px;
         >li{
           width: 100%;
           height: 200px;
@@ -280,9 +280,6 @@
           padding-top: 80px;
           >span{
             font-size: 0.6rem;
-            &:hover{
-              cursor: pointer;
-            }
           }
           >.blue{
             color: #1F6CFC;

@@ -56,7 +56,7 @@
                 :type="passwordCanSee?'text':'password'"
                 v-model="password"
                 placeholder="请输入支付口令"
-                :disabled="openPassword"
+                :disabled="needSet"
               ></el-input>
               <img
                 v-show="passwordCanSee"
@@ -70,20 +70,20 @@
                 src="@/assets/images/by.png"
                 @click="passwordCanSee= !passwordCanSee"
               >
-              <div class="notice" v-show="openPassword">
+              <div class="notice" v-show="needSet">
                 <span @click="goSetting">支付口令已启用，不允许为空，请点击维护。</span>
               </div>
             </div>
           </div>
           <div class="btns">
             <span class="btn btn-cancel" @click="beforeClose('btn')">取消</span>
-            <span class="btn btn-disable" v-if="openPassword">支付</span>
+            <span class="btn btn-disable" v-if="needSet">支付</span>
             <span class="btn" v-else @click="pay">支付</span>
           </div>
         </div>
       </div>
       <!-- 设置支付口令 -->
-      <div class="dialogContainer" v-show="showSetting">
+      <div class="dialogContainer" v-show="showSetting&&needSet">
         <div class="payCenterDialog">
           <div class="content password setting">
             <span>支付口令</span>
@@ -151,7 +151,7 @@ export default {
       type: Object,
       default: {
         openDialog: false,
-        data: {},
+        data: null,
         itemType: ''
       }
     },
@@ -162,13 +162,11 @@ export default {
   data() {
     return {
       radio: 0,
-      money: 1982834.24,
       newPassword: '',
       newPasswordCanSee: false,
       confirmPassword: '',
       confirmPasswordCanSee: false,
       passwordCanSee: false,
-      openPassword: true,
       showMergePay: true,
       showPassword: false,
       showSetting: false,
@@ -177,31 +175,34 @@ export default {
         {
           xuhao: 1,
           date: '浙江省总工会本级女工部',
-          name: '20121254'
+          name: '2254'
         },
         {
           xuhao: 1,
-          date: '浙江省总工会本级女工部',
+          date: '浙江省总工会本级政治部',
+          name: '21999254'
+        },
+        {
+          xuhao: 1,
+          name: '29999',
+          date: '浙江省总工会本级男工部'
+        },
+        {
+          xuhao: 1,
+          date: '浙江省总工会本级党支部',
           name: '20121254'
         }
-        // {
-        //   xuhao: 1,
-        //   date: '浙江省总工会本级女工部',
-        // },
-        // {
-        //   xuhao: 1,
-        //   date: '浙江省总工会本级女工部',
-        //   name: '20121254',
-        // }
       ]
     }
   },
   created() {},
+
   mounted() {},
   methods: {
     setPassword() {
       this.showSetting = false
-      this.openPassword = false
+      this.$parent.needSet = false
+      this.$parent.$parent.needSet = false
       this.showPassword = true
     },
     enterPassword() {
@@ -214,7 +215,7 @@ export default {
       } else if (this.showPassword) {
         this.showMergePay = true
         this.showPassword = false
-      } else if (this.showSetting) {
+      } else if (this.needSet) {
         this.showSetting = false
         this.showPassword = true
       }
@@ -228,6 +229,15 @@ export default {
       this.$msgBox.show({
         content: '支付操作成功！具体到账情况以银行处理时间为准。',
         fn: () => {
+          this.showPassword = false
+          this.showMergePay = true
+          if (Array.isArray(this.data.data)) {
+            this.data.data.forEach(item => {
+              item.FState = 1
+            })
+          } else {
+            this.data.data.FState = 1
+          }
           if (vm.father) vm.father.openDialog = false
           vm.data.openDialog = false
         }
@@ -243,6 +253,18 @@ export default {
         : this.showSetting
         ? '请设置支付口令'
         : ''
+    },
+    money() {
+      if (Array.isArray(this.data.data)) {
+        return this.data.data.reduce((prev, item) => {
+          return prev + item.FAmountTotal
+        }, 0)
+      } else {
+        return this.data.data.FAmountTotal
+      }
+    },
+    needSet() {
+      return this.$parent.needSet || this.$parent.$parent.needSet
     }
   },
   watch: {}

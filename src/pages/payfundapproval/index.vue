@@ -109,7 +109,7 @@
                 <td>
                   <el-checkbox v-model="check[idx]"  >{{idx+1}}</el-checkbox>
                 </td>
-                <td @click="handleRowClick(item,idx)" class="apply-epart cell-click">
+                <td @click="handleRowClick(item,idx)" class="apply-epart">
                   {{item.applyDepart}}
                 </td>
                 <td>
@@ -125,21 +125,14 @@
                   {{item.applyDate}}
                 </td>
                 <td>
-                  <span class="cell-click" v-if="item.approvalStutas ==1 " @click.stop="openAuditfollow(item,idx)">待审核</span>
-                  <span class="cell-click" v-if="item.approvalStutas ==2 " @click.stop="openAuditfollow(item,idx)">审批中</span>
-                  <span class="cell-click" v-if="item.approvalStutas ==3 " @click.stop="openAuditfollow(item,idx)">审批通过</span>
+                  <span style="cursor: pointer" v-if="item.approvalStutas ==1 " @click.stop="openApproval(item,idx)">待审核</span>
+                  <span style="cursor: pointer" v-if="item.approvalStutas ==2 " @click.stop="openApproval(item,idx)">审批中</span>
+                  <span style="cursor: pointer" v-if="item.approvalStutas ==3 " @click.stop="openApproval(item,idx)">审批通过</span>
                 </td>
                 <td>
-                  <div>
-                    <el-tooltip v-if="item.approvalStutas == 1" class="" effect="dark" content="已经停留6小时" placement="bottom-start">
-                      <img  src="../../assets/images/sj2.png" class="img-icon">
-                    </el-tooltip>
-                    <el-tooltip v-else-if="item.approvalStutas == 2"  class="" effect="dark" content="已经停留10小时" placement="bottom-start">
-                      <img  src="../../assets/images/sj2.png" class="img-icon">
-                    </el-tooltip>
-                    <el-tooltip v-else-if="item.approvalStutas == 3" class="" effect="dark" content="已经停留5小时" placement="bottom-start">
-                      <img  src="../../assets/images/sj1.png" class="img-icon">
-                    </el-tooltip>
+                  <div @click="openAuditfollow()">
+                    <img  v-if="item.approvalStutas == 1" src="../../assets/images/sj2.png" class="img-icon">
+                    <img v-else src="../../assets/images/sj1.png" class="img-icon">
                   </div>
                 </td>
                 <td></td>
@@ -216,7 +209,7 @@
                 <td>
                   {{item.applyName}}
                 </td>
-                <td style="text-align: right">
+                <td>
                   {{item.applyAmount}}
                 </td>
                 <td>
@@ -258,7 +251,7 @@
           </applybill>
       </el-dialog>
       <!--图片预览-->
-      <el-dialog class="dialog img-dialog" :visible.sync="imgDialog" :close-on-click-modal="false" width="40%">
+      <el-dialog class="dialog img-dialog" :visible.sync="imgDialog" :close-on-click-modal="false" width="60%">
         <div slot="title" class="dialog-title">
           <span style="float: left">查看附件</span>
         </div>
@@ -4955,13 +4948,9 @@
     float: right;
     margin-bottom: 0px;
   }
-  .cell-click{
-    color: #409EFF;
-    cursor: pointer;
-    text-decoration: underline;
-  }
   .img-icon{
    width: 30px;
+    cursor: pointer;
   }
   .blue{
     color: #00B8EE;
@@ -4991,19 +4980,19 @@
     font-size: 0.16rem;
     border-bottom: 1px solid #eaeaea;
   }
-  /*.dialog>>>.el-dialog{*/
-  /*  position: absolute;*/
-  /*  top: 50%;*/
-  /*  left: 50%;*/
-  /*  margin: 0 !important;*/
-  /*  transform: translate(-50%,-50%);*/
-  /*}*/
+  .dialog>>>.el-dialog{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin: 0 !important;
+    transform: translate(-50%,-50%);
+  }
   .detail-dialog>>>.el-dialog{
-    /*height: 86%;*/
-    height: 600px;
+    height: 86%;
+    min-height: 600px;
   }
   .img-dialog>>>.el-dialog{
-    height: 550px;
+    height: 650px;
   }
   .hidden{
     display: none;

@@ -5,7 +5,6 @@
       width="37.5%"
       :close-on-click-modal="false"
       class="dialog"
-      @close="closeDialog"
     >
       <div slot="title" class="dialog-title">
         <p>审批并生成支付单</p>
@@ -205,11 +204,6 @@
       getBackPeople(item){
         this.$set(this.backPeople,0,item.name)
         console.log(this.backPeople)
-      },
-      //关闭弹框
-      closeDialog(){
-        this.openDialog = false
-        this.visible = false
       },
     }
   }

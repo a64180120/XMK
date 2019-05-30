@@ -1,30 +1,6 @@
 <template>
     <section>
       <div class="content">
-        <div class="handle">
-          <div v-show="!isApproval"  class="title">
-            <span>■</span>审批处理
-          </div>
-          <div class="radio">
-            <ul>
-              <li>
-                <div v-if="isApproval" class="title">
-                  <span>■</span>审批处理
-                </div>
-                <el-radio v-if="!isApproval" v-model="handleValue" label="1">同意</el-radio>
-                <el-radio v-if="!isApproval" v-model="handleValue" label="2">不同意</el-radio>
-                <span v-if="backPeople[0] !== undefined " style="color: red">(本单据将退回给“{{backPeople[0]}}”)</span>
-              </li>
-              <li>
-                <span>附单据 {{list}} 张</span>
-              </li>
-            </ul>
-          </div>
-          <div class="textare">
-            <el-input type="textarea" v-model="textare"></el-input>
-          </div>
-        </div>
-        <div style="clear:both"></div>
         <div class="sub-table">
           <!--审批流程-->
           <div class="sub-approval">
@@ -34,9 +10,7 @@
             <div class="table">
               <el-table class="table-content"
                         :data="subData"
-                        :border="true"
-                        :header-row-class-name="headerRowClass"
-                        @row-click="handleRowClick">
+                        :border="true" :header-row-class-name="headerRowClass">
                 <el-table-column prop="code" width="80" align="center" label="流程编码">
                 </el-table-column>
                 <el-table-column prop="name" align="center"  label="流程名称">
@@ -73,6 +47,30 @@
             </div>
           </div>
         </div>
+        <div style="clear:both"></div>
+        <div class="handle">
+          <div v-show="!isApproval"  class="title">
+            <span>■</span>审批处理
+          </div>
+          <div class="radio">
+            <ul>
+              <li>
+                <div v-if="isApproval" class="title">
+                  <span>■</span>审批处理
+                </div>
+                <el-radio v-if="!isApproval" v-model="handleValue" label="1">同意</el-radio>
+                <el-radio v-if="!isApproval" v-model="handleValue" label="2">不同意</el-radio>
+                <span v-if="backPeople[0] !== undefined " style="color: red">(本单据将退回给“{{backPeople[0]}}”)</span>
+              </li>
+              <li>
+                <span>附单据 {{list}} 张</span>
+              </li>
+            </ul>
+          </div>
+          <div class="textare">
+            <el-input type="textarea" v-model="textare"></el-input>
+          </div>
+        </div>
       </div>
     </section>
 </template>
@@ -102,12 +100,18 @@
           handleValue:'',
           subData:[{
             code:"0001",
-            name:"活动资金申请"
+            name:"活动资金"
           },{
             code:"0002",
-            name:"团建资金申请"
+            name:"活动资金"
           }],
-          subPeople:[]
+          subPeople:[{
+            code:'0001',
+            name:'王刚'
+          },{
+            code:'0002',
+            name:'李明'
+          }]
         }
       },
       watch:{
@@ -122,7 +126,6 @@
       methods:{
         changeDialog(){
           this.openDialog = true
-          this.subPeople = []
         },
         //表头样式回调
         headerRowClass(val){
@@ -140,31 +143,13 @@
         handleSelectAll(selection){
 
         },
-        //当前行点击事件
-        handleRowClick(row,column){
-          if (row.code =='0001') {
-            this.subPeople = [{
-              code:'0001',
-              name:'王刚'
-            },{
-              code:'0002',
-              name:'李明'
-            }]
-          }else {
-            this.subPeople = [{
-              code:'0001',
-              name:'王刚'
-            }]
-          }
-        },
         //取消
         cancel(){
           this.openDialog = false
-          this.subPeople = []
         },
         //确认
         submit(){
-          this.subPeople = []
+
         }
       }
     }

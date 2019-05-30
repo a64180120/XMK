@@ -29,7 +29,7 @@
 
 <script>
 export default {
-  name: 'mergePay',
+  name: 'payErrorHandle',
   components: {},
   props: {
     data: {
@@ -49,10 +49,14 @@ export default {
   mounted() {},
   methods: {
     errorHandle() {
+      if (this.radio === '') {
+        this.$msgBox.show('请选择一种处理方式。')
+        return
+      }
       this.data.openDialog = false
       this.$msgBox.show({
-        title: '添加分类',
-        content: '请填写分类名称'
+        content: '处理成功',
+        fn: () => {}
       })
     }
   },
