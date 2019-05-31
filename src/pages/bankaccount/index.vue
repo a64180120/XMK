@@ -10,7 +10,7 @@
                     <div class="topIcon"><img src="@/assets/images/zj2.png" alt=""></div>
                     修改
                 </div>
-                <div class="handle">
+                <div @click.stop="deleteRow" class="handle">
                     <div class="topIcon"><img src="@/assets/images/zj3.png" alt=""></div>
                     删除
                 </div>
@@ -30,7 +30,7 @@
 import accountAdd from '@/pages/bankaccount/add'
 import topHandle from '@/components/topNav/topHandle'
 import order from '@/components/bankorder'
-
+import {BankAccountDelete} from '@/api/bankaccount'
 export default {
     name:'bankaccount',
     data(){
@@ -41,31 +41,65 @@ export default {
         }
     },
     methods:{
+        //刷新
         refresh(){
             this.$refs.order.getData();
         },
+        //新增修改
         showAccountAdd(val){
             this.handleBtn=val;
             if(val=='update'){
-             
                  this.info=this.$refs.order.choosedItem[0];
-                 console.log(this.info)
-                    if(this.$refs.order.choosedItem.length>1){
-                        this.$msgBox.show('请只选择一行数据!')
-                        return;
-                    }
+                 if(!this.info){
+                    this.$msgBox.show('请选择一行数据!')
+                    return;
+                }
+                if(this.$refs.order.choosedItem.length>1){
+                    this.$msgBox.show('请只选择一行数据!')
+                    return;
+                }
                  this.info.OCode=this.info.OrgCode;
                  this.info.FLifecycle=this.info.FLifecycle==0?'0':'1';
-                 
+                 this.info.PersistentState=2;
             }else{
-                this.info={FLifecycle:'1'};
+                this.info={FLifecycle:'1',PersistentState:1};
             }
             this.accountAddShow=true;
         },
-        addCancle(){
-            console.log(1111)
+        //关闭新增修改窗口
+        addCancle(val){
             this.accountAddShow=false;
-            this.refresh();
+            if(val){
+                this.refresh();
+            }
+            
+        },
+        //删除行
+        deleteRow(){
+            let info=JSON.parse(JSON.stringify(this.$refs.order.choosedItem));
+            let data={infoData:[]};
+            if(info.length==0){
+                this.$msgBox.show('请选择一行数据!')
+                return;
+            }
+            this.$confirm('此操作将永久删除该流程, 是否继续?', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+                }).then(()=>{
+                    info.map(inf=>{
+                        data.infoData.push(inf.PhId);
+                    })
+                    BankAccountDelete(data).then(res=>{
+                        this.$msgBox.show(res.Msg);
+                        this.refresh();      
+                    }).catch((err)=>{
+                        console.log(err);
+                        this.$msgBox.show('删除数据失败!')
+                    })
+                })
+      
+            
         }
     },
     mounted(){
