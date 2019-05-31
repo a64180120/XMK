@@ -14,7 +14,7 @@ import ajax from './utils/ajax'
 import axios from './utils/axios_new'
 import xmMessage from '@/components/message'
 import MessageBox from './components/messageDialog'
-
+import '@/assets/css/font/index.less'
 Vue.config.productionTip = false
 
 //完整引入element-ui

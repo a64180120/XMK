@@ -6,7 +6,7 @@
       :visible.sync="data.openDialog"
       width="80%"
       :close-on-click-modal="false"
-      class="payCenter"
+      class="payCenter payList"
       :before-close="payListClose"
     >
       <div slot="title" class="dialog-title">
@@ -14,7 +14,7 @@
       </div>
       <div class="payCenterDialog">
         <div class="btns">
-          <span class="payId">支付单号：{{detail.FCode}}</span>
+          <span class="payId">支付单号：{{detail.Mst.FCode}}</span>
           <template v-if="data.itemType == 'error'">
             <span class="btn btn-large" @click="save('payErrorHandleData')">异常处理</span>
             <span class="btn btn-large" @click="save('new')">重新支付</span>
@@ -55,11 +55,23 @@
               <span>
                 支付方式：
                 <template v-if="data.itemType == 'notApprove'">
-                  <el-select popper-class="payList-largeSelects" v-model="payWay" placeholder="请选择">
-                    <el-option v-for="item in payWayList" :label="item.label" :value="item.value"></el-option>
+                  <el-select
+                    popper-class="payList-largeSelects"
+                    v-model="detail.Mst.FPaymethod"
+                    placeholder="请选择"
+                  >
+                    <el-option
+                      v-for="(item,index) in FPaymethodList"
+                      :label="item.label"
+                      :value="item.value"
+                      :key="index"
+                    ></el-option>
                   </el-select>
                 </template>
-                <div class="el-select" v-else>{{payWayList.find(item=>item.value == account).label}}</div>
+                <div
+                  class="el-select"
+                  v-else
+                >{{FPaymethodList.find(item=>item.value == detail.Mst.FPaymethod).label}}</div>
               </span>
             </h2>
           </div>
@@ -67,12 +79,29 @@
           <div class="getDetail">
             <div v-if="data.itemType == 'notApprove'">
               批量设置转账方式
-              <el-select v-model="bankType" placeholder="请选择">
-                <el-option label="同行" value="1"></el-option>
-                <el-option label="跨行" value="2"></el-option>
+              <el-select
+                @focus="selectFSamebankFocus"
+                @visible-change="selectFSamebankBlur"
+                v-model="bankType"
+                placeholder="请选择"
+                ref="selectFSamebank"
+              >
+                <el-option
+                  v-for="(item,index) in FSamebankList"
+                  :label="item.label"
+                  :value="item.value"
+                  :key="index"
+                ></el-option>
               </el-select>
             </div>
-            <el-table max-height="200px" style="margin-top:10px;" :data="payList" border>
+            <el-table
+              max-height="350px"
+              ref="payListTable"
+              style="margin-top:10px;"
+              :data="detail.Dtls"
+              border
+              :span-method="tabelColspan"
+            >
               <!-- 序号列 -->
               <el-table-column type="index" width="80" header-align="center" align="center">
                 <template slot="header" slot-scope="scope">
@@ -85,14 +114,14 @@
                 </template>
                 <template slot-scope="scope">
                   <el-checkbox
-                    v-if="data.itemType == 'notApprove'||(data.itemType == 'error'&&scope.row.status=='支付异常')"
+                    v-if="data.itemType == 'notApprove'||(data.itemType == 'error'&&scope.row.FState==2)"
                     @change="selectOne(scope)"
                     :label="scope.$index"
                     v-model="scope.row.choosed"
                   >{{scope.$index+1}}</el-checkbox>
                   <template v-else>
                     <span
-                      :style="data.itemType == 'error'&&scope.row.status!='支付异常'?'padding-left:25px':''"
+                      :style="data.itemType == 'error'&&scope.row.FState!=2?'padding-left:25px':''"
                     >{{scope.$index+1}}</span>
                   </template>
                 </template>
@@ -111,28 +140,79 @@
                 <template slot-scope="scope">
                   <!-- 申请金额 -->
                   <div
-                    v-if="scope.column.property=='money'"
+                    v-if="scope.column.property=='FAmount'"
                     :title="scope.row[scope.column.property]"
                     class="table-item"
                   >{{scope.row[scope.column.property] | NumFormat}}</div>
-                  <!-- 其他 -->
+                  <!-- 备注  -->
                   <div
-                    :title="scope.row[scope.column.property]"
+                    v-else-if="scope.column.property=='descrilbe'&& data.itemType == 'notApprove'"
+                    class="table-item nopadding"
+                  >
+                    <el-input v-model="scope.row[scope.column.property]" placeholder></el-input>
+                  </div>
+                  <!-- 预算科目  -->
+                  <div v-else-if="scope.column.property=='QtKmdm'" class="table-item nopadding">
+                    <template v-if="data.itemType == 'notApprove'">
+                      <el-select v-model="scope.row[scope.column.property]" placeholder="请选择预算科目">
+                        <el-option label="501 活动支出" :value="501" disabled></el-option>
+                        <el-option label="501001 活动支出001" :value="501001"></el-option>
+                        <el-option label="501002 活动支出002" :value="501002"></el-option>
+                      </el-select>
+                    </template>
+                    <template
+                      v-else
+                    >{{scope.row[scope.column.property]?kemuList.find(item=>item.value==scope.row[scope.column.property]).label:'————'}}</template>
+                  </div>
+                  <!-- 支付方式 -->
+                  <div v-else-if="scope.column.property=='FSamebank'" class="table-item nopadding">
+                    <template v-if="data.itemType == 'notApprove'">
+                      <el-select v-model="scope.row[scope.column.property]" placeholder="请选择支付方式">
+                        <el-option
+                          v-for="(item,index) in FSamebankList"
+                          :label="item.label"
+                          :value="item.value"
+                          :key="index"
+                        ></el-option>
+                      </el-select>
+                    </template>
+                    <template
+                      v-else
+                    >{{FSamebankList.find(item=>item.value==scope.row[scope.column.property]).label}}</template>
+                  </div>
+                  <!-- 收款方账户名称 -->
+                  <div
+                    v-else-if="scope.column.property=='FRecAcntname'&&data.itemType == 'notApprove'"
                     class="table-item"
-                    v-else
+                    @click="selectBank(scope.row)"
                   >{{scope.row[scope.column.property]}}</div>
+                  <!-- 其他 -->
+                  <div :title="scope.row[scope.column.property]" class="table-item" v-else>
+                    <span>{{scope.row[scope.column.property]}}</span>
+                  </div>
                 </template>
               </el-table-column>
               <!-- 支付异常列 -->
               <template v-if="data.itemType=='error'">
                 <el-table-column
                   v-for="(item,index) in payHeaders2"
-                  :key="index+10"
+                  :key="index+20"
                   :property="item.name"
                   :label="item.label"
                   :width="item.width||''"
                   :header-align="item.headerAlign||'center'"
-                ></el-table-column>
+                  :align="item.bodyAlign||'left'"
+                >
+                  <template slot-scope="scope">
+                    <div v-if="scope.column.property=='FState'" class="table-item">
+                      <template>{{FStateList.find(item=>item.value==scope.row[scope.column.property]).label}}</template>
+                    </div>
+                    <div :title="scope.row[scope.column.property]" class="table-item" v-else>
+                      <span v-if="scope.row.FState == 1">————</span>
+                      <span v-else>{{scope.row[scope.column.property]}}</span>
+                    </div>
+                  </template>
+                </el-table-column>
               </template>
               <!-- 支付成功列 -->
               <template v-if="data.itemType=='success'">
@@ -141,58 +221,95 @@
                   :label="payHeaders2[0].label"
                   :width="payHeaders2[0].width||''"
                   :header-align="payHeaders2[0].headerAlign||'center'"
-                ></el-table-column>
+                  :align="payHeaders2[0].bodyAlign||'left'"
+                >
+                  <template slot-scope="scope">
+                    <div v-if="scope.column.property=='FState'" class="table-item">
+                      <!-- <template>{{FStateList.find(item=>item.value==scope.row[scope.column.property]).label}}</template> -->
+                      支付成功
+                    </div>
+                  </template>
+                </el-table-column>
               </template>
             </el-table>
           </div>
           <div class="bottom">
-            <span @click="showAuditfollow = true">
+            <span v-if="!reSetting" @click="showAuditfollow = true">
               <template v-if="data.itemType == 'notApprove'">待送审</template>
               <template v-else-if="data.itemType == ''">审批中</template>
               <template v-else-if="data.itemType == 'approval'">待审批</template>
               <template v-else>审批通过</template>
             </span>
-            <span v-if="data.itemType != 'approval'">
+            <span
+              v-if="(data.itemType != 'approval')&&!reSetting"
+              :class="{success:data.itemType=='success'}"
+            >
               <template v-if="data.itemType == 'error'">支付异常</template>
               <template v-else-if="data.itemType=='success'">支付成功</template>
               <template v-else>待支付</template>
             </span>
-            <span @click="showFundDetail">点击查看关联申请单信息（申请编号：{{detail.RefbillCode}}）</span>
+            <span class="dj" @click="showFundDetail">点击查看关联申请单信息（申请编号：{{detail.Mst.RefbillCode}}）</span>
           </div>
         </div>
       </div>
-      <!-- 关联申请单信息查看 -->
-      <!-- 审批弹框 -->
-      <approval-dialog
-        ref="approvalDialog"
-        :title="appDialog.title"
-        :btn-group="appDialog.btnGroup"
-        :data="approvalData"
-        :inner="false"
-      ></approval-dialog>
     </el-dialog>
+    <!-- 关联申请单信息查看 -->
+    <el-dialog
+      append-to-body
+      :visible.sync="fundDetailData.openDialog"
+      width="80%"
+      :close-on-click-modal="false"
+      class="dialog detail-dialog payCenter"
+    >
+      <div slot="title" class="dialog-title">
+        <span style="float: left;">查看申请</span>
+      </div>
+      <apply-bill :data="fundDetailData" @showImg="showImg">
+        <div slot="btn-group">
+          <el-button class="btn" size="mini">打印</el-button>
+        </div>
+      </apply-bill>
+    </el-dialog>
+    <!--图片预览-->
+    <el-dialog
+      class="dialog img-dialog payCenter"
+      :visible.sync="imgDialog"
+      :close-on-click-modal="false"
+      width="60%"
+      height="600px"
+    >
+      <div slot="title" class="dialog-title">
+        <span style="float: left">查看附件</span>
+      </div>
+      <div class="btn-load" style="text-align:right;">
+        <el-button class="btn">下载</el-button>
+      </div>
+      <img-view v-if="imgDialog"></img-view>
+    </el-dialog>
+    <auditfollow :visible="showAuditfollow" @update:visible="closeAuditFollow"></auditfollow>
+    <!-- 审批弹框 -->
+    <approval-dialog
+      ref="approvalDialog"
+      :title="appDialog.title"
+      :btn-group="appDialog.btnGroup"
+      :data="approvalData"
+    ></approval-dialog>
   </div>
 </template>
 
 <script>
   import applyBill from '@/components/applyBill/applybill'
-  // import mergePay from './mergePay.vue'
-  // import payErrorHandle from './payErrorHandle.vue'
-  // import goApproval from './goApproval.vue'
-  // import bankChoose from './bankChoose'
-  // import auditfollow from '../../components/auditFollow/auditfollow'
+  import auditfollow from '../../components/auditFollow/auditfollow'
+  import ImgView from '../../components/imgView/imgView'
   import approvalDialog from '../payfundapproval/approvalDialog.vue'
 
   export default {
     name: 'payList',
     components: {
       applyBill,
-      // mergePay,
-      // payErrorHandle,
-      // goApproval,
-      // bankChoose,
-      // auditfollow,
-      approvalDialog
+      auditfollow,
+      approvalDialog,
+      ImgView
     },
     props: {
       data: {
@@ -206,61 +323,73 @@
     },
     data() {
       return {
-        kemu: '',
-        way: '',
+        imgDialog: false, //图片预览弹框
         showAuditfollow: false,
         // 支付单表单
         // 未送审
         payHeaders1: [
+          {
+            name: 'XmProjcode',
+            label: '项目编码',
+            width: '200',
+            bodyAlign: 'center'
+          },
+          {
+            name: 'XmProjname',
+            label: '项目名称',
+            width: '200',
+            bodyAlign: 'center'
+          },
           {
             name: 'depart',
             label: '收款单位/部门',
             width: '200'
           },
           {
-            name: 'proName',
+            name: 'BudgetdtlName',
             label: '明细项目名称',
             width: '200'
           },
           {
-            name: 'money',
+            name: 'FAmount',
             label: '申请金额（元）',
             width: '150',
             bodyAlign: 'right'
           },
           {
-            name: 'descrilbe',
+            name: 'FDescribe',
             label: '备注',
             width: '300'
           },
           {
-            name: 'kemu',
+            name: 'QtKmdm',
             label: '预算科目',
-            width: '200'
+            width: '200',
+            bodyAlign: 'center'
           },
           {
-            name: 'way',
+            name: 'FSamebank',
             label: '转账方式',
             width: '200',
             bodyAlign: 'center'
           },
           {
-            name: 'getName',
+            name: 'FRecAcntname',
             label: '收款方账户名称',
             width: '200'
           },
           {
-            name: 'getAccount',
+            name: 'FRecAcnt',
             label: '收款账号',
             width: '200'
           },
           {
-            name: 'bankName',
+            name: 'FPayBankcode',
             label: '开户行',
             width: '200'
           },
           {
-            name: 'cardId',
+            name: 'FRecBankcode',
             label: '银行行号',
             width: '200'
           }
@@ -268,19 +397,19 @@
         // 支付异常的三列
         payHeaders2: [
           {
-            name: 'status',
+            name: 'FState',
             label: '支付状态',
-            width: '120',
+            width: '150',
             bodyAlign: 'center'
           },
           {
-            name: 'reason',
+            name: 'FResultmsg',
             label: '支付异常原因',
             width: '350',
             bodyAlign: 'center'
           },
           {
-            name: 'reID',
+            name: 'RefbillDtlPhid2',
             label: '重新支付后关联支付单编号',
             width: '250',
             bodyAlign: 'center'
@@ -289,26 +418,39 @@
         account: 1,
         accountList: [
           {
-            label: '账号A',
+            label: '浙江省总工会',
             value: 1
           },
           {
-            label: '账号B',
+            label: '浙江省总工会政治部',
             value: 2
           },
           {
-            label: 'XXXXX',
+            label: '浙江省总工会财务部',
             value: 3
           }
         ],
-        payWay: 1,
-        payWayList: [
+        FStateList: [
           {
-            label: '网银',
+            label: '待支付',
+            value: 0
+          },
+          {
+            label: '支付成功',
             value: 1
           },
           {
+            label: '支付异常',
+            value: 2
+          }
+        ],
+        FPaymethodList: [
+          {
             label: '现金',
+            value: 1
+          },
+          {
+            label: '网银',
             value: 2
           },
           {
@@ -332,139 +474,14 @@
             value: 501002
           }
         ],
-        wayList: [
+        FSamebankList: [
           {
             label: '同行',
-            value: 0
+            value: 1
           },
           {
             label: '跨行',
-            value: 1
-          }
-        ],
-        payList: [
-          {
-            choosed: false,
-            depart: '杭州市总工会',
-            proName: 'XXXXX',
-            money: '2345.98',
-            descrilbe: '备注内容',
-            kemu: 501001,
-            way: 0,
-            getName: '123',
-            getAccount: '321',
-            bankName: '123',
-            cardId: '321',
-            status: '支付异常',
-            reason: '支付请求响应失败/对方账号不存在',
-            reID: '201904180002'
-          },
-          {
-            choosed: false,
-            depart: '杭州市总工会',
-            proName: 'XXXXX',
-            money: '2345.98',
-            descrilbe: '备注内容',
-            kemu: 501001,
-            way: 0,
-            getName: '123',
-            getAccount: '321',
-            bankName: '123',
-            cardId: '321',
-            status: '支付异常',
-            reason: '支付请求响应失败/对方账号不存在',
-            reID: '201904180002'
-          },
-          {
-            choosed: false,
-            depart: '绍兴市市总工会',
-            proName: 'XX',
-            money: '22243.9',
-            descrilbe: '备注内容多备注内容多备注内容多备注内容多备注内容多',
-            kemu: 501001,
-            way: 0,
-            getName: '312312',
-            getAccount: '12312',
-            bankName: '3123',
-            cardId: '123123'
-          },
-          {
-            choosed: false,
-            depart: '绍兴市市总工会',
-            proName: 'XX',
-            money: '22243.9',
-            descrilbe: '备注内容多备注内容多备注内容多备注内容多备注内容多',
-            kemu: 501001,
-            way: 0,
-            getName: '312312',
-            getAccount: '12312',
-            bankName: '3123',
-            cardId: '123123'
-          },
-          {
-            choosed: false,
-            depart: '绍兴市市总工会',
-            proName: 'XX',
-            money: '22243.9',
-            descrilbe: '备注内容多备注内容多备注内容多备注内容多备注内容多',
-            kemu: 501001,
-            way: 0,
-            getName: '312312',
-            getAccount: '12312',
-            bankName: '3123',
-            cardId: '123123'
-          },
-          {
-            choosed: false,
-            depart: '绍兴市市总工会',
-            proName: 'XX',
-            money: '22243.9',
-            descrilbe: '备注内容多备注内容多备注内容多备注内容多备注内容多',
-            kemu: 501001,
-            way: 0,
-            getName: '312312',
-            getAccount: '12312',
-            bankName: '3123',
-            cardId: '123123'
-          },
-          {
-            choosed: false,
-            depart: '绍兴市市总工会',
-            proName: 'XX',
-            money: '22243.9',
-            descrilbe: '备注内容多备注内容多备注内容多备注内容多备注内容多',
-            kemu: 501001,
-            way: 0,
-            getName: '312312',
-            getAccount: '12312',
-            bankName: '3123',
-            cardId: '123123'
-          },
-          {
-            choosed: false,
-            depart: '绍兴市市总工会',
-            proName: 'XX',
-            money: '22243.9',
-            descrilbe: '备注内容多备注内容多备注内容多备注内容多备注内容多',
-            kemu: 501001,
-            way: 0,
-            getName: '312312',
-            getAccount: '12312',
-            bankName: '3123',
-            cardId: '123123'
-          },
-          {
-            choosed: false,
-            depart: '绍兴市市总工会',
-            proName: 'XX',
-            money: '22243.9',
-            descrilbe: '备注内容多备注内容多备注内容多备注内容多备注内容多',
-            kemu: 501001,
-            way: 0,
-            getName: '312312',
-            getAccount: '12312',
-            bankName: '3123',
-            cardId: '123123'
+            value: 0
           }
         ],
         fundDetailData: {
@@ -489,7 +506,140 @@
         },
         reSetting: false,
         allSelected: false,
-        detail: {},
+        // detail: {
+        //   Mst: {
+        //     FCode: '',
+        //     FPaymethod: 1
+        //   },
+        //   Dtls: []
+        // },
+        detail: {
+          Mst: {
+            PhId: '216190528000005',
+            OrgPhid: '547181121000001',
+            OrgCode: '1',
+            RefbillPhid: '6',
+            RefbillCode: 'zfbbf0006',
+            FCode: 'P1559012283053',
+            FPaymethod: 2,
+            FAmountTotal: 2006.0,
+            FApproval: 0,
+            FState: 0,
+            FDescribe: '单元测试-1559012283053',
+            FDate: '2019-05-27 00:00:00',
+            FBilltype: 'zjbf',
+            FYear: null,
+            PersistentState: 0,
+            NgRecordVer: 1,
+            NgInsertDt: '2019-05-28 10:58:03',
+            NgUpdateDt: '2019-05-28 10:58:03',
+            Creator: '521180820000001',
+            Editor: '521180820000001',
+            CurOrgId: '547181121000001'
+          },
+          Dtls: [
+            {
+              choosed: false,
+              depart: '杭州市总工会',
+              PhId: '216190528000009',
+              MstPhid: '216190528000005',
+              OrgPhid: '547181121000001',
+              OrgCode: '1',
+              RefbillPhid: '6',
+              RefbillCode: 'zfbbf0006',
+              RefbillDtlPhid: '1',
+              RefbillDtlPhid2: '2161905280009999',
+              FAmount: 2000.0,
+              FCurrency: '001',
+              FPayAcntname: '付款账户1',
+              FPayAcnt: '111001',
+              FPayBankcode: '杭州市工商银行',
+              FRecAcntname: '杭州市总工会党支部',
+              FRecAcnt: '6221233216248914675',
+              FRecBankcode: '31455',
+              FRecCityname: '杭州市',
+              FSamecity: 0,
+              FSamebank: 1,
+              FIsurgent: 1,
+              FCorp: 1,
+              FUsage: '用途信息',
+              FPostscript: '附言：xxx',
+              FExplation: '摘要',
+              FDescribe: '打印机已坏',
+              FSubmitdate: null,
+              FSeqno: null,
+              FBkSn: null,
+              FResult: null,
+              FResultmsg: '支付请求响应失败',
+              FState: 2,
+              FNewCode: null,
+              XmProjcode: '201905200002',
+              XmProjname: '办公室设备购买',
+              BudgetdtlName: '办公设备打印机购买',
+              FDepartmentcode: null,
+              FDepartmentname: null,
+              QtKmdm: 501001,
+              QtKmmc: null,
+              PersistentState: 0,
+              NgRecordVer: 1,
+              NgInsertDt: '2019-05-28 10:58:03',
+              NgUpdateDt: '2019-05-28 10:58:03',
+              Creator: '521180820000001',
+              Editor: '521180820000001',
+              CurOrgId: '547181121000001'
+            },
+            {
+              choosed: false,
+              depart: '绍兴市市总工会',
+              PhId: '216190528000009',
+              MstPhid: '216190528000005',
+              OrgPhid: '547181121000001',
+              OrgCode: '1',
+              RefbillPhid: '6',
+              RefbillCode: 'zfbbf0006',
+              RefbillDtlPhid: '1',
+              RefbillDtlPhid2: '2161905280009999',
+              FAmount: 1000.0,
+              FCurrency: '001',
+              FPayAcntname: '付款账户1',
+              FPayAcnt: '111001',
+              FPayBankcode: '绍兴市农业银行',
+              FRecAcntname: '绍兴市市总工会女工部',
+              FRecAcnt: '6228481268248914675',
+              FRecBankcode: '67455',
+              FRecCityname: '杭州市',
+              FSamecity: 0,
+              FSamebank: 1,
+              FIsurgent: 1,
+              FCorp: 1,
+              FUsage: '用途信息',
+              FPostscript: '附言：xxx',
+              FExplation: '摘要',
+              FDescribe: '碎纸机已坏',
+              FSubmitdate: null,
+              FSeqno: null,
+              FBkSn: null,
+              FResult: null,
+              FResultmsg: '对方账号不存在',
+              FState: 2,
+              FNewCode: null,
+              XmProjcode: '201905200002',
+              XmProjname: '办公室设备购买',
+              BudgetdtlName: '办公设备碎纸机购买',
+              FDepartmentcode: null,
+              FDepartmentname: null,
+              QtKmdm: 501001,
+              QtKmmc: null,
+              PersistentState: 0,
+              NgRecordVer: 1,
+              NgInsertDt: '2019-05-28 10:58:03',
+              NgUpdateDt: '2019-05-28 10:58:03',
+              Creator: '521180820000001',
+              Editor: '521180820000001',
+              CurOrgId: '547181121000001'
+            }
+          ]
+        },
         appDialog: {
           title: '',
           btnGroup: {
@@ -500,15 +650,116 @@
       }
     },
     created() {
-      console.log('paylist created')
-      this.detail = Array.isArray(this.data.data)
-        ? this.data.data[0]
-        : this.data.data
+      // console.log(this.data.data)
+      // this.detail.Mst = Array.isArray(this.data.data)
+      //   ? this.data.data[0]
+      //   : this.data.data
+      // this.getData()
     },
-    mounted() {
-      console.log('paylist mounted')
-    },
+    mounted() {},
     methods: {
+      // 批量设置转账方式
+      selectFSamebankFocus() {
+        if (this.detail.Dtls.every(item => item.choosed === false)) {
+          this.$refs.selectFSamebank.blur()
+          this.$msgBox.show('请先选择要设置的项目。')
+        }
+      },
+      selectFSamebankBlur(visible) {
+        console.log(123)
+        if (this.bankType !== '' && !visible) {
+          console.log(this.bankType)
+          this.detail.Dtls.forEach(item => {
+            if (item.choosed) {
+              console.log(item)
+              item.FSamebank = this.bankType
+            }
+          })
+        }
+      },
+      //打开图片预览
+      showImg(file) {
+        console.log(file)
+        this.imgDialog = true
+      },
+      tabelColspan({ row, column, rowIndex, columnIndex }) {
+        if (this.detail.Dtls.length == 0) return
+        if (columnIndex === 1 || columnIndex === 2) {
+          let count = 1
+          if (rowIndex == 0) {
+            while (
+              rowIndex < this.detail.Dtls.length - 1 &&
+              this.detail.Dtls[rowIndex][column.property] ==
+              this.detail.Dtls[rowIndex + 1][column.property]
+              ) {
+              count++
+              rowIndex++
+            }
+            if (count > 1) {
+              return [count, 1]
+            }
+          } else {
+            if (
+              this.detail.Dtls[rowIndex][column.property] !=
+              this.detail.Dtls[rowIndex - 1][column.property]
+            ) {
+              while (
+                rowIndex < this.detail.Dtls.length - 1 &&
+                this.detail.Dtls[rowIndex][column.property] ==
+                this.detail.Dtls[rowIndex + 1][column.property]
+                ) {
+                count++
+                rowIndex++
+              }
+              if (count > 1) {
+                return [count, 1]
+              }
+            } else {
+              return [0, 0]
+            }
+          }
+        }
+      },
+      getData() {
+        this.getAxios('/GKPaymentMstApi/GetPayment4Zjbf', {
+          id: this.data.data.PhId,
+          // id: 401190528000001,
+          uid: '521180820000001', //用户id
+          orgid: '547181121000001', //组织id
+          ryear: '2019' //年度
+        })
+          .then(res => {
+            console.log(res)
+            if (res.Status == 'error') {
+              return
+            }
+            res.Dtls.forEach(item => (item.choosed = false))
+            this.detail.Dtls = res.Dtls
+            this.$nextTick(() => {
+              this.$refs.payListTable.doLayout()
+            })
+          })
+          .catch(err => {
+            console.log(err)
+          })
+      },
+      getBank(e) {
+        if (this.bankChooseData.data.choosed) {
+          this.detail.Dtls.forEach(item => {
+            if (item.choosed) {
+              item.FRecAcntname = '杭州市总工会'
+              item.FRecAcnt = '6228481268248914675'
+              item.FPayBankcode = '杭州市工商银行'
+              item.FRecBankcode = '64841'
+            }
+          })
+        } else {
+          this.bankChooseData.data.FRecAcntname = '杭州市总工会'
+          this.bankChooseData.data.FRecAcnt = '6228481268248914675'
+          this.bankChooseData.data.FPayBankcode = '杭州市工商银行'
+          this.bankChooseData.data.FRecBankcode = '64841'
+        }
+      },
       closeAuditFollow() {
         this.showAuditfollow = false
       },
@@ -527,22 +778,30 @@
       selectOne($scope) {
         console.log($scope.row.choosed)
         if ($scope.row.choosed) {
-          this.allSelected = this.payList.every(item => item.choosed)
+          this.allSelected = this.detail.Dtls.every(item => item.choosed)
         } else {
           this.allSelected = false
         }
       },
       selectAll(choosed) {
-        console.log(choosed)
-        this.payList.forEach(item => {
+        this.detail.Dtls.forEach(item => {
           item.choosed = choosed
         })
       },
       // 支付单详情事件
       save(type) {
-        console.log(type)
         switch (type) {
           case '':
+            if (this.reSetting) {
+              this.$msgBox.show({
+                content: '保存成功。',
+                fn: () => {
+                  this.reSetting = false
+                  this.data.itemType = 'error'
+                }
+              })
+              return
+            }
             this.$msgBox.show({
               content: '保存成功。'
             })
@@ -552,6 +811,7 @@
           case 'payErrorHandleData':
           case 'mergePayData':
             this[type].openDialog = true
+            this[type].data = this.data.data
             break
           case 'new':
             this.reSetting = true
@@ -567,8 +827,9 @@
       },
       // 选择银行
       selectBank(item) {
-        console.log(item)
+        console.log(123)
         this.bankChooseData.openDialog = true
+        this.bankChooseData.data = item
       }
     },
     watch: {}
@@ -655,10 +916,20 @@
               text-overflow: ellipsis;
               white-space: nowrap;
               cursor: pointer;
+              > span {
+                display: inline-block;
+                vertical-align: middle;
+              }
               &.nopadding {
                 padding: 0;
               }
               > .el-select {
+                height: 100%;
+              }
+              &:after {
+                content: '';
+                display: inline-block;
+                vertical-align: middle;
                 height: 100%;
               }
             }
@@ -668,30 +939,40 @@
           margin-top: 10px;
           font-size: 0.18rem;
           padding-left: 20px;
+          overflow: hidden;
           span {
             cursor: pointer;
             margin-right: 20px;
-            &:first-of-type,
+            position: relative;
+            padding-left: 0.3rem;
+            &::before {
+              content: '';
+              display: inline-block;
+              background-image: url('../../assets/images/yk1.png');
+              background-size: contain;
+              background-repeat: no-repeat;
+              background-position: 0 center;
+              width: 0.2rem;
+              height: 0.2rem;
+              position: absolute;
+              left: 0;
+              top: 50%;
+              margin-top: -0.1rem;
+            }
             &:nth-of-type(2) {
-              position: relative;
-              padding-left: 0.3rem;
               &::before {
-                content: '';
-                display: inline-block;
-                background-image: url('../../assets/images/yk1.png');
-                background-size: contain;
-                background-repeat: no-repeat;
-                background-position: 0 center;
-                width: 0.2rem;
-                height: 0.2rem;
-                position: absolute;
-                left: 0;
-                top: 50%;
-                margin-top: -0.1rem;
+                background-image: url('../../assets/images/wzf.png');
+              }
+              &.success::before {
+                background-image: url('../../assets/images/zfcg.png');
               }
             }
             &:last-of-type {
               float: right;
+              &::before {
+                background-image: url('../../assets/images/dj.png');
+                margin-top: -0.09rem;
+              }
             }
           }
         }
@@ -775,6 +1056,17 @@
       .payDetail h2 .el-input__inner {
         font-size: 0.18rem;
       }
+      .payListContent .getDetail .el-table__body-wrapper {
+        max-height: 200px !important;
+      }
+      .payListContent
+      .getDetail
+      .el-table--enable-row-hover
+      .el-table__body
+      tr:hover
+      > td {
+        background-color: #fff;
+      }
       .el-radio__label {
         font-size: 0.14rem;
       }
@@ -790,13 +1082,21 @@
             }
           }
         }
+        .el-input__inner {
+          font-size: 0.14rem;
+          background-color: transparent;
+          border: 0;
+        }
       }
     }
     .el-dialog {
       display: inline-block;
       margin: 0 !important;
       vertical-align: middle;
-      max-height: 86%;
+      &.payList {
+        min-height: 60%;
+      }
+
       .el-dialog__body {
         padding-top: 0px;
       }
