@@ -12,246 +12,270 @@
       <div slot="title" class="dialog-title">
         <span style="float: left">支付单查看</span>
       </div>
-      <div class="payCenterDialog">
-        <div class="btns">
-          <span class="payId">支付单号：{{detail.Mst.FCode}}</span>
-          <template v-if="data.itemType == 'error'">
-            <span class="btn btn-large" @click="save('payErrorHandleData')">异常处理</span>
-            <span class="btn btn-large" @click="save('new')">重新支付</span>
-          </template>
-          <template v-if="data.itemType == 'notApprove'">
-            <span class="btn btn-large" @click="save('')">保存</span>
-            <span class="btn btn-large" style="padding:0" @click="save('approvalData')">保存并送审</span>
-          </template>
-          <template v-if="data.itemType =='pay'">
-            <span class="btn btn-large" @click="save('mergePayData')">支付</span>
-          </template>
-          <template v-if="data.itemType =='approval'">
-            <span class="btn btn-large" @click="save('approval')">审批</span>
-          </template>
-          <span class="btn btn-large">打印</span>
-        </div>
-        <div class="content payListContent">
-          <h1>付款方</h1>
-          <div class="payDetail">
-            <h2>付款单位：浙江省总工会</h2>
-            <h2 class="selects">
-              <span>
-                付款账户：
-                <template v-if="data.itemType == 'notApprove'">
-                  <el-select
-                    popper-class="payList-largeSelects"
-                    v-model="account"
-                    placeholder="请选择"
-                  >
-                    <el-option v-for="item in accountList" :label="item.label" :value="item.value"></el-option>
-                  </el-select>
-                </template>
-                <div
-                  class="el-select"
-                  v-else
-                >{{accountList.find(item=>item.value == account).label}}</div>
-              </span>
-              <span>
-                支付方式：
-                <template v-if="data.itemType == 'notApprove'">
-                  <el-select
-                    popper-class="payList-largeSelects"
-                    v-model="detail.Mst.FPaymethod"
-                    placeholder="请选择"
-                  >
-                    <el-option
-                      v-for="(item,index) in FPaymethodList"
-                      :label="item.label"
-                      :value="item.value"
-                      :key="index"
-                    ></el-option>
-                  </el-select>
-                </template>
-                <div
-                  class="el-select"
-                  v-else
-                >{{FPaymethodList.find(item=>item.value == detail.Mst.FPaymethod).label}}</div>
-              </span>
-            </h2>
+      <el-row :gutter="10">
+        <el-col :span="24">
+          <span style="float:left;font-size:0.16rem;line-height:28px;">支付单号：{{detail.Mst.FCode}}</span>
+          <div class="top-btn">
+            <template v-if="data.itemType == 'error'">
+              <span class="btn btn-large" @click="save('payErrorHandleData')">异常处理</span>
+              <span class="btn btn-large" @click="save('new')">重新支付</span>
+            </template>
+            <template v-if="data.itemType == 'notApprove'">
+              <span class="btn btn-large" @click="save('')">保存</span>
+              <span class="btn btn-large" style="padding:0" @click="save('approvalData')">保存并送审</span>
+            </template>
+            <template v-if="data.itemType =='pay'">
+              <span class="btn btn-large" @click="save('mergePayData')">支付</span>
+            </template>
+            <template v-if="data.itemType =='approval'">
+              <span class="btn btn-large" @click="save('approval')">审批</span>
+            </template>
+            <span class="btn btn-large">打印</span>
           </div>
-          <h1>收款方</h1>
-          <div class="getDetail">
-            <div v-if="data.itemType == 'notApprove'">
-              批量设置转账方式
-              <el-select
-                @focus="selectFSamebankFocus"
-                @visible-change="selectFSamebankBlur"
-                v-model="bankType"
-                placeholder="请选择"
-                ref="selectFSamebank"
-              >
-                <el-option
-                  v-for="(item,index) in FSamebankList"
-                  :label="item.label"
-                  :value="item.value"
-                  :key="index"
-                ></el-option>
-              </el-select>
+        </el-col>
+      </el-row>
+      <el-row class="content" :gutter="10">
+        <!--付款方信息-->
+        <el-col :span="5" style="min-height:240px">
+          <div class="left-card">
+            <span>付款方</span>
+            <div>
+              <ul class="apply-info">
+                <li>
+                  <span>付款单位：</span>
+                  <div>浙江省总工会</div>
+                </li>
+                <li>
+                  <span>付款账户：</span>
+                  <div v-if="data.itemType == 'notApprove'">
+                    <el-select
+                      popper-class="payList-largeSelects"
+                      v-model="account"
+                      placeholder="请选择"
+                    >
+                      <el-option
+                        v-for="item in accountList"
+                        :label="item.label"
+                        :value="item.value"
+                      ></el-option>
+                    </el-select>
+                  </div>
+                  <div v-else>{{accountList.find(item=>item.value == account).label}}</div>
+                </li>
+                <li>
+                  <span>支付方式：</span>
+                  <div v-if="data.itemType == 'notApprove'">
+                    <el-select
+                      popper-class="payList-largeSelects"
+                      v-model="detail.Mst.FPaymethod"
+                      placeholder="请选择"
+                    >
+                      <el-option
+                        v-for="(item,index) in FPaymethodList"
+                        :label="item.label"
+                        :value="item.value"
+                        :key="index"
+                      ></el-option>
+                    </el-select>
+                  </div>
+                  <div
+                    v-else
+                  >{{FPaymethodList.find(item=>item.value == detail.Mst.FPaymethod).label}}</div>
+                </li>
+              </ul>
             </div>
-            <el-table
-              max-height="350px"
-              ref="payListTable"
-              style="margin-top:10px;"
-              :data="detail.Dtls"
-              border
-              :span-method="tabelColspan"
-            >
-              <!-- 序号列 -->
-              <el-table-column type="index" width="80" header-align="center" align="center">
-                <template slot="header" slot-scope="scope">
-                  <el-checkbox
-                    @change="selectAll"
-                    v-model="allSelected"
-                    v-if="data.itemType == 'notApprove'||data.itemType == 'error'"
-                  >序号</el-checkbox>
-                  <template v-else>序号</template>
-                </template>
-                <template slot-scope="scope">
-                  <el-checkbox
-                    v-if="data.itemType == 'notApprove'||(data.itemType == 'error'&&scope.row.FState==2)"
-                    @change="selectOne(scope)"
-                    :label="scope.$index"
-                    v-model="scope.row.choosed"
-                  >{{scope.$index+1}}</el-checkbox>
-                  <template v-else>
-                    <span
-                      :style="data.itemType == 'error'&&scope.row.FState!=2?'padding-left:25px':''"
-                    >{{scope.$index+1}}</span>
-                  </template>
-                </template>
-              </el-table-column>
-              <!-- 公共列 -->
-              <el-table-column
-                v-for="(item,index) in payHeaders1"
-                :key="index"
-                :property="item.name"
-                :label="item.label"
-                :width="item.width||''"
-                :header-align="item.headerAlign||'center'"
-                :align="item.bodyAlign||'left'"
-                empty-text="————"
+          </div>
+        </el-col>
+        <!--收款方信息-->
+        <el-col :span="19">
+          <div class="detail-table">
+            <div class="title">
+              <span>收款方</span>
+            </div>
+            <div class="top">
+              <template v-if="data.itemType == 'notApprove'">
+                批量设置转账方式
+                <el-select
+                  @focus="selectFSamebankFocus"
+                  @visible-change="selectFSamebankBlur"
+                  v-model="bankType"
+                  placeholder="请选择"
+                  ref="selectFSamebank"
+                >
+                  <el-option
+                    v-for="(item,index) in FSamebankList"
+                    :label="item.label"
+                    :value="item.value"
+                    :key="index"
+                  ></el-option>
+                </el-select>
+              </template>
+            </div>
+            <div class="getDetail">
+              <el-table
+                max-height="350px"
+                ref="payListTable"
+                style="margin-top:10px;"
+                :data="detail.Dtls"
+                border
+                :span-method="tabelColspan"
               >
-                <template slot-scope="scope">
-                  <!-- 申请金额 -->
-                  <div
-                    v-if="scope.column.property=='FAmount'"
-                    :title="scope.row[scope.column.property]"
-                    class="table-item"
-                  >{{scope.row[scope.column.property] | NumFormat}}</div>
-                  <!-- 备注  -->
-                  <div
-                    v-else-if="scope.column.property=='descrilbe'&& data.itemType == 'notApprove'"
-                    class="table-item nopadding"
-                  >
-                    <el-input v-model="scope.row[scope.column.property]" placeholder></el-input>
-                  </div>
-                  <!-- 预算科目  -->
-                  <div v-else-if="scope.column.property=='QtKmdm'" class="table-item nopadding">
-                    <template v-if="data.itemType == 'notApprove'">
-                      <el-select v-model="scope.row[scope.column.property]" placeholder="请选择预算科目">
-                        <el-option label="501 活动支出" :value="501" disabled></el-option>
-                        <el-option label="501001 活动支出001" :value="501001"></el-option>
-                        <el-option label="501002 活动支出002" :value="501002"></el-option>
-                      </el-select>
+                <!-- 序号列 -->
+                <el-table-column type="index" width="80" header-align="center" align="center">
+                  <template slot="header" slot-scope="scope">
+                    <el-checkbox
+                      @change="selectAll"
+                      v-model="allSelected"
+                      v-if="data.itemType == 'notApprove'||data.itemType == 'error'"
+                    >序号</el-checkbox>
+                    <template v-else>序号</template>
+                  </template>
+                  <template slot-scope="scope">
+                    <el-checkbox
+                      v-if="data.itemType == 'notApprove'||(data.itemType == 'error'&&scope.row.FState==2)"
+                      @change="selectOne(scope)"
+                      :label="scope.$index"
+                      v-model="scope.row.choosed"
+                    >{{scope.$index+1}}</el-checkbox>
+                    <template v-else>
+                      <span
+                        :style="data.itemType == 'error'&&scope.row.FState!=2?'padding-left:25px':''"
+                      >{{scope.$index+1}}</span>
                     </template>
-                    <template
-                      v-else
-                    >{{scope.row[scope.column.property]?kemuList.find(item=>item.value==scope.row[scope.column.property]).label:'————'}}</template>
-                  </div>
-                  <!-- 支付方式 -->
-                  <div v-else-if="scope.column.property=='FSamebank'" class="table-item nopadding">
-                    <template v-if="data.itemType == 'notApprove'">
-                      <el-select v-model="scope.row[scope.column.property]" placeholder="请选择支付方式">
-                        <el-option
-                          v-for="(item,index) in FSamebankList"
-                          :label="item.label"
-                          :value="item.value"
-                          :key="index"
-                        ></el-option>
-                      </el-select>
-                    </template>
-                    <template
-                      v-else
-                    >{{FSamebankList.find(item=>item.value==scope.row[scope.column.property]).label}}</template>
-                  </div>
-                  <!-- 收款方账户名称 -->
-                  <div
-                    v-else-if="scope.column.property=='FRecAcntname'&&data.itemType == 'notApprove'"
-                    class="table-item"
-                    @click="selectBank(scope.row)"
-                  >{{scope.row[scope.column.property]}}</div>
-                  <!-- 其他 -->
-                  <div :title="scope.row[scope.column.property]" class="table-item" v-else>
-                    <span>{{scope.row[scope.column.property]}}</span>
-                  </div>
-                </template>
-              </el-table-column>
-              <!-- 支付异常列 -->
-              <template v-if="data.itemType=='error'">
+                  </template>
+                </el-table-column>
+                <!-- 公共列 -->
                 <el-table-column
-                  v-for="(item,index) in payHeaders2"
-                  :key="index+20"
+                  v-for="(item,index) in payHeaders1"
+                  :key="index"
                   :property="item.name"
                   :label="item.label"
                   :width="item.width||''"
                   :header-align="item.headerAlign||'center'"
                   :align="item.bodyAlign||'left'"
+                  empty-text="————"
                 >
                   <template slot-scope="scope">
-                    <div v-if="scope.column.property=='FState'" class="table-item">
-                      <template>{{FStateList.find(item=>item.value==scope.row[scope.column.property]).label}}</template>
+                    <!-- 申请金额 -->
+                    <div
+                      v-if="scope.column.property=='FAmount'"
+                      :title="scope.row[scope.column.property]"
+                      class="table-item"
+                    >{{scope.row[scope.column.property] | NumFormat}}</div>
+                    <!-- 备注  -->
+                    <div
+                      v-else-if="scope.column.property=='descrilbe'&& data.itemType == 'notApprove'"
+                      class="table-item nopadding"
+                    >
+                      <el-input v-model="scope.row[scope.column.property]" placeholder></el-input>
                     </div>
+                    <!-- 预算科目  -->
+                    <div v-else-if="scope.column.property=='QtKmdm'" class="table-item nopadding">
+                      <template v-if="data.itemType == 'notApprove'">
+                        <el-select v-model="scope.row[scope.column.property]" placeholder="请选择预算科目">
+                          <el-option label="501 活动支出" :value="501" disabled></el-option>
+                          <el-option label="501001 活动支出001" :value="501001"></el-option>
+                          <el-option label="501002 活动支出002" :value="501002"></el-option>
+                        </el-select>
+                      </template>
+                      <template
+                        v-else
+                      >{{scope.row[scope.column.property]?kemuList.find(item=>item.value==scope.row[scope.column.property]).label:'————'}}</template>
+                    </div>
+                    <!-- 支付方式 -->
+                    <div
+                      v-else-if="scope.column.property=='FSamebank'"
+                      class="table-item nopadding"
+                    >
+                      <template v-if="data.itemType == 'notApprove'">
+                        <el-select v-model="scope.row[scope.column.property]" placeholder="请选择支付方式">
+                          <el-option
+                            v-for="(item,index) in FSamebankList"
+                            :label="item.label"
+                            :value="item.value"
+                            :key="index"
+                          ></el-option>
+                        </el-select>
+                      </template>
+                      <template
+                        v-else
+                      >{{FSamebankList.find(item=>item.value==scope.row[scope.column.property]).label}}</template>
+                    </div>
+                    <!-- 收款方账户名称 -->
+                    <div
+                      v-else-if="scope.column.property=='FRecAcntname'&&data.itemType == 'notApprove'"
+                      class="table-item"
+                      @click="selectBank(scope.row)"
+                    >{{scope.row[scope.column.property]}}</div>
+                    <!-- 其他 -->
                     <div :title="scope.row[scope.column.property]" class="table-item" v-else>
-                      <span v-if="scope.row.FState == 1">————</span>
-                      <span v-else>{{scope.row[scope.column.property]}}</span>
+                      <span>{{scope.row[scope.column.property]}}</span>
                     </div>
                   </template>
                 </el-table-column>
-              </template>
-              <!-- 支付成功列 -->
-              <template v-if="data.itemType=='success'">
-                <el-table-column
-                  :property="payHeaders2[0].name"
-                  :label="payHeaders2[0].label"
-                  :width="payHeaders2[0].width||''"
-                  :header-align="payHeaders2[0].headerAlign||'center'"
-                  :align="payHeaders2[0].bodyAlign||'left'"
-                >
-                  <template slot-scope="scope">
-                    <div v-if="scope.column.property=='FState'" class="table-item">
-                      <!-- <template>{{FStateList.find(item=>item.value==scope.row[scope.column.property]).label}}</template> -->
-                      支付成功
-                    </div>
-                  </template>
-                </el-table-column>
-              </template>
-            </el-table>
+                <!-- 支付异常列 -->
+                <template v-if="data.itemType=='error'">
+                  <el-table-column
+                    v-for="(item,index) in payHeaders2"
+                    :key="index+20"
+                    :property="item.name"
+                    :label="item.label"
+                    :width="item.width||''"
+                    :header-align="item.headerAlign||'center'"
+                    :align="item.bodyAlign||'left'"
+                  >
+                    <template slot-scope="scope">
+                      <div v-if="scope.column.property=='FState'" class="table-item">
+                        <template>{{FStateList.find(item=>item.value==scope.row[scope.column.property]).label}}</template>
+                      </div>
+                      <div :title="scope.row[scope.column.property]" class="table-item" v-else>
+                        <span v-if="scope.row.FState == 1">————</span>
+                        <span v-else>{{scope.row[scope.column.property]}}</span>
+                      </div>
+                    </template>
+                  </el-table-column>
+                </template>
+                <!-- 支付成功列 -->
+                <template v-if="data.itemType=='success'">
+                  <el-table-column
+                    :property="payHeaders2[0].name"
+                    :label="payHeaders2[0].label"
+                    :width="payHeaders2[0].width||''"
+                    :header-align="payHeaders2[0].headerAlign||'center'"
+                    :align="payHeaders2[0].bodyAlign||'left'"
+                  >
+                    <template slot-scope="scope">
+                      <div v-if="scope.column.property=='FState'" class="table-item">
+                        <!-- <template>{{FStateList.find(item=>item.value==scope.row[scope.column.property]).label}}</template> -->
+                        支付成功
+                      </div>
+                    </template>
+                  </el-table-column>
+                </template>
+              </el-table>
+            </div>
           </div>
-          <div class="bottom">
-            <span v-if="!reSetting" @click="showAuditfollow = true">
-              <template v-if="data.itemType == 'notApprove'">待送审</template>
-              <template v-else-if="data.itemType == ''">审批中</template>
-              <template v-else-if="data.itemType == 'approval'">待审批</template>
-              <template v-else>审批通过</template>
-            </span>
-            <span
-              v-if="(data.itemType != 'approval')&&!reSetting"
-              :class="{success:data.itemType=='success'}"
-            >
-              <template v-if="data.itemType == 'error'">支付异常</template>
-              <template v-else-if="data.itemType=='success'">支付成功</template>
-              <template v-else>待支付</template>
-            </span>
-            <span class="dj" @click="showFundDetail">点击查看关联申请单信息（申请编号：{{detail.Mst.RefbillCode}}）</span>
-          </div>
+        </el-col>
+      </el-row>
+      <el-row :gutter="10">
+        <div class="bottom">
+          <span v-if="!reSetting" @click="showAuditfollow = true">
+            <template v-if="data.itemType == 'notApprove'">待送审</template>
+            <template v-else-if="data.itemType == ''">审批中</template>
+            <template v-else-if="data.itemType == 'approval'">待审批</template>
+            <template v-else>审批通过</template>
+          </span>
+          <span
+            v-if="(data.itemType != 'approval')&&!reSetting"
+            :class="{success:data.itemType=='success'}"
+          >
+            <template v-if="data.itemType == 'error'">支付异常</template>
+            <template v-else-if="data.itemType=='success'">支付成功</template>
+            <template v-else>待支付</template>
+          </span>
+          <span class="dj" @click="showFundDetail">点击查看关联申请单信息（申请编号：{{detail.Mst.RefbillCode}}）</span>
         </div>
-      </div>
+      </el-row>
     </el-dialog>
     <!-- 关联申请单信息查看 -->
     <el-dialog
@@ -366,7 +390,7 @@ export default {
           bodyAlign: 'center'
         },
         {
-          name: 'depart',
+          name: 'FDepartmentname',
           label: '收款单位/部门',
           width: '200'
         },
@@ -531,140 +555,14 @@ export default {
       },
       reSetting: false,
       allSelected: false,
-      // detail: {
-      //   Mst: {
-      //     FCode: '',
-      //     FPaymethod: 1
-      //   },
-      //   Dtls: []
-      // },
       detail: {
         Mst: {
-          PhId: '216190528000005',
-          OrgPhid: '547181121000001',
-          OrgCode: '1',
-          RefbillPhid: '6',
-          RefbillCode: 'zfbbf0006',
-          FCode: 'P1559012283053',
-          FPaymethod: 2,
-          FAmountTotal: 2006.0,
-          FApproval: 0,
-          FState: 0,
-          FDescribe: '单元测试-1559012283053',
-          FDate: '2019-05-27 00:00:00',
-          FBilltype: 'zjbf',
-          FYear: null,
-          PersistentState: 0,
-          NgRecordVer: 1,
-          NgInsertDt: '2019-05-28 10:58:03',
-          NgUpdateDt: '2019-05-28 10:58:03',
-          Creator: '521180820000001',
-          Editor: '521180820000001',
-          CurOrgId: '547181121000001'
+          FCode: '',
+          FPaymethod: 1
         },
-        Dtls: [
-          {
-            choosed: false,
-            depart: '杭州市总工会',
-            PhId: '216190528000009',
-            MstPhid: '216190528000005',
-            OrgPhid: '547181121000001',
-            OrgCode: '1',
-            RefbillPhid: '6',
-            RefbillCode: 'zfbbf0006',
-            RefbillDtlPhid: '1',
-            RefbillDtlPhid2: '',
-            FAmount: 2000.0,
-            FCurrency: '001',
-            FPayAcntname: '付款账户1',
-            FPayAcnt: '111001',
-            FPayBankcode: '杭州市工商银行',
-            FRecAcntname: '杭州市总工会党支部',
-            FRecAcnt: '6221233216248914675',
-            FRecBankcode: '31455',
-            FRecCityname: '杭州市',
-            FSamecity: 0,
-            FSamebank: 1,
-            FIsurgent: 1,
-            FCorp: 1,
-            FUsage: '用途信息',
-            FPostscript: '附言：xxx',
-            FExplation: '摘要',
-            FDescribe: '打印机已坏',
-            FSubmitdate: null,
-            FSeqno: null,
-            FBkSn: null,
-            FResult: null,
-            FResultmsg: '',
-            FState: 1,
-            FNewCode: null,
-            XmProjcode: '201905200002',
-            XmProjname: '办公室设备购买',
-            BudgetdtlName: '办公设备打印机购买',
-            FDepartmentcode: null,
-            FDepartmentname: null,
-            QtKmdm: 501001,
-            QtKmmc: null,
-            PersistentState: 0,
-            NgRecordVer: 1,
-            NgInsertDt: '2019-05-28 10:58:03',
-            NgUpdateDt: '2019-05-28 10:58:03',
-            Creator: '521180820000001',
-            Editor: '521180820000001',
-            CurOrgId: '547181121000001'
-          },
-          {
-            choosed: false,
-            depart: '绍兴市市总工会',
-            PhId: '216190528000009',
-            MstPhid: '216190528000005',
-            OrgPhid: '547181121000001',
-            OrgCode: '1',
-            RefbillPhid: '6',
-            RefbillCode: 'zfbbf0006',
-            RefbillDtlPhid: '1',
-            RefbillDtlPhid2: '————',
-            FAmount: 1000.0,
-            FCurrency: '001',
-            FPayAcntname: '付款账户1',
-            FPayAcnt: '111001',
-            FPayBankcode: '绍兴市农业银行',
-            FRecAcntname: '绍兴市市总工会女工部',
-            FRecAcnt: '6228481268248914675',
-            FRecBankcode: '67455',
-            FRecCityname: '杭州市',
-            FSamecity: 0,
-            FSamebank: 1,
-            FIsurgent: 1,
-            FCorp: 1,
-            FUsage: '用途信息',
-            FPostscript: '附言：xxx',
-            FExplation: '摘要',
-            FDescribe: '碎纸机已坏',
-            FSubmitdate: null,
-            FSeqno: null,
-            FBkSn: null,
-            FResult: null,
-            FResultmsg: '对方账号不存在',
-            FState: 2,
-            FNewCode: null,
-            XmProjcode: '201905200002',
-            XmProjname: '办公室设备购买',
-            BudgetdtlName: '办公设备碎纸机购买',
-            FDepartmentcode: null,
-            FDepartmentname: null,
-            QtKmdm: 501001,
-            QtKmmc: null,
-            PersistentState: 0,
-            NgRecordVer: 1,
-            NgInsertDt: '2019-05-28 10:58:03',
-            NgUpdateDt: '2019-05-28 10:58:03',
-            Creator: '521180820000001',
-            Editor: '521180820000001',
-            CurOrgId: '547181121000001'
-          }
-        ]
+        Dtls: []
       },
+
       oldDtls: [],
       appDialog: {
         title: '',
@@ -679,13 +577,9 @@ export default {
     this.detail.Mst = Array.isArray(this.data.data)
       ? this.data.data[0]
       : this.data.data
-    if (this.detail.Mst.FApproval == 0) {
-      var Dtls = JSON.parse(JSON.stringify(this.detail.Dtls))
-      Dtls.forEach(item => {
-        this.clearItems(item)
-      })
-      this.detail.Dtls = Dtls
-    }
+    this.$nextTick(() => {
+      this.getData()
+    })
   },
   mounted() {},
   methods: {
@@ -713,6 +607,7 @@ export default {
       console.log(file)
       this.imgDialog = true
     },
+    // 表格合并方法
     tabelColspan({ row, column, rowIndex, columnIndex }) {
       if (this.detail.Dtls.length == 0) return
       if (columnIndex === 1 || columnIndex === 2) {
@@ -766,14 +661,15 @@ export default {
           }
           res.Dtls.forEach(item => (item.choosed = false))
           this.detail.Dtls = res.Dtls
-          this.$nextTick(() => {
-            this.$refs.payListTable.doLayout()
-          })
+          // this.$nextTick(() => {
+          //   this.$refs.payListTable.doLayout()
+          // })
         })
         .catch(err => {
           console.log(err)
         })
     },
+    // 获取银行
     getBank(e) {
       if (this.bankChooseData.data.choosed) {
         this.detail.Dtls.forEach(item => {
@@ -906,168 +802,176 @@ export default {
   font-size: 0.16rem;
   .dialog-title {
     overflow: hidden;
+
     > span {
       width: 100%;
       text-align: left;
-      font-size: 0.18rem;
+      font-size: 0.16rem;
       border-bottom: 1px solid #eaeaea;
     }
   }
-  .payCenterDialog {
-    background-color: #fff;
-    .content {
-      text-align: left;
-      font-size: 0.16rem;
+  .content {
+    padding: 20px 0 0 0;
+    height: 100%;
+    margin-bottom: 45px;
+  }
+  .left-card {
+    max-width: 100%;
+    border-radius: 8px;
+    position: relative;
+    padding: 7%;
+    padding-bottom: 0;
+    > i {
+      font-size: 0.2rem;
+      color: #91bff8;
+    }
+    > span {
+      padding-top: 7%;
+      font-size: 0.2rem;
+      color: #ffff00;
+      position: absolute;
+      height: 140px;
+      background-color: $btnColor;
+      border-radius: 8px;
+      left: 0;
+      top: 0;
+      width: 100%;
+    }
+    > div {
+      background-color: #ffffff;
+      width: 86%;
+      border-radius: 8px;
+      box-shadow: 0px 2px 10px #888888;
+      margin: 50px auto 0;
+      overflow: auto;
+      position: relative;
+      z-index: 2;
+      > .apply-info {
+        padding: 8px;
+        text-align: left;
+        font-size: 0.14rem;
+        line-height: 0.25rem;
+        > li {
+          padding-left: 0.75rem;
+          overflow: hidden;
+          margin-top: 5px;
+          margin-bottom: 10px;
+          border-bottom: 1px #cccccc9e solid;
+          > span {
+            position: relative;
+            float: left;
+            margin-left: -0.75rem;
+          }
+          > div {
+            float: left;
+            position: relative;
+            padding-bottom: 10px;
+            // float: none;
+            // margin-top: 35px;
+            // margin-left: -0.9rem;
+          }
+        }
+      }
+    }
+  }
+
+  .detail-table {
+    overflow: auto;
+    width: 100%;
+    > .title {
+      background-color: #3294e8;
+      border-radius: 6px 6px 0 0;
+      height: 35px;
       > span {
-        line-height: 55px;
-      }
-      > .el-input {
-        width: auto;
-        line-height: 55px;
-      }
-      > img {
-        width: 55px;
-        height: 55px;
-        margin-right: 10px;
-      }
-      &.payListContent {
-        background-color: #f5f5f5;
-        padding: 10px;
-        margin-top: 15px;
-        > h1 {
-          font-size: 0.18rem;
-          margin-bottom: 10px;
-        }
-        .payDetail {
-          background-color: #fff;
-          border-radius: 5px;
-          padding: 10px;
-          margin-bottom: 10px;
-          font-size: 0.18rem;
-          h2 {
-            line-height: 40px;
-            &.selects {
-              display: flex;
-              > span:first-child {
-                flex: 1;
-                display: flex;
-                line-height: 40px;
-                padding-right: 50px;
-                > .el-select {
-                  flex: 1;
-                }
-              }
-              > span:nth-child(2) {
-                .el-select {
-                  min-width: 200px;
-                }
-              }
-            }
-          }
-        }
-        .getDetail {
-          background-color: #fff;
-          border-radius: 10px;
-          padding: 10px;
-          .table-item {
-            padding: 0 15px;
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            line-height: 48px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            cursor: pointer;
-            > span {
-              display: inline-block;
-              vertical-align: middle;
-            }
-            &.nopadding {
-              padding: 0;
-            }
-            > .el-select {
-              height: 100%;
-            }
-            &:after {
-              content: '';
-              display: inline-block;
-              vertical-align: middle;
-              height: 100%;
-            }
-          }
-        }
-      }
-      .bottom {
-        margin-top: 10px;
-        font-size: 0.18rem;
-        padding-left: 20px;
-        overflow: hidden;
-        span {
-          cursor: pointer;
-          margin-right: 20px;
-          position: relative;
-          padding-left: 0.3rem;
-          &::before {
-            content: '';
-            display: inline-block;
-            background-image: url('../../assets/images/yk1.png');
-            background-size: contain;
-            background-repeat: no-repeat;
-            background-position: 0 center;
-            width: 0.2rem;
-            height: 0.2rem;
-            position: absolute;
-            left: 0;
-            top: 50%;
-            margin-top: -0.1rem;
-          }
-          &:nth-of-type(2) {
-            &::before {
-              background-image: url('../../assets/images/wzf.png');
-            }
-            &.success::before {
-              background-image: url('../../assets/images/zfcg.png');
-            }
-          }
-          &:last-of-type {
-            float: right;
-            &::before {
-              background-image: url('../../assets/images/dj.png');
-              margin-top: -0.09rem;
-            }
-          }
-        }
+        font-size: 0.2rem;
+        line-height: 35px;
+        color: #ffffff;
       }
     }
-    .btns {
-      text-align: right;
-      .btn {
-        border: 1px solid $btnColor;
-        cursor: pointer;
-        line-height: 28px;
-        &:not(:last-of-type) {
-          margin-right: 10px;
-        }
-        &.btn-cancel {
-          background: #fff;
-          color: $btnColor;
-          border: 1px solid $btnColor;
-        }
-        &.btn-large {
-          width: 88px;
-        }
-      }
-      .payId {
-        float: left;
-        line-height: 30px;
-        font-size: 0.18rem;
-      }
-    }
-    .el-collapse {
+    > .top {
+      text-align: left;
       margin-top: 10px;
+    }
+  }
+  .top-btn {
+    text-align: right;
+    > .btn {
+      width: 80px;
+      &:not(:last-of-type) {
+        margin-right: 15px;
+      }
+    }
+  }
+  .getDetail {
+    background-color: #fff;
+    border-radius: 10px;
+    .table-item {
+      padding: 0 15px;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      line-height: 48px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      cursor: pointer;
+      > span {
+        display: inline-block;
+        vertical-align: middle;
+      }
+      &.nopadding {
+        padding: 0;
+      }
+      &:after {
+        content: '';
+        display: inline-block;
+        vertical-align: middle;
+        height: 100%;
+      }
+    }
+  }
+  &.payList .bottom {
+    margin-top: 10px;
+    font-size: 0.18rem;
+    padding-left: 20px;
+    overflow: hidden;
+    text-align: left;
+    span {
+      cursor: pointer;
+      margin-right: 20px;
+      position: relative;
+      padding-left: 0.3rem;
+      &::before {
+        content: '';
+        display: inline-block;
+        background-image: url('../../assets/images/yk1.png');
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: 0 center;
+        width: 0.2rem;
+        height: 0.2rem;
+        position: absolute;
+        left: 0;
+        top: 50%;
+        margin-top: -0.1rem;
+      }
+      &:nth-of-type(2) {
+        &::before {
+          background-image: url('../../assets/images/wzf.png');
+        }
+        &.success::before {
+          background-image: url('../../assets/images/zfcg.png');
+        }
+      }
+      &:last-of-type {
+        float: right;
+        &::before {
+          background-image: url('../../assets/images/dj.png');
+          margin-top: -0.09rem;
+        }
+      }
     }
   }
 }
@@ -1075,6 +979,9 @@ export default {
 
 <style lang='scss'>
 .payCenter {
+  .el-dialog__body {
+    font-size: 0.14rem;
+  }
   .el-checkbox,
   .el-checkbox__input.is-checked + .el-checkbox__label,
   .el-checkbox-button__inner {
@@ -1088,21 +995,17 @@ export default {
   }
   .el-table td,
   .el-table th.is-leaf {
-    border-color: rgb(204, 204, 204);
+    border-color: $borderColor_ccc;
   }
   .el-table--border,
   .el-table--group {
-    border-color: rgb(204, 204, 204);
+    border-color: $borderColor_ccc;
   }
-  .payCenterDialog {
+  .getDetail {
     .el-table {
       font-size: 0.14rem;
-      th {
-        background-color: $btnColor;
-        border-right-color: #fff;
-      }
       thead {
-        color: #fff;
+        color: #333;
       }
     }
     .el-collapse-item__header {
@@ -1116,20 +1019,13 @@ export default {
       padding-bottom: 0;
     }
     .el-table__header-wrapper thead .el-checkbox__label {
-      color: #fff;
+      color: #333;
     }
-    .payDetail h2 .el-input__inner {
-      font-size: 0.18rem;
+    .el-table__body-wrapper {
+      max-height: 280px !important;
     }
-    .payListContent .getDetail .el-table__body-wrapper {
-      max-height: 200px !important;
-    }
-    .payListContent
-      .getDetail
-      .el-table--enable-row-hover
-      .el-table__body
-      tr:hover
-      > td {
+
+    .el-table--enable-row-hover .el-table__body tr:hover > td {
       background-color: #fff;
     }
     .el-radio__label {
@@ -1161,13 +1057,9 @@ export default {
     &.payList {
       min-height: 60%;
     }
-
     .el-dialog__body {
       padding-top: 0px;
     }
-  }
-  &.el-dialog__wrapper {
-    text-align: center;
   }
   &.el-dialog__wrapper::after {
     display: inline-block;
@@ -1175,8 +1067,29 @@ export default {
     vertical-align: middle;
     height: 100%;
   }
+  .apply-info {
+    .el-input__inner {
+      line-height: 30px;
+      height: 30px;
+    }
+    .el-input__icon {
+      line-height: 30px;
+    }
+  }
+  &.payList > .el-dialog {
+    min-width: 1200px;
+  }
+  .detail-table .top {
+    .el-input__inner {
+      line-height: 35px;
+      height: 35px;
+    }
+    .el-input__icon {
+      line-height: 35px;
+    }
+  }
 }
 .payList-largeSelects.el-popper .el-select-dropdown__item {
-  font-size: 0.18rem;
+  font-size: 0.14rem;
 }
 </style>
