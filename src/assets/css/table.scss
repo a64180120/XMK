@@ -85,6 +85,9 @@ table .left{
 .tableHead table td:nth-of-type(1){
   border: 0;
 }
+.tableHead table .el-checkbox__label,.tableBody table .el-checkbox__label{
+  position: absolute;
+}
 .tableBody{
   position: absolute;
   bottom: 0;
@@ -153,9 +156,10 @@ table .left{
 
 .btnArea i{
   vertical-align: middle;
-  font-size: 0.3rem;
+  font-size: 0.2rem;
   color: #58a5e6;
   opacity: .5;
+
 }
 .btnArea i:hover{
   opacity: 1;
@@ -172,6 +176,7 @@ table .left{
     overflow: visible;
     white-space: nowrap;
     position: relative;
+    right: 0px;
     -webkit-transition: all 0.3s linear;
     -moz-transition: all 0.3s linear;
     -ms-transition: all 0.3s linear;

@@ -25,22 +25,22 @@
           <div class="btnArea">
             <el-form :inline="true">
               <el-form-item label="申报部门" class="top-form-left">
-                <el-input size="mini" v-model="form.depart" @focus="openOrg()" @change="changeInput()" style="width: 120px" placeholder="全部"></el-input>
+                <el-input size="mini" v-model="searchForm.OrgName" @focus="openOrg()" @change="changeInput()" style="width: 120px" placeholder="全部"></el-input>
               </el-form-item>
               <el-form-item label="停留时长" class="top-form-left">
-                <el-input size="mini" v-model="form.long" style="width: 200px" placeholder="请输入停留时长" @change="changeInput()">
-                  <el-select v-model="select" slot="prepend" placeholder="类型" class="select-input" style="width: 75px">
-                    <el-option label="大于" value="1"></el-option>
-                    <el-option label="等于" value="2"></el-option>
+                <el-input size="mini" v-model="searchForm.StopHour" style="width: 200px" placeholder="请输入停留时长" @change="changeInput()">
+                  <el-select v-model="searchForm.Operator" slot="prepend" placeholder="类型" class="select-input" style="width: 75px" @change="changeInput('operator')">
+                    <el-option label="等于" value="1"></el-option>
+                    <el-option label="大于" value="2"></el-option>
                     <el-option label="小于" value="3"></el-option>
                   </el-select>
                 </el-input>
               </el-form-item>
               <el-form-item label="申报日期" class="top-form-left">
-                <el-date-picker v-model="form.date" @change="changeInput()" style="width: 240px" size="mini" type="daterange" start-placeholder="开始时间" end-placeholder="开始时间"></el-date-picker>
+                <el-date-picker v-model="searchForm.BDate" @change="changeInput()" style="width: 240px" size="mini" type="daterange" start-placeholder="开始时间" end-placeholder="开始时间"></el-date-picker>
               </el-form-item>
               <el-form-item label="" class="top-form-right">
-                <search-input @btnClick="search()" placeholder="申请单名称/编号" v-model="searchValue"></search-input>
+                <search-input @btnClick="search()" placeholder="申请单名称/编号" v-model="searchForm.BName"></search-input>
               </el-form-item>
             </el-form>
           </div>
@@ -119,7 +119,7 @@
                   {{item.BName}}
                 </td>
                 <td style="text-align: right">
-                  {{item.BAccount}}
+                  {{item.BAccount | NumFormat}}
                 </td>
                 <td>
                   {{item.BDate}}
@@ -252,7 +252,7 @@
             @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
             :current-page="page.currentPage"
-            :page-sizes="page.pageSize"
+            :page-sizes="page.pageSizes"
             layout="total,sizes,prev,pager,next,jumper"
             :total="page.total"></el-pagination>
         </div>
@@ -281,11 +281,11 @@
         <img-view v-if="imgDialog"></img-view>
       </el-dialog>
       <!--审批弹框-->
-      <approval-dialog ref="approvalDialog" @dialogFlow="openAuditfollow" @subSuc="plSubSuc()"></approval-dialog>
+      <approval-dialog ref="approvalDialog" :rowData="selection" @dialogFlow="openAuditfollow" @subSuc="plSubSuc()"></approval-dialog>
       <!--生成支付单弹框-->
-      <paylist-dialog ref="paylistDialog" :data="approvalData"  @subSuc="plSubSuc()"></paylist-dialog>
+      <paylist-dialog ref="paylistDialog" :rowData="selection"  @subSuc="plSubSuc()"></paylist-dialog>
       <!--查看审批流程-->
-      <auditfollow :visible="visible" @update:visible="closeAuditFollow()"></auditfollow>
+      <auditfollow :visible.sync="visible" :auditMsg="auditMsg"></auditfollow>
       <!--组织树-->
       <orgtree :data="orgtreeData" :checkedOrg="checkedOrg" :visible.sync="orgType" @confirm="getOrg"></orgtree>
     </div>
@@ -313,12 +313,21 @@
       ImgView, Orgtree, Applybill, Auditfollow, ApprovalDialog, SearchInput, HandleBtn, FundDetail},
     data(){
       return{
-        searchValue:'',
+        BType:"001", //单据类型 资金拨付 001  申请单 002
+        searchForm:{
+          BName:'',//申报单名称或编号查询内容
+          BDate:[],//申报时间段
+          Operator:"",//停留时长的判断条件(1:等于,2:大于,3:小于)
+          StopHour:'',//停留时长
+          OrgCode:'100',//组织编码
+          OrgName:''//组织名称
+        },
         checkedAll:false, //是否全选
         IsIndeterminate:false, //列表中是否有选中的值并且不是全选
         check:[],//列表所有选中状态
         selection:[],//选中后的值
-        select:"", //选择停留时间类型
+        auditMsg:[],//审批流程 数据
+
         orgtreeData:[
           {
             "RelatId": "",
@@ -4727,21 +4736,16 @@
           ], //工会组织列表
         checkedOrg:[],//设置组织树默认选中项
         orgType:false,//控制组织树的展示与隐藏
-        orgName:'',//组织名称
         detailData:{},
         approvalData:{},
         openApprovalDialog:false,
         checked:'',
-        form:{
-          depart:'',
-          long:'',
-          date:[]
-        },
         tableData:[{}],//模拟表格数据
         page:{
           currentPage:1,//当前页
-          pageSize:[20,50,100], //每页显示多少条
-          total:12//总条数
+          pageSizes:[20,50,100], //每页显示多少条
+          total:0,//总条数
+          pageSize:10,
         },//分页
         visible:false,
         appDialog:{
@@ -4761,16 +4765,14 @@
     },
 
     mounted() {
+      this.selection = []
       this.isApproval = this.$route.query.approval
-      console.log(this.isApproval)
-      this.testData()
-      // this.loadData()
+      // this.testData()
+      this.loadData()
     },
     watch:{
       check(val,oldval){
-        console.log(val)
         this.selection = selection(this.check,this.tableData)
-        console.log(this.selection)
         if (this.selection.length !==0 && this.selection.length !== this.tableData.length){
           this.IsIndeterminate = true
         }else if (this.selection.length === this.tableData.length) {
@@ -4791,25 +4793,37 @@
       },
     },
     methods:{
+      //拉取列表数据
       loadData(){
         let data = {
           Uid:7,
-          OrgCode:'100',
+          OrgCode:this.searchForm.OrgCode,
           Year:'2019',
-          PageIndex:1,
-          PageSize:10,
-          BType:'001'
+          PageIndex:this.page.currentPage,
+          PageSize:this.page.pageSize,
+          BType:this.BType,
+          BName:this.searchForm.BName,
+          Operator:this.searchForm.Operator,
+          StopHour:this.searchForm.StopHour,
+          BStartDate:this.searchForm.BDate === null  ? '':this.searchForm.BDate[0],
+          BEndTime:this.searchForm.BDate === null ? '':this.searchForm.BDate[1],
         }
+
+        let that = this
         this.getAxios('/GAppvalRecord/GetUnDoRecordList',data).then(success=>{
-          console.log(success)
+          console.log(success.Data)
           if (success && success.Status === "success") {
-            this.tableData = success.Data
-            this.page.total = success.Total
+            that.tableData = success.Data
+            that.page.total = success.Total
+            // this.page.total = 100
+            for (let i in success.Data) {
+              that.check.push(false)
+            }
           }else {
             this.$msgBox.show(success.Msg)
           }
         }).catch(err=>{
-
+          that.$msgBox.show("数据获取异常")
         })
       },
       testData(){
@@ -4856,7 +4870,7 @@
       },
       //搜索框事件
       search(){
-        console.log(1)
+        this.loadData()
       },
       //单行选中事件
       handleSelect(selection,row){
@@ -4877,11 +4891,13 @@
       },
       //当前页显示多少条数据
       handleSizeChange(val){
-        console.log(val)
+        this.page.pageSize = val
+        this.loadData()
       },
       //调到第几页
       handleCurrentChange(val){
-        console.log(val)
+        this.page.currentPage = val
+        this.loadData()
       },
       //打开查看审批流
       openApproval(row,idx){
@@ -4906,20 +4922,36 @@
           this.$refs.paylistDialog.changeDialog()
         }
       },
-      closeAuditFollow(){
-        this.visible = false
-      },
-      openAuditfollow(){
+      //审批流查看
+      openAuditfollow(item,idx){
         this.visible = true
+        let data = {
+          RefbillPhid:item.RefbillPhid,
+          ProcPhid:item.ProcPhid,
+          FBilltype:this.BType
+        }
+        let that= this
+        this.getAxios("/GAppvalRecord/GetAppvalRecord",data).then(success =>{
+            console.log(success)
+          if (success && success.Status === "success") {
+            that.auditMsg = success.Data
+          }else {
+            that.$msgBox.show(success.Msg)
+          }
+        }).catch(err =>{
+          that.$msgBox.show("数据获取异常")
+        })
       },
       //确认按钮
       confirmOrg(){
-        this.form.depart = this.orgName.label
+        this.searchForm.OrgLabel = this.orgName.label
         this.orgType = false
       },
       //获取组织树
       getOrg(e){
-        this.form.depart = e[0].OName
+        this.searchForm.OrgName = e[0].OName
+        this.searchForm.OrgCode = e[0].OCode
+        console.log(this.searchForm)
       },
       //打开组织树
       openOrg(){
@@ -4935,20 +4967,16 @@
         this.detailDialog = false
       },
       //输入框值改变
-      changeInput(){
-        this.tableData = [{
-          applyDepart:'广东省工人医院',
-          applyCode:'201904180001',
-          applyName:'专家授课课酬支付申请',
-          itemCode:'20190000007',
-          itemName:'与行业协会合作共同展开...',
-          applyAmount:'4,567.90',
-          applyDate:'2019-04-17',
-          approvalStutas:'2'
-        }]
-        if( this.form.long==''){
-          this.testData()
+      changeInput(e){
+        if(e ==='operator'){
+          if(this.searchForm.StopHour !== ''){
+            this.loadData()
+            return
+          }else {
+            return;
+          }
         }
+       this.loadData()
       },
       // 关闭详情弹框事件
       closeDetailDialog(){
