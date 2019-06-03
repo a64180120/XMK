@@ -14,11 +14,12 @@
       <div class="saasMsg">
         <div>
           <div class="imgCon">
-            <img src="../../assets/images/message.png">
+            <img v-if="status === 'success'" src="../../assets/images/message.png">
+            <img v-else-if="status === 'error'" src="../../assets/images/cw.png">
           </div>
           <span style="float:right;width:290px">
             <span v-html="content"></span>
-            &nbsp;({{count}}s) 后自动关闭
+            ({{count}}s) 后自动关闭
           </span>
         </div>
         <div>
@@ -55,7 +56,8 @@ export default {
     return {
       openDialog: false,
       interval: null,
-      count: 3
+      count: 3,
+      status: 'success'
     }
   },
   mounted() {},
@@ -73,6 +75,16 @@ export default {
       console.log('show')
       this.count = 3
       this.openDialog = true
+      this.status = 'success'
+      this.$nextTick(() => {
+        this.beginCount()
+      })
+    },
+    showError: function() {
+      console.log('Alert')
+      this.count = 3
+      this.openDialog = true
+      this.status = 'error'
       this.$nextTick(() => {
         this.beginCount()
       })
@@ -122,8 +134,8 @@ export default {
       }
       > .imgCon {
         float: left;
-        width: 60px;
-        height: 55px;
+        width: 50px;
+        height: 50px;
         > img {
           width: 100%;
           height: 100%;
@@ -132,7 +144,6 @@ export default {
     }
   }
   .btn {
-
     cursor: pointer;
     background: #00b7ee;
     color: #fff;

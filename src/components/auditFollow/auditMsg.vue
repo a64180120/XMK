@@ -6,11 +6,11 @@
                 <span>审批人:</span>
                 <em>{{index}}</em>
             </li>
-            <li>{{info.name}}</li>
-            <li>{{info.time.replace('T',' ')}}</li>
+            <li>{{info.OperaName}}</li>
+            <li>{{info.FDate}}</li>
 
-            <li>意见: {{info.msg}}</li>
-            <li >附件: <span @click.stop="showAttech" class="attenchment">{{info.att}}</span></li>
+            <li>意见: {{info.FOpinion}}</li>
+            <li >附件: <span @click.stop="showAttech" class="attenchment">{{info.RefbillPhid}}</span></li>
         </ul>
 
       <el-dialog class="dialog img-dialog" :visible.sync="dialogVisible" :append-to-body="true" :close-on-click-modal="false" width="40%">

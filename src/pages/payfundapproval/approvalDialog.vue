@@ -11,7 +11,13 @@
         <div slot="title" class="dialog-title">
           <p>查看</p>
         </div>
-        <approval-bill @dialogFlow="searchFlow()" @nuargeen="backAproval" :backPeople="backPeople"></approval-bill>
+        <approval-bill @dialogFlow="searchFlow"
+                       @approvalRowClick="approvalRowClick"
+                       @selectApprovaler="selectApprovaler"
+                       @isArgeen="backAproval"
+                       :approvalFollow="approvalFollow"
+                       :nextApprovaler="nextApprovaler"
+                       :backPersonnel="backPersonnel"></approval-bill>
         <div class="approval-btn">
           <el-button size="small" type="primary" @click="cancel()">取消</el-button>
           <el-button size="small" type="primary" @click="submit()">确认</el-button>
@@ -28,15 +34,16 @@
         name: "approvalDialog",
       components: {BackApproval, ApprovalBill},
       props:{
-
-         data:{
-           type:Object,
+         rowData:{
+           type:Array,
            default:function () {
-             return {
-             }
+             return []
            }
          },
-
+         BType:{
+           type: String,
+           default:'001'
+         }
       },
       data(){
           return{
@@ -44,27 +51,63 @@
             textare:'',
             openDialog:false,
             handleValue:'',
-            subData:[{
-              code:"0001",
-              name:"ZXXXXX"
-            },{
-              code:"0001",
-              name:"FASAS"
-            }],
-            backPeople:[]
+            approvalFollow:[],
+            nextApprovaler:[],
+            backPersonnel:[]
           }
       },
+      mounted(){
+      },
       methods:{
+        //根据组织id，单据类型获取所有的审批流程
+        getAppvalProc(){
+          let data = {
+            ProcPhid:this.rowData[0].ProcPhid,
+            PostPhid:this.rowData[0].PostPhid
+          }
+
+          this.getAxios('/GAppvalPost/GetAppvalProcAndOperator',data).then(success=>{
+            if (success && success.Status === 'success'){
+              this.$set(this.approvalFollow,0,success.Process);
+              this.nextApprovaler = success.AppvalPost.Operators;
+              for (let key in this.approvalFollow){
+                this.approvalFollow[key].RefbillPhid =this.rowData[0].RefbillPhid;
+                this.approvalFollow[key].ProcPhid = this.rowData[0].ProcPhid;
+              }
+              console.log(this.approvalFollow,this.nextApprovaler)
+            }else {
+              let that = this
+              this.$msgBox.show({
+                content: success.Msg,
+                fn:function () {
+                  that.openDialog =false
+                }
+              })
+            }
+          }).catch(err =>{
+            console.log(err)
+          })
+        },
+        //审批流列表行点击事件
+        approvalRowClick(e){
+          console.log(e)
+        },
+        //下一审批人选中弹框
+        selectApprovaler(e){
+          console.log(e)
+        },
+        //开启或关闭弹框
         changeDialog(){
           this.openDialog = true
+          this.getAppvalProc()
         },
         //表头样式回调
         headerRowClass(val){
           return "table-header"
         },
         //查看详细流程
-        searchFlow(row,column,index,store){
-          this.$emit("dialogFlow")
+        searchFlow(row){
+          this.$emit("dialogFlow",row)
         },
         //表格单选
         handleSelect(selection,row){
@@ -98,16 +141,43 @@
           })
         },
         backAproval(val){
-          if (val[0] != undefined ){
+          if (!val ){
             this.visible = true
+            this.getBackApprovalPost()
+            this.getGetOperators()
           } else {
             this.visible = false
-            this.backPeople = []
+            this.backPersonnel = []
           }
         },
+        //拉去回退时,获取之前的所有岗位,包括发起人(岗位id为0)
+        getBackApprovalPost(){
+
+          let data = {
+            ProcPhid:this.rowData[0].ProcPhid,
+            PostPhid:this.rowData[0].PostPhid
+          }
+          this.getAxios('/GAppvalPost/GetBackApprovalPost',data).then(success=>{
+            console.log(success)
+          }).catch(err =>{
+            console.log(err)
+          })
+        },
+        //根据审批岗位获取审批人(包括岗位id为0的发起人)
+        getGetOperators(){
+          let data = {
+            RefbillPhid:this.rowData[0].RefbillPhid,
+            PostPhid:this.rowData[0].PostPhid
+          }
+          this.getAxios('/GAppvalPost/GetOperators',data).then(success=>{
+              console.log(success)
+          }).catch(err =>{
+
+          })
+        },
+        //点击获取回退人员名字
         getBackPeople(item){
           this.$set(this.backPeople,0,item.name)
-          console.log(this.backPeople)
         },
       }
     }
@@ -205,12 +275,7 @@
 <style scoped>
   .dialog{}
   .dialog >>> .el-dialog{
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    margin: 0 !important;
-    transform: translate(-50%,-50%);
-    height: 310px;
+    height: 435px;
   }
   .dialog >>> .el-dialog__header{
     padding: 0;
