@@ -20,10 +20,10 @@
             <div class="type">
                 <p>字典类型</p>
                 <ul>
-                    <li @click="selectType(ind)" :class="{active:ind==selected}" v-for="(type,ind) of typeList" :key="ind">{{type.name}}</li>
+                    <li @click="selectType(type)" :class="{active:type.DicType==selected.DicType}" v-for="(type,ind) of typeList" :key="ind">{{type.DicName}}</li>
                 </ul>
             </div>
-            <div class="content">
+            <div v-if="selected.DicType=='PayMethod'" class="content">
                 <div class="list">
                     <div class="listHead">
                         <ul >
@@ -38,34 +38,35 @@
                 </div>
                 <div class="list listBodyCon">
                     <div class="listBody">
-                        <ul :class="{update:!disabled}" v-for="(item,n) of typeInfoList">
+                        <div v-if="typeInfoList.length==0">请添加类型</div>
+                        <ul :class="{update:!disabled}" v-for="(item,n) of typeInfoList" :key="n">
                             <li>{{n+1}}</li>
                             <li>
-                                <div v-show="disabled">{{item.code}}</div> 
+                                <div v-show="disabled">{{item.TypeCode}}</div> 
                                 <div v-show="!disabled">
-                                    <el-input v-model="item.code" placeholder="请输入类型编码"></el-input>
+                                    <el-input v-model="item.TypeCode" placeholder="请输入类型编码"></el-input>
                                 </div>
                             </li>
                             <li>
-                                <div v-show="disabled">{{item.name}}</div>
+                                <div v-show="disabled">{{item.TypeName}}</div>
                                 <div v-show="!disabled">
-                                    <el-input v-model="item.name" placeholder="请输入类型名称"></el-input>
+                                    <el-input v-model="item.TypeName" placeholder="请输入类型名称"></el-input>
                                 </div>
                             </li>
                             <li>
-                                <div v-show="disabled">{{item.msg}}</div>
+                                <div v-show="disabled">{{item.Bz}}</div>
                                 <div v-show="!disabled">
-                                    <el-input v-model="item.msg" placeholder="请输入备注"></el-input>
+                                    <el-input v-model="item.Bz" placeholder="请输入备注"></el-input>
                                 </div>
                             </li>
                             <li class="enable">
                                 <div v-show="disabled">
-                                    <img v-show="item.enable=='0'" src="@/assets/images/gou.svg" alt="">
-                                    <img v-show="item.enable=='1'" src="@/assets/images/cha.svg" alt=""> 
+                                    <img v-show="item.Isactive=='0'" src="@/assets/images/gou.svg" alt="">
+                                    <img v-show="item.Isactive=='1'" src="@/assets/images/cha.svg" alt=""> 
                                 </div>
                                 <div v-show="!disabled">
-                                    <el-radio v-model="item.enable" label="0">启用</el-radio>
-                                    <el-radio v-model="item.enable" label="1">停用</el-radio>
+                                    <el-radio v-model="item.Isactive" :label="0">启用</el-radio>
+                                    <el-radio v-model="item.Isactive" :label="1">停用</el-radio>
                                 </div> 
                                 <div class="icon active">
                                     <div @click="addInfo(n)">
@@ -82,43 +83,96 @@
                 </div>
                    
             </div>
+            <div v-else-if="selected.DicType=='DxbzCode'" class="content">
+                <div class="codeCon">
+                    <span>对下补助代码: </span>
+                    
+                    <div><el-input :disabled="disabled" placeholder="请输入补助代码" v-model="Value"></el-input>   </div>
+                </div>        
+            </div>
         </div>
     </div>
 </template>
 
 <script>
 import topHandle from '@/components/topNav/topHandle'
+import {GetSysSetList,dictionarySave} from '@/api/systemSetting/dataSafe'
 export default {
     name:'dictionary',
     data(){
         return{
             disabled:true,//不可编辑,修改
-            typeList:[{name:'支付方式',code:1},{name:'网银',code:2}],//字典类型列表
+            Value:'',//对下补助代码
+            typeList:[
+              
+
+                {   DicType: 'PayMethod',
+                    DicName: '支付方式',
+                    
+                }  ,
+                {   DicType: 'DxbzCode',
+                    DicName: '对下补助代码维护',
+                }],//字典类型列表
             typeInfoList:[
-                {enable:'0',code:'001',name:'mingc',msg:''},
-                 {enable:'1',code:'002',name:'安抚',msg:'阿斯顿发生的发'},
-                  {enable:'0',code:'003',name:'是的发生',msg:''}
             ],//类型信息列表
             deleteList:[],//删除的数据
-            selected:''
+            selected:{   
+                    DicType: 'PayMethod',
+                    DicName: '支付方式',
+                }
         }
+    },
+    mounted(){
+        this.getData();
     },
     methods:{
         getData(){
-            console.log(222)
+            let data={
+                DicType: this.selected.DicType
+            }
+            GetSysSetList(data).then(res=>{
+                if(res.Status=='error'){
+                    this.$msgBox.show(res.Msg)
+                }else{
+                    this.typeInfoList=res.Record;
+                    this.Value=res.Record[0].Value;
+                    this.typeInfoList.map(info => info.PersistentState=2)
+                }
+            }).catch(err=>{
+                this.$msgBox.show('获取数据失败!')
+            })
         },
-        selectType(index){
-            this.selected=index;
+        update(){
+            this.typeInfoList[0].Value=this.Value;
+            let arr=this.typeInfoList.concat(this.deleteList);
+            let data={
+                infoData:arr
+            }
+            dictionarySave(data).then(res=>{
+                if(res.Status=='error'){
+                    this.$msgBox.show(res.Msg)
+                }else{
+                    this.disabled=true;
+                    this.getData();
+                }
+            }).catch(err=>{
+                this.$msgBox.show('修改失败!')
+            })
+        },
+        selectType(type){
+            this.selected=type;
+            this.disabled=true;
             this.getData();
         },
         //类型信息新增
         addInfo(index){
-            this.typeInfoList.splice(index+1,0,{enable:'0'})
+            this.typeInfoList.splice(index+1,0,{DicType:"PayMethod",Isactive:0,PersistentState:1,DicName:'支付方式'})
         },
         //类型信息删除
         deleteInfo(index,item){
             if(this.typeInfoList.length>1){
-                if(item.Phid){
+                if(item.PhId){
+                    item.PersistentState=3;
                     this.deleteList.push(item);
                 }
                 this.typeInfoList.splice(index,1);
@@ -154,7 +208,7 @@ export default {
     }
     .container{
         left:200px;
-        top:150px;  
+        top:160px;  
         padding:1%; 
         padding-right:0;
 
@@ -167,7 +221,7 @@ export default {
         >p{
             height:40px;
             line-height: 40px;
-            background: $btnColor;
+            background: #83C350;
             color:#fff;
             font-size:0.18rem;
             font-weight: 700;
@@ -297,6 +351,18 @@ export default {
                     display: block;
                 }
             } 
+        }
+        .codeCon{
+            padding-left:50px;
+            text-align: left;
+            font-size:0.16rem;
+            >div{
+                width:50%;
+                display: inline-block;
+            }
+            >span{
+                display: inline-block;
+            }
         }
     }
 }

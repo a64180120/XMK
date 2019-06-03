@@ -43,7 +43,7 @@ function apiAxios(method, url, params, hastimeout) {
         reqTimeStamp = Date.parse(new Date());
 
     var appinfo = {
-      'DbName': 'NG0006',
+      'DbName': 'NG0001',
       'OrgId': '488181024000001',
       'OrgName': '',
       'OCode': '',
