@@ -80,7 +80,7 @@
           ></el-date-picker>
           <div class="btns">
             <div class="search">
-              <search-input v-model="search" @btnClick="getData"></search-input>
+              <search-input placeholder="支付单编号/申请单编号" v-model="search" @btnClick="getData"></search-input>
             </div>
           </div>
         </div>
@@ -374,7 +374,7 @@ export default {
       }
       deleteBlank(query)
       console.log(query)
-      this.getAxios('/GKPaymentMstApi/GetPaymentList', {
+      this.getAxios('GGK/GKPaymentMstApi/GetPaymentList', {
         queryfilter: JSON.stringify(query),
         PageIndex: this.currentPage - 1, //当前第几页，从0开始
         PageSize: this.pageSize, //每页显示行数
@@ -761,22 +761,11 @@ export default {
   .el-checkbox__label {
     font-size: 0.14rem;
   }
-  .tableBody .el-checkbox__label {
-    font-size: 0.14rem;
-  }
   .selects {
-    .search .input.el-input.el-input--mini {
-      width: 150px !important;
-    }
-    .el-input--mini .el-input__inner {
-      height: 28px;
-      line-height: 28px;
-    }
     .el-range-editor--mini.el-input__inner {
       height: 28px;
       line-height: 28px;
     }
-    .el-input--mini,
     .el-select-dropdown__item,
     .el-range-editor--mini .el-range-separator,
     .el-range-editor--mini .el-range-input {
@@ -811,51 +800,6 @@ export default {
     &.unclickable {
       cursor: not-allowed;
       color: #c0c4cc;
-    }
-  }
-  .el-table td,
-  .el-table th.is-leaf {
-    border-color: rgb(204, 204, 204);
-  }
-  .el-table--border,
-  .el-table--group {
-    border-color: rgb(204, 204, 204);
-  }
-  .payCenterDialog {
-    .el-table {
-      font-size: 0.14rem;
-      th {
-        background-color: $btnColor;
-        border-right-color: #fff;
-      }
-      thead {
-        color: #fff;
-      }
-    }
-    .el-collapse-item__header {
-      font-size: 0.13rem;
-      border-bottom: 0px;
-    }
-    .el-collapse-item__wrap {
-      border-bottom: 0px;
-    }
-    .el-collapse-item__content {
-      padding-bottom: 0;
-    }
-    .el-table__header-wrapper thead .el-checkbox__label {
-      color: #fff;
-    }
-    &.smallDialog {
-      .el-radio__inner {
-        width: 0.14rem;
-        height: 0.14rem;
-      }
-      .el-radio__label {
-        font-size: 0.14rem;
-      }
-      .el-radio:not(:last-of-type) {
-        margin-bottom: 10px;
-      }
     }
   }
 }

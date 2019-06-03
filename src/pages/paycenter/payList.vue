@@ -55,12 +55,12 @@
                     >
                       <el-option
                         v-for="item in accountList"
-                        :label="item.label"
-                        :value="item.value"
+                        :label="item.FBankname"
+                        :value="item.PhId"
                       ></el-option>
                     </el-select>
                   </div>
-                  <div v-else>{{accountList.find(item=>item.value == account).label}}</div>
+                  <div v-else>{{accountList.find(item=>item.PhId == account).FBankname}}</div>
                 </li>
                 <li>
                   <span>支付方式：</span>
@@ -164,7 +164,7 @@
                     >{{scope.row[scope.column.property] | NumFormat}}</div>
                     <!-- 备注  -->
                     <div
-                      v-else-if="scope.column.property=='descrilbe'&& data.itemType == 'notApprove'"
+                      v-else-if="scope.column.property=='FDescribe'&& data.itemType == 'notApprove'"
                       class="table-item nopadding"
                     >
                       <el-input v-model="scope.row[scope.column.property]" placeholder></el-input>
@@ -347,6 +347,7 @@ import bankChoose from './bankChoose'
 import auditfollow from '../../components/auditFollow/auditfollow'
 import ImgView from '../../components/imgView/imgView'
 import approvalDialog from '../payfundapproval/approvalDialog.vue'
+import { BankAccountList } from '@/api/bankaccount'
 
 export default {
   name: 'payList',
@@ -464,7 +465,7 @@ export default {
           bodyAlign: 'center'
         }
       ],
-      account: 1,
+      account: '',
       accountList: [
         {
           label: '浙江省总工会',
@@ -578,16 +579,37 @@ export default {
       ? this.data.data[0]
       : this.data.data
     this.$nextTick(() => {
+      this.account = this.detail.Mst.OrgPhid
       this.getData()
+      this.getAccountList({
+        OrgPhid: 488181024000001,
+        // OrgPhid: this.detail.Mst.OrgPhid,
+        selectStr: ''
+      })
     })
   },
   mounted() {},
   methods: {
+    // 获取付款银行档案
+    getAccountList(data) {
+      BankAccountList(data)
+        .then(res => {
+          if (res.Status == 'error') {
+            this.$msgBox.show(res.Msg)
+          } else {
+            this.accountList = res.Record
+          }
+        })
+        .catch(err => {
+          this.$msgBox.show('获取银行档案列表失败!')
+        })
+    },
     // 批量设置转账方式
     selectFSamebankFocus() {
       if (this.detail.Dtls.every(item => item.choosed === false)) {
         this.$refs.selectFSamebank.blur()
         this.$msgBox.show('请先选择要设置的项目。')
+        console.log('thishis')
       }
     },
     selectFSamebankBlur(visible) {
@@ -647,7 +669,108 @@ export default {
       }
     },
     getData() {
-      this.getAxios('/GKPaymentMstApi/GetPayment4Zjbf', {
+      this.detail.Dtls = [
+        {
+          choosed: false,
+          PhId: '401190528000001',
+          MstPhid: '401190528000001',
+          OrgPhid: '521180820000002',
+          OrgCode: '100',
+          RefbillPhid: '7',
+          RefbillCode: 'zfbbf0007',
+          RefbillDtlPhid: '1',
+          RefbillDtlPhid2: '1',
+          FAmount: 1000.0,
+          FCurrency: '001',
+          FPayAcntname: '付款账户1',
+          FPayAcnt: '111001',
+          FPayBankcode: '102',
+          FRecAcntname: '收款账户1',
+          FRecAcnt: '222122',
+          FRecBankcode: '102',
+          FRecCityname: '杭州市',
+          FSamecity: 0,
+          FSamebank: 1,
+          FIsurgent: 1,
+          FCorp: 1,
+          FUsage: '用途信息',
+          FPostscript: '附言：xxx',
+          FExplation: '摘要-修改',
+          FDescribe: '描述-修改',
+          FSubmitdate: null,
+          FSeqno: null,
+          FBkSn: null,
+          FResult: null,
+          FResultmsg: null,
+          FState: 0,
+          FNewCode: null,
+          XmProjcode: 'XM0001', //项目代码
+          XmProjname: '项目0001', //项目名称
+          BudgetdtlName: '预算明细项目001', //明细项目名称
+          FDepartmentcode: '100.1', //补助单位/部门代码
+          FDepartmentname: '省总财务部', //补助单位/部门名称
+          QtKmdm: null, //预算科目代码
+          QtKmmc: null, //预算科目名称
+          PersistentState: 0,
+          NgRecordVer: 2,
+          NgInsertDt: '2019-05-28 09:57:50',
+          NgUpdateDt: '2019-05-28 13:23:27',
+          Creator: '521180820000001',
+          Editor: '521180820000001',
+          CurOrgId: '521180820000002'
+        },
+        {
+          PhId: '401190528000002',
+          MstPhid: '401190528000001',
+          OrgPhid: '521180820000002',
+          OrgCode: '100',
+          RefbillPhid: '7',
+          choosed: false,
+          RefbillCode: 'zfbbf0007',
+          RefbillDtlPhid: '2',
+          RefbillDtlPhid2: '2',
+          FAmount: 1006.0,
+          FCurrency: '001',
+          FPayAcntname: '付款账户2',
+          FPayAcnt: '111002',
+          FPayBankcode: '102',
+          FRecAcntname: '收款账户1',
+          FRecAcnt: '222122',
+          FRecBankcode: '102',
+          FRecCityname: '杭州市',
+          FSamecity: 0,
+          FSamebank: 1,
+          FIsurgent: 1,
+          FCorp: 1,
+          FUsage: '用途信息2',
+          FPostscript: '附言：xxx2',
+          FExplation: '摘要2-修改',
+          FDescribe: '描述2-修改',
+          FSubmitdate: null,
+          FSeqno: null,
+          FBkSn: null,
+          FResult: null,
+          FResultmsg: null,
+          FState: 0,
+          FNewCode: null,
+          XmProjcode: 'XM0001',
+          XmProjname: '项目0001',
+          BudgetdtlName: '预算明细项目002',
+          FDepartmentcode: '100.1',
+          FDepartmentname: '省总财务部',
+          QtKmdm: null,
+          QtKmmc: null,
+          PersistentState: 0,
+          NgRecordVer: 2,
+          NgInsertDt: '2019-05-28 09:57:50',
+          NgUpdateDt: '2019-05-28 13:23:35',
+          Creator: '521180820000001',
+          Editor: '521180820000001',
+          CurOrgId: '521180820000002'
+        }
+      ]
+      return
+      this.getAxios('GGK/GKPaymentMstApi/GetPayment4Zjbf', {
         id: this.data.data.PhId,
         // id: 401190528000001,
         uid: '521180820000001', //用户id
@@ -670,21 +793,22 @@ export default {
         })
     },
     // 获取银行
-    getBank(e) {
+    getBank(data) {
+      console.log(data)
       if (this.bankChooseData.data.choosed) {
         this.detail.Dtls.forEach(item => {
           if (item.choosed) {
-            item.FRecAcntname = '杭州市总工会'
-            item.FRecAcnt = '6228481268248914675'
-            item.FPayBankcode = '杭州市工商银行'
-            item.FRecBankcode = '64841'
+            item.FRecAcntname = data.FBankname
+            item.FRecAcnt = data.FAccount
+            item.FPayBankcode = data.FOpenAccount
+            item.FRecBankcode = data.FBankcode
           }
         })
       } else {
-        this.bankChooseData.data.FRecAcntname = '杭州市总工会'
-        this.bankChooseData.data.FRecAcnt = '6228481268248914675'
-        this.bankChooseData.data.FPayBankcode = '杭州市工商银行'
-        this.bankChooseData.data.FRecBankcode = '64841'
+        this.bankChooseData.data.FRecAcntname = data.FBankname
+        this.bankChooseData.data.FRecAcnt = data.FAccount
+        this.bankChooseData.data.FPayBankcode = data.FOpenAccount
+        this.bankChooseData.data.FRecBankcode = data.FBankcode
       }
     },
     closeAuditFollow() {

@@ -18,7 +18,7 @@
             <span class="btn" @click="bankConfirm">确定</span>
           </div>
           <div style="height: 300px;">
-            <bankorder></bankorder>
+            <bankorder ref="bankorder"></bankorder>
           </div>
         </div>
       </div>
@@ -49,8 +49,13 @@ export default {
   mounted() {},
   methods: {
     bankConfirm() {
+      var data = this.$refs.bankorder.choosedItem
+      if (data.length != 1) {
+        this.$msgBox.error('请选择一条数据。')
+        return
+      }
       this.data.openDialog = false
-      this.$emit('getBank')
+      this.$emit('getBank', data[0])
     }
   },
   watch: {}
