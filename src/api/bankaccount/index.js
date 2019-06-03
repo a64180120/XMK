@@ -21,3 +21,13 @@ export function BankAccountSave(param){
     })
     
 }
+
+export function BankAccountDelete(param){
+    return new Promise((resolve,reject)=>{
+        Vue.prototype.postAxios('/GQT/BankAccountApi/PostDelete',param).then(res=>{
+            resolve(res)
+        }).catch(err=>{
+            reject(err)
+        })
+    })
+}

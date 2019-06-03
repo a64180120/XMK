@@ -18,45 +18,45 @@ function apiAxios(method, url, params, hastimeout) {
   //var timestamp = new Date().getTime();
   //var signature = getSha512(timestamp + "_" + token + "_newgrand");
 
-  var appinfo = {
-    //sql 数据库
-    DbName: 'NG0001',
-    OrgId: '547181121000001',
-    OrgName: '',
-    OCode: '',
-    UserId: '521180820000001',
-    UserKey: '9999',
-    UserName: '',
-    TokenKey: '',
-    AppKey: 'D31B7F91-3068-4A49-91EE-F3E13AE5C48C',
-    AppSecret: '103CB639-840C-4E4F-8812-220ECE3C4E4D',
-    DbServerName: '',
-    SessionKey: '',
-    UName: ''
-  }
+  // var appinfo = {
+  //   //sql 数据库
+  //   DbName: 'NG0002',
+  //   OrgId: '547181121000001',
+  //   OrgName: '',
+  //   OCode: '',
+  //   UserId: '521180820000001',
+  //   UserKey: '9999',
+  //   UserName: '',
+  //   TokenKey: '',
+  //   AppKey: 'D31B7F91-3068-4A49-91EE-F3E13AE5C48C',
+  //   AppSecret: '103CB639-840C-4E4F-8812-220ECE3C4E4D',
+  //   DbServerName: '',
+  //   SessionKey: '',
+  //   UName: ''
+  // }
   // var url1 = 'http://127.0.0.1:8020',
-  var url1 = 'http://127.0.0.1:8028',
-    //oracle 数据库
-    // var appKey = 'D31B7F91-3068-4A49-91EE-F3E13AE5C48C',
-    //     appSecret = '103CB639-840C-4E4F-8812-220ECE3C4E4D',
-    //     url1 = "http://127.0.0.1:8099",
-    //     reqTimeStamp = Date.parse(new Date());
+  //var url1 = 'http://127.0.0.1:8028';
+    // oracle 数据库
+    var appKey = 'D31B7F91-3068-4A49-91EE-F3E13AE5C48C',
+        appSecret = '103CB639-840C-4E4F-8812-220ECE3C4E4D',
+        url1 = "http://127.0.0.1:8099",
+        reqTimeStamp = Date.parse(new Date());
 
-    // var appinfo = {
-    //     'DbName': 'NG0006',
-    //     'OrgId': '488181024000001',
-    //     'OrgName': '',
-    //     'OCode': '',
-    //     'UserId': '488181024000001',
-    //     'UserKey': '9999',
-    //     'UserName': '',
-    //     'TokenKey': '',
-    //     'AppKey': appKey,
-    //     'AppSecret': appSecret,
-    //     'DbServerName': '',
-    //     'SessionKey': '',
-    //     'UName': ''
-    // };
+    var appinfo = {
+      'DbName': 'NG0006',
+      'OrgId': '488181024000001',
+      'OrgName': '',
+      'OCode': '',
+      'UserId': '488181024000001',
+      'UserKey': '9999',
+      'UserName': '',
+      'TokenKey': '',
+      'AppKey': appKey,
+      'AppSecret': appSecret,
+      'DbServerName': '',
+      'SessionKey': '',
+      'UName': ''
+    };
     reqTimeStamp = Date.parse(new Date())
   var sign = md5(
     (url1 + reqTimeStamp + appinfo.AppKey + appinfo.AppSecret).toLowerCase()

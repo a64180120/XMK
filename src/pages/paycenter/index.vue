@@ -80,7 +80,7 @@
           ></el-date-picker>
           <div class="btns">
             <div class="search">
-              <search-input v-model="search" @btnClick="getData"></search-input>
+              <search-input placeholder="支付单编号/申请单编号" v-model="search" @btnClick="getData"></search-input>
             </div>
           </div>
         </div>
@@ -328,249 +328,6 @@ export default {
   mounted() {},
   methods: {
     getData() {
-      let res = {
-        totalRows: 44,
-        Record: [
-          {
-            PhId: 127190529000010,
-            OrgPhid: 521180820000001,
-            OrgCode: '1',
-            RefbillPhid: 1,
-            RefbillCode: 'zfbf00011',
-            FCode: '127190529000010',
-            FPaymethod: 1,
-            FAmountTotal: 2000.0,
-            FApproval: 1,
-            FState: 0,
-            FDescribe: '测试',
-            FDate: null,
-            FBilltype: '资金拨付单',
-            FYear: null,
-            PersistentState: 0,
-            NgRecordVer: 1,
-            NgInsertDt: '2018-12-25T11:26:23',
-            NgUpdateDt: '2018-12-25T11:26:23',
-            Creator: 521180820000001,
-            Editor: 521180820000001,
-            CurOrgId: 521180820000001
-          },
-          {
-            PhId: 127190529000021,
-            OrgPhid: 521180820000001,
-            OrgCode: '1',
-            RefbillPhid: 2,
-            RefbillCode: 'zfbf0002',
-            FCode: '127190529000021',
-            FPaymethod: 1,
-            FAmountTotal: 2002.0,
-            FApproval: 2,
-            FState: 0,
-            FDescribe: '测试',
-            FDate: null,
-            FBilltype: '资金拨付单',
-            FYear: null,
-            PersistentState: 0,
-            NgRecordVer: 1,
-            NgInsertDt: '2019-12-20T11:00:23',
-            NgUpdateDt: '2019-12-20T11:00:23',
-            Creator: 521180820000001,
-            Editor: 521180820000001,
-            CurOrgId: 521180820000001
-          },
-          {
-            PhId: 127190529003001,
-            OrgPhid: 521180820000001,
-            OrgCode: '1',
-            RefbillPhid: 3,
-            RefbillCode: 'zfbf0003',
-            FCode: '127190529003001',
-            FPaymethod: 1,
-            FAmountTotal: 2003.0,
-            FApproval: 9,
-            FState: 0,
-            FDescribe: '测试',
-            FDate: null,
-            FBilltype: '资金拨付单',
-            FYear: null,
-            PersistentState: 0,
-            NgRecordVer: 1,
-            NgInsertDt: '2018-12-25T11:26:23',
-            NgUpdateDt: '2018-12-25T11:26:23',
-            Creator: 521180820000001,
-            Editor: 521180820000001,
-            CurOrgId: 521180820000001
-          },
-          {
-            PhId: 127190529013001,
-            OrgPhid: 521180810000001,
-            OrgCode: '1',
-            RefbillPhid: 3,
-            RefbillCode: 'zfbf0004',
-            FCode: '127190529003001',
-            FPaymethod: 1,
-            FAmountTotal: 2103.0,
-            FApproval: 9,
-            FState: 0,
-            FDescribe: '测试',
-            FDate: null,
-            FBilltype: '资金拨付单',
-            FYear: null,
-            PersistentState: 0,
-            NgRecordVer: 1,
-            NgInsertDt: '2018-12-25T11:26:23',
-            NgUpdateDt: '2018-12-25T11:26:23',
-            Creator: 521180820000001,
-            Editor: 521180820000001,
-            CurOrgId: 521180820000001
-          },
-          {
-            PhId: 127190529003002,
-            OrgPhid: 521180820000001,
-            OrgCode: '1',
-            RefbillPhid: 3,
-            RefbillCode: 'zfbf0013',
-            FCode: '127190529003001',
-            FPaymethod: 1,
-            FAmountTotal: 12003.0,
-            FApproval: 9,
-            FState: 0,
-            FDescribe: '测试',
-            FDate: null,
-            FBilltype: '资金拨付单',
-            FYear: null,
-            PersistentState: 0,
-            NgRecordVer: 1,
-            NgInsertDt: '2018-12-25T11:26:23',
-            NgUpdateDt: '2018-12-25T11:26:23',
-            Creator: 521180820000001,
-            Editor: 521180820000001,
-            CurOrgId: 521180820000001
-          },
-          {
-            PhId: 127190529000501,
-            OrgPhid: 521180820000001,
-            OrgCode: '1',
-            RefbillPhid: 5,
-            RefbillCode: 'zfb8f0005',
-            FCode: '127190529000501',
-            FPaymethod: 1,
-            FAmountTotal: 2005.0,
-            FApproval: 9,
-            FState: 2,
-            FDescribe: '测试',
-            FDate: null,
-            FBilltype: '资金拨付单',
-            FYear: null,
-            PersistentState: 0,
-            NgRecordVer: 1,
-            NgInsertDt: '2018-12-25T11:26:23',
-            NgUpdateDt: '2018-12-25T11:26:23',
-            Creator: 521180820000001,
-            Editor: 521180820000001,
-            CurOrgId: 521180820000001
-          },
-          {
-            PhId: 127190529000511,
-            OrgPhid: 521180820010001,
-            OrgCode: '1',
-            RefbillPhid: 5,
-            RefbillCode: 'zfb8f0015',
-            FCode: '127190529010501',
-            FPaymethod: 1,
-            FAmountTotal: 2105.0,
-            FApproval: 9,
-            FState: 2,
-            FDescribe: '测试',
-            FDate: null,
-            FBilltype: '资金拨付单',
-            FYear: null,
-            PersistentState: 0,
-            NgRecordVer: 1,
-            NgInsertDt: '2018-12-25T11:26:23',
-            NgUpdateDt: '2018-12-25T11:26:23',
-            Creator: 521180820000001,
-            Editor: 521180820000001,
-            CurOrgId: 521180820000001
-          },
-          {
-            PhId: 127190529000011,
-            OrgPhid: 547181121000001,
-            OrgCode: '100',
-            RefbillPhid: 7,
-            RefbillCode: 'zfbbf0007',
-            FCode: 'P1559096542043',
-            FPaymethod: 2,
-            FAmountTotal: 2006.0,
-            FApproval: 0,
-            FState: 0,
-            FDescribe: '单元测试-1559096542043',
-            FDate: '',
-            FBilltype: '资金拨付单',
-            FYear: null,
-            PersistentState: 0,
-            NgRecordVer: 1,
-            NgInsertDt: '2019-05-29T10:22:25',
-            NgUpdateDt: '2019-05-29T10:22:25',
-            Creator: 521180820000001,
-            Editor: 521180820000001,
-            CurOrgId: 547181121000001
-          },
-          {
-            PhId: 127190529000002,
-            OrgPhid: 547181121000001,
-            OrgCode: '100',
-            RefbillPhid: 7,
-            RefbillCode: 'zfbbf0007',
-            FCode: 'P1559096586066',
-            FPaymethod: 2,
-            FAmountTotal: 2006.0,
-            FApproval: 0,
-            FState: 0,
-            FDescribe: '单元测试-1559096586066',
-            FDate: '',
-            FBilltype: '资金拨付单',
-            FYear: null,
-            PersistentState: 0,
-            NgRecordVer: 1,
-            NgInsertDt: '2019-05-29T10:23:06',
-            NgUpdateDt: '2019-05-29T10:23:06',
-            Creator: 521180820000001,
-            Editor: 521180820000001,
-            CurOrgId: 547181121000001
-          },
-          {
-            PhId: 182190529000001,
-            OrgPhid: 547181121000001,
-            OrgCode: '100',
-            RefbillPhid: 7,
-            RefbillCode: 'zfbbf0007',
-            FCode: 'P1559096718686',
-            FPaymethod: 2,
-            FAmountTotal: 2006.0,
-            FApproval: 9,
-            FState: 1,
-            FDescribe: '单元测试-1559096718686',
-            FDate: '2019-05-30T10:25:22',
-            FBilltype: '资金拨付单',
-            FYear: null,
-            PersistentState: 0,
-            NgRecordVer: 1,
-            NgInsertDt: '2019-05-29T10:25:22',
-            NgUpdateDt: '2019-05-29T10:25:22',
-            Creator: 521180820000001,
-            Editor: 521180820000001,
-            CurOrgId: 547181121000001
-          }
-        ],
-        index: 0,
-        size: 10
-      }
-      this.total = res.totalRows
-      this.tableData = res.Record.map(item => {
-        item.checked = false
-        return item
-      })
-      return
       var query = {
         'NgInsertDt*date*ge*1': this.sbrq ? this.sbrq[0] || '' : '', //申报日期开始
         'NgInsertDt*date*le*1': this.sbrq ? this.sbrq[1] || '' : '', //申报日期结束
@@ -617,7 +374,7 @@ export default {
       }
       deleteBlank(query)
       console.log(query)
-      this.getAxios('/GKPaymentMstApi/GetPaymentList', {
+      this.getAxios('GGK/GKPaymentMstApi/GetPaymentList', {
         queryfilter: JSON.stringify(query),
         PageIndex: this.currentPage - 1, //当前第几页，从0开始
         PageSize: this.pageSize, //每页显示行数
@@ -659,7 +416,6 @@ export default {
       if (item) {
         if (item.FApproval == 0 || item.FApproval == 2) {
           this.payListData.itemType = 'notApprove'
-          // 测试 待送审删除信息
         } else if (item.FState == 2) {
           this.payListData.itemType = 'error'
         } else if (item.FState == 0 && item.FApproval == 9) {
@@ -676,7 +432,7 @@ export default {
           return prev + cur.checked
         }, 0)
         if (handleitem.length < 1) {
-          this.$msgBox.show({
+          this.$msgBox.error({
             content: '请至少选择一条数据进行操作。',
             fn: () => {
               console.log('test fn')
@@ -722,7 +478,7 @@ export default {
             ) {
               this.$msgBox.show({
                 content:
-                  '只有审批状态为“审批通过”，支付状态为“待支付”的单据，才可以使用【合并支付】。',
+                  "只有审批状态为“<span class='dangerText'>审批通过</span>”，支付状态为“<span class='dangerText'>待支付</span>”的单据，才可以使用【合并支付】。",
                 fn: () => {}
               })
               this.tableData.forEach(item => {
@@ -858,14 +614,14 @@ export default {
       color: #757575;
       > span:not(:first-of-type) {
         margin-left: 0px;
-        @media screen and (min-width: 1430px) {
+        @media screen and (min-width: 1470px) {
           margin-left: 10px;
         }
       }
       > span + div {
         width: 150px;
         margin-left: 0px;
-        @media screen and (min-width: 1430px) {
+        @media screen and (min-width: 1470px) {
           margin-left: 10px;
         }
         &.large-input {
@@ -1005,19 +761,11 @@ export default {
   .el-checkbox__label {
     font-size: 0.14rem;
   }
-  .tableBody .el-checkbox__label {
-    font-size: 0.14rem;
-  }
   .selects {
-    .el-input--mini .el-input__inner {
-      height: 28px;
-      line-height: 28px;
-    }
     .el-range-editor--mini.el-input__inner {
       height: 28px;
       line-height: 28px;
     }
-    .el-input--mini,
     .el-select-dropdown__item,
     .el-range-editor--mini .el-range-separator,
     .el-range-editor--mini .el-range-input {
@@ -1052,51 +800,6 @@ export default {
     &.unclickable {
       cursor: not-allowed;
       color: #c0c4cc;
-    }
-  }
-  .el-table td,
-  .el-table th.is-leaf {
-    border-color: rgb(204, 204, 204);
-  }
-  .el-table--border,
-  .el-table--group {
-    border-color: rgb(204, 204, 204);
-  }
-  .payCenterDialog {
-    .el-table {
-      font-size: 0.14rem;
-      th {
-        background-color: $btnColor;
-        border-right-color: #fff;
-      }
-      thead {
-        color: #fff;
-      }
-    }
-    .el-collapse-item__header {
-      font-size: 0.13rem;
-      border-bottom: 0px;
-    }
-    .el-collapse-item__wrap {
-      border-bottom: 0px;
-    }
-    .el-collapse-item__content {
-      padding-bottom: 0;
-    }
-    .el-table__header-wrapper thead .el-checkbox__label {
-      color: #fff;
-    }
-    &.smallDialog {
-      .el-radio__inner {
-        width: 0.14rem;
-        height: 0.14rem;
-      }
-      .el-radio__label {
-        font-size: 0.14rem;
-      }
-      .el-radio:not(:last-of-type) {
-        margin-bottom: 10px;
-      }
     }
   }
 }

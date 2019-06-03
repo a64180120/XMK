@@ -96,7 +96,7 @@
 @for $i from 0 through 9 {
   @for $j from 0 through 9 {
     .scroll#{$i}-#{$j} {
-      animation: 1.5s move#{$i}-#{$j} linear;
+      animation: 0.5s move#{$i}-#{$j} linear;
     }
   }
 }

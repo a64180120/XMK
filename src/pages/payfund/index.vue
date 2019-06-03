@@ -428,7 +428,7 @@
             approvalList:[{value:0,label:'全部'},{value:1,label:'待送审'},{value:2,label:'审批中'},{value:3,label:'审批未通过'},{value:4,label:'审批通过'}],
             payList:[{value:0,label:'全部'},{value:1,label:'待支付'},{value:2,label:'支付异常'},{value:3,label:'支付成功'}],
             bmList:[{value:0,label:'办公室'},{value:1,label:'女工部'},{value:2,label:'财务与资产部'}],
-            bzList:[{value:0,label:'全部'},{value:1,label:'XXX项目1'},{value:2,label:'XXX项目2'}],
+            bzList:[{value:0,label:'全部'},{value:1,label:'救灾补助项目'},{value:2,label:'送温暖项目'}],
             spTypeList:{'1':'待送审','2':'审批中','3':'未通过','4':'审批通过'},
             payTypeList:{'0':'—','1':'待支付','2':'支付异常','3':'支付成功'},
             visiable:false,//高级搜索框显示隐藏

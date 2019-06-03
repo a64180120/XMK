@@ -30,6 +30,24 @@ MessageBox.install = function(Vue, options) {
       }
       return currentMsg.showMsgBox()
     },
+    error(options) {
+      if (!currentMsg) {
+        initInstance()
+      } else {
+        currentMsg.$destroy()
+        console.log(currentMsg.openDialog)
+        clearInterval(currentMsg.interval)
+        currentMsg.interval = null
+        currentMsg = new MessageBoxInstance()
+        currentMsg.$mount().$el
+      }
+      if (typeof options === 'string') {
+        currentMsg.content = options
+      } else if (typeof options === 'object') {
+        Object.assign(currentMsg, options)
+      }
+      return currentMsg.showError()
+    }
   }
 }
 export default MessageBox
