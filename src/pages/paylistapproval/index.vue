@@ -1,6 +1,6 @@
 <template>
   <section>
-    <handle-btn title="审批中心在线工作平台">
+    <handle-btn title="审批中心在线工作平台" :auditBtn="true">
       <div class="top" v-if="isApproval">
         <ul>
           <li @click="aprovalItem()">

@@ -33,15 +33,15 @@ export default {
             type:Array,
             default(){
                 return [{
-                    name:'王刚',
-                    time:'2019-04-25T14:00',
-                    att:'附件1',
-                    msg:'不同意'
+                  OperaName:'王刚',
+                  FDate:'2019-04-25T14:00',
+                  RefbillPhid:'附件1',
+                  FOpinion:'不同意'
                     },{
-                    name:'金晶',
-                    time:'2019-04-25T17:00',
-                    att:'附件2',
-                    msg:'同意'
+                  OperaName:'金晶',
+                  FDate:'2019-04-25T17:00',
+                  RefbillPhid:'附件2',
+                  FOpinion:'同意'
                 }]
             }
         }
@@ -92,6 +92,14 @@ export default {
     .content{
         padding:50px 10px 10px 30px;
         >ul{
+          position: absolute;
+          bottom: 60px;
+          overflow: auto;
+          top: 60px;
+          right: 12px;
+          padding-right: 30px;
+          padding-left: 30px;
+          margin-right: -27px;
             >li{
                 border-left:1px solid $btnColor;
                 &:first-of-type{
