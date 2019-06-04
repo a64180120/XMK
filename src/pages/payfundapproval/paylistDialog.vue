@@ -10,13 +10,13 @@
       <div slot="title" class="dialog-title">
         <p>审批并生成支付单</p>
       </div>
-      <approval-bill @dialogFlow="searchFlow()" @nuargeen="backAproval" :backPeople="backPeople"></approval-bill>
+      <approval-bill @dialogFlow="searchFlow()" @isAgree="backAproval" :backPeople="backPeople"></approval-bill>
       <div class="approval-btn">
         <el-button size="small" type="primary" @click="cancel()">取消</el-button>
         <el-button size="small" type="primary" @click="submit()">生成支付单</el-button>
       </div>
     </el-dialog>
-    <back-approval :visible.sync="visible" @getBackPeople="getBackPeople"></back-approval>
+    <back-approval v-if="visible" :visible.sync="visible" @getBackPeople="getBackPeople" @closeBack="closeBack"></back-approval>
   </section>
 </template>
 
@@ -27,11 +27,10 @@
     name: "paylistDialog",
     components: {BackApproval, ApprovalBill},
     props:{
-      data:{
+      rowData:{
         type:Object,
         default:function () {
-          return {
-          }
+          return []
         }
       }
     },
@@ -58,22 +57,6 @@
         }else {
           this.openDialog = true
         }
-      },
-      //表头样式回调
-      headerRowClass(val){
-        return "table-header"
-      },
-      //查看详细流程
-      searchFlow(row,column,index,store){
-
-      },
-      //表格单选
-      handleSelect(selection,row){
-
-      },
-      //表格全选
-      handleSelectAll(selection){
-
       },
       //取消
       cancel(){
@@ -201,6 +184,10 @@
           this.visible = false
           this.backPeople = []
         }
+      },
+      //关闭销毁回退,下次打开执行生命周期
+      closeBack(){
+        this.visible = false
       },
       getBackPeople(item){
         this.$set(this.backPeople,0,item.name)

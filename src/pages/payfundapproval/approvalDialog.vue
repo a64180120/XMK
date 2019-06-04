@@ -17,13 +17,14 @@
                        @isArgeen="backAproval"
                        :approvalFollow="approvalFollow"
                        :nextApprovaler="nextApprovaler"
-                       :backPersonnel="backPersonnel"></approval-bill>
+                       :backPersonnel="backPersonnel"
+                        ref="approval"></approval-bill>
         <div class="approval-btn">
           <el-button size="small" type="primary" @click="cancel()">取消</el-button>
           <el-button size="small" type="primary" @click="submit()">确认</el-button>
         </div>
       </el-dialog>
-      <back-approval :visible.sync="visible" @getBackPeople="getBackPeople"></back-approval>
+      <back-approval v-if="visible" :visible.sync="visible" :auditMsg="backData" @getBackPeople="getBackPeople" @closeBack="closeBack"></back-approval>
     </section>
 </template>
 
@@ -53,7 +54,8 @@
             handleValue:'',
             approvalFollow:[],
             nextApprovaler:[],
-            backPersonnel:[]
+            backPersonnel:[],
+            backData:[]
           }
       },
       mounted(){
@@ -121,11 +123,15 @@
         cancel(){
           this.openDialog = false
           this.visible = false
+          this.backPersonnel = []
+          this.$refs.approval.handleValue = ''
         },
         //关闭弹框
         closeDialog(){
           this.openDialog = false
-          this.visible = false
+          this.visible = false;
+          this.backPersonnel = [];
+          this.$refs.approval.handleValue = ''
         },
 
         //确认
@@ -135,16 +141,21 @@
           this.$msgBox.show({
             content:'审批成功',
             fn:function () {
-              that.openDialog = false
-              that.$emit('subSuc')
+              that.openDialog = false;
+              that.$emit('subSuc');
+              that.$refs.approval.handleValue = ''
             }
           })
         },
+
+        //关闭销毁回退,下次打开执行生命周期
+        closeBack(){
+          this.visible = false
+        },
         backAproval(val){
           if (!val ){
-            this.visible = true
             this.getBackApprovalPost()
-            this.getGetOperators()
+            // this.getGetOperators()
           } else {
             this.visible = false
             this.backPersonnel = []
@@ -155,29 +166,39 @@
 
           let data = {
             ProcPhid:this.rowData[0].ProcPhid,
-            PostPhid:this.rowData[0].PostPhid
+            PostPhid:this.rowData[0].PostPhid,
+            RefbillPhid:this.rowData[0].RefbillPhid,
           }
           this.getAxios('/GAppvalPost/GetBackApprovalPost',data).then(success=>{
-            console.log(success)
+            if (success && success.Status == 'success') {
+              this.backData = success.Data
+              this.visible = true
+            }else {
+              this.$msgBox.show(success.Msg)
+            }
           }).catch(err =>{
-            console.log(err)
+            this.$msgBox.show('请求出错')
           })
         },
         //根据审批岗位获取审批人(包括岗位id为0的发起人)
-        getGetOperators(){
-          let data = {
-            RefbillPhid:this.rowData[0].RefbillPhid,
-            PostPhid:this.rowData[0].PostPhid
-          }
-          this.getAxios('/GAppvalPost/GetOperators',data).then(success=>{
-              console.log(success)
-          }).catch(err =>{
-
-          })
-        },
+        // getGetOperators(){
+        //   let data = {
+        //     RefbillPhid:this.rowData[0].RefbillPhid,
+        //     PostPhid:this.rowData[0].PostPhid
+        //   }
+        //   this.getAxios('/GAppvalPost/GetOperators',data).then(success=>{
+        //     console.log('获取审批人===============')
+        //       console.log(success)
+        //   }).catch(err =>{
+        //
+        //   })
+        // },
         //点击获取回退人员名字
         getBackPeople(item){
-          this.$set(this.backPeople,0,item.name)
+          for (let key in item.Operators){
+            this.$set(this.backPersonnel,key,item.Operators[key])
+          }
+          console.log(this.backPersonnel)
         },
       }
     }
