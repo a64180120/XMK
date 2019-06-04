@@ -34,9 +34,8 @@
 
       <div class="formArea">
         <div class="btnArea">
-          <i class="el-icon-d-arrow-left iicon" style="position:absolute;left:0;" @click.stop="unionStateScroll(false)"></i>
-          <i class="el-icon-d-arrow-right iicon" style="position:absolute;right:275px;" @click.stop="unionStateScroll(true)"></i>
-          <i class="el-icon-d-arrow-right iicon" style="position:absolute;right:275px;" @click.stop="unionStateScroll(true)"></i>
+          <i class="el-icon-d-arrow-left iicon" style="position:absolute;left:0;top: .12rem;" @click.stop="unionStateScroll(false)"></i>
+          <i class="el-icon-d-arrow-right iicon" style="position:absolute;right:275px;top: .12rem;" @click.stop="unionStateScroll(true)"></i>
           <div class="scrollNav">
             <div>
               <label>
@@ -158,7 +157,7 @@
             </colgroup>
             <thead>
               <tr>
-                <td title="序号">
+                <td title="序号" style="text-align: left;padding-left: .2rem">
                   <el-checkbox v-model="checked">序号</el-checkbox>
                 </td>
                 <td title="申请单编号">
@@ -199,30 +198,30 @@
               <col width="15%">
             </colgroup>
             <tbody>
-            <tr v-for="(item,index) in dataList.data" v-if="(searchData.approvalType==0&&searchData.payType==0)||(searchData.approvalType==0&&searchData.payType==item.billZfType)||(searchData.payType==0&&searchData.approvalType==item.billSpType)||(searchData.payType==item.billZfType&&searchData.approvalType==item.billSpType)">
-              <td>
+            <tr  :class="{trActive:checkList[index]}" v-for="(item,index) in dataList.data" v-if="(searchData.approvalType==0&&searchData.payType==0)||(searchData.approvalType==0&&searchData.payType==item.billZfType)||(searchData.payType==0&&searchData.approvalType==item.billSpType)||(searchData.payType==item.billZfType&&searchData.approvalType==item.billSpType)">
+              <td style="text-align: left;padding-left: .2rem">
                 <el-checkbox v-model="checkList[index]">{{index+1}}</el-checkbox>
               </td>
-              <td @click="showApply(item.billNum)">
-                {{item.billNum}}
+              <td @click="showApply(item.PhId)">
+                {{item.FCode}}
               </td>
               <td>
-                {{item.billName}}
+                {{item.FName}}
               </td>
               <td class="right">
-                {{item.billMoney | NumFormat}}
+                {{item.FAmountTotal | NumFormat}}
               </td>
               <td>
-                {{item.billDate}}
+                {{item.FDate.substring(0,10)}}
               </td>
               <td class="atype" @click="openAuditfollow">
-                {{spTypeList[item.billSpType]}}
+                {{spTypeList[item.FApproval]}}
               </td>
               <td>
-                {{payTypeList[item.billZfType]}}
+                {{payTypeList[item.IsPay]}}
               </td>
               <td>
-                {{item.billNote}}
+                {{item.FDescribe}}
               </td>
             </tr>
             </tbody>
@@ -343,7 +342,7 @@
             dataList:{
               total:7,
               data:[
-                {
+               /* {
                   billDate: "2019-5-27",
                   billMoney: 90434.53,
                   billName: "专家授课课酬支付申请",
@@ -405,7 +404,7 @@
                   billNum: "1558946890819WE",
                   billSpType: 4,
                   billZfType: 3
-                },
+                },*/
               ],
             },
             searchData:{
@@ -429,8 +428,8 @@
             payList:[{value:0,label:'全部'},{value:1,label:'待支付'},{value:2,label:'支付异常'},{value:3,label:'支付成功'}],
             bmList:[{value:0,label:'办公室'},{value:1,label:'女工部'},{value:2,label:'财务与资产部'}],
             bzList:[{value:0,label:'全部'},{value:1,label:'救灾补助项目'},{value:2,label:'送温暖项目'}],
-            spTypeList:{'1':'待送审','2':'审批中','3':'未通过','4':'审批通过'},
-            payTypeList:{'0':'—','1':'待支付','2':'支付异常','3':'支付成功'},
+            spTypeList:{'0':'待送审','1':'审批中','2':'未通过','9':'审批通过'},
+            payTypeList:{'0':'待支付','1':'支付异常','9':'支付成功'},
             visiable:false,//高级搜索框显示隐藏
             chartData:{
               chart:[{name:'可申请',value:13210},{name:'冻结',value:1200},{name:'已使用',value:2301}],
@@ -461,7 +460,7 @@
       },
       components:{Applypro, Orgtree, Applybill, tophandle,pieChart,goApproval,Auditfollow,ApprovalDialog,num},
       mounted(){
-          //this.getData();
+          this.getData();
           //this.dataFuc();
         this.getCheckList(this.dataList.total);
       },
@@ -592,6 +591,8 @@
           }
           this.getAxios('GBK/PaymentMstApi/GetPaymentMstList',param).then(res=>{
             console.log(res);
+            this.dataList.total=res.totalRows;
+            this.dataList.data=res.Record;
           }).catch(err=>{
             console.log(err);
           })
@@ -610,7 +611,7 @@
         //查看申请弹窗
         showApply:function(num){
           this.applyType=true;
-          this.applyNum=num;
+          this.applyNum=num+'';
         },
         //删除事件
         handleDelete:function(flag){

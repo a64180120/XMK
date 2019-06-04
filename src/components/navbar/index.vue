@@ -47,7 +47,7 @@ export default {
 .navbar{
     position:absolute;
     left:10px;
-    top:150px;
+    top:160px;
     bottom:30px;
     width:170px;
     padding:10px 0px;

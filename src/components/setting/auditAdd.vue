@@ -123,7 +123,8 @@ export default {
         type:{
             type:String,
             default:'add'
-        }
+        },
+        
     },
     data(){
         return{

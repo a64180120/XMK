@@ -307,12 +307,7 @@
 <style scoped>
   .dialog{}
   .dialog >>> .el-dialog{
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    margin: 0 !important;
-    transform: translate(-50%,-50%);
-    height: 310px;
+    height: 435px;
   }
   .dialog >>> .el-dialog__header{
     padding: 0;

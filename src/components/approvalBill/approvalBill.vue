@@ -13,7 +13,7 @@
                 </div>
                 <el-radio v-if="!isApproval" v-model="handleValue" label="1">同意</el-radio>
                 <el-radio v-if="!isApproval" v-model="handleValue" label="2">不同意</el-radio>
-                <span v-if="backPeople[0] !== undefined " style="color: red">(本单据将退回给“{{backPeople[0]}}”)</span>
+                <span v-if="backPersonnel[0] !== undefined " style="color: red">(本单据将退回给“{{backPersonnel[0]}}”)</span>
               </li>
               <li>
                 <span>附单据 {{list}} 张</span>
@@ -33,13 +33,13 @@
             </div>
             <div class="table">
               <el-table class="table-content"
-                        :data="subData"
+                        :data="approvalFollow"
                         :border="true"
                         :header-row-class-name="headerRowClass"
                         @row-click="handleRowClick">
-                <el-table-column prop="code" width="80" align="center" label="流程编码">
+                <el-table-column prop="FCode" width="80" align="center" label="流程编码">
                 </el-table-column>
-                <el-table-column prop="name" align="center"  label="流程名称">
+                <el-table-column prop="FName" align="center"  label="流程名称">
                 </el-table-column>
                 <el-table-column width="60" align="center"  label="查看">
                   <template slot-scope="scope">
@@ -54,17 +54,17 @@
               <span>■</span>下一审批人
             </div>
             <div class="table">
-              <el-table v-if="true" class="table-next"
-                        :data="subPeople"
+              <el-table v-if="nextApprovaler !== []" class="table-next"
+                        :data="nextApprovaler"
                         :border="true"
                         @select="handleSelect"
                         @select-all="handleSelectAll"
                         :header-row-class-name="headerRowClass">
                 <el-table-column type="selection" width="30">
                 </el-table-column>
-                <el-table-column prop="code" align="center"  label="操作员编码">
+                <el-table-column prop="OperatorPhid" align="center"  label="操作员编码">
                 </el-table-column>
-                <el-table-column prop="name" align="center"  label="姓名">
+                <el-table-column prop="OperatorName" align="center"  label="姓名">
                 </el-table-column>
               </el-table>
               <div v-else class="sptg">
@@ -78,21 +78,47 @@
 </template>
 
 <script>
-    import Auditfollow from "../auditFollow/auditfollow";
+  /**
+   *事件:
+   * 1、 dialogFlow():审批流程当前行搜索图标点击时触发，传递当前行数据
+   * 2、selectApprovaler():下一审批人选中时触发，传递选中行的数据
+   * 3、approvalRowClick()：审批流列表当前行的点击事件，传递审批流程列表当前行的数据
+   * 4、isAgree:是否同意事件改变时触发 传递一个布尔值 ，ture为同意  false为不同意
+   * 属性：
+   * 1、approvalFollow ，左边审批流程列表数据
+   * 2、nextApprovaler，下一审批人列表数据
+   * 3、backPersonnel，返回人员数据
+   */
+
     export default {
         name: "approvalBill",
-      components: {Auditfollow},
       props:{
         isApproval:{//送审true 审核 false
           type:Boolean,
           default:false
         },
-        backPeople:{
+        //回退的操作人员列表
+        backPersonnel:{
           type: Array,
           default: function () {
             return []
           }
+        },
+        //下一审批岗位的审批人列表 如果为空表示最后一个审批人
+        nextApprovaler:{
+          type:Array,
+          default:function () {
+            return []
+          },
+        },
+        //审批流程数据列表
+        approvalFollow:{
+          type:Array,
+          default:function () {
+            return []
+          }
         }
+
       },
       data(){
         return{
@@ -113,9 +139,9 @@
       watch:{
         handleValue(val){
           if(val === "2" ){
-            this.$emit("nuargeen",val)
+            this.$emit("isArgeen",false)
           }else {
-            this.$emit("nuargeen",[])
+            this.$emit("isArgeen",true)
           }
         }
       },
@@ -134,28 +160,15 @@
         },
         //表格单选
         handleSelect(selection,row){
-
+          this.$emit('selectApprovaler',selection)
         },
         //表格全选
         handleSelectAll(selection){
-
+          this.$emit('selectApprovaler',selection)
         },
         //当前行点击事件
         handleRowClick(row,column){
-          if (row.code =='0001') {
-            this.subPeople = [{
-              code:'0001',
-              name:'王刚'
-            },{
-              code:'0002',
-              name:'李明'
-            }]
-          }else {
-            this.subPeople = [{
-              code:'0001',
-              name:'王刚'
-            }]
-          }
+          this.$emit('approvalRowClick',row)
         },
         //取消
         cancel(){
@@ -173,7 +186,7 @@
 <style lang="scss" scoped>
   .content{
     width: 100%;
-    height:228px;
+    height:335px;
     overflow: auto;
     >.handle{
       >.radio{
