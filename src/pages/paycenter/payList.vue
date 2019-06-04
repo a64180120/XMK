@@ -550,7 +550,6 @@ export default {
         },
         Dtls: []
       },
-      oldDtls: [],
       appDialog: {
         title: '',
         btnGroup: {
@@ -635,6 +634,7 @@ export default {
           console.log('save err', err)
         })
     },
+
     // 获取预算科目列表
     getBudgetAccountsList() {
       getBudgetAccountsList({})
@@ -727,10 +727,9 @@ export default {
     },
     // 批量设置转账方式
     selectFSamebankFocus() {
-      if (this.detail.Dtls.every(item => item.choosed === false)) {
+      if (this.detail.Dtls.every(item => item.choosed == false)) {
         this.$refs.selectFSamebank.blur()
         this.$msgBox.show('请先选择要设置的项目。')
-        console.log('thishis')
       }
     },
     selectFSamebankBlur(visible) {
@@ -799,14 +798,13 @@ export default {
         console.log('setting')
         this.reSetting = false
         this.data.itemType = 'error'
-        this.detail.Dtls.unshift(this.oldDtls)
       } else {
         done()
       }
     },
     // dialog中的check事件
     selectOne($scope) {
-      console.log($scope.row.choosed)
+      console.log($scope.row)
       if ($scope.row.choosed) {
         if (this.data.itemType == 'error') {
           var newDtls = this.detail.Dtls.filter(item => item.FState == 2)
@@ -817,11 +815,13 @@ export default {
       } else {
         this.allSelected = false
       }
+      this.$forceUpdate()
     },
     selectAll(choosed) {
       this.detail.Dtls.forEach(item => {
         item.choosed = choosed
       })
+      this.$forceUpdate()
     },
     // 测试用 选择银行
     selectBank(item) {
@@ -837,6 +837,11 @@ export default {
         this.detail = Array.isArray(this.data.data)
           ? this.data.data[0]
           : this.data.data
+        this.detail.Dtls.forEach(item => {
+          // item.choosed = false
+          this.$set(item, 'choosed', false)
+        })
+        // this.$forceUpdate()
         this.$nextTick(() => {
           // this.getData()
           this.getAccountList({
