@@ -54,13 +54,16 @@
                       placeholder="请选择"
                     >
                       <el-option
+                        v-if="accountList.length>0"
                         v-for="item in accountList"
                         :label="item.FBankname"
                         :value="item.PhId"
                       ></el-option>
                     </el-select>
                   </div>
-                  <div v-else>{{accountList.find(item=>item.PhId == account).FBankname}}</div>
+                  <div
+                    v-else
+                  >{{accountList.length?accountList.find(item=>item.PhId == account).FBankname:''}}</div>
                 </li>
                 <li>
                   <span>支付方式：</span>
@@ -159,7 +162,7 @@
                     <!-- 申请金额 -->
                     <div
                       v-if="scope.column.property=='FAmount'"
-                      :title="scope.row[scope.column.property]"
+                      :title="scope.row[scope.column.property] | NumFormat"
                       class="table-item"
                     >{{scope.row[scope.column.property] | NumFormat}}</div>
                     <!-- 备注  -->
@@ -171,16 +174,23 @@
                     </div>
                     <!-- 预算科目  -->
                     <div v-else-if="scope.column.property=='QtKmdm'" class="table-item nopadding">
-                      <template v-if="data.itemType == 'notApprove'">
-                        <el-select v-model="scope.row[scope.column.property]" placeholder="请选择预算科目">
-                          <el-option label="501 活动支出" :value="501" disabled></el-option>
-                          <el-option label="501001 活动支出001" :value="501001"></el-option>
-                          <el-option label="501002 活动支出002" :value="501002"></el-option>
+                      <template
+                        v-if="data.itemType == 'notApprove'&&kemuList.length>0&&scope.row.QtKmdm"
+                      >
+                        <el-select
+                          v-model="scope.row.QtKmdm"
+                          placeholder="请选择预算科目"
+                          @change="kumuChange(scope.row)"
+                        >
+                          <el-option
+                            v-for="(item,index) in kemuList.filter(item=>scope.row.QtKmdm.slice(0,3)==item.KMDM.slice(0,3))"
+                            :label="item.KMDM+' '+item.KMMC"
+                            :value="item.KMDM"
+                            :disabled="item.KMDM.length==3"
+                          ></el-option>
                         </el-select>
                       </template>
-                      <template
-                        v-else
-                      >{{scope.row[scope.column.property]?kemuList.find(item=>item.value==scope.row[scope.column.property]).label:'————'}}</template>
+                      <template v-else>{{scope.row.QtKmdm}} {{scope.row.QtKmmc}}</template>
                     </div>
                     <!-- 支付方式 -->
                     <div
@@ -273,7 +283,10 @@
             <template v-else-if="data.itemType=='success'">支付成功</template>
             <template v-else>待支付</template>
           </span>
-          <span class="dj" @click="showFundDetail">点击查看关联申请单信息（申请编号：{{detail.Mst.RefbillCode}}）</span>
+          <span
+            class="dj"
+            @click="fundDetailData.openDialog = true"
+          >点击查看关联申请单信息（申请编号：{{detail.Mst.RefbillCode}}）</span>
         </div>
       </el-row>
     </el-dialog>
@@ -311,7 +324,7 @@
       <img-view v-if="imgDialog"></img-view>
     </el-dialog>
     <!-- 合并支付组件 -->
-    <merge-pay :father="data" :data="mergePayData"></merge-pay>
+    <merge-pay v-if="mergePayData.openDialog" :father="data" :data="mergePayData"></merge-pay>
     <!-- 异常处理 -->
     <pay-error-handle
       :father="data"
@@ -348,6 +361,7 @@ import auditfollow from '../../components/auditFollow/auditfollow'
 import ImgView from '../../components/imgView/imgView'
 import approvalDialog from '../payfundapproval/approvalDialog.vue'
 import { BankAccountList } from '@/api/bankaccount'
+import { getPayment, savePayList, getBudgetAccountsList } from '@/api/paycenter'
 
 export default {
   name: 'payList',
@@ -466,20 +480,7 @@ export default {
         }
       ],
       account: '',
-      accountList: [
-        {
-          label: '浙江省总工会',
-          value: 1
-        },
-        {
-          label: '浙江省总工会政治部',
-          value: 2
-        },
-        {
-          label: '浙江省总工会财务部',
-          value: 3
-        }
-      ],
+      accountList: [],
       FStateList: [
         {
           label: '待支付',
@@ -509,21 +510,7 @@ export default {
         }
       ],
       bankType: '',
-      kemuList: [
-        {
-          label: '501 活动支出',
-          value: 501,
-          disabled: true
-        },
-        {
-          label: '501001 活动支出001',
-          value: 501001
-        },
-        {
-          label: '501002 活动支出002',
-          value: 501002
-        }
-      ],
+      kemuList: [],
       FSamebankList: [
         {
           label: '同行',
@@ -563,7 +550,6 @@ export default {
         },
         Dtls: []
       },
-
       oldDtls: [],
       appDialog: {
         title: '',
@@ -575,34 +561,168 @@ export default {
     }
   },
   created() {
-    this.detail.Mst = Array.isArray(this.data.data)
-      ? this.data.data[0]
-      : this.data.data
-    this.$nextTick(() => {
-      this.account = this.detail.Mst.OrgPhid
-      this.getData()
-      this.getAccountList({
-        OrgPhid: 488181024000001,
-        // OrgPhid: this.detail.Mst.OrgPhid,
-        selectStr: ''
-      })
-    })
+    // this.detail.Mst = Array.isArray(this.data.data)
+    //   ? this.data.data[0]
+    //   : this.data.data
+    // this.$nextTick(() => {
+    //   this.getData()
+    //   this.getAccountList({
+    //     OrgPhid: 488181024000001,
+    //     // OrgPhid: this.detail.Mst.OrgPhid,
+    //     selectStr: ''
+    //   })
+    // })
   },
   mounted() {},
   methods: {
+    // 预算科目选择
+    kumuChange(e) {
+      console.log(e)
+      e.QtKmmc = this.kemuList.find(item => item.KMDM == e.QtKmdm).KMMC
+    },
+    // 获取支付单详情
+    getData() {
+      getPayment({
+        id: this.data.data.Mst.PhId,
+        // id: 401190528000001,
+        uid: '521180820000001', //用户id
+        orgid: '547181121000001', //组织id
+        ryear: '2019' //年度
+      })
+        .then(res => {
+          console.log('payList', res)
+          if (res.Status == 'error') {
+            return
+          }
+          this.detail.Mst = res.Mst
+          res.Dtls.forEach(item => (item.choosed = false))
+          this.detail.Dtls = res.Dtls
+        })
+        .catch(err => {
+          console.log('payList', err)
+        })
+    },
+    // 保存支付单接口
+    savePayList(suc, fail) {
+      let saveData = JSON.parse(JSON.stringify(this.detail))
+      delete saveData.Mst.checked
+      saveData.Mst.PersistentState = 2
+      if (saveData.Dtls.length > 0) {
+        saveData.Dtls.forEach(item => {
+          item.PersistentState = 2
+          delete item.choosed
+        })
+      }
+      console.log('save', saveData)
+      savePayList({
+        uid: 521180820000001,
+        orgid: 521180820000002,
+        infoData: saveData
+      })
+        .then(res => {
+          if (res.Status == 'error') {
+            if (typeof fail == 'function') fail()
+            this.$msgBox.error(res.Msg)
+          } else {
+            if (typeof suc == 'function') suc()
+            this.getData()
+          }
+        })
+        .catch(err => {
+          if (typeof fail == 'function') fail()
+          this.$msgBox.error(err)
+          console.log('save err', err)
+        })
+    },
+    // 获取预算科目列表
+    getBudgetAccountsList() {
+      getBudgetAccountsList({})
+        .then(res => {
+          if (res.Status == 'error') {
+            this.$msgBox.error(res.Msg)
+            return
+          }
+          this.kemuList = res.Record
+          console.log('account', res)
+        })
+        .catch(err => {
+          this.$msgBox.error(err)
+          console.log('account error', err)
+        })
+    },
     // 获取付款银行档案
     getAccountList(data) {
       BankAccountList(data)
         .then(res => {
           if (res.Status == 'error') {
-            this.$msgBox.show(res.Msg)
+            this.$msgBox.error(res.Msg)
           } else {
+            this.account = this.detail.Mst.OrgPhid
             this.accountList = res.Record
           }
         })
         .catch(err => {
-          this.$msgBox.show('获取银行档案列表失败!')
+          this.$msgBox.error('获取银行档案列表失败!')
         })
+    },
+    // 获取到新的银行信息
+    getBank(data) {
+      console.log(data)
+      if (this.bankChooseData.data.choosed) {
+        this.detail.Dtls.forEach(item => {
+          if (item.choosed) {
+            item.FRecAcntname = data.FBankname
+            item.FRecAcnt = data.FAccount
+            item.FPayBankcode = data.FOpenAccount
+            item.FRecBankcode = data.FBankcode
+          }
+        })
+      } else {
+        this.bankChooseData.data.FRecAcntname = data.FBankname
+        this.bankChooseData.data.FRecAcnt = data.FAccount
+        this.bankChooseData.data.FPayBankcode = data.FOpenAccount
+        this.bankChooseData.data.FRecBankcode = data.FBankcode
+      }
+    },
+    // 支付单 按钮事件
+    save(type) {
+      switch (type) {
+        case '':
+          if (this.reSetting) {
+            this.savePayList(() => {
+              this.$msgBox.show({
+                content: '保存成功。',
+                fn: () => {
+                  this.reSetting = false
+                  this.data.itemType = 'error'
+                }
+              })
+            })
+            return
+          }
+          this.savePayList(() => {
+            this.$msgBox.show({
+              content: '保存成功。'
+            })
+          })
+          break
+        case 'approvalData':
+        case 'payErrorHandleData':
+        case 'mergePayData':
+          this[type].openDialog = true
+          this[type].data = this.data.data
+          break
+        case 'new':
+          this.reSetting = true
+          this.data.itemType = 'notApprove'
+          break
+        case 'approval':
+          this.appDialog.title = '查看'
+          this.appDialog.btnGroup.cancelName = '取消'
+          this.appDialog.btnGroup.onfirmName = '确认'
+          this.$refs.approvalDialog.changeDialog()
+          break
+      }
     },
     // 批量设置转账方式
     selectFSamebankFocus() {
@@ -668,152 +788,11 @@ export default {
         }
       }
     },
-    getData() {
-      this.detail.Dtls = [
-        {
-          choosed: false,
-          PhId: '401190528000001',
-          MstPhid: '401190528000001',
-          OrgPhid: '521180820000002',
-          OrgCode: '100',
-          RefbillPhid: '7',
-          RefbillCode: 'zfbbf0007',
-          RefbillDtlPhid: '1',
-          RefbillDtlPhid2: '1',
-          FAmount: 1000.0,
-          FCurrency: '001',
-          FPayAcntname: '付款账户1',
-          FPayAcnt: '111001',
-          FPayBankcode: '102',
-          FRecAcntname: '收款账户1',
-          FRecAcnt: '222122',
-          FRecBankcode: '102',
-          FRecCityname: '杭州市',
-          FSamecity: 0,
-          FSamebank: 1,
-          FIsurgent: 1,
-          FCorp: 1,
-          FUsage: '用途信息',
-          FPostscript: '附言：xxx',
-          FExplation: '摘要-修改',
-          FDescribe: '描述-修改',
-          FSubmitdate: null,
-          FSeqno: null,
-          FBkSn: null,
-          FResult: null,
-          FResultmsg: null,
-          FState: 0,
-          FNewCode: null,
-          XmProjcode: 'XM0001', //项目代码
-          XmProjname: '项目0001', //项目名称
-          BudgetdtlName: '预算明细项目001', //明细项目名称
-          FDepartmentcode: '100.1', //补助单位/部门代码
-          FDepartmentname: '省总财务部', //补助单位/部门名称
-          QtKmdm: null, //预算科目代码
-          QtKmmc: null, //预算科目名称
-          PersistentState: 0,
-          NgRecordVer: 2,
-          NgInsertDt: '2019-05-28 09:57:50',
-          NgUpdateDt: '2019-05-28 13:23:27',
-          Creator: '521180820000001',
-          Editor: '521180820000001',
-          CurOrgId: '521180820000002'
-        },
-        {
-          PhId: '401190528000002',
-          MstPhid: '401190528000001',
-          OrgPhid: '521180820000002',
-          OrgCode: '100',
-          RefbillPhid: '7',
-          choosed: false,
-          RefbillCode: 'zfbbf0007',
-          RefbillDtlPhid: '2',
-          RefbillDtlPhid2: '2',
-          FAmount: 1006.0,
-          FCurrency: '001',
-          FPayAcntname: '付款账户2',
-          FPayAcnt: '111002',
-          FPayBankcode: '102',
-          FRecAcntname: '收款账户1',
-          FRecAcnt: '222122',
-          FRecBankcode: '102',
-          FRecCityname: '杭州市',
-          FSamecity: 0,
-          FSamebank: 1,
-          FIsurgent: 1,
-          FCorp: 1,
-          FUsage: '用途信息2',
-          FPostscript: '附言：xxx2',
-          FExplation: '摘要2-修改',
-          FDescribe: '描述2-修改',
-          FSubmitdate: null,
-          FSeqno: null,
-          FBkSn: null,
-          FResult: null,
-          FResultmsg: null,
-          FState: 0,
-          FNewCode: null,
-          XmProjcode: 'XM0001',
-          XmProjname: '项目0001',
-          BudgetdtlName: '预算明细项目002',
-          FDepartmentcode: '100.1',
-          FDepartmentname: '省总财务部',
-          QtKmdm: null,
-          QtKmmc: null,
-          PersistentState: 0,
-          NgRecordVer: 2,
-          NgInsertDt: '2019-05-28 09:57:50',
-          NgUpdateDt: '2019-05-28 13:23:35',
-          Creator: '521180820000001',
-          Editor: '521180820000001',
-          CurOrgId: '521180820000002'
-        }
-      ]
-      return
-      this.getAxios('GGK/GKPaymentMstApi/GetPayment4Zjbf', {
-        id: this.data.data.PhId,
-        // id: 401190528000001,
-        uid: '521180820000001', //用户id
-        orgid: '547181121000001', //组织id
-        ryear: '2019' //年度
-      })
-        .then(res => {
-          console.log(res)
-          if (res.Status == 'error') {
-            return
-          }
-          res.Dtls.forEach(item => (item.choosed = false))
-          this.detail.Dtls = res.Dtls
-          // this.$nextTick(() => {
-          //   this.$refs.payListTable.doLayout()
-          // })
-        })
-        .catch(err => {
-          console.log(err)
-        })
-    },
-    // 获取银行
-    getBank(data) {
-      console.log(data)
-      if (this.bankChooseData.data.choosed) {
-        this.detail.Dtls.forEach(item => {
-          if (item.choosed) {
-            item.FRecAcntname = data.FBankname
-            item.FRecAcnt = data.FAccount
-            item.FPayBankcode = data.FOpenAccount
-            item.FRecBankcode = data.FBankcode
-          }
-        })
-      } else {
-        this.bankChooseData.data.FRecAcntname = data.FBankname
-        this.bankChooseData.data.FRecAcnt = data.FAccount
-        this.bankChooseData.data.FPayBankcode = data.FOpenAccount
-        this.bankChooseData.data.FRecBankcode = data.FBankcode
-      }
-    },
+    // 关闭审批流程框
     closeAuditFollow() {
       this.showAuditfollow = false
     },
+    // 关闭支付单弹框
     payListClose(done) {
       if (this.reSetting) {
         console.log('setting')
@@ -823,9 +802,6 @@ export default {
       } else {
         done()
       }
-    },
-    showFundDetail() {
-      this.fundDetailData.openDialog = true
     },
     // dialog中的check事件
     selectOne($scope) {
@@ -846,77 +822,33 @@ export default {
         item.choosed = choosed
       })
     },
-    // 支付单详情事件
-    save(type) {
-      switch (type) {
-        case '':
-          if (this.reSetting) {
-            this.$msgBox.show({
-              content: '保存成功。',
-              fn: () => {
-                this.reSetting = false
-                this.data.itemType = 'error'
-                this.detail.Dtls.unshift(this.oldDtls)
-              }
-            })
-            return
-          }
-          this.$msgBox.show({
-            content: '保存成功。'
-          })
-          return
-          break
-        case 'approvalData':
-        case 'payErrorHandleData':
-        case 'mergePayData':
-          this[type].openDialog = true
-          this[type].data = this.data.data
-          break
-        case 'new':
-          this.reSetting = true
-          this.data.itemType = 'notApprove'
-          this.oldDtls = this.detail.Dtls[0]
-          this.detail.Dtls.splice(0, 1)
-          this.detail.Dtls[0].RefbillDtlPhid2 = 2161905280009999
-          break
-        case 'approval':
-          this.appDialog.title = '查看'
-          this.appDialog.btnGroup.cancelName = '取消'
-          this.appDialog.btnGroup.onfirmName = '确认'
-          this.$refs.approvalDialog.changeDialog()
-          break
-      }
-    },
     // 测试用 选择银行
     selectBank(item) {
       console.log(123)
       this.bankChooseData.openDialog = true
       this.bankChooseData.data = item
-    }, // 测试用,清空select
-    clearItems(item) {
-      item['QtKmdm'] = ''
-      item['FSamebank'] = ''
-      item['FRecAcntname'] = ''
-      item['FRecAcnt'] = ''
-      item['FPayBankcode'] = ''
-      item['FRecBankcode'] = ''
     }
   },
   watch: {
-    // 'data.openDialog'(newVal) {
-    //   if (newVal) {
-    //     this.detail.Mst = Array.isArray(this.data.data)
-    //       ? this.data.data[0]
-    //       : this.data.data
-    //     if (this.detail.Mst.FApproval == 0) {
-    //       var Dtls = JSON.parse(JSON.stringify(this.detail.Dtls))
-    //       Dtls.forEach(item => {
-    //         this.clearItems(item)
-    //       })
-    //       this.detail.Dtls = Dtls
-    //     }
-    //   }
-    // }
+    'data.openDialog'(newVal) {
+      if (newVal) {
+        console.log(this.data.data)
+        this.detail = Array.isArray(this.data.data)
+          ? this.data.data[0]
+          : this.data.data
+        this.$nextTick(() => {
+          // this.getData()
+          this.getAccountList({
+            OrgPhid: 488181024000001,
+            // OrgPhid: this.detail.Mst.OrgPhid,
+            selectStr: ''
+          })
+          if (this.kemuList.length == 0) {
+            this.getBudgetAccountsList()
+          }
+        })
+      }
+    }
   }
 }
 </script>
@@ -981,6 +913,7 @@ export default {
           margin-top: 5px;
           margin-bottom: 10px;
           border-bottom: 1px #cccccc9e solid;
+          padding-bottom: 10px;
           > span {
             position: relative;
             float: left;
@@ -989,7 +922,6 @@ export default {
           > div {
             float: left;
             position: relative;
-            padding-bottom: 10px;
             // float: none;
             // margin-top: 35px;
             // margin-left: -0.9rem;
@@ -1082,6 +1014,7 @@ export default {
         margin-top: -0.1rem;
       }
       &:nth-of-type(2) {
+        cursor: auto;
         &::before {
           background-image: url('../../assets/images/wzf.png');
         }

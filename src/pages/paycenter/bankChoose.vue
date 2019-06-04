@@ -29,7 +29,7 @@
 <script>
 import bankorder from '@/components/bankorder'
 export default {
-  name: 'mergePay',
+  name: 'bankChoose',
   components: { bankorder },
   props: {
     data: {

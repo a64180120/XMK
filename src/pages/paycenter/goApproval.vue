@@ -196,14 +196,14 @@ export default {
           if (Array.isArray(this.data.data)) {
             this.data.data.forEach(item => {
               if (item.FApproval !== 9) {
-                item.checked = false
-                item.FApproval = 1
+                item.Mst.checked = false
+                item.Mst.FApproval = 1
               }
             })
           } else {
             if (this.data.data.FApproval !== 9) {
-              this.data.data.checked = false
-              this.data.data.FApproval = 1
+              this.data.data.Mst.checked = false
+              this.data.data.Mst.FApproval = 1
             }
           }
           vm.data.openDialog = false
@@ -234,7 +234,7 @@ export default {
 
 <style lang="scss" scoped>
 .dialog-title {
-  border-bottom: 1px solid #ccc;
+  border-bottom: 1px solid $borderColor_ccc;
   text-align: left;
   padding-left: 20px;
   > p {

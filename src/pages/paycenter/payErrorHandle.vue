@@ -63,12 +63,12 @@ export default {
           if (this.father) this.father.openDialog = false
           if (Array.isArray(this.data.data)) {
             this.data.data.forEach(item => {
-              item.checked = false
-              item.FState = 1
+              item.Mst.checked = false
+              item.Mst.FState = 1
             })
           } else {
-            this.data.data.checked = false
-            this.data.data.FState = 1
+            this.data.data.Mst.checked = false
+            this.data.data.Mst.FState = 1
           }
         }
       })
@@ -87,7 +87,7 @@ export default {
       width: 100%;
       text-align: left;
       font-size: 0.16rem;
-      border-bottom: 1px solid #eaeaea;
+      border-bottom: 1px solid $borderColor_ccc;
     }
   }
   .payCenterDialog {
