@@ -42,9 +42,9 @@
             </div>
             <div class="top">
               <ul>
-                <li>申报单位/部门：{{data.applyDepart}}</li>
-                <li>申报日期：{{data.applyDate}}</li>
-                <li>单位：4396.00元</li>
+                <li><span style="color: #3294e8;">申报单位/部门：</span>{{record.PaymentMst.FDepname}}</li>
+                <li><span style="color: #3294e8;">申报日期：</span>{{record.PaymentMst.FDate.substring(0,10)}}</li>
+                <li><span style="color: #3294e8;">申报金额：</span>{{record.PaymentMst.FAmountTotal | NumFormat}}元</li>
               </ul>
             </div>
             <div class="content">
@@ -56,12 +56,12 @@
                   </colgroup>
                   <tbody>
                   <tr>
-                    <td>申请单号</td>
-                    <td>{{data.BNum}}</td>
+                    <td style="color: #3294e8;">申请单号</td>
+                    <td>{{record.PaymentMst.FCode}}</td>
                   </tr>
                   <tr>
-                    <td>申请单位名称</td>
-                    <td>{{data.applyDepart}}</td>
+                    <td style="color: #3294e8;">申请单位名称</td>
+                    <td>{{record.PaymentMst.FOrgname+'-'+record.PaymentMst.FDepname}}</td>
                   </tr>
                   </tbody>
                 </table>
@@ -76,10 +76,10 @@
                   </colgroup>
                   <tbody>
                   <tr>
-                    <td>申请说明</td>
-                    <td>{{data.BDescribe}}</td>
-                    <td>申请金额合计</td>
-                    <td>{{data.applyAmount}}</td>
+                    <td  style="color: #3294e8;">申请说明</td>
+                    <td>{{record.PaymentMst.FDescribe}}</td>
+                    <td  style="color: #3294e8;">申请金额合计</td>
+                    <td>{{record.PaymentMst.FAmountTotal | NumFormat}}</td>
                   </tr>
                   </tbody>
                 </table>
@@ -91,7 +91,7 @@
                   </colgroup>
                   <tbody>
                   <tr>
-                    <td>申请拨付明细</td>
+                    <td  style="background-color: #3294e86b">申请拨付明细</td>
                   </tr>
                   </tbody>
                 </table>
@@ -108,12 +108,12 @@
                   </colgroup>
                   <tbody>
                   <tr>
-                    <td>项目编码</td>
-                    <td>项目名称</td>
-                    <td>补助单位/部门</td>
-                    <td>明细项目名称</td>
-                    <td>申请金额</td>
-                    <td>备注</td>
+                    <td  style="color: #3294e8;">项目编码</td>
+                    <td  style="color: #3294e8;">项目名称</td>
+                    <td  style="color: #3294e8;">补助单位/部门</td>
+                    <td  style="color: #3294e8;">明细项目名称</td>
+                    <td  style="color: #3294e8;">申请金额</td>
+                    <td  style="color: #3294e8;">备注</td>
                   </tr>
                   </tbody>
                 </table>
@@ -129,18 +129,22 @@
                     <col width="16%">
                   </colgroup>
                   <tbody>
-                  <tr v-for="(item,idx) in data.table">
-                    <td :rowspan="idx%3==0 ?'3':'1'" v-if="idx%3==0">
-                      {{item.id}}
-                    </td>
-                    <td :rowspan="idx%3==0 ?'3':'1'" v-if="idx%3==0">
-                      {{item.BName}}
-                    </td>
-                    <td>{{item.depart}}</td>
-                    <td>{{item.name}}</td>
-                    <td style="text-align: right">{{item.amount}}</td>
-                    <td >{{item.remark}}</td>
-                  </tr>
+                  <template v-for="(item) in record.PaymentXmDtl" v-if="record.PaymentXmDtl">
+                    <tr v-for="(xm,idx) in item.PaymentDtls" v-if="item.PaymentDtls">
+                      <td :rowspan="item.PaymentDtls.length" v-if="idx%3==0">
+                        {{item.PaymentXm.XmProjcode}}
+                      </td>
+                      <td :rowspan="item.PaymentDtls.length" v-if="idx%3==0">
+                        {{item.PaymentXm.XmProjname}}
+                      </td>
+                      <td>{{xm.FDepartmentname}}</td>
+                      <td>{{xm.BudgetdtlName}}</td>
+                      <td style="text-align: right">{{xm.FAmount | NumFormat}}</td>
+                      <td >{{xm.FPayment}}</td>
+
+                    </tr>
+
+                  </template>
                   </tbody>
                 </table>
               </div>
@@ -179,6 +183,16 @@
     <go-approval  :data="approvalDataS"></go-approval>
     <!--生成支付单-->
     <approval-dialog ref="approvalDialog" :title="appDialog.title" :btn-group="appDialog.btnGroup" :data="approvalData"></approval-dialog>
+    <!--附件查看-->
+    <el-dialog class="dialog img-dialog" :visible.sync="dialogVisible" :append-to-body="true" :close-on-click-modal="false" width="40%">
+      <div slot="title" class="dialog-title">
+        <span style="float: left">查看附件</span>
+      </div>
+      <div class="btn-load">
+        <el-button class="btn">下载</el-button>
+      </div>
+      <img-view v-if="dialogVisible"></img-view>
+    </el-dialog>
   </section>
 
   <!--内层弹框-->
@@ -187,9 +201,10 @@
 <script>
     import ApprovalDialog from "../../pages/payfundapproval/approvalDialog";
     import goApproval from '../../pages/paycenter/goApproval.vue';
+    import ImgView from "../imgView/imgView";
     export default {
         name: "applybill",
-      components: {ApprovalDialog,goApproval},
+      components: {ApprovalDialog,goApproval,ImgView},
       props:{applyNum:String},
       data(){
           return {
@@ -198,6 +213,26 @@
             delmsgType:false,//点击删除后的提示弹窗
             msg:'',//删除提示消息
             time:3,//倒计时
+            record:{
+              PaymentMst:{
+                FDepname:'',
+                FDate:'',
+                FAmountTotal:'',
+                FCode:'',
+                FOrgname:'',
+                FDescribe:'',
+              },
+              PaymentXmDtl:[{PaymentDtls:{
+                  PhId:'',
+                  BudgetdtlName:'',
+                  FDepartmentname:'',
+                  FAmount:'',
+                  FPayment:''
+                },PaymentXm:{
+                  XmProjcode:'',
+                  XmProjname:''
+                }}],
+            },
             data:{applyDepart:'浙江省总工会本级办公室',
               applyDate:new Date().getFullYear()+"-"+ (new Date().getMonth()+1)+"-"+ new Date().getDate(),
               applyAmount:'4,567.90',
@@ -263,6 +298,7 @@
               data: {}
             },
             timeF:'',
+            dialogVisible:false,//附件查看弹窗
           }
       },
       watch:{
@@ -271,15 +307,23 @@
         },
       },
       mounted(){
-          this.$nextTick(
+         /* this.$nextTick(
             this.getApply()
-          );
+          );*/
 
       },
       methods:{
           //申请单查看
         getApply:function(){
           console.log(this.applyNum+'这里添加数据查询方法');
+          let param={fPhId:this.applyNum};
+
+          this.getAxios('GBK/PaymentMstApi/GetPaymentMst',param).then(res=>{
+            console.log(res);
+            this.record=res;
+          }).catch(err=>{
+            console.log(err);
+          })
         },
         //生成支付单
         creatApply:function(){
@@ -343,7 +387,8 @@
         },
         //点击文件列表
         clickFolder(file){
-          this.$emit('showImg',file)
+          //this.$emit('showImg',file)
+          this.dialogVisible=true;
         }
       }
     }
@@ -452,10 +497,10 @@
 
     > .top {
       > ul {
-        margin: 8px 0;
+        margin: 8px 1%;
         list-style: none;
         float: left;
-        width: 100%;
+        width: 98%;
 
         > li {
           width: 33%;
@@ -473,6 +518,8 @@
     }
 
     > .content {
+      width: 98%;
+      margin-left: 1%;
       > .top-tbody {
         > table {
           border: 1px solid #eaeaea;

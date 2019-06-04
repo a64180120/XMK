@@ -98,8 +98,6 @@ export default {
                         this.$msgBox.show('删除数据失败!')
                     })
                 })
-      
-            
         }
     },
     mounted(){

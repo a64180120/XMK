@@ -11,9 +11,9 @@
                      <el-select v-model="orderType" placeholder="请选择">
                         <el-option
                         v-for="item in options"
-                        :key="item.value"
+                        :key="item.Value"
                         :label="item.label"
-                        :value="item.value">
+                        :value="item.Value">
                         </el-option>
                     </el-select>
                 </div>
@@ -27,31 +27,53 @@
 </template>
 
 <script>
+import {PostAddProcType,PostUpdateProcType} from '@/api/systemSetting/audit'
 export default {
     name:'auditTypeAdd',
     props:{
         type:{
             type:String,
             default:'add'
+        },
+        typeinfo:{
+            type:Object,
+            default(){
+                return {}
+            }
         }
     },
     data(){
         return{
-            orderType:'',
+            orderType:'001',
             auditType:'',
             options:[
-                {value:'1',label:'资金拨付单'},
-                {value:'2',label:'支付单'},
-                {value:'3',label:'项目用款单'},
-                {value:'4',label:'预算审核单'},
-                {value:'5',label:'项目申报单'}
+                {Value:'001',label:'资金拨付单'},
+                {Value:'002',label:'支付单'},
+                {Value:'003',label:'项目用款单'},
+                {Value:'004',label:'预算审核单'},
+                {Value:'005',label:'项目申报单'}
             ]
         }
     },
     methods:{
         update(){  //保存
-            this.$msgBox.show('保存成功!')
-            this.$emit('add-cancle');
+            let data={
+                "BillType":this.orderType,
+                "ApprovalTypeName":this.auditType,
+                "ApprovalTypeCode":'0002',
+                "Orgid":'521180820000001',
+                "OrgCode":'1'
+            }
+            PostAddProcType(data).then(res=>{
+                if(res.Status=="error"){
+                    this.$msgBox.show(res.Msg);
+                }else{
+                    this.$msgBox.show('保存成功!')
+                    this.$emit('add-cancle');
+                }
+            }).catch(err=>{
+                this.$msgBox.show('保存失败!')
+            })
         }
     }
 }
