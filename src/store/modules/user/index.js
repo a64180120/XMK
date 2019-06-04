@@ -10,7 +10,11 @@ const state = {
     //用户名称
     username: "",
     //组织列表
-    orglist:[]
+    orglist:[],
+    //当前选中组织
+    orgid:'', //id
+    orgcode:'', //编码
+    orgname:'',//名称
 };
 
 //计算获取取新数据
@@ -36,8 +40,18 @@ const mutations = {
     },
     //组织列表
     setOrglist(state,data){
-
         state.orglist=data;
+    },
+    //修改当前组织
+    setOrganize(state,data){
+        state.orgid=data.PhId;
+        state.orgcode=data.OCode;
+        state.orgname=data.OName;
+
+    },
+    //修改年度
+    setYear(state,data){
+        state.year=data
     }
 };
 

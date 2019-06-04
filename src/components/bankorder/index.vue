@@ -3452,10 +3452,7 @@ export default {
             //   "ExtendObjects": null
             // }],
 
-            accountList:[
-                {Phid:11111,OrgPhid:3333,name:'中国银行',FBankname:'王冠冠',FAccount:'3326605648526216',FBankcode:'10101'},
-                {Phid:222,OrgPhid:3333,name:'农业银行',FBankname:'刘杭',FAccount:'6606605643333216',FBankcode:'15502'},
-                {Phid:3333,OrgPhid:3333,name:'交通银行',FBankname:'夏华军',FAccount:'5555665648526216',FBankcode:'33254'}],
+            accountList:[]
         }
     },
     computed:{
