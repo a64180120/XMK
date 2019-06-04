@@ -51,11 +51,11 @@
               <div>
                 <span>项目名称：</span>
                 <span>
-                  <el-select size="small" v-model="item.PaymentXm.XmProjcode">
-                    <el-option v-for="pro in projectList"
-                               :label="pro.proName"
-                               :key="pro.proCode"
-                               :value="pro.proCode"
+                  <el-select size="small" v-model="item.PaymentXm.XmProjcode" @change="changePro(pindex)">
+                    <el-option v-for="pro in prodata.Mst"
+                               :label="pro.FProjName"
+                               :key="pro.FProjCode"
+                               :value="pro.FProjCode"
                     ></el-option>
                   </el-select>
                 </span>
@@ -191,7 +191,15 @@
   import ImgView from "../imgView/imgView";
   export default {
     name: "applypro",
-    props:{applyNum:String},
+    props:{
+      applyNum:String,
+      prodata:{
+        type:Object,
+        default:function () {
+          return []
+        }
+      }
+    },
     data(){
       return {
         msgType: false,//删除弹窗
@@ -321,6 +329,7 @@
       },
     },
     mounted(){
+      console.log(this.data);
       this.$nextTick(
         this.getApply(),
         this.getOrgList()
@@ -543,7 +552,24 @@
       clickFolder(file){
         //this.$emit('showImg',file)
         this.dialogVisible=true;
-      }
+      },
+      //选择主项目
+      changePro:function(index){
+        console.log(index);
+        let proCode=this.PaymentXmDtl[index].PaymentXm.XmProjcode;
+        for(var i in this.prodata.Mst){
+          if(proCode==this.proData.Mst[i].FProjCode){
+            this.PaymentXmDtl[index].PaymentXm.XmMstPhid=this.proData.Mst[i].PhId;
+            this.PaymentXmDtl[index].PaymentXm.XmProjname=this.proData.Mst[i].FProjName;
+            this.PaymentXmDtl[index].PaymentXm.FAmountTotal=this.proData.Mst[i].FProjAmount;
+            this.PaymentXmDtl[index].PaymentXm.FRemarks='';
+          }
+        }
+      },
+      //获取明细项目列表
+      getProDetail:function(index){
+
+      },
     }
   }
 </script>

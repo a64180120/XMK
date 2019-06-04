@@ -312,7 +312,7 @@
     <el-dialog class="applydialog" :title="applyproTitle"
                :visible.sync="applyproType"
                >
-       <applypro :applyNum="applyNum"  @delete="handleDelete"></applypro>
+       <applypro :applyNum="applyNum" :prodata="apartData"  @delete="handleDelete"></applypro>
     </el-dialog>
 
     <go-approval  :data="approvalDataS"></go-approval>
@@ -341,71 +341,7 @@
             checkList:[],//选择框列表
             dataList:{
               total:7,
-              data:[
-               /* {
-                  billDate: "2019-5-27",
-                  billMoney: 90434.53,
-                  billName: "专家授课课酬支付申请",
-                  billNote: "",
-                  billNum: "1558946679753TRIN",
-                  billSpType: 3,
-                  billZfType: 0
-                },
-                {
-                  billDate: "2019-5-22",
-                  billMoney: 7647.67,
-                  billName: "专家授课课酬支付申请",
-                  billNote: "",
-                  billNum: "1558946890819E",
-                  billSpType: 1,
-                  billZfType: 0
-                },
-                {
-                  billDate: "2019-5-21",
-                  billMoney: 3000,
-                  billName: "办公设备打印机购买",
-                  billNote: "",
-                  billNum: "1558946890819QX",
-                  billSpType: 2,
-                  billZfType: 0
-                },
-                {
-                  billDate: "2019-5-21",
-                  billMoney: 3000,
-                  billName: "办公设备打印机购买",
-                  billNote: "",
-                  billNum: "1558946890819QX",
-                  billSpType: 4,
-                  billZfType: 1
-                },
-                {
-                  billDate: "2019-5-21",
-                  billMoney: 3000,
-                  billName: "部门聚餐申请",
-                  billNote: "",
-                  billNum: "1558946890819QX",
-                  billSpType: 4,
-                  billZfType: 1
-                },
-                {
-                  billDate: "2019-5-27",
-                  billMoney: 90434.53,
-                  billName: "专家授课课酬支付申请",
-                  billNote: "",
-                  billNum: "1558946679753TR",
-                  billSpType: 4,
-                  billZfType: 2
-                },
-                {
-                  billDate: "2019-5-22",
-                  billMoney: 7647.67,
-                  billName: "专家授课课酬支付申请",
-                  billNote: "",
-                  billNum: "1558946890819WE",
-                  billSpType: 4,
-                  billZfType: 3
-                },*/
-              ],
+              data:[],
             },
             searchData:{
               approvalType:0,
@@ -455,7 +391,7 @@
             },
             approvalData:{
             },
-            apartData:{Mst:[],Amount:'0'}
+            apartData:{Mst:[],Amount:'0'},//选择部门后获取的项目信息
           }
       },
       components:{Applypro, Orgtree, Applybill, tophandle,pieChart,goApproval,Auditfollow,ApprovalDialog,num},
@@ -546,7 +482,6 @@
         },
         //q切换右侧项目是进行并状态数据切换
         getChartList:function(val){
-          console.log(val);
           switch(val){
             case 0:
               this.chartData.chart=[{name:'可申请',value:13210},{name:'冻结',value:1200},{name:'已使用',value:2301}];
@@ -585,10 +520,14 @@
             FBudgetDept: this.searchData.bmType //部门代码
           };
           this.getAxios('GYS/BudgetMstApi/GetBudgetMstList',param).then(res=>{
-            console.log('获取部门对应的项目及项目总额');
-            console.log(res);
-            console.log('===================');
             this.apartData=res;
+            let bmCode=this.searchData.bmType;
+            for(var i in this.bmList){
+              if(bmCode==this.bmList[i].OCode){
+                this.apartData['bm']=this.bmList[i];
+                return;
+              }
+            }
           }).catch(err=>{
             console.log(err);
           })
@@ -615,13 +554,15 @@
           }).catch(err=>{
             console.log(err);
           })
-
-          console.log('查询数据');
         },
         //分页pagesize修改触发事件
-        handleSizeChange:function(){},
+        handleSizeChange:function(){
+          this.getData();
+        },
         //当前页码修改触发事件
-        handleCurrentChange:function(){},
+        handleCurrentChange:function(){
+          this.getData()
+        },
         //dialog关闭前触发事件
         handleClose:function(){
             //alert('cloase');
