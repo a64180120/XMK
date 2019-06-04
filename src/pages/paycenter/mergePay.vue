@@ -253,22 +253,27 @@ export default {
           uid: '521180820000001',
           orgid: '547181121000001',
           ryear: '2019'
-        }).then(res => {
-          if (res.Status == 'error') {
-            this.$msgBox.error(res.Msg)
-            console.log(res)
-            return
-          }
-          this.$msgBox.show({
-            content: '支付操作成功！具体到账情况以银行处理时间为准。',
-            fn: () => {
-              this.showPassword = false
-              this.showMergePay = true
-              if (this.father) this.father.openDialog = false
-              this.data.openDialog = false
-            }
-          })
         })
+          .then(res => {
+            if (res.Status == 'error') {
+              this.$msgBox.error(res.Msg)
+              console.log(res)
+              return
+            }
+            this.$msgBox.show({
+              content: '支付操作成功！具体到账情况以银行处理时间为准。',
+              fn: () => {
+                this.showPassword = false
+                this.showMergePay = true
+                if (this.father) this.father.openDialog = false
+                this.data.openDialog = false
+              }
+            })
+          })
+          .catch(err => {
+            console.log(err)
+            this.$$msgBox.error(`支付失败！${err.message}`)
+          })
       }
     },
     clearNoNum(event) {

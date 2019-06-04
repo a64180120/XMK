@@ -522,7 +522,7 @@ export default {
         switch (type) {
           case 'payListData':
             if (checkedCount != 1) {
-              this.$msgBox.show({
+              this.$msgbox.error({
                 content: '请选择一条数据进行维护。',
                 fn: () => {}
               })
@@ -536,7 +536,7 @@ export default {
             ) {
               this.payListData.itemType = 'notApprove'
             } else {
-              this.$msgBox.show({
+              this.$msgbox.error({
                 content:
                   handleitem[0].Mst.FApproval == 1
                     ? '单据正在审批中。'
@@ -555,7 +555,7 @@ export default {
                 return item.Mst.FApproval == 9 && item.Mst.FState == 0
               })
             ) {
-              this.$msgBox.show({
+              this.$msgbox.error({
                 content:
                   "只有审批状态为“<span class='dangerText'>审批通过</span>”，支付状态为“<span class='dangerText'>待支付</span>”的单据，才可以使用【合并支付】。",
                 fn: () => {}
@@ -572,7 +572,7 @@ export default {
                 return item.Mst.FState == 2
               })
             ) {
-              this.$msgBox.show('只能对支付异常的单据进行处理。')
+              this.$msgbox.error('只能对支付异常的单据进行处理。')
               this.tableData.forEach(item => {
                 item.Mst.checked = false
               })
@@ -585,7 +585,7 @@ export default {
                 return item.Mst.FApproval == 0
               })
             ) {
-              this.$msgBox.show('只能对待送审的单据进行处理。')
+              this.$msgbox.error('只能对待送审的单据进行处理。')
               this.tableData.forEach(item => {
                 item.Mst.checked = false
               })

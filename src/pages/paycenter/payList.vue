@@ -599,6 +599,7 @@ export default {
           this.detail.Dtls = res.Dtls
         })
         .catch(err => {
+          this.$msgBox.error('获取支付单详情失败！')
           console.log('payList', err)
         })
     },
@@ -630,7 +631,7 @@ export default {
         })
         .catch(err => {
           if (typeof fail == 'function') fail()
-          this.$msgBox.error(err)
+          this.$msgBox.error('保存失败！')
           console.log('save err', err)
         })
     },
@@ -646,7 +647,7 @@ export default {
           console.log('account', res)
         })
         .catch(err => {
-          this.$msgBox.error(err)
+          this.$msgBox.error('获取预算科目列表失败！')
           console.log('account error', err)
         })
     },
