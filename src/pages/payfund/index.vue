@@ -233,20 +233,20 @@
           <!--部门选择-->
           <el-select size="small" style="width: 250px;" v-model="searchData.bmType" @change="changeApart">
             <el-option v-for="item in bmList"
-                       :key="item.value"
-                       :label="item.label"
-                       :value="item.value">
+                       :key="item.OCode"
+                       :label="item.OName"
+                       :value="item.OCode">
             </el-option>
           </el-select>
           <!--预算显示区域-->
           <el-card>
             <div>
-              <p style="color: #3294e8;">{{apartData.count}}</p>
+              <p style="color: #3294e8;">{{apartData.Mst.length}}</p>
               <div>预算支出项目总数</div>
             </div>
             <div>
               <p style="color:#f52c1d">
-                <num :vv="apartData.money"></num>
+                <num :vv="apartData.FAmount | NumFormat"></num>
                 <!--{{apartData.money}}--></p>
               <div>支出预算总额</div>
             </div>
@@ -426,7 +426,7 @@
             },
             approvalList:[{value:0,label:'全部'},{value:1,label:'待送审'},{value:2,label:'审批中'},{value:3,label:'审批未通过'},{value:4,label:'审批通过'}],
             payList:[{value:0,label:'全部'},{value:1,label:'待支付'},{value:2,label:'支付异常'},{value:3,label:'支付成功'}],
-            bmList:[{value:0,label:'办公室'},{value:1,label:'女工部'},{value:2,label:'财务与资产部'}],
+            bmList:[],
             bzList:[{value:0,label:'全部'},{value:1,label:'救灾补助项目'},{value:2,label:'送温暖项目'}],
             spTypeList:{'0':'待送审','1':'审批中','2':'未通过','9':'审批通过'},
             payTypeList:{'0':'待支付','1':'支付异常','9':'支付成功'},
@@ -455,13 +455,13 @@
             },
             approvalData:{
             },
-            apartData:{count:28,money:'30,989.32'}
+            apartData:{Mst:[],Amount:'0'}
           }
       },
       components:{Applypro, Orgtree, Applybill, tophandle,pieChart,goApproval,Auditfollow,ApprovalDialog,num},
       mounted(){
-          this.getData();
-          //this.dataFuc();
+          //this.getData();
+          this.getDataC();
         this.getCheckList(this.dataList.total);
       },
       watch:{
@@ -564,15 +564,34 @@
           }
         },
 
-
+        //获取部门
         getDataC:function(){
-          let param={uid:'488181024000001'};
-          this.$axios.get('GQT/CorrespondenceSettings2Api/GetSBUnit',{params:param}).then(res=>{
+          let param={Unit:'101'};
+          this.getAxios('GQT/CorrespondenceSettingsApi/GetDeptByUnit',param).then(res=>{
             console.log(res);
+            this.bmList=res.Record;
+            this.searchData.bmType=res.Record[0].OCode;
+            this.getData();
+            this.getAllProByBm();
           }).catch(err=>{
             console.log(err);
           })
-
+        },
+        //获取部门对应的项目及项目总额
+        getAllProByBm:function(){
+          let param={
+            FYear: '2019',  //年度
+            FDeclarationUnit: '101', //组织代码
+            FBudgetDept: this.searchData.bmType //部门代码
+          };
+          this.getAxios('GYS/BudgetMstApi/GetBudgetMstList',param).then(res=>{
+            console.log('获取部门对应的项目及项目总额');
+            console.log(res);
+            console.log('===================');
+            this.apartData=res;
+          }).catch(err=>{
+            console.log(err);
+          })
         },
         getData:function(){
           let param={
@@ -695,20 +714,9 @@
           this.$refs.approvalDialog.changeDialog()
         },
         changeApart:function(val){
-          // bmList:[{value:0,label:'办公室'},{value:1,label:'女工部'},{value:2,label:'财务与资产部'}],
-          switch(val){
-            case 0:
-              this.apartData={count:28,money:'30,989.32'};
-              break;
-            case 1:
-              this.apartData={count:8,money:'2,459.32'};
-              break;
-            case 2:
-              this.apartData={count:18,money:'120,000.13'};
-              break;
-            default:
-              break;
-          }
+          console.log(val);
+          this.getData();
+          this.getAllProByBm();
         }
       }
     }
