@@ -3479,7 +3479,6 @@ export default {
                 selectStr:''
             }
             BankAccountList(data).then(res=>{
-                 
                  if(res.Status=="error"){
                      this.$msgBox.show(res.Msg)
                  }else{

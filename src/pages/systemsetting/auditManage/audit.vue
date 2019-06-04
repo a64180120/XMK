@@ -60,10 +60,10 @@
                                         <el-checkbox v-model="type.checked" @change="typechoose(type)">{{n+1}}</el-checkbox>
                                         </td>
                                         <td>
-                                        支付审批
+                                        {{type.TypeName}}
                                         </td>
                                         <td>
-                                        支出单据
+                                        {{orders[type.Value]}}
                                         </td>
                                     </tr>
                                 </thead>
@@ -179,7 +179,7 @@
             <audit-add :type="auditBtn" @add-cancle="addCancle"></audit-add>
         </fDialog>
          <fDialog  :title="'审批类型'+(typeBtn=='add'?'新增':'修改')" :visible.sync="auditTypeAddShow">
-            <audittype-add :type="typeBtn" @add-cancle="typeCancle"></audittype-add>
+            <audittype-add :type="typeBtn" :typeinfo="typechoosedItem[0]" @add-cancle="typeCancle"></audittype-add>
         </fDialog>
     </div>
 </template>
@@ -191,10 +191,18 @@ import Orgtree from "@/components/orgtree/index"
 import fDialog from "@/components/attechment/dialog"
 import topHandle from '@/components/topNav/topHandle'
 import search from '@/components/searchInput/searchInput'
+import {PostAddProcType,GetProcTypes,PostUpdateProcType,PostDeleteProcType} from '@/api/systemSetting/audit'
 export default {
     name:'auditLiuCheng',
     data(){
         return{
+            orders:{
+                '001':'资金拨付单',
+                '002':'支付单',
+                '003':'项目用款单',
+                '004':'预算审核单',
+                '005':'项目申报单'
+            },
             typechecked:false,//类型全选状态
             typechoosedItem:[],//类型选中的行
             typeindeterminate:false,//类型半选状态
@@ -4623,10 +4631,14 @@ export default {
             }
         }
     },
+    mounted(){
+        this.getTypeData();
+    },
     methods:{
         search(val){
             console.log(val)
         },
+        
         deleteAudit(){  //流程删除
             this.$confirm('此操作将永久删除该流程, 是否继续?', '提示', {
                 confirmButtonText: '确定',
@@ -4642,18 +4654,58 @@ export default {
             this.auditBtn=val;
             this.auditAddShow=true;
         },
+        //获取类型列表
+        getTypeData(){
+            let data={
+                orgid:'521180820000001'
+            }
+            GetProcTypes(data).then(res=>{
+                if(res.Status=='error'){
+                    this.$msgBox.show(res.Msg)
+                }else{
+                    console.log(res.Data)
+                    this.typeList=res.Data;    
+                }
+            }).catch(err=>{
+                this.$msgBox.show('获取类型列表失败!')
+            })
+        },
+        //删除类型
         deletetype(){
+            if(this.typechoosedItem.leng==0){
+                this.$msgBox.show('请选择一行审批类型!')
+            }
             this.$confirm('此操作将永久删除该类型, 是否继续?', '提示', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
                 type: 'warning'
                 }).then(()=>{
-                    this.$msgBox.show('删除成功!')
+                    let data={
+                        ApprovalTypeId:this.typechoosedItem[0].PhId
+                    }
+                    PostDeleteProcType(data).then(res=>{
+                         this.$msgBox.show(res.Msg);
+                         if(res.Status=='success'){
+                             this.getTypeData();
+                         }
+                    }).catch(err=>{
+                        this.$msgBox.show('删除类型失败!');
+                    })
+                   
                 }).catch(()=>{
 
                 })
         },
         showAuditTypeAdd(val){ //类型编辑
+            if(this.typechoosedItem.length==0){
+                this.$msgBox.show('请选择一行数据!');
+                return;
+            }
+            if(this.typechoosedItem.length>1){
+                this.$msgBox.show('请只选择一行数据!');
+                return;
+            }
+            console.log(this.typechoosedItem)
             this.typeBtn=val;
             this.auditTypeAddShow=true;
         },
@@ -4662,6 +4714,7 @@ export default {
         },
         typeCancle(){//类型弹窗关闭
             this.auditTypeAddShow=false;
+            this.getTypeData();
         },
         handleCurrentChange(val){
             console.log(1111,val)
@@ -4795,7 +4848,7 @@ export default {
     }
     .container{
         left:200px;
-        top:150px;      
+        top:160px;      
         .searchCon{
             padding:10px;
             float:right;
