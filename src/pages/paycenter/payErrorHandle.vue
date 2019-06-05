@@ -28,7 +28,11 @@
 </template>
 
 <script>
-import { postRefreshPaymentState } from '@/api/paycenter'
+import {
+  postRefreshPaymentState,
+  postRefreshPaymentsState,
+  postUpdatePaymentsState
+} from '@/api/paycenter'
 export default {
   name: 'payErrorHandle',
   components: {},
@@ -44,6 +48,7 @@ export default {
       default: null
     }
   },
+  inject: ['refreshIndexData'],
   data() {
     return {
       radio: ''
@@ -60,32 +65,30 @@ export default {
         this.$msgBox.show('请选择一种处理方式。')
         return
       }
-      let suc = () => {
-        this.data.openDialog = false
-        this.$msgBox.show({
-          content: '处理成功',
-          fn: () => {
-            if (this.father) this.father.openDialog = false
-            if (Array.isArray(this.data.data)) {
-              this.data.data.forEach(item => {
-                item.Mst.checked = false
-                item.Mst.FState = 1
-              })
-            } else {
-              this.data.data.Mst.checked = false
-              this.data.data.Mst.FState = 1
-            }
-          }
-        })
-      }
       if (this.radio == 0) {
+        // 重新刷新支付状态
         if (!Array.isArray(this.data.data)) {
-          this.postRefreshPaymentState(suc)
+          this.postRefreshPaymentState()
+        } else {
+          var ids = this.data.data.map(item => {
+            return item.Mst.PhId
+          })
+          this.postRefreshPaymentsState(ids)
+        }
+      } else {
+        // 直接更改支付状态
+        if (!Array.isArray(this.data.data)) {
+          this.postUpdatePaymentsState([this.data.data.Mst.PhId])
+        } else {
+          var ids = this.data.data.map(item => {
+            return item.Mst.PhId
+          })
+          this.postUpdatePaymentsState(ids)
         }
       }
     },
     // 刷新并获取支付单支付状态
-    postRefreshPaymentState(fn) {
+    postRefreshPaymentState() {
       postRefreshPaymentState({
         id: this.data.data.Mst.PhId,
         uid: '521180820000001',
@@ -97,14 +100,67 @@ export default {
             this.$msgBox.error(res.Msg)
             return
           }
-          if (fn) fn(this)
-          this.detail = res
-          this.detail.Dtls.forEach(item => {
-            this.$set(item, 'choosed', false)
+          this.data.openDialog = false
+          this.refreshIndexData()
+          this.$msgBox.show({
+            content: '处理成功',
+            fn: () => {
+              if (this.father) this.father.openDialog = false
+            }
           })
         })
         .catch(err => {
           this.$msgBox.err('发起线上异常处理失败！')
+          console.log(err)
+        })
+    },
+    // 刷新并获取支付单支付状态-多笔
+    postRefreshPaymentsState(ids) {
+      postRefreshPaymentsState({
+        infoData: ids,
+        uid: '521180820000001',
+        orgid: '547181121000001'
+      })
+        .then(res => {
+          if (res.Status == 'error') {
+            this.$msgBox.error(res.Msg)
+            return
+          }
+          this.refreshIndexData()
+          this.data.openDialog = false
+          this.$msgBox.show({
+            content: res.Msg || '处理成功',
+            fn: () => {
+              if (this.father) this.father.openDialog = false
+            }
+          })
+        })
+        .catch(err => {
+          this.$msgBox.err('发起线上异常处理失败！')
+          console.log(err)
+        })
+    },
+    // 批量更新支付单支付状态
+    postUpdatePaymentsState(infoData) {
+      postUpdatePaymentsState({
+        uid: '631181115000001',
+        orgid: '547181121000001',
+        infoData: infoData,
+        value: 1
+      })
+        .then(res => {
+          if (res.Status == 'error') {
+            this.$msgBox.error(res.Msg)
+            return
+          }
+          this.refreshIndexData()
+          this.data.openDialog = false
+          this.$msgBox.show({
+            content: '操作成功！请在2小时后查看状态。'
+          })
+        })
+        .catch(err => {
+          this.$msgBox.err('消除异常失败！')
           console.log(err)
         })
     }

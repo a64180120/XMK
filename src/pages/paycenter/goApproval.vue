@@ -118,6 +118,7 @@ export default {
       default: '001'
     }
   },
+  inject: ['refreshIndexData'],
   data() {
     return {
       showAuditfollow: false,
@@ -185,28 +186,39 @@ export default {
     },
     //确认
     submit() {
-      postAddAppvalRecord({
-        RefbillPhid: 'zfbbf0006',
-        FBilltype: '002',
-        ProcPhid: '1',
-        PostPhid: '1',
-        NextOperators: ['1'],
-        FSeq: '',
-        FSendDate: '',
-        FApproval: '1',
-        FOpinion: this.content
-      })
-        .then(res => {
-          if (res.Status == 'error') {
-            this.$msgBox.error(res.Msg)
-            return
-          }
-          console.log(res)
+      console.log(this.data.data)
+      if (this.$parent.reSetting == undefined) {
+        // 直接送审
+        postAddAppvalRecord({
+          RefbillPhid: '230190527000002',
+          FBilltype: '002',
+          ProcPhid: '1',
+          PostPhid: '1',
+          NextOperators: ['1'],
+          FSeq: '',
+          FSendDate: '',
+          FApproval: '1',
+          FOpinion: this.content
         })
-        .catch(err => {
-          console.log(err)
-          this.$msgBox.error('送审失败！')
-        })
+          .then(res => {
+            if (res.Status == 'error') {
+              this.$msgBox.error(res.Msg)
+              return
+            }
+            this.refreshIndexData()
+            console.log(res)
+          })
+          .catch(err => {
+            console.log(err)
+            this.$msgBox.error('送审失败！')
+          })
+      } else if (this.$parent.reSetting) {
+        // 生成新的支付单，送审
+      } else {
+        // 保存支付单，送审
+      }
+      return
+
       return
       var vm = this
       this.$msgBox.show({

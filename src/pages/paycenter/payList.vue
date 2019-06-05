@@ -10,11 +10,15 @@
       :before-close="payListClose"
     >
       <div slot="title" class="dialog-title">
-        <span style="float: left">支付单查看</span>
+        <span v-if="!reSetting" style="float: left">支付单查看</span>
+        <span v-else style="float: left">发起重新支付</span>
       </div>
       <el-row :gutter="10">
         <el-col :span="24">
-          <span style="float:left;font-size:0.16rem;line-height:28px;">支付单号：{{detail.Mst.FCode}}</span>
+          <span
+            v-if="!reSetting"
+            style="float:left;font-size:0.16rem;line-height:28px;"
+          >支付单号：{{detail.Mst.FCode}}</span>
           <div class="top-btn">
             <template v-if="data.itemType == 'error'">
               <span class="btn btn-large" @click="save('payErrorHandleData')">异常处理</span>
@@ -240,7 +244,7 @@
                       </div>
                       <div :title="scope.row[scope.column.property]" class="table-item" v-else>
                         <span v-if="scope.row.FState == 1">————</span>
-                        <span v-else>{{scope.row[scope.column.property]}}</span>
+                        <span v-else>{{scope.row[scope.column.property]||'————'}}</span>
                       </div>
                     </template>
                   </el-table-column>
@@ -361,7 +365,12 @@ import auditfollow from '../../components/auditFollow/auditfollow'
 import ImgView from '../../components/imgView/imgView'
 import approvalDialog from '../payfundapproval/approvalDialog.vue'
 import { BankAccountList } from '@/api/bankaccount'
-import { getPayment, savePayList, getBudgetAccountsList } from '@/api/paycenter'
+import {
+  getPayment,
+  savePayList,
+  getBudgetAccountsList,
+  postAddPayList
+} from '@/api/paycenter'
 
 export default {
   name: 'payList',
@@ -375,6 +384,7 @@ export default {
     approvalDialog,
     ImgView
   },
+  inject: ['refreshIndexData'],
   props: {
     data: {
       type: Object,
@@ -473,7 +483,7 @@ export default {
           bodyAlign: 'center'
         },
         {
-          name: 'RefbillDtlPhid2',
+          name: 'FNewCode',
           label: '重新支付后关联支付单编号',
           width: '250',
           bodyAlign: 'center'
@@ -493,6 +503,10 @@ export default {
         {
           label: '支付异常',
           value: 2
+        },
+        {
+          label: '支付中',
+          value: 3
         }
       ],
       FPaymethodList: [
@@ -550,6 +564,8 @@ export default {
         },
         Dtls: []
       },
+      oldDetail: null,
+      errorDetail: null,
       appDialog: {
         title: '',
         btnGroup: {
@@ -559,20 +575,6 @@ export default {
       }
     }
   },
-  created() {
-    // this.detail.Mst = Array.isArray(this.data.data)
-    //   ? this.data.data[0]
-    //   : this.data.data
-    // this.$nextTick(() => {
-    //   this.getData()
-    //   this.getAccountList({
-    //     OrgPhid: 488181024000001,
-    //     // OrgPhid: this.detail.Mst.OrgPhid,
-    //     selectStr: ''
-    //   })
-    // })
-  },
-  mounted() {},
   methods: {
     // 预算科目选择
     kumuChange(e) {
@@ -602,6 +604,33 @@ export default {
           console.log('payList', err)
         })
     },
+    // 重新生成支付单
+    postAddPayList(suc) {
+      postAddPayList({
+        uid: 521180820000001, //用户id
+        orgid: 547181121000001, //组织id
+        ryear: '2019', //年度
+        infoData: this.detail
+      })
+        .then(res => {
+          if (res.Status == 'error') {
+            this.$msgBox.error(res.Msg)
+          } else {
+            this.$msgBox.show('保存成功')
+            this.oldDetail.Dtls.forEach(item => {
+              if (item.choosed) {
+                item.FNewCode = res.KeyCodes[0]
+              }
+            })
+            if (suc) suc()
+            this.refreshIndexData()
+          }
+        })
+        .catch(err => {
+          this.$msgBox.error('保存失败！')
+          console.log('save new err', err)
+        })
+    },
     // 保存支付单接口
     savePayList(suc, fail) {
       let saveData = JSON.parse(JSON.stringify(this.detail))
@@ -626,6 +655,7 @@ export default {
           } else {
             if (typeof suc == 'function') suc()
             this.getData()
+            this.refreshIndexData()
           }
         })
         .catch(err => {
@@ -634,7 +664,6 @@ export default {
           console.log('save err', err)
         })
     },
-
     // 获取预算科目列表
     getBudgetAccountsList() {
       getBudgetAccountsList({})
@@ -690,15 +719,7 @@ export default {
       switch (type) {
         case '':
           if (this.reSetting) {
-            this.savePayList(() => {
-              this.$msgBox.show({
-                content: '保存成功。',
-                fn: () => {
-                  this.reSetting = false
-                  this.data.itemType = 'error'
-                }
-              })
-            })
+            this.postAddPayList()
             return
           }
           this.savePayList(() => {
@@ -714,6 +735,65 @@ export default {
           this[type].data = this.data.data
           break
         case 'new':
+          let errorArr = this.detail.Dtls.filter(item => item.choosed)
+          console.log(errorArr)
+          if (errorArr.length == 0) {
+            this.$msgBox.error('请至少选择一条数据！')
+            return
+          } else if (errorArr.some(item => item.FState != 2)) {
+            this.$msgBox.error('只能对支付异常的项目重新支付！')
+            this.allSelected = false
+            this.detail.Dtls.forEach(item => (item.choosed = false))
+            return
+          } else if (
+            errorArr.some(item => {
+              item.FNewCode
+            })
+          ) {
+            this.$msgBox.error('只能对未生成新的支付单的项目重新支付！')
+            return
+          }
+          // 去除对象中的监听
+          errorArr = errorArr.map(item => {
+            return Object.assign({}, item)
+          })
+          var now = new Date().getTime().toString()
+          let Mst = Object.assign({}, this.detail.Mst, {
+              PhId: 0,
+              FCode: 'P' + now,
+              FAmountTotal: errorArr.reduce(
+                (prev, cur) => prev + cur.FAmount,
+                0
+              ),
+              FApproval: 0,
+              FDate: 0,
+              PersistentState: 1,
+              FState: 0
+            }),
+            Dtls = errorArr.map(item => {
+              return Object.assign(item, {
+                choosed: false,
+                PersistentState: 1,
+                PhId: 0,
+                MstPhid: 0,
+                FSubmitdate: null,
+                FSeqno: null,
+                FBkSn: null,
+                FResult: null,
+                FResultmsg: null,
+                FState: 0,
+                FNewCode: null,
+                ForeignKeys: null,
+                BusinessPrimaryKeys: null,
+                PersistentState: 1,
+                OldMstPhid: this.detail.Mst.PhId,
+                OldDtlPhid: item.PhId
+              })
+            })
+          console.log(Mst, Dtls, errorArr)
+          this.oldDetail = this.detail
+          this.detail = { Mst, Dtls }
+          this.allSelected = false
           this.reSetting = true
           this.data.itemType = 'notApprove'
           break
@@ -798,6 +878,8 @@ export default {
         console.log('setting')
         this.reSetting = false
         this.data.itemType = 'error'
+        this.detail = this.oldDetail
+        this.allSelected = this.detail.Dtls.every(item => item.choosed)
       } else {
         done()
       }
@@ -834,6 +916,7 @@ export default {
     'data.openDialog'(newVal) {
       if (newVal) {
         console.log(this.data.data)
+        this.allSelected = false
         this.detail = Array.isArray(this.data.data)
           ? this.data.data[0]
           : this.data.data
