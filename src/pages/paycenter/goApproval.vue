@@ -85,6 +85,7 @@
 
 <script>
 import auditfollow from '../../components/auditFollow/auditfollow'
+import { getAppvalProc, postAddAppvalRecord } from '@/api/paycenter'
 
 export default {
   name: 'goApproval',
@@ -112,6 +113,9 @@ export default {
     },
     reSetting: {
       default: false
+    },
+    bType: {
+      default: '001'
     }
   },
   data() {
@@ -181,6 +185,29 @@ export default {
     },
     //确认
     submit() {
+      postAddAppvalRecord({
+        RefbillPhid: 'zfbbf0006',
+        FBilltype: '002',
+        ProcPhid: '1',
+        PostPhid: '1',
+        NextOperators: ['1'],
+        FSeq: '',
+        FSendDate: '',
+        FApproval: '1',
+        FOpinion: this.content
+      })
+        .then(res => {
+          if (res.Status == 'error') {
+            this.$msgBox.error(res.Msg)
+            return
+          }
+          console.log(res)
+        })
+        .catch(err => {
+          console.log(err)
+          this.$msgBox.error('送审失败！')
+        })
+      return
       var vm = this
       this.$msgBox.show({
         content: '送审成功',
@@ -196,14 +223,14 @@ export default {
           if (Array.isArray(this.data.data)) {
             this.data.data.forEach(item => {
               if (item.FApproval !== 9) {
-                item.checked = false
-                item.FApproval = 1
+                item.Mst.checked = false
+                item.Mst.FApproval = 1
               }
             })
           } else {
             if (this.data.data.FApproval !== 9) {
-              this.data.data.checked = false
-              this.data.data.FApproval = 1
+              this.data.data.Mst.checked = false
+              this.data.data.Mst.FApproval = 1
             }
           }
           vm.data.openDialog = false
@@ -212,6 +239,21 @@ export default {
     }
   },
   created() {
+    getAppvalProc({
+      Orgid: '521180820000002',
+      BType: this.bType
+    })
+      .then(res => {
+        if (res.Status == 'error') {
+          this.$msgBox.error(res.Msg)
+          return
+        }
+        console.log(res)
+      })
+      .catch(err => {
+        console.log(err)
+        this.$msgBox.error('获取送审流程失败！')
+      })
     console.log(this.father, this.reSetting)
     this.nextData = this.nextDataList[0]
     if (this.data.openDialog) {
@@ -234,7 +276,7 @@ export default {
 
 <style lang="scss" scoped>
 .dialog-title {
-  border-bottom: 1px solid #ccc;
+  border-bottom: 1px solid $borderColor_ccc;
   text-align: left;
   padding-left: 20px;
   > p {

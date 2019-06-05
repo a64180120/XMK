@@ -24,64 +24,70 @@
     <div class="container">
       <div class="formArea">
         <div class="selects">
-          <span>支付单据</span>
-          <el-select
-            @change="selectType"
-            collapse-tags
-            v-model="type"
-            placeholder="请选择"
-            size="mini"
-            style="width:110px"
-          >
-            <el-option
-              v-for="item in typeList"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            ></el-option>
-          </el-select>
-          <span>支付状态</span>
-          <el-select
-            @change="selectStatus"
-            collapse-tags
-            v-model="status"
-            multiple
-            placeholder="请选择"
-            size="mini"
-          >
-            <el-option
-              v-for="item in statusList"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            ></el-option>
-          </el-select>
-          <span>申报日期</span>
-          <el-date-picker
-            v-model="sbrq"
-            type="datetimerange"
-            range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
-            size="mini"
-            class="large-input"
-            value-format="yyyy-MM-dd HH:mm:ss"
-          ></el-date-picker>
-          <span>支付日期</span>
-          <el-date-picker
-            v-model="zfrq"
-            type="datetimerange"
-            range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
-            size="mini"
-            class="large-input"
-            value-format="yyyy-MM-dd HH:mm:ss"
-          ></el-date-picker>
-          <div class="btns">
-            <div class="search">
-              <search-input placeholder="支付单编号/申请单编号" v-model="search" @btnClick="getData"></search-input>
-            </div>
+          <div ref="selectsContainer">
+            <i class="el-icon-d-arrow-left"></i>
+            <i class="el-icon-d-arrow-right"></i>
+            <span>支付单据</span>
+            <el-select
+              @change="selectType"
+              collapse-tags
+              v-model="type"
+              placeholder="请选择"
+              size="mini"
+              style="width:110px"
+            >
+              <el-option
+                v-for="item in typeList"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              ></el-option>
+            </el-select>
+            <span>支付状态</span>
+            <el-select
+              @change="selectStatus"
+              collapse-tags
+              v-model="status"
+              multiple
+              placeholder="请选择"
+              size="mini"
+            >
+              <el-option
+                v-for="item in statusList"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              ></el-option>
+            </el-select>
+            <span>申报日期</span>
+            <el-date-picker
+              v-model="sbrq"
+              type="datetimerange"
+              range-separator="至"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              size="mini"
+              class="large-input"
+              value-format="yyyy-MM-dd HH:mm:ss"
+              @change="getData"
+            ></el-date-picker>
+            <span>支付日期</span>
+            <el-date-picker
+              v-model="zfrq"
+              type="datetimerange"
+              range-separator="至"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              size="mini"
+              class="large-input"
+              @change="getData"
+              value-format="yyyy-MM-dd HH:mm:ss"
+            ></el-date-picker>
+          </div>
+        </div>
+        <div class="btns">
+          <div class="search">
+            <search-input placeholder="支付单编号/申请单编号" v-model="search" @btnClick="getData"></search-input>
           </div>
         </div>
         <div class="tableHead">
@@ -125,43 +131,47 @@
               <col width="13%">
             </colgroup>
             <thead>
-              <tr :class="{trActive:item.checked}" v-for="(item,index) in tableData" :key="index">
+              <tr
+                :class="{trActive:item.Mst.checked}"
+                v-for="(item,index) in tableData"
+                :key="index"
+              >
                 <td>
-                  <el-checkbox v-model="item.checked" @change="handleCheckOne(item)">{{index+1}}</el-checkbox>
+                  <el-checkbox v-model="item.Mst.checked" @change="handleCheckOne(item)">{{index+1}}</el-checkbox>
                 </td>
                 <td>
                   <div
                     @click="payNav('payListData',item)"
                     style="cursor:pointer;text-decoration:underline;"
-                  >{{item.FCode}}</div>
+                  >{{item.Mst.FCode}}</div>
                 </td>
                 <td>
-                  <div>{{item.FAmountTotal | NumFormat}}</div>
+                  <div>{{item.Mst.FAmountTotal | NumFormat}}</div>
                 </td>
                 <td>
-                  <div>{{item.FBilltype}}</div>
+                  <div>{{item.Mst.FBilltype}}</div>
                 </td>
                 <td>
-                  <div>{{item.RefbillCode}}</div>
+                  <div>{{item.Mst.RefbillCode}}</div>
                 </td>
                 <td>
-                  <div>{{item.NgInsertDt.replace('T',' ')}}</div>
+                  <div>{{item.Mst.NgInsertDt.replace('T',' ')}}</div>
                 </td>
                 <td>
-                  <div v-if="item.FApproval==0">待送审</div>
-                  <div v-else-if="item.FApproval==1">审批中</div>
-                  <div v-else-if="item.FApproval==2">未通过</div>
-                  <div v-else-if="item.FApproval==9">审批通过</div>
+                  <div v-if="item.Mst.FApproval==0">待送审</div>
+                  <div v-else-if="item.Mst.FApproval==1">审批中</div>
+                  <div v-else-if="item.Mst.FApproval==2">未通过</div>
+                  <div v-else-if="item.Mst.FApproval==9">审批通过</div>
                   <div v-else>————</div>
                 </td>
                 <td>
-                  <div v-if="item.FState==0">待支付</div>
-                  <div v-else-if="item.FState==1">支付成功</div>
-                  <div v-else-if="item.FState==2">支付异常</div>
+                  <div v-if="item.Mst.FState==0">待支付</div>
+                  <div v-else-if="item.Mst.FState==1">支付成功</div>
+                  <div v-else-if="item.Mst.FState==2">支付异常</div>
                   <div v-else>————</div>
                 </td>
                 <td>
-                  <div>{{item.FDate?item.FDate.replace('T',' '):"————"}}</div>
+                  <div>{{item.Mst.FDate?item.Mst.FDate.replace('T',' '):"————"}}</div>
                 </td>
               </tr>
             </thead>
@@ -200,10 +210,10 @@
       </div>
     </div>
     <!-- 支付单查看 -->
-    <pay-list v-if="payListData.openDialog" :data="payListData"></pay-list>
+    <pay-list :data="payListData"></pay-list>
     <merge-pay v-if="mergePayData.openDialog" :data="mergePayData"></merge-pay>
     <pay-error-handle v-if="payErrorHandleData.openDialog" :data="payErrorHandleData"></pay-error-handle>
-    <go-approval v-if="approvalData.openDialog" :data="approvalData"></go-approval>
+    <go-approval v-if="approvalData.openDialog" :bType="'002'" :data="approvalData"></go-approval>
   </div>
 </template>
 
@@ -325,10 +335,35 @@ export default {
   created() {
     this.getData()
   },
-  mounted() {},
+  mounted() {
+    let spans = document.querySelectorAll('.selects>div>span'),
+      selects = document.querySelectorAll('.selects>div>div'),
+      contentWidth = 0,
+      count = 0
+    spans.forEach(item => {
+      contentWidth += item.offsetWidth
+      count++
+    })
+    selects.forEach(item => {
+      contentWidth += item.offsetWidth
+      count++
+    })
+    contentWidth += count * 10
+    window.onresize = () => {
+      let container = this.$refs.selectsContainer
+      let containerWidth = container.offsetWidth
+      if (containerWidth >= contentWidth) {
+        container.className = ''
+        console.log('big')
+      } else {
+        console.log('small')
+        container.className = 'scroll'
+      }
+    }
+  },
   methods: {
     getData() {
-      var query = {
+      let query = {
         'NgInsertDt*date*ge*1': this.sbrq ? this.sbrq[0] || '' : '', //申报日期开始
         'NgInsertDt*date*le*1': this.sbrq ? this.sbrq[1] || '' : '', //申报日期结束
         'FDate*date*ge*1': this.zfrq ? this.zfrq[0] || '' : '', //支付日期开始
@@ -374,7 +409,8 @@ export default {
       }
       deleteBlank(query)
       console.log(query)
-      this.getAxios('GGK/GKPaymentMstApi/GetPaymentList', {
+      // this.getAxios('GGK/GKPaymentMstApi/GetPaymentList', {
+      this.getAxios('GGK/GKPaymentMstApi/GetPaymentList4Zjbf', {
         queryfilter: JSON.stringify(query),
         PageIndex: this.currentPage - 1, //当前第几页，从0开始
         PageSize: this.pageSize, //每页显示行数
@@ -389,7 +425,7 @@ export default {
           }
           this.total = res.totalRows
           this.tableData = res.Record.map(item => {
-            item.checked = false
+            item.Mst.checked = false
             return item
           })
         })
@@ -400,27 +436,26 @@ export default {
     // 主体全选事件
     handleCheckAll(val) {
       this.tableData.forEach(item => {
-        item.checked = val
+        item.Mst.checked = val
       })
     },
     handleCheckOne(item) {
-      if (!item.checked) {
+      if (!item.Mst.checked) {
         this.checkAll = false
       } else {
-        this.checkAll = this.tableData.every(item => item.checked)
+        this.checkAll = this.tableData.every(item => item.Mst.checked)
       }
     },
     // 导航栏事件
     payNav(type, item) {
-      this.noDataRefresh()
       if (item) {
-        if (item.FApproval == 0 || item.FApproval == 2) {
+        if (item.Mst.FApproval == 0 || item.Mst.FApproval == 2) {
           this.payListData.itemType = 'notApprove'
-        } else if (item.FState == 2) {
+        } else if (item.Mst.FState == 2) {
           this.payListData.itemType = 'error'
-        } else if (item.FState == 0 && item.FApproval == 9) {
+        } else if (item.Mst.FState == 0 && item.Mst.FApproval == 9) {
           this.payListData.itemType = 'pay'
-        } else if (item.FState == 1) {
+        } else if (item.Mst.FState == 1) {
           this.payListData.itemType = 'success'
         } else {
           this.payListData.itemType = ''
@@ -428,8 +463,8 @@ export default {
       } else {
         var handleitem = []
         let checkedCount = this.tableData.reduce((prev, cur) => {
-          if (cur.checked) handleitem.push(cur)
-          return prev + cur.checked
+          if (cur.Mst.checked) handleitem.push(cur)
+          return prev + cur.Mst.checked
         }, 0)
         if (handleitem.length < 1) {
           this.$msgBox.error({
@@ -443,29 +478,29 @@ export default {
         switch (type) {
           case 'payListData':
             if (checkedCount != 1) {
-              this.$msgBox.show({
+              this.$msgBox.error({
                 content: '请选择一条数据进行维护。',
                 fn: () => {}
               })
               this.tableData.forEach(item => {
-                item.checked = false
+                item.Mst.checked = false
               })
               return
             } else if (
-              handleitem[0].FApproval == 0 ||
-              handleitem[0].FApproval == 2
+              handleitem[0].Mst.FApproval == 0 ||
+              handleitem[0].Mst.FApproval == 2
             ) {
               this.payListData.itemType = 'notApprove'
             } else {
-              this.$msgBox.show({
+              this.$msgBox.error({
                 content:
-                  handleitem[0].FApproval == 1
+                  handleitem[0].Mst.FApproval == 1
                     ? '单据正在审批中。'
                     : '单据已经审批通过。',
                 fn: () => {}
               })
               this.tableData.forEach(item => {
-                item.checked = false
+                item.Mst.checked = false
               })
               return
             }
@@ -473,16 +508,16 @@ export default {
           case 'mergePayData':
             if (
               !handleitem.every(item => {
-                return item.FApproval == 9 && item.FState == 0
+                return item.Mst.FApproval == 9 && item.Mst.FState == 0
               })
             ) {
-              this.$msgBox.show({
+              this.$msgBox.error({
                 content:
                   "只有审批状态为“<span class='dangerText'>审批通过</span>”，支付状态为“<span class='dangerText'>待支付</span>”的单据，才可以使用【合并支付】。",
                 fn: () => {}
               })
               this.tableData.forEach(item => {
-                item.checked = false
+                item.Mst.checked = false
               })
               return
             }
@@ -490,12 +525,12 @@ export default {
           case 'payErrorHandleData':
             if (
               !handleitem.every(item => {
-                return item.FState == 2
+                return item.Mst.FState == 2
               })
             ) {
-              this.$msgBox.show('只能对支付异常的单据进行处理。')
+              this.$msgBox.error('只能对支付异常的单据进行处理。')
               this.tableData.forEach(item => {
-                item.checked = false
+                item.Mst.checked = false
               })
               return
             }
@@ -503,12 +538,12 @@ export default {
           case 'approvalData':
             if (
               !handleitem.every(item => {
-                return item.FApproval == 0
+                return item.Mst.FApproval == 0
               })
             ) {
-              this.$msgBox.show('只能对待送审的单据进行处理。')
+              this.$msgBox.error('只能对待送审的单据进行处理。')
               this.tableData.forEach(item => {
-                item.checked = false
+                item.Mst.checked = false
               })
               return
             }
@@ -518,19 +553,10 @@ export default {
       this[type].data = item || handleitem
       this[type].openDialog = true
     },
-    // tableData无数据处理
-    noDataRefresh() {
-      if (this.tableData.length === 0) {
-        this.notClosedAll = false
-        this.showMask = true
-        this.message = '暂无数据可以操作。'
-        this.tishi = true
-        return
-      }
-    },
     // 筛选
     selectType(cur) {
       console.log(cur, this.type)
+      this.getData()
     },
     selectStatus(cur) {
       if (cur && cur.length > 0) {
@@ -542,6 +568,7 @@ export default {
           this.status = ['']
         }
       }
+      this.getData()
     },
     // 分页
     handleSizeChange(val) {
@@ -607,145 +634,45 @@ export default {
     .selects {
       text-align: left;
       line-height: 28px;
-      height: 28px;
-      margin: 8px 0;
+      height: 29px;
+      margin: 8px 240px 8px 0px;
       box-sizing: border-box;
-      font-size: 0.14rem;
       color: #757575;
-      > span:not(:first-of-type) {
-        margin-left: 0px;
-        @media screen and (min-width: 1470px) {
+      overflow: hidden;
+
+      > div {
+        white-space: nowrap;
+        font-size: 0;
+        > i {
+          font-size: 0.2rem;
+        }
+        &.scroll {
+          padding: 0 20px;
+        }
+        > span {
+          font-size: 0.14rem;
+        }
+        > span:not(:first-of-type) {
           margin-left: 10px;
         }
-      }
-      > span + div {
-        width: 150px;
-        margin-left: 0px;
-        @media screen and (min-width: 1470px) {
+        > span + div {
+          width: 150px;
           margin-left: 10px;
-        }
-        &.large-input {
-          width: 280px;
+          &.large-input {
+            width: 320px;
+          }
         }
       }
-      .btns {
-        float: right;
-      }
+    }
+    .btns {
+      position: absolute;
+      top: 8px;
+      right: 0px;
     }
     .pages {
       position: absolute;
       bottom: 10px;
       right: 1%;
-    }
-  }
-  .mask {
-    position: fixed;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 2000;
-  }
-  .dialogContainer {
-    &.lowIndex {
-      z-index: 1999;
-    }
-    position: fixed;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 2001;
-    .payCenterDialog {
-      &.smallDialog {
-        width: 300px;
-      }
-      &.largeDialog {
-        width: 80%;
-      }
-      z-index: 2001;
-      background-color: #fff;
-      width: 50%;
-      padding: 20px;
-      display: inline-block;
-      vertical-align: middle;
-      .header {
-        text-align: left;
-        font-size: 0.24rem;
-        line-height: 0.24rem;
-        height: 0.24rem;
-        padding-bottom: 10px;
-        border-bottom: 1px solid #ccc;
-        color: #535252;
-        position: relative;
-        i.el-icon-close {
-          float: right;
-          cursor: pointer;
-          line-height: 0.24rem;
-        }
-      }
-      .content {
-        margin-top: 10px;
-        text-align: left;
-        font-size: 0.16rem;
-        > span {
-          line-height: 55px;
-        }
-        > .el-input {
-          width: auto;
-          line-height: 55px;
-        }
-        > img {
-          width: 55px;
-          height: 55px;
-          margin-right: 10px;
-        }
-        &.payList {
-          background-color: #f5f5f5;
-          padding: 10px;
-          margin-top: 15px;
-          .payDetail {
-            background-color: #fff;
-            border-radius: 5px;
-          }
-          .getDetail {
-            background-color: #fff;
-          }
-        }
-      }
-      .btns {
-        text-align: right;
-        padding-top: 10px;
-        .btn {
-          border: 1px solid $btnColor;
-          cursor: pointer;
-          &:not(:last-of-type) {
-            margin-right: 10px;
-          }
-          &.btn-cancel {
-            background: #fff;
-            color: $btnColor;
-            border: 1px solid $btnColor;
-          }
-          &.btn-large {
-            width: 88px;
-          }
-        }
-        .payId {
-          float: left;
-          line-height: 28px;
-        }
-      }
-      .el-collapse {
-        margin-top: 10px;
-      }
-    }
-    &::after {
-      content: '';
-      display: inline-block;
-      vertical-align: middle;
-      height: 100%;
     }
   }
 }

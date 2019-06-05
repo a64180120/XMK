@@ -28,6 +28,7 @@
 </template>
 
 <script>
+import { postRefreshPaymentState } from '@/api/paycenter'
 export default {
   name: 'payErrorHandle',
   components: {},
@@ -48,7 +49,10 @@ export default {
       radio: ''
     }
   },
-  created() {},
+  created() {
+    console.log(this.data.data)
+    console.log(this.data.father)
+  },
   mounted() {},
   methods: {
     errorHandle() {
@@ -56,22 +60,53 @@ export default {
         this.$msgBox.show('请选择一种处理方式。')
         return
       }
-      this.data.openDialog = false
-      this.$msgBox.show({
-        content: '处理成功',
-        fn: () => {
-          if (this.father) this.father.openDialog = false
-          if (Array.isArray(this.data.data)) {
-            this.data.data.forEach(item => {
-              item.checked = false
-              item.FState = 1
-            })
-          } else {
-            this.data.data.checked = false
-            this.data.data.FState = 1
+      let suc = () => {
+        this.data.openDialog = false
+        this.$msgBox.show({
+          content: '处理成功',
+          fn: () => {
+            if (this.father) this.father.openDialog = false
+            if (Array.isArray(this.data.data)) {
+              this.data.data.forEach(item => {
+                item.Mst.checked = false
+                item.Mst.FState = 1
+              })
+            } else {
+              this.data.data.Mst.checked = false
+              this.data.data.Mst.FState = 1
+            }
           }
+        })
+      }
+      if (this.radio == 0) {
+        if (!Array.isArray(this.data.data)) {
+          this.postRefreshPaymentState(suc)
         }
+      }
+    },
+    // 刷新并获取支付单支付状态
+    postRefreshPaymentState(fn) {
+      postRefreshPaymentState({
+        id: this.data.data.Mst.PhId,
+        uid: '521180820000001',
+        orgid: '547181121000001',
+        ryear: '2019'
       })
+        .then(res => {
+          if (res.Status == 'error') {
+            this.$msgBox.error(res.Msg)
+            return
+          }
+          if (fn) fn(this)
+          this.detail = res
+          this.detail.Dtls.forEach(item => {
+            this.$set(item, 'choosed', false)
+          })
+        })
+        .catch(err => {
+          this.$msgBox.err('发起线上异常处理失败！')
+          console.log(err)
+        })
     }
   },
   watch: {}
@@ -87,7 +122,7 @@ export default {
       width: 100%;
       text-align: left;
       font-size: 0.16rem;
-      border-bottom: 1px solid #eaeaea;
+      border-bottom: 1px solid $borderColor_ccc;
     }
   }
   .payCenterDialog {

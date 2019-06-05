@@ -23,16 +23,16 @@
             <span class="btn btn-cancel" @click="beforeClose('btn')">取消</span>
             <span class="btn" @click="enterPassword">确定</span>
           </div>
-          <el-collapse accordion>
+          <!-- <el-collapse>
             <el-collapse-item name="1">
               <template slot="title">
                 <i class="header-icon el-icon-menu" style="margin-left:10px;"></i>点击查看详细收款信息
               </template>
               <el-table max-height="200px" :data="gridData" border>
                 <el-table-column type="index" label="序号" width="50"></el-table-column>
-                <el-table-column property="date" label="收款方姓名"></el-table-column>
+                <el-table-column property="FDepartmentname" label="收款方姓名"></el-table-column>
                 <el-table-column
-                  property="name"
+                  property="FAmount"
                   header-align="center"
                   align="right"
                   label="待付金额"
@@ -43,7 +43,30 @@
                 </el-table-column>
               </el-table>
             </el-collapse-item>
-          </el-collapse>
+          </el-collapse>-->
+          <div @click="showList = !showList" class="collapse" style>
+            <i class="header-icon el-icon-menu" style="margin-left:10px;"></i>点击查看详细收款信息
+            <i
+              :class="{'el-icon-arrow-right':true,'trDown':showList}"
+              style="float:right"
+            ></i>
+          </div>
+          <template v-if="showList">
+            <el-table max-height="200px" :data="gridData" border>
+              <el-table-column type="index" label="序号" width="50"></el-table-column>
+              <el-table-column property="FDepartmentname" label="收款方姓名"></el-table-column>
+              <el-table-column
+                property="FAmount"
+                header-align="center"
+                align="right"
+                label="待付金额"
+                width="150"
+                class-name="pr15"
+              >
+                <template slot-scope="scope">{{scope.row[scope.column.property] | NumFormat}}</template>
+              </el-table-column>
+            </el-table>
+          </template>
         </div>
       </div>
       <!-- 支付口令 -->
@@ -56,7 +79,9 @@
                 :type="passwordCanSee?'text':'password'"
                 v-model="password"
                 placeholder="请输入支付口令"
+                :maxlength="6"
                 :disabled="needSet"
+                @keyup.native="clearNoNum"
               ></el-input>
               <img
                 v-show="passwordCanSee"
@@ -91,7 +116,9 @@
               <el-input
                 :type="newPasswordCanSee?'text':'password'"
                 v-model="newPassword"
-                placeholder="请输入支付口令"
+                placeholder="请输入6位数字口令"
+                :maxlength="6"
+                @keyup.native="clearNoNum"
               ></el-input>
               <img
                 v-show="newPasswordCanSee"
@@ -110,8 +137,10 @@
             <div class="passwordContent">
               <el-input
                 :type="confirmPasswordCanSee?'text':'password'"
+                :maxlength="6"
                 v-model="confirmPassword"
-                placeholder="请输入支付口令"
+                placeholder="请输入6位数字口令"
+                @keyup.native="clearNoNum"
               ></el-input>
               <img
                 v-show="confirmPasswordCanSee"
@@ -143,6 +172,14 @@
 </template>
 
 <script>
+import {
+  postSubmitPayment,
+  postPayPsd,
+  postSavePayPsd,
+  postJudgePayPsd
+} from '@/api/paycenter'
+import md5 from 'js-md5'
+
 export default {
   name: 'mergePay',
   components: {},
@@ -162,7 +199,7 @@ export default {
   data() {
     return {
       radio: 0,
-      activeName: '',
+      showList: false,
       newPassword: '',
       newPasswordCanSee: false,
       confirmPassword: '',
@@ -172,38 +209,87 @@ export default {
       showPassword: false,
       showSetting: false,
       password: '',
-      gridData: [
-        {
-          xuhao: 1,
-          date: '杭州市总工会',
-          name: '2254'
-        },
-        {
-          xuhao: 1,
-          date: '绍兴市市总工会',
-          name: '1000'
-        },
-        {
-          xuhao: 1,
-          name: '20000',
-          date: '杭州市总工会本级党支部'
-        }
-      ]
+      gridData: [],
+      needSet: false
     }
   },
-  created() {},
-
-  mounted() {},
+  created() {
+    console.log(this.data.data)
+    if (Array.isArray(this.data.data)) {
+      this.data.data.forEach(item => {
+        this.gridData = [...this.gridData, ...item.Dtls]
+      })
+    } else {
+      this.gridData = [...this.gridData, ...this.data.data.Dtls]
+    }
+  },
   methods: {
+    // 提交口令设置
     setPassword() {
-      this.showSetting = false
-      this.$parent.needSet = false
-      this.$parent.$parent.needSet = false
-      this.showPassword = true
+      if (this.confirmPassword == '' || this.newPassword == '') {
+        this.$msgBox.error('支付口令不能为空！')
+        return
+      }
+      if (this.confirmPassword.length < 6 || this.newPassword.length < 6) {
+        this.$msgBox.error('支付口令为6位数字！')
+        return
+      }
+      if (this.confirmPassword !== this.newPassword) {
+        this.$msgBox.error('两次输入的支付口令不一致！')
+        return
+      }
+      postSavePayPsd({
+        TypeCode: '999999',
+        TypeName: '管理员',
+        Orgid: '488181024000001',
+        Orgcode: '1',
+        value: md5(this.confirmPassword),
+        Isactive: this.radio
+      })
+        .then(res => {
+          if (res.Status == 'error') {
+            this.$msgBox.error(res.Msg)
+            console.log(res)
+            return
+          }
+          this.$msgBox.show('保存成功')
+          this.needSet = false
+          this.showSetting = false
+          this.showPassword = true
+        })
+        .catch(err => {
+          console.log(err)
+          this.$msgBox.error('保存支付口令失败')
+        })
     },
+    // 进入支付页面
     enterPassword() {
-      this.showMergePay = false
-      this.showPassword = true
+      postPayPsd({
+        TypeCode: '999999',
+        TypeName: '管理员',
+        Orgid: '488181024000001',
+        Orgcode: '1'
+      })
+        .then(res => {
+          if (res.Status == 'error') {
+            this.$msgBox.error(res.Msg)
+            console.log(res)
+            return
+          }
+          if (res == 2) {
+            this.needSet = true
+          }
+          if (res == 1) {
+            this.pay()
+            return
+          }
+          this.showMergePay = false
+          this.showPassword = true
+        })
+        .catch(err => {
+          console.log(err)
+          this.$msgBox.error(err.message)
+        })
     },
     beforeClose(done) {
       if (this.showMergePay) {
@@ -216,61 +302,79 @@ export default {
         this.showPassword = true
       }
     },
+    // 进入口令设置页面
     goSetting() {
       this.showPassword = false
       this.showSetting = true
     },
+    // 发起支付请求
     pay() {
-      var vm = this
-      this.$msgBox.show({
-        content: '支付操作成功！具体到账情况以银行处理时间为准。',
-        fn: () => {
-          this.showPassword = false
-          this.showMergePay = true
-          function Format(d) {
-            var year = d.getFullYear()
-            var month = change(d.getMonth() + 1)
-            var day = change(d.getDate())
-            var hour = change(d.getHours())
-            var minute = change(d.getMinutes())
-            var second = change(d.getSeconds())
-            function change(t) {
-              if (t < 10) {
-                return '0' + t
-              } else {
-                return t
-              }
-            }
-            var time =
-              year +
-              '-' +
-              month +
-              '-' +
-              day +
-              ' ' +
-              hour +
-              ':' +
-              minute +
-              ':' +
-              second
-            return time
-          }
-          if (Array.isArray(this.data.data)) {
-            this.data.data.forEach(item => {
-              item.FState = 1
-              item.checked = false
-              // 时间格式化
-              item.FDate = Format(new Date())
-            })
-          } else {
-            this.data.data.FState = 1
-            this.data.data.checked = false
-            this.data.data.FDate = Format(new Date())
-          }
-          if (vm.father) vm.father.openDialog = false
-          vm.data.openDialog = false
-        }
+      if (this.password == '') {
+        this.$msgBox.error('支付口令不能为空！')
+        return
+      }
+      if (this.password.length < 6) {
+        this.$msgBox.error('支付口令为6位数字！')
+        return
+      }
+      // 判断口令是否正确
+      postJudgePayPsd({
+        TypeCode: '999999',
+        Value: md5(this.password)
       })
+        .then(res => {
+          if (res.Status == 'error') {
+            this.$msgBox.error(res.Msg)
+            return
+          }
+          console.log(res)
+          if (!res) {
+            this.$msgBox.error('支付口令错误，请重新输入！')
+            this.password = ''
+            return
+          }
+          // 发起支付请求
+          if (Array.isArray(this.data.data) && this.data.data.length > 0) {
+            return
+            postSubmitPayment({})
+          } else {
+            postSubmitPayment({
+              id: '324190603000001',
+              // id: this.data.data.Mst.PhId,
+              uid: '521180820000001',
+              orgid: '547181121000001',
+              ryear: '2019'
+            })
+              .then(res => {
+                if (res.Status == 'error') {
+                  this.$msgBox.error(res.Msg)
+                  console.log(res)
+                  return
+                }
+                this.$msgBox.show({
+                  content: '支付操作成功！具体到账情况以银行处理时间为准。',
+                  fn: () => {
+                    this.showPassword = false
+                    this.showMergePay = true
+                    if (this.father) this.father.openDialog = false
+                    this.data.openDialog = false
+                  }
+                })
+              })
+              .catch(err => {
+                console.log(err)
+                this.$$msgBox.error('支付失败！')
+              })
+          }
+        })
+        .catch(err => {
+          this.$msgBox.error('口令验证失败！')
+          console.log('judge', err)
+        })
+    },
+    clearNoNum(event) {
+      var obj = event.target
+      obj.value = obj.value.replace(/[^\d]/g, '') //清除“数字”以外的字符
     }
   },
   computed: {
@@ -286,17 +390,11 @@ export default {
     money() {
       if (Array.isArray(this.data.data)) {
         return this.data.data.reduce((prev, item) => {
-          return prev + item.FAmountTotal
+          return prev + item.Mst.FAmountTotal
         }, 0)
       } else {
-        return this.data.data.FAmountTotal
+        return this.data.data.Mst.FAmountTotal
       }
-    },
-    needSet() {
-      return this.$parent.needSet || this.$parent.$parent.needSet
-    },
-    'data.openDialog'(newVal) {
-      this.activeName = ''
     }
   },
   watch: {
@@ -315,7 +413,7 @@ export default {
       width: 100%;
       text-align: left;
       font-size: 0.16rem;
-      border-bottom: 1px solid #eaeaea;
+      border-bottom: 1px solid $borderColor_ccc;
     }
   }
   .payCenterDialog {
@@ -432,8 +530,13 @@ export default {
         line-height: 30px;
       }
     }
-    .el-collapse {
+    .collapse {
+      padding-top: 10px;
+      border-top: 1px solid $borderColor_ccc;
+      text-align: left;
       margin-top: 10px;
+      margin-bottom: 10px;
+      cursor: pointer;
     }
   }
 }

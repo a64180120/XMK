@@ -205,7 +205,11 @@
     export default {
         name: "applybill",
       components: {ApprovalDialog,goApproval,ImgView},
-      props:{applyNum:String},
+      props:{applyNum: {
+          type: String,
+          default: ''
+        }
+      },
       data(){
           return {
             msgType:false,//删除弹窗
@@ -303,21 +307,22 @@
       },
       watch:{
         applyNum(){
+
           this.getApply();
         },
       },
       mounted(){
-         /* this.$nextTick(
+         this.$nextTick(
             this.getApply()
-          );*/
-
+          );
+        this.getApply();
+          console.log(this.applyNum)
       },
       methods:{
           //申请单查看
         getApply:function(){
           console.log(this.applyNum+'这里添加数据查询方法');
           let param={fPhId:this.applyNum};
-
           this.getAxios('GBK/PaymentMstApi/GetPaymentMst',param).then(res=>{
             console.log(res);
             this.record=res;

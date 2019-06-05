@@ -10,13 +10,18 @@
       <div slot="title" class="dialog-title">
         <p>审批并生成支付单</p>
       </div>
-      <approval-bill @dialogFlow="searchFlow()" @nuargeen="backAproval" :backPeople="backPeople"></approval-bill>
+      <approval-bill
+        :approvalFollow="approvalFollow"
+        :nextApprovaler="nextApprovaler"
+        @dialogFlow="searchFlow"
+        @isArgeen="backAproval"
+        :backPersonnel="backPersonnel"></approval-bill>
       <div class="approval-btn">
         <el-button size="small" type="primary" @click="cancel()">取消</el-button>
         <el-button size="small" type="primary" @click="submit()">生成支付单</el-button>
       </div>
     </el-dialog>
-    <back-approval :visible.sync="visible" @getBackPeople="getBackPeople"></back-approval>
+    <back-approval v-if="visible" :visible.sync="visible" :auditMsg="backData" @getBackPeople="getBackPeople" @closeBack="closeBack"></back-approval>
   </section>
 </template>
 
@@ -27,53 +32,67 @@
     name: "paylistDialog",
     components: {BackApproval, ApprovalBill},
     props:{
-      data:{
-        type:Object,
+      rowData:{
+        type:Array,
         default:function () {
-          return {
-          }
+          return []
         }
+      },
+      BType:{
+        type: String,
+        default:'002'
       }
     },
     data(){
       return{
         visible:false,
         textare:'',
-        backPeople:[],
+        backPersonnel:[],
         openDialog:false,
         handleValue:'',
-        subData:[{
-          code:"0001",
-          name:"ZXXXXX"
-        },{
-          code:"0001",
-          name:"FASAS"
-        }]
+        approvalFollow:[],
+        nextApprovaler:[],
+        backPersonnel:[],
+        backData:[]
       }
     },
     methods:{
+      //根据组织id，单据类型获取所有的审批流程
+      getAppvalProc(){
+        let data = {
+          ProcPhid:this.rowData[0].ProcPhid,
+          PostPhid:this.rowData[0].PostPhid
+        }
+
+        this.getAxios('/GAppvalPost/GetAppvalProcAndOperator',data).then(success=>{
+          if (success && success.Status === 'success'){
+            this.$set(this.approvalFollow,0,success.Process);
+            this.nextApprovaler = success.AppvalPost.Operators;
+            for (let key in this.approvalFollow){
+              this.approvalFollow[key].RefbillPhid =this.rowData[0].RefbillPhid;
+              this.approvalFollow[key].ProcPhid = this.rowData[0].ProcPhid;
+            }
+            console.log(this.approvalFollow,this.nextApprovaler)
+          }else {
+            let that = this
+            this.$msgBox.show({
+              content: success.Msg,
+              fn:function () {
+                that.openDialog =false
+              }
+            })
+          }
+        }).catch(err =>{
+          console.log(err)
+        })
+      },
       changeDialog(){
         if (this.openDialog) {
           this.openDialog = false
         }else {
+          this.getAppvalProc()
           this.openDialog = true
         }
-      },
-      //表头样式回调
-      headerRowClass(val){
-        return "table-header"
-      },
-      //查看详细流程
-      searchFlow(row,column,index,store){
-
-      },
-      //表格单选
-      handleSelect(selection,row){
-
-      },
-      //表格全选
-      handleSelectAll(selection){
-
       },
       //取消
       cancel(){
@@ -195,21 +214,51 @@
         })
       },
       backAproval(val){
-        if (val[0] != undefined ){
-          this.visible = true
+        if (!val){
+          // this.visible = true
+          this.getBackApprovalPost()
         } else {
           this.visible = false
-          this.backPeople = []
+          this.backPersonnel = []
         }
       },
+      //关闭销毁回退,下次打开执行生命周期
+      closeBack(){
+        this.visible = false
+      },
       getBackPeople(item){
-        this.$set(this.backPeople,0,item.name)
-        console.log(this.backPeople)
+        for (let key in item.Operators){
+          this.$set(this.backPersonnel,key,item.Operators[key])
+        }
+        console.log(this.backPersonnel)
       },
       //关闭弹框
       closeDialog(){
         this.openDialog = false
         this.visible = false
+      },
+      //查看详细流程
+      searchFlow(row){
+        this.$emit("dialogFlow",row)
+      },
+      //拉去回退时,获取之前的所有岗位,包括发起人(岗位id为0)
+      getBackApprovalPost(){
+
+        let data = {
+          ProcPhid:this.rowData[0].ProcPhid,
+          PostPhid:this.rowData[0].PostPhid,
+          RefbillPhid:this.rowData[0].RefbillPhid,
+        }
+        this.getAxios('/GAppvalPost/GetBackApprovalPost',data).then(success=>{
+          if (success && success.Status == 'success') {
+            this.backData = success.Data
+            this.visible = true
+          }else {
+            this.$msgBox.show(success.Msg)
+          }
+        }).catch(err =>{
+          this.$msgBox.show('请求出错')
+        })
       },
     }
   }

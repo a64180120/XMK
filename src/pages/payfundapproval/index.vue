@@ -262,7 +262,8 @@
         <div slot="title" class="dialog-title">
           <span style="float: left">查看申请</span>
         </div>
-          <applybill @showImg="showImg">
+          <applybill @showImg="showImg" :applyNum="applyNum"
+                     @delete="handleDelete">
             <div slot="btn-group" >
               <el-button v-if="isApproval" class="btn" size="mini" @click="aprovalItem">审批</el-button>
               <el-button  v-if="isApproval" class="btn" size="mini" style="width: 90px" @click="creatPayItem">生成支付单</el-button>
@@ -283,7 +284,7 @@
       <!--审批弹框-->
       <approval-dialog ref="approvalDialog" :rowData="selection" @dialogFlow="openAuditfollow" @subSuc="plSubSuc()"></approval-dialog>
       <!--生成支付单弹框-->
-      <paylist-dialog ref="paylistDialog" :rowData="selection"  @subSuc="plSubSuc()"></paylist-dialog>
+      <paylist-dialog ref="paylistDialog" :rowData="selection"  @dialogFlow="openAuditfollow" @subSuc="plSubSuc()"></paylist-dialog>
       <!--查看审批流程-->
       <auditfollow :visible.sync="visible" :auditMsg="auditMsg"></auditfollow>
       <!--组织树-->
@@ -4760,7 +4761,8 @@
         openInnerDialog:false,//打开详情内层弹框
 
         //判断显示为已审批页面还是未审批页面
-        isApproval:""
+        isApproval:"",
+        applyNum:"",//当前查看申请单的编号
       }
     },
 
@@ -4882,10 +4884,9 @@
       },
       //单行点击事件
       handleRowClick(row,idx){
+        console.log(row)
         // this.$refs.fundDetail.changeDialog()
-        console.clear()
-        this.selection = row
-        console.log(this.selection)
+        this.applyNum = row.BNum
         this.detailDialog = true
         this.detailData = row
       },
@@ -4980,7 +4981,11 @@
       },
       // 关闭详情弹框事件
       closeDetailDialog(){
-        this.selection = ''
+        this.selection = []
+      },
+      //删除事件
+      handleDelete(){
+
       }
     }
   }
