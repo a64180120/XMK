@@ -141,7 +141,9 @@
                       <td>{{xm.BudgetdtlName}}</td>
                       <td style="text-align: right">{{xm.FAmount | NumFormat}}</td>
                       <td >{{xm.FPayment}}</td>
+
                     </tr>
+
                   </template>
                   </tbody>
                 </table>
@@ -203,7 +205,11 @@
     export default {
         name: "applybill",
       components: {ApprovalDialog,goApproval,ImgView},
-      props:{applyNum:String},
+      props:{applyNum: {
+          type: String,
+          default: ''
+        }
+      },
       data(){
           return {
             msgType:false,//删除弹窗
@@ -306,9 +312,9 @@
         },
       },
       mounted(){
-         /* this.$nextTick(
+         this.$nextTick(
             this.getApply()
-          );*/
+          );
         this.getApply();
           console.log(this.applyNum)
       },

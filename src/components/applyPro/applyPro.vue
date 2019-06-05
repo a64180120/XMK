@@ -51,11 +51,11 @@
               <div>
                 <span>项目名称：</span>
                 <span>
-                  <el-select size="small" v-model="item.PaymentXm.XmProjcode">
-                    <el-option v-for="pro in projectList"
-                               :label="pro.proName"
-                               :key="pro.proCode"
-                               :value="pro.proCode"
+                  <el-select size="small" v-model="item.PaymentXm.XmProjcode" @change="changePro(pindex)">
+                    <el-option v-for="pro in prodata.Mst"
+                               :label="pro.FProjName"
+                               :key="pro.FProjCode"
+                               :value="pro.FProjCode"
                     ></el-option>
                   </el-select>
                 </span>
@@ -191,7 +191,15 @@
   import ImgView from "../imgView/imgView";
   export default {
     name: "applypro",
-    props:{applyNum:String},
+    props:{
+      applyNum:String,
+      prodata:{
+        type:Object,
+        default:function () {
+          return []
+        }
+      }
+    },
     data(){
       return {
         msgType: false,//删除弹窗
@@ -321,8 +329,10 @@
       },
     },
     mounted(){
+      console.log(this.data);
       this.$nextTick(
-        this.getApply()
+        this.getApply(),
+        this.getOrgList()
       );
 
     },
@@ -338,6 +348,17 @@
           console.log(err);
         })
       },
+
+      //获取组织数数据
+      getOrgList:function(){
+        this.getAxios('GQT/CorrespondenceSettingsApi/GetALLOrgTree').then(res=>{
+          console.log(res);
+          this.orgList=res.Record;
+        }).catch(err=>{
+          console.log(err)
+        })
+      },
+
       //保存0，保存并送审1，区别：是否调用送审组件
       save:function(type){
         this.$msgBox.show({
@@ -487,12 +508,27 @@
       },
       //点击组织树确定按钮进行选中组织赋值
       confirmOrg:function(val){
-        this.projectItem[this.choosedOrg.index[0]].pdList[this.choosedOrg.index[1]].pdOrg=val[0];
+        //OCode: "100001" OName: "广东省总工会(大账)" FDepartmentcode: '101.09', //（补助单位/部门）   FDepartmentname: '法工部', //（补助单位名称）
+        this.PaymentXmDtl[this.choosedOrg.index[0]].PaymentDtls[this.choosedOrg.index[1]].FDepartmentcode=val[0].OCode;
+        this.PaymentXmDtl[this.choosedOrg.index[0]].PaymentDtls[this.choosedOrg.index[1]].FDepartmentname=val[0].OName;
         if(val.length>1){
           for(var i=0; i<val.length-1;i++){
-            let sc={pdOrg:{}, pdName: '爱上咖啡', pdMoney: 2000, pdNode: ''};
-            sc.pdOrg=val[i+1];
-            this.projectItem[this.choosedOrg.index[0]].pdList.splice(this.choosedOrg.index[1],0,sc);
+            let sc={
+              XmMstPhid: '', //（预算项目主表主键）
+              BudgetdtlPhid: '', //（预算明细主键）
+              BudgetdtlName: '', //（预算明细名称）
+              FDepartmentcode: '', //（补助单位/部门）
+              FDepartmentname: '', //（补助单位名称）
+              FAmount: '', //（项目明细申请金额）
+              FRemarks: '', //（备注）
+              QtKmdm: '', //（预算项目编码）
+              QtKmmc: '' , //（预算项目名称）
+              FPayment:'', //(支付状态：0-待支付 1-支付异常  9-支付成功)
+              FPaymentdate:'' //（支付日期）
+            }
+            sc.FDepartmentcode=val[i+1].OCode;
+            sc.FDepartmentname=val[i+1].OName;
+            this.PaymentXmDtl[this.choosedOrg.index[0]].PaymentDtls.splice(this.choosedOrg.index[1]+1,0,sc);
             sc=null;
           }
         }
@@ -500,7 +536,7 @@
       confirmOrgDetail:function(){
         this.orgDetailType=false;
         console.log(this.choosedPro);
-        this.projectItem[this.choosedPro.index[0]].pdList[this.choosedPro.index[1]].pdName=this.choosedPro.pro;
+        this.PaymentXmDtl[this.choosedPro.index[0]].pdList[this.choosedPro.index[1]].pdName=this.choosedPro.pro;
       },
       //弹出明细项目，pindex表示项目下标，s,表示项目对应pdlist下标
       showDetailPro(f,s){
@@ -516,7 +552,24 @@
       clickFolder(file){
         //this.$emit('showImg',file)
         this.dialogVisible=true;
-      }
+      },
+      //选择主项目
+      changePro:function(index){
+        console.log(index);
+        let proCode=this.PaymentXmDtl[index].PaymentXm.XmProjcode;
+        for(var i in this.prodata.Mst){
+          if(proCode==this.proData.Mst[i].FProjCode){
+            this.PaymentXmDtl[index].PaymentXm.XmMstPhid=this.proData.Mst[i].PhId;
+            this.PaymentXmDtl[index].PaymentXm.XmProjname=this.proData.Mst[i].FProjName;
+            this.PaymentXmDtl[index].PaymentXm.FAmountTotal=this.proData.Mst[i].FProjAmount;
+            this.PaymentXmDtl[index].PaymentXm.FRemarks='';
+          }
+        }
+      },
+      //获取明细项目列表
+      getProDetail:function(index){
+
+      },
     }
   }
 </script>
