@@ -24,66 +24,70 @@
     <div class="container">
       <div class="formArea">
         <div class="selects">
-          <span>支付单据</span>
-          <el-select
-            @change="selectType"
-            collapse-tags
-            v-model="type"
-            placeholder="请选择"
-            size="mini"
-            style="width:110px"
-          >
-            <el-option
-              v-for="item in typeList"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            ></el-option>
-          </el-select>
-          <span>支付状态</span>
-          <el-select
-            @change="selectStatus"
-            collapse-tags
-            v-model="status"
-            multiple
-            placeholder="请选择"
-            size="mini"
-          >
-            <el-option
-              v-for="item in statusList"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            ></el-option>
-          </el-select>
-          <span>申报日期</span>
-          <el-date-picker
-            v-model="sbrq"
-            type="datetimerange"
-            range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
-            size="mini"
-            class="large-input"
-            value-format="yyyy-MM-dd HH:mm:ss"
-            @change="getData"
-          ></el-date-picker>
-          <span>支付日期</span>
-          <el-date-picker
-            v-model="zfrq"
-            type="datetimerange"
-            range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
-            size="mini"
-            class="large-input"
-            @change="getData"
-            value-format="yyyy-MM-dd HH:mm:ss"
-          ></el-date-picker>
-          <div class="btns">
-            <div class="search">
-              <search-input placeholder="支付单编号/申请单编号" v-model="search" @btnClick="getData"></search-input>
-            </div>
+          <div ref="selectsContainer">
+            <i class="el-icon-d-arrow-left"></i>
+            <i class="el-icon-d-arrow-right"></i>
+            <span>支付单据</span>
+            <el-select
+              @change="selectType"
+              collapse-tags
+              v-model="type"
+              placeholder="请选择"
+              size="mini"
+              style="width:110px"
+            >
+              <el-option
+                v-for="item in typeList"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              ></el-option>
+            </el-select>
+            <span>支付状态</span>
+            <el-select
+              @change="selectStatus"
+              collapse-tags
+              v-model="status"
+              multiple
+              placeholder="请选择"
+              size="mini"
+            >
+              <el-option
+                v-for="item in statusList"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              ></el-option>
+            </el-select>
+            <span>申报日期</span>
+            <el-date-picker
+              v-model="sbrq"
+              type="datetimerange"
+              range-separator="至"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              size="mini"
+              class="large-input"
+              value-format="yyyy-MM-dd HH:mm:ss"
+              @change="getData"
+            ></el-date-picker>
+            <span>支付日期</span>
+            <el-date-picker
+              v-model="zfrq"
+              type="datetimerange"
+              range-separator="至"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              size="mini"
+              class="large-input"
+              @change="getData"
+              value-format="yyyy-MM-dd HH:mm:ss"
+            ></el-date-picker>
+          </div>
+        </div>
+        <div class="btns">
+          <div class="search">
+            <search-input placeholder="支付单编号/申请单编号" v-model="search" @btnClick="getData"></search-input>
           </div>
         </div>
         <div class="tableHead">
@@ -209,7 +213,7 @@
     <pay-list :data="payListData"></pay-list>
     <merge-pay v-if="mergePayData.openDialog" :data="mergePayData"></merge-pay>
     <pay-error-handle v-if="payErrorHandleData.openDialog" :data="payErrorHandleData"></pay-error-handle>
-    <go-approval v-if="approvalData.openDialog" :data="approvalData"></go-approval>
+    <go-approval v-if="approvalData.openDialog" :bType="'002'" :data="approvalData"></go-approval>
   </div>
 </template>
 
@@ -331,82 +335,34 @@ export default {
   created() {
     this.getData()
   },
-  mounted() {},
+  mounted() {
+    let spans = document.querySelectorAll('.selects>div>span'),
+      selects = document.querySelectorAll('.selects>div>div'),
+      contentWidth = 0,
+      count = 0
+    spans.forEach(item => {
+      contentWidth += item.offsetWidth
+      count++
+    })
+    selects.forEach(item => {
+      contentWidth += item.offsetWidth
+      count++
+    })
+    contentWidth += count * 10
+    window.onresize = () => {
+      let container = this.$refs.selectsContainer
+      let containerWidth = container.offsetWidth
+      if (containerWidth >= contentWidth) {
+        container.className = ''
+        console.log('big')
+      } else {
+        console.log('small')
+        container.className = 'scroll'
+      }
+    }
+  },
   methods: {
     getData() {
-      // var res = {
-      //   totalRows: 4,
-      //   Record: [
-      //     {
-      //       PhId: 1,
-      //       OrgPhid: 547181121000001,
-      //       OrgCode: ' 1 ',
-      //       RefbillPhid: 1,
-      //       RefbillCode: ' zfbf00011 ',
-      //       FCode: ' zf0001 ',
-      //       FPaymethod: 1,
-      //       FAmountTotal: 2000.0,
-      //       FApproval: 9,
-      //       FState: 0,
-      //       FDescribe: ' 测试 ',
-      //       PersistentState: 0,
-      //       NgRecordVer: 1,
-      //       NgInsertDt: '2018-12-25T11: 26: 23 ',
-      //       NgUpdateDt: '2018-12-25T11: 26: 23 ',
-      //       Creator: 521180820000001,
-      //       Editor: 521180820000001,
-      //       CurOrgId: 547181121000001
-      //     },
-      //     {
-      //       PhId: 2,
-      //       OrgPhid: 547181121000001,
-      //       OrgCode: ' 1 ',
-      //       RefbillPhid: 1,
-      //       RefbillCode: ' zfbf00011 ',
-      //       FCode: ' zf0001 ',
-      //       FPaymethod: 1,
-      //       FAmountTotal: 2000.0,
-      //       FApproval: 9,
-      //       FState: 0,
-      //       FDescribe: ' 测试 ',
-      //       PersistentState: 0,
-      //       NgRecordVer: 1,
-      //       NgInsertDt: ' 2018 - 12 - 25T11: 26: 23 ',
-      //       NgUpdateDt: ' 2018 - 12 - 25T11: 26: 23 ',
-      //       Creator: 521180820000001,
-      //       Editor: 521180820000001,
-      //       CurOrgId: 547181121000001
-      //     },
-      //     {
-      //       PhId: 3,
-      //       OrgPhid: 547181121000001,
-      //       OrgCode: ' 1 ',
-      //       RefbillPhid: 1,
-      //       RefbillCode: ' zfbf00011 ',
-      //       FCode: ' zf0001 ',
-      //       FPaymethod: 1,
-      //       FAmountTotal: 2000.0,
-      //       FApproval: 0,
-      //       FState: 0,
-      //       FDescribe: ' 测试 ',
-      //       PersistentState: 0,
-      //       NgRecordVer: 1,
-      //       NgInsertDt: ' 2018 - 12 - 25T11: 26: 23 ',
-      //       NgUpdateDt: ' 2018 - 12 - 25T11: 26: 23 ',
-      //       Creator: 521180820000001,
-      //       Editor: 521180820000001,
-      //       CurOrgId: 547181121000001
-      //     }
-      //   ],
-      //   ' index ': 0,
-      //   ' size ': 3
-      // }
-      // this.total = res.totalRows
-      // this.tableData = res.Record.map(item => {
-      //   item.checked = false
-      //   return item
-      // })
-      // return
       let query = {
         'NgInsertDt*date*ge*1': this.sbrq ? this.sbrq[0] || '' : '', //申报日期开始
         'NgInsertDt*date*le*1': this.sbrq ? this.sbrq[1] || '' : '', //申报日期结束
@@ -678,30 +634,40 @@ export default {
     .selects {
       text-align: left;
       line-height: 28px;
-      height: 28px;
-      margin: 8px 0;
+      height: 29px;
+      margin: 8px 240px 8px 0px;
       box-sizing: border-box;
-      font-size: 0.14rem;
       color: #757575;
-      > span:not(:first-of-type) {
-        margin-left: 0px;
-        @media screen and (min-width: 1470px) {
+      overflow: hidden;
+
+      > div {
+        white-space: nowrap;
+        font-size: 0;
+        > i {
+          font-size: 0.2rem;
+        }
+        &.scroll {
+          padding: 0 20px;
+        }
+        > span {
+          font-size: 0.14rem;
+        }
+        > span:not(:first-of-type) {
           margin-left: 10px;
         }
-      }
-      > span + div {
-        width: 150px;
-        margin-left: 0px;
-        @media screen and (min-width: 1470px) {
+        > span + div {
+          width: 150px;
           margin-left: 10px;
-        }
-        &.large-input {
-          width: 320px;
+          &.large-input {
+            width: 320px;
+          }
         }
       }
-      .btns {
-        float: right;
-      }
+    }
+    .btns {
+      position: absolute;
+      top: 8px;
+      right: 0px;
     }
     .pages {
       position: absolute;

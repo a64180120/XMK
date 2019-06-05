@@ -582,7 +582,7 @@ export default {
     // 获取支付单详情
     getData() {
       getPayment({
-        id: this.data.data.Mst.PhId,
+        id: this.detail.Mst.PhId,
         // id: 401190528000001,
         uid: '521180820000001', //用户id
         orgid: '547181121000001', //组织id
@@ -843,7 +843,7 @@ export default {
         })
         // this.$forceUpdate()
         this.$nextTick(() => {
-          // this.getData()
+          this.getData()
           this.getAccountList({
             OrgPhid: 488181024000001,
             // OrgPhid: this.detail.Mst.OrgPhid,
