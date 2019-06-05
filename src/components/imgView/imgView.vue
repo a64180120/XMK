@@ -21,15 +21,19 @@
       <div class="img-nav">
         <ul>
           <li class="prev">
-            <i class="el-icon-d-arrow-left"></i>
+            <i class="el-icon-d-arrow-left" @click="prevImg()"></i>
           </li>
-          <li v-for="i in 5" class="img-item">
-            <div class="img-bg">
-              <img src="../../assets/test.jpg" alt="图片">
+          <li  class="img-content">
+            <div class="img-main">
+              <div class="img-item" v-for="(item,idx) in images">
+                <div  class="img-bg" :class="[idx === 2?'active':'']">
+                  <img src="../../assets/test.jpg" alt="图片">
+                </div>
+              </div>
             </div>
           </li>
           <li class="next">
-            <i class="el-icon-d-arrow-right"></i>
+            <i class="el-icon-d-arrow-right" @click="nextImg()"></i>
           </li>
         </ul>
       </div>
@@ -47,12 +51,32 @@
           images:{
             type:Array,
             default:function () {
-              return []
+              return [{
+                path:'../../assets/test.jpg',
+                name:'name'
+              },{
+                path:'../../assets/test.jpg',
+                name:'name'
+              },{
+                path:'../../assets/test.jpg',
+                name:'name'
+              },{
+                path:'../../assets/test.jpg',
+                name:'name'
+              },{
+                path:'../../assets/test.jpg',
+                name:'name'
+              },{
+                path:'../../assets/test.jpg',
+                name:'name'
+              }]
             }
           },
       },
       data(){
           return{
+            img:[],
+            activeItem:Number,
             imgDialog:false,
             options:{
               navbar:true,
@@ -61,11 +85,11 @@
               button:false,
               title:false
             },
-            width:'100%'
+            width:'100%',
+            listLeight:Number
           }
       },
       mounted(){
-        // this.show()
       },
       methods:{
           inited(viewer){
@@ -81,6 +105,17 @@
             })
 
         },
+        prevImg(){
+          this.activeItem --
+        },
+        nextImg(){
+          this.activeItem ++
+          if (this.activeItem === 2 &&this.listLeight.length>4 ){
+            for (let i in this.images){
+              this.$set(this.img,i+this.activeItem-1,this.images[i+this.activeItem-1])
+            }
+          }
+        }
       }
     }
 </script>
@@ -115,19 +150,32 @@
         text-align: left;
         height: 55px;
         display: flex;
-        >li{
-          margin: 0 10px;
-        }
-        >.img-item{
-          width: 18%;
-          >.img-bg{
-            background-color: #eaeaea;
+        >.img-content{
+          width: 100%;
+          >.img-main{
             width: 100%;
-            height: 55px;
-            >img{
-              width: 100%;
+            white-space: nowrap;
+            overflow: hidden;
+            >.img-item{
+              margin: auto;
+              white-space: normal;
+              overflow: auto;
+              display: inline-block;
+              width: 20%;
               height: 55px;
-              object-fit: contain;
+              padding: 0 10px;
+              .img-bg{
+                width: 100%;
+                background-color: #eaeaea;
+                >img{
+                  width: 100%;
+                  height: 55px;
+                  object-fit: contain;
+                }
+              }
+              .active{
+                background-color: #00b7ee;
+              }
             }
           }
         }

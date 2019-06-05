@@ -33,7 +33,8 @@
                             <thead>
                                 <tr>
                                     <td style="padding: 0 5px;">
-                                    <el-checkbox v-model="typechecked" @change="typeallChecked" :indeterminate="typeindeterminate">序号</el-checkbox>
+                                        <div>序号</div>
+                                    <!-- <el-checkbox v-model="typechecked" @change="typeallChecked" :indeterminate="typeindeterminate">序号</el-checkbox> -->
                                     </td>
                                     <td>
                                     审批类型
@@ -55,7 +56,7 @@
                                 
                                 </colgroup>
                                 <thead>
-                                    <tr v-for="(type,n) in typeList" :key="n">
+                                    <tr :class="{trActive:type.checked}" v-for="(type,n) in typeList" :key="n">
                                         <td style="padding: 0 5px;">
                                         <el-checkbox v-model="type.checked" @change="typechoose(type)">{{n+1}}</el-checkbox>
                                         </td>
@@ -132,7 +133,7 @@
                                     <col width="15%">
                                 </colgroup>
                                 <thead>
-                                    <tr v-for="(audit,m) in auditList" :key="m">
+                                    <tr :class="{trActive:audit.checked}" v-for="(audit,m) in auditList" :key="m">
                                         <td style="padding: 0 5px;">
                                         <el-checkbox @change="choose(audit)" v-model="audit.checked">{{m+1}}</el-checkbox>
                                         </td>
@@ -176,10 +177,10 @@
         <orgtree :visible.sync="orgVisible"  @confirm="getOrg" :data="orgList" :checked-org="orgSelected"></orgtree>
  
         <fDialog :title="(auditBtn=='add'?'新增':'修改')+'审批流'" :visible.sync="auditAddShow">
-            <audit-add :type="auditBtn" @add-cancle="addCancle"></audit-add>
+            <audit-add :type="auditBtn" :options="typeList" @add-cancle="addCancle"></audit-add>
         </fDialog>
          <fDialog  :title="'审批类型'+(typeBtn=='add'?'新增':'修改')" :visible.sync="auditTypeAddShow">
-            <audittype-add :type="typeBtn" :typeinfo="typechoosedItem[0]" @add-cancle="typeCancle"></audittype-add>
+            <audittype-add :type="typeBtn" :typeinfo="typeinfo" @add-cancle="typeCancle"></audittype-add>
         </fDialog>
     </div>
 </template>
@@ -191,7 +192,7 @@ import Orgtree from "@/components/orgtree/index"
 import fDialog from "@/components/attechment/dialog"
 import topHandle from '@/components/topNav/topHandle'
 import search from '@/components/searchInput/searchInput'
-import {PostAddProcType,GetProcTypes,PostUpdateProcType,PostDeleteProcType} from '@/api/systemSetting/audit'
+import {PostAddProcType,GetProcTypes,PostUpdateProcType,PostDeleteProcType,GetProcList} from '@/api/systemSetting/audit'
 export default {
     name:'auditLiuCheng',
     data(){
@@ -205,8 +206,9 @@ export default {
             },
             typechecked:false,//类型全选状态
             typechoosedItem:[],//类型选中的行
+            typeinfo:{},//类型修改
             typeindeterminate:false,//类型半选状态
-            typeList:[{Phid:1111,},{Phid:222,}],//类型列表
+            typeList:[],//类型列表
             choosedItem:[],//选中的行
             checked:false,//全选状态
             indeterminate:false,//半选状态
@@ -4638,7 +4640,27 @@ export default {
         search(val){
             console.log(val)
         },
-        
+        getData(val){
+            console.log(val);
+            let data={
+                orgid:'521180820000001',
+                ApprovalTypeId:val.PhId,
+                BillType:val.Value,
+                PageIndex:1,
+                PageSize:20,
+                QueryFilter:''
+                // Orgid：组织id
+                // ApprovalTypeId：审批类型id
+                // BillType：单据类型
+                // PageIndex：页码（从1开始）
+                // PageSize：每页显示条数
+                // ------可选参数--------
+                // QueryFilter：搜索条件
+            }
+            GetProcList(data).then(res=>{
+                console.log(res)
+            })
+        },
         deleteAudit(){  //流程删除
             this.$confirm('此操作将永久删除该流程, 是否继续?', '提示', {
                 confirmButtonText: '确定',
@@ -4651,8 +4673,18 @@ export default {
                 })
         },
         showAuditAdd(val){  //流程编辑
-            this.auditBtn=val;
-            this.auditAddShow=true;
+            if(this.typechoosedItem.length==0){
+                this.$msgBox.show('请先选择一个审批类型!');
+                return;
+            }
+            if(this.typechoosedItem.length>1){
+                this.$msgBox.show('只能选择一个审批类型!');
+                return;
+            }
+            if(this.typechoosedItem.length==1){
+                this.auditBtn=val;
+                this.auditAddShow=true;
+            }
         },
         //获取类型列表
         getTypeData(){
@@ -4663,8 +4695,9 @@ export default {
                 if(res.Status=='error'){
                     this.$msgBox.show(res.Msg)
                 }else{
-                    console.log(res.Data)
-                    this.typeList=res.Data;    
+                    this.typeList=res.Data;
+                    this.typechecked=false;  
+                    this.typeallChecked(false);  
                 }
             }).catch(err=>{
                 this.$msgBox.show('获取类型列表失败!')
@@ -4672,16 +4705,28 @@ export default {
         },
         //删除类型
         deletetype(){
-            if(this.typechoosedItem.leng==0){
-                this.$msgBox.show('请选择一行审批类型!')
+            if(this.typechoosedItem.length==0){
+                this.$msgBox.show('请选择一行审批类型!');
+                return;
+            }
+            for(let ty of this.typechoosedItem){
+                if(ty.Issystem==1){
+                    this.$msgBox.show('不允许删除内置类型,请查看!');
+                     return;
+                }
+               
             }
             this.$confirm('此操作将永久删除该类型, 是否继续?', '提示', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
                 type: 'warning'
                 }).then(()=>{
+                    let newArr=[];
+                    this.typechoosedItem.map(ty => {
+                        newArr.push(ty.PhId);
+                    })
                     let data={
-                        ApprovalTypeId:this.typechoosedItem[0].PhId
+                        ApprovalTypeIds:newArr
                     }
                     PostDeleteProcType(data).then(res=>{
                          this.$msgBox.show(res.Msg);
@@ -4697,24 +4742,30 @@ export default {
                 })
         },
         showAuditTypeAdd(val){ //类型编辑
-            if(this.typechoosedItem.length==0){
-                this.$msgBox.show('请选择一行数据!');
-                return;
-            }
-            if(this.typechoosedItem.length>1){
-                this.$msgBox.show('请只选择一行数据!');
-                return;
-            }
-            console.log(this.typechoosedItem)
             this.typeBtn=val;
+            if(val=='update'){
+                if(this.typechoosedItem.length==0){
+                    this.$msgBox.show('请选择一行数据!');
+                    return;
+                }
+                if(this.typechoosedItem.length>1){
+                    this.$msgBox.show('请只选择一行数据!');
+                    return;
+                }
+                this.typeinfo=this.typechoosedItem[0];
+            }else{
+                this.typeinfo={Value:'001',TypeName:''}
+            }
             this.auditTypeAddShow=true;
         },
         addCancle(){ //流程弹窗关闭
             this.auditAddShow=false;
         },
-        typeCancle(){//类型弹窗关闭
+        typeCancle(data){//类型弹窗关闭
             this.auditTypeAddShow=false;
-            this.getTypeData();
+            if(data){
+                this.getTypeData();
+            }
         },
         handleCurrentChange(val){
             console.log(1111,val)
@@ -4777,36 +4828,49 @@ export default {
                 })
             }
         },
-        //类型选择
-        typechoose(val,index){
-            if(val.checked){
-                this.typechoosedItem.push(val);
+        //类型单选
+        typechoose(val,index){    
+  
+            let ch = val.checked;  
+            this.typeallChecked(false);
+            this.$set(val,'checked',ch);
+            if(ch){
+                this.typechoosedItem[0]=val;
+                this.getData(val);
             }else{
-                this.typechoosedItem.map((ch,i,arr)=>{
-                    if(ch.Phid==val.Phid){
-                        this.typechoosedItem.splice(i,1);
-                    }
-                });
-                
+                this.typechoosedItem=[];
             }
-            let allCheck=this.typeList.every((acc)=>{
-                return acc.checked==true;
-            })
-            if(allCheck){
-                this.typechecked=true;
-                this.typeindeterminate=false;
-            }else{
-                this.typechecked=false;
-                this.typeindeterminate=false;
-                if(this.typechoosedItem.length>0){
-                    this.typeindeterminate=true;
-                }
-            }
-            console.log(this.typechoosedItem)
         },
+        //类型选择(多选)
+        // typechoose(val,index){
+        //     if(val.checked){
+        //         this.typechoosedItem.push(val);
+        //     }else{
+        //         this.typechoosedItem.map((ch,i,arr)=>{
+        //             if(ch.Phid==val.Phid){
+        //                 this.typechoosedItem.splice(i,1);
+        //             }
+        //         });
+                
+        //     }
+        //     let allCheck=this.typeList.every((acc)=>{
+        //         return acc.checked==true;
+        //     })
+        //     if(allCheck){
+        //         this.typechecked=true;
+        //         this.typeindeterminate=false;
+        //     }else{
+        //         this.typechecked=false;
+        //         this.typeindeterminate=false;
+        //         if(this.typechoosedItem.length>0){
+        //             this.typeindeterminate=true;
+        //         }
+        //     }
+        //     console.log(this.typechoosedItem)
+        // },
         //类型全选
         typeallChecked(val){
-            this.indeterminate=false;
+            this.typeindeterminate=false;
             if(val){
                 this.typeList.map(arr=>{
                     this.$set(arr,'checked',true); 

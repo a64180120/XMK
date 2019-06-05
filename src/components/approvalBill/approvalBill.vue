@@ -265,23 +265,23 @@
     background-color: #09F;
     padding: 6px 0;
     color: #ffffff;
-    font-size: 0.12rem
+    font-size: 0.14rem
   ;
   }
   .table-content >>> tr td{
     padding: 5px 0;
-    font-size: 0.12rem
+    font-size: 0.14rem
   }
   .table-next >>>tr th{
     background-color: #09F;
     padding: 5px 0;
     color: #ffffff;
-    font-size: 0.12rem
+    font-size: 0.14rem
   ;
   }
   .table-next >>>tr td{
     padding: 5px 0;
-    font-size: 0.12rem
+    font-size: 0.14rem
   }
   .icon-search{
     font-size: 0.16rem;
