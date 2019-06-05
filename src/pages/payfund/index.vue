@@ -233,20 +233,20 @@
           <!--部门选择-->
           <el-select size="small" style="width: 250px;" v-model="searchData.bmType" @change="changeApart">
             <el-option v-for="item in bmList"
-                       :key="item.value"
-                       :label="item.label"
-                       :value="item.value">
+                       :key="item.OCode"
+                       :label="item.OName"
+                       :value="item.OCode">
             </el-option>
           </el-select>
           <!--预算显示区域-->
           <el-card>
             <div>
-              <p style="color: #3294e8;">{{apartData.count}}</p>
+              <p style="color: #3294e8;">{{apartData.Mst.length}}</p>
               <div>预算支出项目总数</div>
             </div>
             <div>
               <p style="color:#f52c1d">
-                <num :vv="apartData.money"></num>
+                <num :vv="apartData.FAmount | NumFormat"></num>
                 <!--{{apartData.money}}--></p>
               <div>支出预算总额</div>
             </div>
@@ -312,7 +312,7 @@
     <el-dialog class="applydialog" :title="applyproTitle"
                :visible.sync="applyproType"
                >
-       <applypro :applyNum="applyNum"  @delete="handleDelete"></applypro>
+       <applypro :applyNum="applyNum" :prodata="apartData"  @delete="handleDelete"></applypro>
     </el-dialog>
 
     <go-approval  :data="approvalDataS"></go-approval>
@@ -341,71 +341,7 @@
             checkList:[],//选择框列表
             dataList:{
               total:7,
-              data:[
-               /* {
-                  billDate: "2019-5-27",
-                  billMoney: 90434.53,
-                  billName: "专家授课课酬支付申请",
-                  billNote: "",
-                  billNum: "1558946679753TRIN",
-                  billSpType: 3,
-                  billZfType: 0
-                },
-                {
-                  billDate: "2019-5-22",
-                  billMoney: 7647.67,
-                  billName: "专家授课课酬支付申请",
-                  billNote: "",
-                  billNum: "1558946890819E",
-                  billSpType: 1,
-                  billZfType: 0
-                },
-                {
-                  billDate: "2019-5-21",
-                  billMoney: 3000,
-                  billName: "办公设备打印机购买",
-                  billNote: "",
-                  billNum: "1558946890819QX",
-                  billSpType: 2,
-                  billZfType: 0
-                },
-                {
-                  billDate: "2019-5-21",
-                  billMoney: 3000,
-                  billName: "办公设备打印机购买",
-                  billNote: "",
-                  billNum: "1558946890819QX",
-                  billSpType: 4,
-                  billZfType: 1
-                },
-                {
-                  billDate: "2019-5-21",
-                  billMoney: 3000,
-                  billName: "部门聚餐申请",
-                  billNote: "",
-                  billNum: "1558946890819QX",
-                  billSpType: 4,
-                  billZfType: 1
-                },
-                {
-                  billDate: "2019-5-27",
-                  billMoney: 90434.53,
-                  billName: "专家授课课酬支付申请",
-                  billNote: "",
-                  billNum: "1558946679753TR",
-                  billSpType: 4,
-                  billZfType: 2
-                },
-                {
-                  billDate: "2019-5-22",
-                  billMoney: 7647.67,
-                  billName: "专家授课课酬支付申请",
-                  billNote: "",
-                  billNum: "1558946890819WE",
-                  billSpType: 4,
-                  billZfType: 3
-                },*/
-              ],
+              data:[],
             },
             searchData:{
               approvalType:0,
@@ -426,7 +362,7 @@
             },
             approvalList:[{value:0,label:'全部'},{value:1,label:'待送审'},{value:2,label:'审批中'},{value:3,label:'审批未通过'},{value:4,label:'审批通过'}],
             payList:[{value:0,label:'全部'},{value:1,label:'待支付'},{value:2,label:'支付异常'},{value:3,label:'支付成功'}],
-            bmList:[{value:0,label:'办公室'},{value:1,label:'女工部'},{value:2,label:'财务与资产部'}],
+            bmList:[],
             bzList:[{value:0,label:'全部'},{value:1,label:'救灾补助项目'},{value:2,label:'送温暖项目'}],
             spTypeList:{'0':'待送审','1':'审批中','2':'未通过','9':'审批通过'},
             payTypeList:{'0':'待支付','1':'支付异常','9':'支付成功'},
@@ -455,13 +391,13 @@
             },
             approvalData:{
             },
-            apartData:{count:28,money:'30,989.32'}
+            apartData:{Mst:[],Amount:'0'},//选择部门后获取的项目信息
           }
       },
       components:{Applypro, Orgtree, Applybill, tophandle,pieChart,goApproval,Auditfollow,ApprovalDialog,num},
       mounted(){
-          this.getData();
-          //this.dataFuc();
+          //this.getData();
+          this.getDataC();
         this.getCheckList(this.dataList.total);
       },
       watch:{
@@ -546,7 +482,6 @@
         },
         //q切换右侧项目是进行并状态数据切换
         getChartList:function(val){
-          console.log(val);
           switch(val){
             case 0:
               this.chartData.chart=[{name:'可申请',value:13210},{name:'冻结',value:1200},{name:'已使用',value:2301}];
@@ -564,15 +499,38 @@
           }
         },
 
-
+        //获取部门
         getDataC:function(){
-          let param={uid:'488181024000001'};
-          this.$axios.get('GQT/CorrespondenceSettings2Api/GetSBUnit',{params:param}).then(res=>{
+          let param={Unit:'101'};
+          this.getAxios('GQT/CorrespondenceSettingsApi/GetDeptByUnit',param).then(res=>{
             console.log(res);
+            this.bmList=res.Record;
+            this.searchData.bmType=res.Record[0].OCode;
+            this.getData();
+            this.getAllProByBm();
           }).catch(err=>{
             console.log(err);
           })
-
+        },
+        //获取部门对应的项目及项目总额
+        getAllProByBm:function(){
+          let param={
+            FYear: '2019',  //年度
+            FDeclarationUnit: '101', //组织代码
+            FBudgetDept: this.searchData.bmType //部门代码
+          };
+          this.getAxios('GYS/BudgetMstApi/GetBudgetMstList',param).then(res=>{
+            this.apartData=res;
+            let bmCode=this.searchData.bmType;
+            for(var i in this.bmList){
+              if(bmCode==this.bmList[i].OCode){
+                this.apartData['bm']=this.bmList[i];
+                return;
+              }
+            }
+          }).catch(err=>{
+            console.log(err);
+          })
         },
         getData:function(){
           let param={
@@ -596,13 +554,15 @@
           }).catch(err=>{
             console.log(err);
           })
-
-          console.log('查询数据');
         },
         //分页pagesize修改触发事件
-        handleSizeChange:function(){},
+        handleSizeChange:function(){
+          this.getData();
+        },
         //当前页码修改触发事件
-        handleCurrentChange:function(){},
+        handleCurrentChange:function(){
+          this.getData()
+        },
         //dialog关闭前触发事件
         handleClose:function(){
             //alert('cloase');
@@ -695,20 +655,9 @@
           this.$refs.approvalDialog.changeDialog()
         },
         changeApart:function(val){
-          // bmList:[{value:0,label:'办公室'},{value:1,label:'女工部'},{value:2,label:'财务与资产部'}],
-          switch(val){
-            case 0:
-              this.apartData={count:28,money:'30,989.32'};
-              break;
-            case 1:
-              this.apartData={count:8,money:'2,459.32'};
-              break;
-            case 2:
-              this.apartData={count:18,money:'120,000.13'};
-              break;
-            default:
-              break;
-          }
+          console.log(val);
+          this.getData();
+          this.getAllProByBm();
         }
       }
     }

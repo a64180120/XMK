@@ -1,5 +1,5 @@
 <template>
-  <div v-show="visible" class="auditfollow msFixed">
+  <div v-if="visible" class="auditfollow msFixed">
     <p class="title">
       <span>{{title}}</span>
       <i @click="close"></i>
@@ -16,24 +16,32 @@
                 <el-radio-group v-model="radio" style="float: right;line-height: 30px;margin-right: -5px">
                   <el-radio :label="item" class="radio">&nbsp</el-radio>
                 </el-radio-group>
-                <p>{{item.depart}}</p>
+                <p>{{item.FName}}</p>
                 <em>{{index+1}}</em>
               </li>
-              <li v-if="typeof item.name == 'string'">
-                <i class="logo"></i>
-                <span>审批人：</span>
-                <p>{{item.name}}</p>
+              <li v-if="item.Operators.length == 1">
+                <template v-for="childrenItem in item.Operators">
+                  <i class="logo"></i>
+                  <span>审批人：</span>
+                  <p>{{childrenItem.OperatorName}}</p>
+                </template>
               </li>
               <li v-else>
                 <i class="logo"></i>
                 <span>审批人：</span>
                 <br />
-                <p>
-                  <span v-for="(name,idx) in item.name">
-                    {{name}}
-                    <span v-if="item.name.length-1 != idx">、</span>
-                  </span>
-                </p>
+                <ul>
+                  <li>
+                    <span v-for="(childrenItem,idx) in item.Operators">
+                      <span>
+                        {{childrenItem.OperatorName}}
+                      </span>
+                      <span v-if="idx !== item.Operators.length-1">
+                        、
+                      </span>
+                    </span>
+                  </li>
+                </ul>
               </li>
             </ul>
           </div>
@@ -60,7 +68,7 @@
       },
       visible:{  //控制显示隐藏
         type:Boolean,
-        default:true
+        default:false
       },
       auditMsg:{
         type:Array,
@@ -84,7 +92,8 @@
       }
     },
     mounted(){
-      this.radio = this.auditMsg[0]
+      this.radio = this.auditMsg[0];
+      console.log(this.radio)
     },
     watch:{
       radio(val){
@@ -94,6 +103,7 @@
     methods:{
       close(){
         this.$emit('update:visible',false);
+        this.$emit('closeBack',false)
       },
       confirm(){
         this.$emit('getBackPeople',this.radio)

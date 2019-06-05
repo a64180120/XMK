@@ -13,7 +13,9 @@
                 </div>
                 <el-radio v-if="!isApproval" v-model="handleValue" label="1">同意</el-radio>
                 <el-radio v-if="!isApproval" v-model="handleValue" label="2">不同意</el-radio>
-                <span v-if="backPersonnel[0] !== undefined " style="color: red">(本单据将退回给“{{backPersonnel[0]}}”)</span>
+                <span v-if="backPersonnel[0] !== undefined " style="color: red">(本单据将退回给
+                  <span v-for="item in backPersonnel">“{{item.OperatorName}}”</span>
+                  )</span>
               </li>
               <li>
                 <span>附单据 {{list}} 张</span>
@@ -122,17 +124,10 @@
       },
       data(){
         return{
-          list:2,
+          list:1,
           textare:'',
           openDialog:false,
           handleValue:'',
-          subData:[{
-            code:"0001",
-            name:"活动资金申请"
-          },{
-            code:"0002",
-            name:"团建资金申请"
-          }],
           subPeople:[]
         }
       },
@@ -170,15 +165,6 @@
         handleRowClick(row,column){
           this.$emit('approvalRowClick',row)
         },
-        //取消
-        cancel(){
-          this.openDialog = false
-          this.subPeople = []
-        },
-        //确认
-        submit(){
-          this.subPeople = []
-        }
       }
     }
 </script>

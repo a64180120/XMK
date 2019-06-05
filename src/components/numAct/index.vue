@@ -109,6 +109,7 @@
       overflow: hidden;
       box-sizing: border-box;
       font-size: .4rem;
+      line-height: .3rem;
       display: inline-block;
       .list{
         position: absolute;
