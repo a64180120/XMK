@@ -501,7 +501,7 @@
 
         //获取部门
         getDataC:function(){
-          let param={Unit:'101'};
+          let param={Unit:'101',UserNo:9999};
           this.getAxios('GQT/CorrespondenceSettingsApi/GetDeptByUnit',param).then(res=>{
             console.log(res);
             this.bmList=res.Record;
