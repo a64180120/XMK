@@ -15,7 +15,11 @@
         :nextApprovaler="nextApprovaler"
         @dialogFlow="searchFlow"
         @isArgeen="backAproval"
-        :backPersonnel="backPersonnel"></approval-bill>
+        @selectApprovaler="selectApprovaler"
+        :backPersonnel="backPersonnel"
+        ref="approval"
+        v-model="textare"
+      ></approval-bill>
       <div class="approval-btn">
         <el-button size="small" type="primary" @click="cancel()">取消</el-button>
         <el-button size="small" type="primary" @click="submit()">生成支付单</el-button>
@@ -47,13 +51,15 @@
       return{
         visible:false,
         textare:'',
-        backPersonnel:[],
         openDialog:false,
         handleValue:'',
         approvalFollow:[],
         nextApprovaler:[],
-        backPersonnel:[],
-        backData:[]
+        backPost:[],//获取回退的审批人岗位
+        isAgree:'', //保存是否同意审批
+        backPersonnel:[],//回退审批人集合
+        backData:[],//回退的审批人岗位集合
+        operatorID:[] //操作人员集合
       }
     },
     methods:{
@@ -94,121 +100,91 @@
           this.openDialog = true
         }
       },
+      //下一审批人选中弹框
+      selectApprovaler(e){
+        for (let k in e){
+          this.operatorID[k] = e[k].OperatorPhid
+        }
+      },
       //取消
       cancel(){
-        this.openDialog = false
+        this.openDialog = false;
+        this.visible = false;
+        this.backPersonnel = [];
+        this.$refs.approval.handleValue = ''
+      },
+      //审批通过
+      submit(){
+        // let that = this
+        // this.visible = false
+        // this.$msgBox.show({
+        //   content:'操作成功',
+        //   fn:function () {
+        //     that.openDialog = false
+        //     that.$emit('subSuc')
+        //   }
+        // })
+
+        //同意数据 单条
+        let data = {
+          PhId:this.rowData[0].PhId,//单据ID
+          ProcPhid:this.rowData[0].ProcPhid,//审批流程id
+          PostPhid:this.rowData[0].PostPhid,//审批岗位id
+          RefbillPhid:this.rowData[0].RefbillPhid,//单据id
+          FBilltype:this.BType,//单据类型
+          FApproval:this.isAgree,//审批意见(0- 未审批 1-待审批 2- 未通过 9-审批通过)
+          NextOperators:"",//下一岗位审批人id的集合
+          FOpinion:this.textare //审批备注
+        }
+
+        if (this.isAgree === '9') {
+          data.NextOperators = this.operatorID
+        }else if(this.isAgree === '2'){
+          let arr =[]
+          for (let key in this.backPersonnel){
+            arr[key] = this.backPersonnel[key].OperatorPhid
+          }
+          data.NextOperators = arr
+          data.BackPostPhid = this.backPost.PhId
+        }
+        this.postAxios('/GAppvalRecord/PostApprovalRecord').then(success=>{
+          if (success.Status == 'success'&&success) {
+            let that= this
+            this.visible = false
+            this.creatPayList()
+            this.$msgBox.show({
+              content:'审批成功',
+              fn:function () {
+                that.openDialog = false;
+                that.$emit('subSuc');
+                that.$refs.approval.handleValue = '';
+                this.textare = ''
+              }
+            })
+          }else {
+            this.$msgBox.show(success.Msg)
+          }
+        }).catch(err=>{
+          this.$msgBox.show('请求出错')
+        })
+
       },
       //生成支付单
-      submit(){
-        let that = this
-        this.visible = false
-        this.$msgBox.show({
-          content:'操作成功',
-          fn:function () {
-            that.openDialog = false
-            that.$emit('subSuc')
-          }
-        })
-        let now = new Date().getTime().toString();
-        let addData = {
-          "uid": 521180820000001,     //用户id
-          "orgid": 547181121000001,   //组织id
-          "ryear": '2019',               //年度
-          "infoData": {
-            "Mst": {
-              "PhId": 0,
-              "OrgPhid": 547181121000001,
-              "OrgCode": "1",
-              "RefbillPhid": 6,
-              "RefbillCode": "zfbbf0006",
-              "FCode": "P" + now,
-              "FPaymethod": 2,
-              "FAmountTotal": 2006.0,
-              "FApproval": 0,
-              "FState": 0,
-              "FDescribe": "单元测试-" + now,
-              "FDate": "2019-05-27",
-              "FBilltype": "zjbf",
-              "PersistentState": 1
-            },
-            "Dtls": [{
-              "PhId": 0,
-              "MstPhid": 0,
-              "OrgPhid": 547181121000001,
-              "OrgCode": "1",
-              "RefbillPhid": 6,
-              "RefbillCode": "zfbbf0006",
-              "RefbillDtlPhid": 1,
-              "RefbillDtlPhid2": 1,
-              "FAmount": 1000.0,
-              "FCurrency": "001",
-              "FPayAcntname": "付款账户1",
-              "FPayAcnt": "111001",
-              "FPayBankcode": "102",
-              "FRecAcntname": "收款账户1",
-              "FRecAcnt": "222122",
-              "FRecBankcode": "102",
-              "FRecCityname": "杭州市",
-              "FSamecity": 0,
-              "FSamebank": 1,
-              "FIsurgent": 1,
-              "FCorp": 1,
-              "FUsage": "用途信息",
-              "FPostscript": "附言：xxx",
-              "FExplation": "摘要",
-              "FDescribe": "描述",
-              "FSubmitdate": null,
-              "FSeqno": null,
-              "FBkSn": null,
-              "FResult": null,
-              "FResultmsg": null,
-              "FState": 0,
-              "FNewCode": null,
-              "ForeignKeys": null,
-              "BusinessPrimaryKeys": null,
-              "PersistentState": 1
-            }, {
-              "PhId": 0,
-              "MstPhid": 0,
-              "OrgPhid": 547181121000001,
-              "OrgCode": "1",
-              "RefbillPhid": 6,
-              "RefbillCode": "zfbbf0006",
-              "RefbillDtlPhid": 1,
-              "RefbillDtlPhid2": 1,
-              "FAmount": 1006.0,
-              "FCurrency": "001",
-              "FPayAcntname": "付款账户2",
-              "FPayAcnt": "111002",
-              "FPayBankcode": "102",
-              "FRecAcntname": "收款账户1",
-              "FRecAcnt": "222122",
-              "FRecBankcode": "102",
-              "FRecCityname": "杭州市",
-              "FSamecity": 0,
-              "FSamebank": 1,
-              "FIsurgent": 1,
-              "FCorp": 1,
-              "FUsage": "用途信息2",
-              "FPostscript": "附言：xxx2",
-              "FExplation": "摘要2",
-              "FDescribe": "描述2",
-              "FSubmitdate": null,
-              "FSeqno": null,
-              "FBkSn": null,
-              "FResult": null,
-              "FResultmsg": null,
-              "FState": 0,
-              "FNewCode": null,
-              "PersistentState": 1
-            }
-            ]
-          }
-        };
-        this.getAxios('/GKPaymentMstApi/PostAdd',addData)
-          .then(success=>{
-          console.log(success)
+      creatPayList(){
+        let data = {
 
+        }
+        this.postAxios('/GAppvalRecord/PostAddPayMent').then(success=>{
+          this.$msgBox.show({
+            content:'审批成功',
+            fn:function () {
+              that.openDialog = false;
+              that.$emit('subSuc');
+              that.$refs.approval.handleValue = '';
+              this.textare = ''
+            }
+          })
+            console.log(success)
         }).catch(err=>{
           console.log(err)
         })
@@ -217,7 +193,9 @@
         if (!val){
           // this.visible = true
           this.getBackApprovalPost()
+          this.isAgree = '2'
         } else {
+          this.isAgree = '9'
           this.visible = false
           this.backPersonnel = []
         }
@@ -225,6 +203,7 @@
       //关闭销毁回退,下次打开执行生命周期
       closeBack(){
         this.visible = false
+
       },
       getBackPeople(item){
         for (let key in item.Operators){
@@ -236,6 +215,7 @@
       closeDialog(){
         this.openDialog = false
         this.visible = false
+        this.textare = ''
       },
       //查看详细流程
       searchFlow(row){
