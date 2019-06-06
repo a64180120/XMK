@@ -3,12 +3,12 @@
         <ul class="typelist">
             <li>
                 <div>审批类型</div>
-                <div><el-input maxlength="10" v-model="auditType" placeholder="请输入审批类型,10个字以内(必填)"></el-input></div>
+                <div><el-input maxlength="10" v-model="auditType.TypeName" placeholder="请输入审批类型,10个字以内(必填)"></el-input></div>
             </li>
             <li>
                 <div>单据类型</div>
                 <div>
-                     <el-select v-model="orderType" placeholder="请选择">
+                     <el-select :disabled="typeinfo.Issystem==1" v-model="orderType" placeholder="请选择">
                         <el-option
                         v-for="item in options"
                         :key="item.Value"
@@ -45,7 +45,7 @@ export default {
     data(){
         return{
             orderType:'001',
-            auditType:'',
+            auditType:{TypeCode:666,TypeName:''},
             options:[
                 {Value:'001',label:'资金拨付单'},
                 {Value:'002',label:'支付单'},
@@ -55,25 +55,47 @@ export default {
             ]
         }
     },
+    watch:{
+        typeinfo(val){
+
+            if(val){
+                this.orderType=val.Value;
+                this.auditType.TypeName=val.TypeName;
+                this.auditType.TypeCode=val.TypeCode;   
+            }else{
+                this.auditType.TypeName='';
+
+            }
+           
+        }
+    },
     methods:{
         update(){  //保存
             let data={
                 "BillType":this.orderType,
-                "ApprovalTypeName":this.auditType,
-                "ApprovalTypeCode":'0002',
+                "ApprovalTypeName":this.auditType.TypeName,
+                "ApprovalTypeCode":this.auditType.TypeCode,
+                ApprovalTypeId:this.typeinfo.PhId,
                 "Orgid":'521180820000001',
                 "OrgCode":'1'
             }
-            PostAddProcType(data).then(res=>{
+            this.fnType(this.typeinfo.PhId,data).then(res=>{
                 if(res.Status=="error"){
                     this.$msgBox.show(res.Msg);
                 }else{
                     this.$msgBox.show('保存成功!')
-                    this.$emit('add-cancle');
+                    this.$emit('add-cancle',true);
                 }
             }).catch(err=>{
                 this.$msgBox.show('保存失败!')
             })
+        },
+        fnType(bool,data){
+            if(bool){
+              return  PostUpdateProcType(data)
+            }else {
+              return  PostAddProcType(data)
+            }
         }
     }
 }

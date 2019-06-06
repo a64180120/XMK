@@ -13,10 +13,12 @@
             <span>支付口令</span>
             <div class="passwordContent">
               <el-input
-              :disabled="disabled"
+                maxlength="6"
+                @keyup.native="clearNoNum($event)"
+                :disabled="disabled"
                 :type="newPasswordCanSee?'text':'password'"
                 v-model="newPassword"
-                placeholder="请输入支付口令"
+                placeholder="请输入6位数字口令"
               ></el-input>
               <img
                 v-show="newPasswordCanSee"
@@ -34,10 +36,11 @@
             <span v-show="!disabled">确认口令</span>
             <div v-show="!disabled" class="passwordContent">
               <el-input
-              
+                maxlength="6"
+                @keyup.native="clearNoNum($event)"
                 :type="confirmPasswordCanSee?'text':'password'"
                 v-model="confirmPassword"
-                placeholder="请输入支付口令"
+                placeholder="请输入6位数字口令"
               ></el-input>
               <img
                 v-show="confirmPasswordCanSee"
@@ -67,13 +70,15 @@
 </template>
 
 <script>
+import md5 from 'js-md5'
+import {PostSavePayPsd} from '@/api/systemSetting/dataSafe'
 export default {
     name:'passwordsetting',
     data(){
         return {
             showSetting:true,
             newPasswordCanSee:false,
-            newPassword:123456,
+            newPassword:'',
             confirmPasswordCanSee:false,
             confirmPassword:'',
             radio:0,
@@ -81,11 +86,89 @@ export default {
         }
     },
     methods:{
+      //设置支付口令
         setPassword(){
-
+          let reg=/([0-9])\1{5}/;
+          if(!this.newPassword){
+            this.$msgBox.show('请输入口令!')
+               return;
+          }
+          if(this.newPassword!==this.confirmPassword){
+            this.$msgBox.show('两次输入的口令不一致,请重新输入!')
+               return;
+          }
+          if(this.confirmPassword.length!=6){
+            this.$msgBox.show('输入的口令应为6位数字,请重新输入!')
+            return;
+          }
+          if(reg.test(this.confirmPassword)){
+            this.$msgBox.show('输入的口令不能为6位相同数字,请重新输入!')
+            return;
+          }
+          if(this.checkNum(this.confirmPassword)){
+            this.$msgBox.show('输入的口令不能为6位连续数字,请重新输入!')
+            return;
+          }
+          let  data={
+            // DicType:'PayPsd',
+            // DicName:'支付口令',
+            TypeCode:'9999',
+            TypeName:'省总管理员',
+            Value:md5(this.confirmPassword),
+            Isactive:this.radio,
+            Orgid:'488181024000001',
+            Orgcode:1
+          }
+            PostSavePayPsd(data).then(res => {
+              this.$msgBox.show(res.Msg);
+              if(res.Status=='success'){
+                // this.getData();
+              }
+            }).catch(err => {
+              this.$msgBox.show('保存支付口令失败!');
+            })
+        },
+        //输入框限定***
+        clearNoNum(event){
+            var obj=event.target;
+            obj.value = obj.value.replace(/[^0-9]/g,"");  //清除“数字”和“.”以外的字符  
+        },
+        //检查口令
+        checkNum(val){
+          let arr=val.split('');
+          let bool = true;
+          for(let a=0;a<5;a++){
+            if(arr[a]-arr[a+1]!=1){
+              bool=false;
+              break;
+            }
+          }
+          if(bool){
+            return bool;
+          }else{
+            bool=true;
+          }
+          for(let b=0;b<5;b++){
+            if(arr[b+1]-arr[b]!=1){
+              bool=false;
+              break;
+            }
+          }
+          return bool;
         },
         getData(){
+          let data={
 
+          }
+          get(data).then(res => {
+            if(res.Status=="error"){
+              this.$msgBox.show(res.Msg)
+            }else{
+
+            }
+          }).catch(err => {
+              this.$msgBox.show('获取支付口令失败!')
+          })
         },
         beforeClose(){
             this.disabled=true;
