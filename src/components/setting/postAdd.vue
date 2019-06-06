@@ -8,42 +8,42 @@
             <li class="auditInfo clear">
                 <div>岗位代码</div>
                 <div>
-                   <el-input v-model="info.code" placeholder="请输入岗位代码(必填)"></el-input>
+                   <el-input v-model="info.FCode" placeholder="请输入岗位代码(必填)"></el-input>
                 </div>
             </li>
             <li class="auditInfo clear">
                 <div>岗位名称</div>
                 <div>
-                    <el-input maxlength="20" v-model="info.code" placeholder="请输入岗位名称,20个字以内(必填)"></el-input>
+                    <el-input maxlength="20" v-model="info.FName" placeholder="请输入岗位名称,20个字以内(必填)"></el-input>
                 </div>
             </li>
             <li class="auditInfo clear">
                 <div>备注</div>
                 <div>
-                    <el-input v-model="info.name" placeholder="请输入备注"></el-input>
+                    <el-input v-model="info.FDescribe" placeholder="请输入备注"></el-input>
                 </div>
             </li>
             <li class="auditInfo clear">
                 <div>启用/停用</div>
                 <div>
-                     <el-radio v-model="info.enable" label="0">启用</el-radio>
-                    <el-radio v-model="info.enable" label="1">停用</el-radio>
+                     <el-radio v-model="info.FEnable" :label="0">启用</el-radio>
+                    <el-radio v-model="info.FEnable" :label="1">停用</el-radio>
                 </div>
             </li>
             <li class="auditInfo clear">
                 <div>审批人员</div>
                 <div class="textR auditerColor">
-                   <div @click.stop="showAddAuditer=true" >
+                   <div @click.stop="showAuditer" >
                         添加审批人
                    </div>
                    
                 </div>
             </li>
         </ul>
-        <div class="listCon">
+        <div v-if="userList.length>0" class="listCon">
             <div class="list">
                 <ul class="listHead">
-                    <li><el-checkbox v-model="checked"> 序号</el-checkbox></li>
+                    <li> 序号</li>
                     <li>操作员编码</li>
                     <li>操作员姓名</li>
                     <li>部门</li>
@@ -51,29 +51,46 @@
                 </ul>
             </div>
             <div class="list2">
-                <ul v-for="n of 6" class="listContent">
-                    <li><el-checkbox v-model="checked"> {{n}}</el-checkbox></li>
-                    <li>是是是</li>
-                    <li>dasds</li>
-                    <li>部safd门</li>
-                    <li>组fsdf织</li>
+                <ul v-for="(user,n) of userList" class="listContent">
+                    <li>{{n+1}}</li>
+                    <li>{{user.Dwdm}}</li>
+                    <li>{{user.DefStr1}}</li>
+                    <li>{{user.DefStr5}}</li>
+                    <li>{{user.DefStr4}}</li>
                 </ul>
             </div>
         </div>
         <el-dialog class="postAddModel" append-to-body title="选择操作员" :visible.sync="showAddAuditer">
-            <auditer @auditer-cancle="auditerCancle"/>
+            <auditer :info="userList" :getuser="users" @auditer-cancle="auditerCancle"/>
         </el-dialog>
     </div>
 </template>
 
 <script>
 import auditer from '@/components/setting/auditer'
+import {PostAdd,GetAppvalPostOpers,PostUpdate} from '@/api/systemSetting/post'
 export default {
     name:'postAdd',
     props:{
         type:{
             type:String,
             default:'add'
+        },
+        postinfo:{
+            type:String,
+            default:''
+        }
+    },
+    watch:{
+        postinfo(val){
+            if(val){
+                this.getData();
+            }else{
+                this.info={
+                    FEnable:0
+                }
+                this.userList=[];
+            }
         }
     },
     data(){
@@ -87,7 +104,7 @@ export default {
             label: '双皮奶'
             }],
             info:{
-                enable:'0'
+                FEnable:0
             },
             post:{
 
@@ -96,17 +113,101 @@ export default {
             selected:1,
             season:'',
             checked:false,
+            userList:[],
+            users:''
         }    
+    },
+    mounted(){
+        if(this.postinfo){
+            this.getData();    
+        }
     },
     methods:{
         liucheng(str){
             this.selected=str;
         },
-        auditerCancle(){
+        auditerCancle(data){
+            if(data){
+                this.userList=data;
+            }
+             this.users='';
             this.showAddAuditer=false;
         },
+        getData(){ //获取修改的数据
+        
+            let data={
+                PhId:this.postinfo
+            }
+            GetAppvalPostOpers(data).then(res => {
+                if(res.Status=='success'){
+                    this.$msgBox.show(res.Msg)
+                }else{
+                    this.info=res.GAppvalPost;
+                    this.userList=res.GAppvalPost4Opers;
+                    this.userList.map(user => {  //统一岗位和操作人员字段
+                        this.turnPro(user);
+                    })
+                }
+            }).catch(err => {
+                this.$msgBox.show('获取岗位信息失败!')
+            })
+        },
+        //
+        turnPro(data){
+            data.Dwdm=data.OperatorCode;
+            data.DefStr1=data.OperatorName;
+            data.DefStr5=data.DepName;
+            data.DefStr3=data.DepCode;
+            data.Dydm=data.OrgCode;
+            data.DefStr4=data.OrgName;
+            data.DefStr6=data.OperatorPhid;
+        },
         update(){  //保存
-            this.$msgBox.show('保存成功!')
+            this.info.OrgPhid='521180820000001';
+            this.info.OrgCode='1';
+            let info2=[];
+            this.userList.map((list,n)=> {
+                info2.push({
+                    OperatorPhid: list.DefStr6,  //（操作员主键）
+                    OperatorCode: list.Dwdm,  //（操作员编码）
+                    FSeq:n+1  
+                })
+            })
+            let data={
+                GAppvalPost:this.info,
+                GAppvalPost4Opers:info2
+            }
+            if(this.type=='add'){
+                PostAdd(data).then(res => {
+                 this.$msgBox.show(res.Msg)
+                 if(res.Status=='success'){
+                     this.$emit('add-cancle',true);
+                 }
+                }).catch(err=> {
+                    this.$msgBox.show('保存失败!')
+                })
+            }else{
+                PostUpdate(data).then(res => {
+                 this.$msgBox.show(res.Msg)
+                 if(res.Status=='success'){
+                     this.$emit('add-cancle',true);
+                 }
+                }).catch(err=> {
+                    this.$msgBox.show('保存失败!')
+                })
+            }
+            
+           
+        },
+        showAuditer(){
+            console.log(this.users)
+            if(this.type=='add'){
+                this.users=''
+            }else{
+                this.users='get';
+            }
+            console.log(this.type,this.users)
+            this.showAddAuditer=true;
         }
     },
     components:{
@@ -187,6 +288,7 @@ export default {
         text-align: left;
         margin:10px 0px 0 20px;
         .listContent >li,.listHead >li{
+        
             float:left;
             text-align: center;
             border:1px solid #ccc;
@@ -216,6 +318,7 @@ export default {
             height:40px;
             overflow-y: scroll;
             padding-right:20px;
+         
             >li{
                 border-top:1px solid #ccc;
                 height:38px;
@@ -317,7 +420,6 @@ export default {
         
     }
     .list2{
-        height:350px;
          overflow-y:scroll;
         position:relative;
     }
@@ -337,7 +439,7 @@ export default {
             &:first-of-type{
                 width:10%;
                 border-left-width:1px;
-                text-align: left;
+                // text-align: left;
                 padding-left:5px;
             }
             &:nth-of-type(2){
@@ -355,7 +457,7 @@ export default {
         }
     } 
     .listHead{
-         
+            color:#fff;
         background:$btnColor;
         >li{
             border-top:1px solid #ccc;

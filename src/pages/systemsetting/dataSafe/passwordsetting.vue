@@ -71,7 +71,7 @@
 
 <script>
 import md5 from 'js-md5'
-import {dictionarySave} from '@/api/systemSetting/dataSafe'
+import {PostSavePayPsd} from '@/api/systemSetting/dataSafe'
 export default {
     name:'passwordsetting',
     data(){
@@ -110,8 +110,8 @@ export default {
             return;
           }
           let  data={
-            DicType:'PayPsd',
-            DicName:'支付口令',
+            // DicType:'PayPsd',
+            // DicName:'支付口令',
             TypeCode:'9999',
             TypeName:'省总管理员',
             Value:md5(this.confirmPassword),
@@ -119,10 +119,10 @@ export default {
             Orgid:'488181024000001',
             Orgcode:1
           }
-            dictionarySave(data).then(res => {
+            PostSavePayPsd(data).then(res => {
               this.$msgBox.show(res.Msg);
               if(res.Status=='success'){
-                this.getData();
+                // this.getData();
               }
             }).catch(err => {
               this.$msgBox.show('保存支付口令失败!');

@@ -9,12 +9,12 @@
             <li class="auditInfo clear">
                 <div>审批类型</div>
                 <div :class="{fontRed:checkContent.type}">
-                    <el-select  v-model="info.SPLX" placeholder="请选择审批类型(必填)">
+                    <el-select  v-model="info.SPLXPhid" placeholder="请选择审批类型(必填)">
                         <el-option
                             v-for="item in options"
-                            :key="item.TypeCode"
+                            :key="item.PhId"
                             :label="item.TypeName"
-                            :value="item">
+                            :value="item.PhId">
                         </el-option>
                     </el-select>
                 </div>
@@ -37,7 +37,8 @@
                     <orgtree :visible.sync="orgVisible"  @confirm="getOrg" :data="orgList" :checked-org="orgSelected"></orgtree>
                     <el-input   readonly   placeholder="请选择组织(必填)"></el-input>
                     <div class="orgInfoCon">
-                        <span  v-for="org of info.org">{{org.OName}}&nbsp;&nbsp;</span>
+                        <input style="border:0;cursor:pointer" v-if="info.org.length==0" type="text" disabled placeholder="请选择组织(必填)">
+                        <span  v-for="org of info.org">{{org.OrgName?org.OrgName:org.OName}}&nbsp;&nbsp;</span>
                     </div>
                 </div>
             </li>
@@ -67,7 +68,7 @@
                 <ul v-for="(postinfo,n) of postList" :key="n" class="listContent">
                     <li>{{n+1}}</li>
                     <li>
-                         <el-select @change="selectName($event,n)" v-model="postinfo.post" placeholder="请选择岗位代码">
+                         <el-select @change="selectName($event,n)" v-model="postinfo.PhId" placeholder="请选择岗位代码">
                             <el-option
                             v-for="item in codeList"
                             :key="item.PhId"
@@ -77,14 +78,14 @@
                         </el-select>
                     </li>
                     <li>
-                        <div >{{postinfoName[n]}}</div>
+                        <div >{{postinfo.FName}}</div>
                     </li>
                     <li class="deleteIconCon">
-                        <el-radio v-model="postinfo.FMode" :label="0">是</el-radio>
-                        <el-radio v-model="postinfo.FMode" :label="1">否</el-radio>
+                        <el-radio v-model="postinfo.FMode" :label="1">是</el-radio>
+                        <el-radio v-model="postinfo.FMode" :label="0">否</el-radio>
                         <div class="icon active">
                             <div @click.stop="addPost(n)"><img src="@/assets/images/jia.png" alt=""></div>    
-                            <div @click.stop="deletePost(n,postinfo)"><img src="@/assets/images/jian.png" alt=""></div>  
+                            <div @click.stop="deletePost(n,info)"><img src="@/assets/images/jian.png" alt=""></div>  
                         </div>
                     </li>
                 </ul>
@@ -107,7 +108,7 @@
         <p class="statusBtn">
             <span @click.stop="liucheng((parseInt(selected)-1))" :class="{grey:selected=='1',green:selected=='2',yellow:selected=='3'}">上一步</span>
             <span @click.stop="liucheng((parseInt(selected)+1))" :class="{grey:selected=='3',yellow:selected!='3'}">下一步</span>
-            <span @click.stop="update" :class="{grey:selected!='3'}">保存</span>
+            <span @click.stop="submit(type)" :class="{grey:selected!='3'}">保存</span>
             <span @click.stop="$emit('add-cancle')">取消</span>
         </p>
         <xmMessage :visible.sync="message.visible" :message="message.msg"></xmMessage>
@@ -117,20 +118,30 @@
 <script>
 import fDialog from "@/components/attechment/dialog"
 import Orgtree from "@/components/orgtree/index";
-import {PostAddProc} from '@/api/systemSetting/audit'
+import {PostAddProc,GetProcDetail} from '@/api/systemSetting/audit'
 import {mapState} from 'vuex'
 export default {
     name:'auditAdd',
     props:{
-        type:{
+        auditinfo:{  //修改传入的流程信息
+            type:Object,
+            default(){
+                return {}
+            }
+        },
+        type:{  //新增还是修改
             type:String,
             default:'add'
         },
-        options:{
+        splx:{  //新增时传入的审批类型id
+            type:String,
+            default:''
+        },
+        options:{ //审批类型列表
             type:Array,
             default:[]
         },
-        codeList:{
+        codeList:{  //岗位列表
             type:Array,
             default(){
                 return [{PhId:'003',FCode:'1111',FName:'财务资产部'},{PhId:'001',FCode:'2222',FName:'资源部'}]
@@ -148,7 +159,7 @@ export default {
             },
             
             info:{  //流程信息列表
-                FEnable:0,
+                FEnable:0,org:[]
             },
             postinfoName:[],
             postList:[  //岗位列表
@@ -174,6 +185,48 @@ export default {
             orgList : state => state.user.orglist,
         })
     },
+    watch:{
+        splx(val){ 
+            if(val){
+                this.$set(this.info,'SPLXPhid',val)
+            }
+        },
+        auditinfo(val){
+            this.selected=1;
+            console.log(val)
+             if(val){ 
+                 let orgs=[];
+                 this.auditinfo.Organizes.map(org => {
+                     orgs.push(org.OrgId);
+                 })
+                 let data={
+                    ApprovalTypeId:this.auditinfo.SPLXPhid,
+                    BillType:this.auditinfo.FBilltype,
+                    OrgIds:orgs,
+                    ProcCode:this.auditinfo.FCode
+                 }
+                GetProcDetail(data).then(res => {
+                    if(res.Status=='error'){
+                        this.$msgBox.show(res.Msg)
+                    }else{
+                        this.info=res.Data;
+                        this.info.org=res.Data.Organizes;
+                        this.postList=res.Data.PostModels;
+                        console.log(this.postList)
+                    }
+                }).catch(err=>{
+                    this.$msgBox.show('获取流程信息失败!')
+                })
+            }else{
+                console.log(this.info,this.splx)
+                this.info={  
+                    FEnable:0,
+                    org:[],
+                    SPLXPhid:this.splx
+                }
+            }
+        }
+    },
     methods:{
         //流程切换
         liucheng(str){
@@ -181,14 +234,14 @@ export default {
                 return;
             }
             if(this.selected==1){
-                console.log(this.info)
-                if((!this.info.FName)||(!this.info.FCode)||(!this.info.org)||(!this.info.SPLX)){//必填信息为空
+                if((!this.info.FName)||(!this.info.FCode)||(this.info.org.length==0)||(!this.info.SPLXPhid)){//必填信息为空
                      this.$msgBox.show('请完善必填信息!')
                     return;
                 }
-            }else if(str==3&&this.selected==2&&this.info.enable==0){
+            }else if(str==3&&this.selected==2&&this.info.FEnable==0){
                 let p=this.postList.every((el)=>{
-                   return el.org&&el.msg;
+
+                   return el.PhId;
                 })
                 if(!p){
                     this.$msgBox.show('编码与名称不能为空!')
@@ -206,19 +259,19 @@ export default {
         //自动带出岗位名称
         selectName(id,n){
             let name='';
+            debugger
             this.codeList.map(po => {
                 if(po.PhId==id){
                     name=po.FName;
                 }
             })
             
-            this.$set(this.postinfoName,n,name);
+            this.$set(this.postList[n],'FName',name);
         },
-        //保存
-        update(){
+        submit(type){
             if(this.selected==3){
                 let arr=[],info;
-                let posts=[],maxMin=[];
+                let posts=[],maxMin=[],splx;
                 this.postList.map((pos,i )=> {
                     posts.push({
                         PostPhid:pos.post,
@@ -264,18 +317,23 @@ export default {
                             F_CONNECTOR:'',
                         }]
                 }
+                this.options.map(opt => {
+                    if(opt.PhId==this.info.SPLXPhid){
+                        splx=opt;
+                    }
+                })
                 info={
                     OrgPhid:'521180820000001',
                     OrgCode:'1',
                     FCode:this.info.FCode,
                     FName:this.info.FName,
-                    FBilltype:this.info.SPLX.Value,
+                    FBilltype:splx.Value,
                     FEnable:this.info.FEnable,
                     FDescribe:this.info.FDescribe,
-                    SPLXPhid:this.info.SPLX.PhId,
-                    SPLXCode:this.info.SPLX.TypeCode,
+                    SPLXPhid:splx.PhId,
+                    SPLXCode:splx.TypeCode,
                     Proc4PostModels:posts,
-                    CondsModels:[]
+                    CondsModels:maxMin
                 }
                 for(let org of this.info.org){
                     let inf = JSON.parse(JSON.stringify(info));
@@ -286,6 +344,17 @@ export default {
                 let data={
                     infoData:arr
                 }
+                if(type=='add'){
+                    this.add(data);
+                }else{
+                    this.update(data);
+                }
+            }
+            
+        },
+        //新增保存
+        add(data){
+            
                 if(this.money.enable){
                     if(((this.money.max||this.money.min)&&(this.money.max!=this.money.min))){
                         //执行保存
@@ -314,6 +383,37 @@ export default {
                     })
                     
                 }
+            
+        },
+        //修改保存
+        update(data){
+             if(this.money.enable){
+                if(((this.money.max||this.money.min)&&(this.money.max!=this.money.min))){
+                    //执行保存
+                    PostUpdateProc(data).then(res => {
+                        this.$msgBox.show(res.Msg);
+                        if(res.Status=='success'){
+                            this.$emit('add-cancle');
+                        }
+                    }).catch(err => {
+                        this.$msgBox.show('修改失败!');
+                    })
+                    
+                    
+                }else{
+                    this.$msgBox.show('请至少填写一个金额,且上限金额与下限金额不能相同!')
+                }
+            }else{
+                //执行保存
+                PostUpdateProc(data).then(res => {
+                    this.$msgBox.show(res.Msg);
+                    if(res.Status=='success'){
+                        this.$emit('add-cancle');
+                    }
+                }).catch(err => {
+                    this.$msgBox.show('修改失败!');
+                })
+                
             }
         },
         //组织选择

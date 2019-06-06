@@ -36,7 +36,7 @@ service.interceptors.response.use(
     if (typeof (res) == "object" && Object.prototype.toString.call(res).toLowerCase() == "[object object]" && !res.length) {
         return Promise.reject(res);
     } else {
-        var jsonStr = res.replace(/\n/g, "\\n").replace(/\r/g, "\\r");
+        var jsonStr = res.replace(/\n/g, "\\n").replace(/\r/g, "\\r").replace('：',':');
         return Promise.resolve(JSON.parse(jsonStr));
     }
   },
