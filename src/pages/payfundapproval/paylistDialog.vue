@@ -45,6 +45,10 @@
       BType:{
         type: String,
         default:'002'
+      },
+      isApproval:{
+        type:Boolean,
+        default:false
       }
     },
     data(){
@@ -147,26 +151,30 @@
           data.NextOperators = arr
           data.BackPostPhid = this.backPost.PhId
         }
-        this.postAxios('/GAppvalRecord/PostApprovalRecord').then(success=>{
-          if (success.Status == 'success'&&success) {
-            let that= this
-            this.visible = false
-            this.creatPayList()
-            this.$msgBox.show({
-              content:'审批成功',
-              fn:function () {
-                that.openDialog = false;
-                that.$emit('subSuc');
-                that.$refs.approval.handleValue = '';
-                this.textare = ''
-              }
-            })
-          }else {
-            this.$msgBox.show(success.Msg)
-          }
-        }).catch(err=>{
-          this.$msgBox.show('请求出错')
-        })
+        if (this.isApproval){
+          this.postAxios('/GAppvalRecord/PostApprovalRecord').then(success=>{
+            if (success.Status == 'success'&&success) {
+              let that= this
+              this.visible = false
+              this.creatPayList()
+              this.$msgBox.show({
+                content:'审批成功',
+                fn:function () {
+                  that.openDialog = false;
+                  that.$emit('subSuc');
+                  that.$refs.approval.handleValue = '';
+                  this.textare = ''
+                }
+              })
+            }else {
+              this.$msgBox.show(success.Msg)
+            }
+          }).catch(err=>{
+            this.$msgBox.show('请求出错')
+          })
+        } else {
+          this.creatPayList()
+        }
 
       },
       //生成支付单

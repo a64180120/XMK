@@ -147,7 +147,7 @@
             path:path,
             query:{
               approval:false,
-              Splx_Phid:this.myApproval.PhId,
+              SplxPhid:item.PhId,
             }})
         }
       }
