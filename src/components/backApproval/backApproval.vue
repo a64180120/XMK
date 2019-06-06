@@ -93,11 +93,10 @@
     },
     mounted(){
       this.radio = this.auditMsg[0];
-      console.log(this.radio)
     },
     watch:{
       radio(val){
-        console.log(val)
+
       }
     },
     methods:{

@@ -19,23 +19,17 @@
         <img src="../../assets/test.jpg">
       </div>
       <div class="img-nav">
-        <ul>
-          <li class="prev">
-            <i class="el-icon-d-arrow-left" @click="prevImg()"></i>
-          </li>
-          <li  class="img-content">
-            <div class="img-main">
-              <div class="img-item" v-for="(item,idx) in images">
-                <div  class="img-bg" :class="[idx === 2?'active':'']">
-                  <img src="../../assets/test.jpg" alt="图片">
-                </div>
-              </div>
-            </div>
-          </li>
-          <li class="next">
-            <i class="el-icon-d-arrow-right" @click="nextImg()"></i>
+        <div class="prev" @click="prevImg">
+          <span></span>
+        </div>
+        <ul id="img-main">
+          <li  class="img-content" v-for="(item,idx) in images">
+            <img src="../../assets/test.jpg" alt="图片">
           </li>
         </ul>
+        <div class="next" @click="nextImg">
+          <span></span>
+        </div>
       </div>
     </section>
 </template>
@@ -106,15 +100,23 @@
 
         },
         prevImg(){
-          this.activeItem --
+          let scrollLeft = document.getElementById('img-main')
+          // console.log(scrollLeft.scrollLeft)
+          this.$nextTick(()=>{
+            scrollLeft.scrollLeft = 0
+          })
+          console.log(document.getElementById('img-main').scrollLeft)
         },
         nextImg(){
-          this.activeItem ++
-          if (this.activeItem === 2 &&this.listLeight.length>4 ){
-            for (let i in this.images){
-              this.$set(this.img,i+this.activeItem-1,this.images[i+this.activeItem-1])
+
+          let scrollLeft = document.getElementById('img-main')
+          // console.log(scrollLeft.scrollLeft)
+          this.$nextTick(()=>{
+            for (let i=0;i<50;i++) {
+                scrollLeft.scrollLeft = i
             }
-          }
+          })
+          console.log(document.getElementById('img-main').scrollLeft)
         }
       }
     }
@@ -145,50 +147,111 @@
     }
     >.img-nav{
       margin-top: 25px;
+      >.prev{
+        display: inline-block;
+        vertical-align: middle;
+        width: 50px;
+        height: 50px;
+        cursor: pointer;
+        margin: 0 10px;
+        background-color:#00b7ee;
+        &:hover{
+          /*background:linear-gradient(to left,rgba(96,110,112,0.8),rgba(96,110,112,0));*/
+        }
+        >span{
+          position: relative;
+          &:before{
+            content:'';
+            display: inline-block;
+            width: 20px;
+            height: 10px;
+            transform: skewY(-45deg);
+            background-color: #eee;
+            position: absolute;
+            top: 10px;
+            left: 10px;
+          }
+          &:after{
+            content:'';
+            display: inline-block;
+            width:  20px;
+            height: 10px;
+            transform: skewY(45deg);
+            background-color: #eee;
+            position: absolute;
+            top: 30px;
+            left: 10px;
+          }
+        }
+      }
       >ul{
-        list-style: none;
-        text-align: left;
-        height: 55px;
-        display: flex;
-        >.img-content{
-          width: 100%;
-          >.img-main{
-            width: 100%;
-            white-space: nowrap;
-            overflow: hidden;
-            >.img-item{
-              margin: auto;
-              white-space: normal;
-              overflow: auto;
-              display: inline-block;
-              width: 20%;
-              height: 55px;
-              padding: 0 10px;
-              .img-bg{
-                width: 100%;
-                background-color: #eaeaea;
-                >img{
-                  width: 100%;
-                  height: 55px;
-                  object-fit: contain;
-                }
-              }
-              .active{
-                background-color: #00b7ee;
-              }
-            }
+        width: 570px;
+        height: 80px;
+        padding: 10px 0;
+        vertical-align: middle;
+        display: inline-block;
+        white-space: nowrap;
+        overflow-x: hidden;
+        overflow-y: hidden;
+        transition: all 0.5s;
+        >li{
+          width: 94px;
+          height: 55px;
+          display: inline-block;
+          margin: 0 10px 0 10px;
+          background-color: #E3E3E3;
+          box-shadow: 0 1px 6px 2px rgba(227,227,227,0.6);
+          border-radius: 2px;
+          border: 2px solid rgba(227,227,227,0.6);
+          transition: all 0.5s;
+          position: relative;
+          cursor: pointer;
+          >img{
+            max-width: 66px;
+            max-height: 51px;
+          }
+          &:hover{
+            transform: scale(1.05);
+            box-shadow: 0 1px 8px 4px rgba(227,227,227,0.8);
+            border:2px solid rgba(227,227,227,0.8); ;
           }
         }
-        >.prev{
-          width: 5%;
-          >i{
-            font-size: 0.32rem;
-          }
+      }
+      >.next{
+        display: inline-block;
+        vertical-align: middle;
+        width: 50px;
+        height: 50px;
+        cursor: pointer;
+        margin: 0 10px;
+        background-color:#00b7ee;
+        &:hover{
+          /*background:linear-gradient(to left,rgba(96,110,112,0.8),rgba(96,110,112,0));*/
         }
-        >.next{
-          width: 5%;
-          font-size: 0.32rem;
-          text-align: right;
+        >span{
+          position: relative;
+          &:before{
+            content:'';
+            display: inline-block;
+            width: 20px;
+            height: 10px;
+            transform: skewY(45deg);
+            background-color: #eee;
+            position: absolute;
+            top: 10px;
+            left: 10px;
+          }
+          &:after{
+            content:'';
+            display: inline-block;
+            width:  20px;
+            height: 10px;
+            transform: skewY(-45deg);
+            background-color: #eee;
+            position: absolute;
+            top: 30px;
+            left: 10px;
+          }
         }
       }
     }

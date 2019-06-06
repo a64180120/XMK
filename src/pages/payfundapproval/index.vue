@@ -109,11 +109,11 @@
                 <td>
                   <el-checkbox v-model="check[idx]"  >{{idx+1}}</el-checkbox>
                 </td>
-                <td @click="handleRowClick(item,idx)" class="apply-epart cell-click">
+                <td @click.stop="handleRowClick(item,idx)" class="apply-epart cell-click">
                   {{item.OrgName}}
                 </td>
                 <td>
-                  {{item.OrgCode}}
+                  {{item.BNum}}
                 </td>
                 <td>
                   {{item.BName}}
@@ -282,9 +282,9 @@
         <img-view v-if="imgDialog"></img-view>
       </el-dialog>
       <!--审批弹框-->
-      <approval-dialog ref="approvalDialog" :rowData="selection" @dialogFlow="openAuditfollow" @subSuc="plSubSuc()"></approval-dialog>
+      <approval-dialog ref="approvalDialog" :rowData="selection" @dialogFlow="childrenAuditfollow" @subSuc="plSubSuc()"></approval-dialog>
       <!--生成支付单弹框-->
-      <paylist-dialog ref="paylistDialog" :rowData="selection"  @dialogFlow="openAuditfollow" @subSuc="plSubSuc()"></paylist-dialog>
+      <paylist-dialog ref="paylistDialog" :rowData="selection"  @dialogFlow="childrenAuditfollow" @subSuc="plSubSuc()"></paylist-dialog>
       <!--查看审批流程-->
       <auditfollow :visible.sync="visible" :auditMsg="auditMsg"></auditfollow>
       <!--组织树-->
@@ -4741,7 +4741,7 @@
         approvalData:{},
         openApprovalDialog:false,
         checked:'',
-        tableData:[{}],//模拟表格数据
+        tableData:[],//模拟表格数据
         page:{
           currentPage:1,//当前页
           pageSizes:[20,50,100], //每页显示多少条
@@ -4763,12 +4763,14 @@
         //判断显示为已审批页面还是未审批页面
         isApproval:"",
         applyNum:"",//当前查看申请单的编号
+        SplxPhid:""
       }
     },
 
     mounted() {
       this.selection = []
       this.isApproval = this.$route.query.approval
+      this.SplxPhid = this.$route.query.SplxPhid
       // this.testData()
       this.loadData()
     },
@@ -4809,6 +4811,7 @@
           StopHour:this.searchForm.StopHour,
           BStartDate:this.searchForm.BDate === null  ? '':this.searchForm.BDate[0],
           BEndTime:this.searchForm.BDate === null ? '':this.searchForm.BDate[1],
+          Splx_Phid:this.SplxPhid,
         }
 
         let that = this
@@ -4923,6 +4926,16 @@
           this.$refs.paylistDialog.changeDialog()
         }
       },
+      //子组件审批流查看
+      childrenAuditfollow(item,idx){
+        this.visible = true
+        let data = {
+          RefbillPhid:this.selection[0].RefbillPhid,
+          ProcPhid:item.PhId,
+          FBilltype:this.BType
+        }
+        this.getAuditfollow(data)
+      },
       //审批流查看
       openAuditfollow(item,idx){
         this.visible = true
@@ -4931,9 +4944,13 @@
           ProcPhid:item.ProcPhid,
           FBilltype:this.BType
         }
+        this.getAuditfollow(data)
+      },
+      //拉去审批流数据查看
+      getAuditfollow(data){
         let that= this
         this.getAxios("/GAppvalRecord/GetAppvalRecord",data).then(success =>{
-            console.log(success)
+          console.log(success)
           if (success && success.Status === "success") {
             that.auditMsg = success.Data
           }else {

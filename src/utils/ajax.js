@@ -18,6 +18,7 @@ function apiAxios(method, url, params, hastimeout) {
   //var timestamp = new Date().getTime();
   //var signature = getSha512(timestamp + "_" + token + "_newgrand");
 
+  //sql 数据库
   var appinfo = {
     //sql 数据库
 /*    DbName: 'NG0001',
@@ -28,6 +29,7 @@ function apiAxios(method, url, params, hastimeout) {
     UserId: '488181024000001',
     OrgName: '',
     OCode: '',
+    UserId: '521180820000001',
     UserKey: '9999',
     UserName: '',
     TokenKey: '',
@@ -37,31 +39,29 @@ function apiAxios(method, url, params, hastimeout) {
     SessionKey: '',
     UName: ''
   }
-  // var url1 = 'http://127.0.0.1:8020',
-  // var url1 = 'http://127.0.0.1:8020',
-  var url1 = 'http://127.0.0.1:8099',
-    //oracle 数据库
-    // var appKey = 'D31B7F91-3068-4A49-91EE-F3E13AE5C48C',
-    //     appSecret = '103CB639-840C-4E4F-8812-220ECE3C4E4D',
-    //     url1 = "http://127.0.0.1:8099",
-    //     reqTimeStamp = Date.parse(new Date());
+  var reqTimeStamp = Date.parse(new Date())
+  var url1 = 'http://127.0.0.1:8099'
+  // oracle 数据库
+  // var appKey = 'D31B7F91-3068-4A49-91EE-F3E13AE5C48C',
+  //   appSecret = '103CB639-840C-4E4F-8812-220ECE3C4E4D',
+  //   url1 = 'http://127.0.0.1:8099',
+  //   reqTimeStamp = Date.parse(new Date())
 
-    // var appinfo = {
-    //     'DbName': 'NG0006',
-    //     'OrgId': '488181024000001',
-    //     'OrgName': '',
-    //     'OCode': '',
-    //     'UserId': '488181024000001',
-    //     'UserKey': '9999',
-    //     'UserName': '',
-    //     'TokenKey': '',
-    //     'AppKey': appKey,
-    //     'AppSecret': appSecret,
-    //     'DbServerName': '',
-    //     'SessionKey': '',
-    //     'UName': ''
-    // };
-    reqTimeStamp = Date.parse(new Date())
+  // var appinfo = {
+  //   DbName: 'NG0006',
+  //   OrgId: '488181024000001',
+  //   OrgName: '',
+  //   OCode: '',
+  //   UserId: '488181024000001',
+  //   UserKey: '9999',
+  //   UserName: '',
+  //   TokenKey: '',
+  //   AppKey: appKey,
+  //   AppSecret: appSecret,
+  //   DbServerName: '',
+  //   SessionKey: '',
+  //   UName: ''
+  // }
   var sign = md5(
     (url1 + reqTimeStamp + appinfo.AppKey + appinfo.AppSecret).toLowerCase()
   )
