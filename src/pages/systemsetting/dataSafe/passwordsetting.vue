@@ -3,7 +3,7 @@
       <div class="dialogContainer passwordsetting" v-show="showSetting">
         <div class="title">
             <span>支付口令设置</span> 
-            <div @click="disabled=false" v-show="disabled">
+            <div @click="updatePsd" v-show="disabled">
                 <img src="@/assets/images/bj.png" alt="">
                 <i>编辑</i>
             </div> 
@@ -21,13 +21,13 @@
                 placeholder="请输入6位数字口令"
               ></el-input>
               <img
-                v-show="newPasswordCanSee"
+                v-show="newPasswordCanSee&&!disabled"
                 class="eye"
                 src="@/assets/images/zy.png"
                 @click="newPasswordCanSee= !newPasswordCanSee"
               >
               <img
-                v-show="!newPasswordCanSee"
+                v-show="!newPasswordCanSee&&!disabled"
                 class="eye"
                 src="@/assets/images/by.png"
                 @click="newPasswordCanSee= !newPasswordCanSee"
@@ -78,7 +78,7 @@ export default {
         return {
             showSetting:true,
             newPasswordCanSee:false,
-            newPassword:'',
+            newPassword:'sdfasdfas',
             confirmPasswordCanSee:false,
             confirmPassword:'',
             radio:0,
@@ -128,6 +128,11 @@ export default {
               this.$msgBox.show('保存支付口令失败!');
             })
         },
+        //编辑口令
+        updatePsd(){
+          this.disabled=false;
+          this.newPassword='';
+        },
         //输入框限定***
         clearNoNum(event){
             var obj=event.target;
@@ -157,21 +162,22 @@ export default {
           return bool;
         },
         getData(){
-          let data={
+          // let data={
 
-          }
-          get(data).then(res => {
-            if(res.Status=="error"){
-              this.$msgBox.show(res.Msg)
-            }else{
+          // }
+          // get(data).then(res => {
+          //   if(res.Status=="error"){
+          //     this.$msgBox.show(res.Msg)
+          //   }else{
 
-            }
-          }).catch(err => {
-              this.$msgBox.show('获取支付口令失败!')
-          })
+          //   }
+          // }).catch(err => {
+          //     this.$msgBox.show('获取支付口令失败!')
+          // })
         },
         beforeClose(){
             this.disabled=true;
+            this.newPassword='123456'
             this.getData();
         }
     }

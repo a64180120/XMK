@@ -524,6 +524,7 @@
           this.getAxios('GBK/PaymentMstApi/GetPaymentMstList',param).then(res=>{
             this.dataList.total=res.totalRows;
             this.dataList.data=res.Record;
+            this.getCheckList();
           }).catch(err=>{
             console.log(err);
           })
@@ -563,14 +564,13 @@
 
           switch (val) {
             case 'add':
+              this.isAdd=false;
+              this.$forceUpdate(this.isAdd);
               this.applyproTitle='新增申请';
               this.applyproType=true;
-              this.isAdd=true;
               break;
             case 'update':
-
               let upList=this.getCheckedList();
-              console.log(upList);
               if(upList.length==0){
                 this.$msgBox.show({
                   content: '请选择要修改的数据。',
@@ -594,11 +594,11 @@
                     }
                   })
                 }else{
+                  this.applyNum=upList[0].PhId+'';
+                  this.isAdd=true;
+                  this.$forceUpdate(this.isAdd);
                   this.applyproTitle='修改申请';
                   this.applyproType=true;
-                  this.applyNum=upList[0].PhId;
-                  this.isAdd=false;
-
                 }
               }
 
@@ -629,6 +629,7 @@
                       }
                     });
                     this.getData();
+                    this.checkList=[];
                   }else{
                     this.$msgBox.show({
                       content: '删除失败，请稍后重试。',

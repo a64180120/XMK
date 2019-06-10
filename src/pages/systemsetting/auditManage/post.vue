@@ -1,6 +1,6 @@
 <template>
     <div class="post">  
-        <topHandle :title="'系统管理在线工作平台'">
+        <topHandle :title="'系统管理在线工作平台'"  @refresh="refresh">
             <div class="btnCon">
                 <div @click.stop="showPostAdd('add')" class="handle">
                     <div class="topIcon"><img src="@/assets/images/xz.png" alt=""></div>
@@ -37,7 +37,6 @@
                  <div class="rightBtn">
                     <search placeholder='岗位代码/岗位名称' @btnClick="searchFn"></search>
                 </div>
-                
             </div>
             <div class="content">
                     <div class="formArea">
@@ -189,7 +188,9 @@ export default {
         searchFn(val){
             console.log(val)
         },
-
+        refresh(){
+            this.getData();
+        },
         handleCurrentChange(val){
             this.pageIndex=val;
             this.getData();

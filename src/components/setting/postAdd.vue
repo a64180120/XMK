@@ -163,8 +163,8 @@ export default {
             data.DefStr6=data.OperatorPhid;
         },
         update(){  //保存
-            this.info.OrgPhid='521180820000001';
-            this.info.OrgCode='1';
+            this.info.OrgPhid=this.$store.state.user.orgid;
+            this.info.OrgCode=this.$store.state.user.orgcode;
             let info2=[];
             this.userList.map((list,n)=> {
                 info2.push({
