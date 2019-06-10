@@ -41,14 +41,14 @@
                   <span>申报项目</span>
               </span>
               <span style="float: right">
-                <span  @click="clickFolder(item)">附单据 {{item.projectFileNum}} 张</span>
-                <span class=""></span>
+                <!--<span  @click="clickFolder(item)">附单据 {{item.projectFileNum}} 张</span>
+                <span class="el-icon-link"></span>-->
                 <span style="margin-left: 20px" @click="delPro(pindex)"><i class="el-icon-close"></i></span>
               </span>
 
             </div>
             <div>
-              <div>
+              <div style="margin: 0 20px;">
                 <span>项目名称：</span>
                 <span>
                   <el-select size="small" v-model="item.PaymentXm.XmProjcode" @change="changePro(pindex)">
@@ -67,12 +67,13 @@
                 </span>
 
               </div>
-              <div style="height: 40px;line-height: 40px;background-color: #d7d7d7;padding:0 10px;margin: 10px 0;">
-                <span>预算总额 （93,432,78元）- 实际已使用 （4,423.78元） - 冻结 （1,234,00元） = </span><span style="color: red;">本次可申请 （86,546.98元）</span>
+              <!--frozen: 0 sum: 660000 surplus: 660000 use: 0-->
+              <div style="height: 40px;line-height: 40px;background-color: #d7d7d7;padding:0 10px;margin-top: 10px;" v-if="item.money">
+                <span>预算总额 （{{item.money.sum | NumFormat}}元）- 实际已使用 （{{item.money.use | NumFormat}}元） - 冻结 （{{item.money.frozen | NumFormat}}元） = </span><span style="color: red;">本次可申请 （{{item.money.surplus | NumFormat}}元）</span>
               </div>
             </div>
-            <div>
-              <table>
+            <div style="margin-top: 10px">
+              <table style="margin:0 20px;width: auto;">
                 <colgroup>
                   <col width="10%">
                   <col width="25%">
@@ -102,6 +103,10 @@
                       <td>
                         <input v-model="mx.FRemarks "/>
                       </td>
+                    <td class="iconTd">
+                      <i class="el-icon-minus" @click="delDtl(pindex,index)"></i>
+                      <i class="el-icon-plus" @click="addDtl(pindex,index)"></i>
+                    </td>
                   </tr>
                 <tr>
                     <td></td>
@@ -171,7 +176,16 @@
     </el-dialog>
     <!--送审-->
     <go-approval  :data="approvalDataS"></go-approval>
-
+    <!--<approval-dialog ></approval-dialog>
+    <approval-bill @dialogFlow="searchFlow"
+                   @approvalRowClick="approvalRowClick"
+                   @selectApprovaler="selectApprovaler"
+                   @isArgeen="backAproval"
+                   :approvalFollow="approvalFollow"
+                   :nextApprovaler="nextApprovaler"
+                   :backPersonnel="backPersonnel"
+                   ref="approval"
+                   v-model="textare"></approval-bill>-->
     <!--附件查看-->
     <el-dialog class="dialog img-dialog" :visible.sync="dialogVisible" :append-to-body="true" :close-on-click-modal="false" width="40%">
       <div slot="title" class="dialog-title">
@@ -189,12 +203,15 @@
 
 <script>
   import Orgtree from "../../components/orgtree/index";
-  import goApproval from '../../pages/paycenter/goApproval.vue';
+  import goApproval from './goApproval.vue';
   import ImgView from "../imgView/imgView";
+  import {mapState} from 'vuex'
+  import ApprovalDialog from "../../pages/payfundapproval/approvalDialog";
   export default {
     name: "applypro",
     props:{
       applyNum:String,
+      isAdd:Boolean,
       prodata:{
         type:Object,
         default:function () {
@@ -240,9 +257,9 @@
           FOrgphid: '488181024000002',//（组织主键）
           FOrgcode: '101',//（组织编码）
           FOrgname: '浙江省总本级',//（组织名）
-          FDepphid: "251181026000001",//（部门主键）
-          FDepcode: '100.03',//（部门编码）
-          FDepname: '办公室',//（部门名称）
+          FDepphid: "",//（部门主键）
+          FDepcode: '',//（部门编码）
+          FDepname: '',//（部门名称）
           FAmountTotal: '',//（申请单金额）
           FDate: '',//（申请单时间）2019-05-30
           FApproval: '0',//（审批状态：0- 未审批 1-待审批 2- 未通过 9-审批通过）
@@ -280,14 +297,55 @@
 
       }
     },
-    components:{Orgtree,goApproval,ImgView},
+    computed: {
+      ...mapState({
+        orgid: state => state.orgid, //id
+        orgcode:state => state.orgcode, //编码
+        orgname:state => state.orgname//名称
+      })
+    },
+    components:{ApprovalDialog, Orgtree,goApproval,ImgView},
     watch:{
-      applyNum(){
+      /*applyNum(){
         this.getApply();
+      },*/
+      isAdd(val){
+        if(val){
+          this.getApply();
+        }
       },
+      prodata:{
+        handler(val){
+          console.log('bumen ');
+          console.log(val);
+          if(val){
+            this.PaymentMst.FDepphid= val.bm.PhId;//（部门主键）
+            this.PaymentMst.FDepcode= val.bm.OCode;//（部门编码）
+            this.PaymentMst.FDepname= val.bm.OName;//（部门名称）
+          }
+        },
+        deep:true,
+      },
+      /*prodata(val){
+        console.log('bumen ');
+        console.log(val);
+        if(val){
+          this.PaymentMst.FDepphid= val.bm.PhId;//（部门主键）
+          this.PaymentMst.FDepcode= val.bm.OCode;//（部门编码）
+          this.PaymentMst.FDepname= val.bm.OName;//（部门名称）
+        }
+
+      }*/
     },
     mounted(){
-      console.log(this.data);
+      //等有组织的是后再解开
+     /*this.PaymentMst.FOrgphid=this.orgid;//（组织主键）
+      this.PaymentMst.FOrgcode=this.orgcode;//（组织编码）
+      this.PaymentMst.FOrgname=this.orgname;//（组织名）*/
+      this.PaymentMst.FDepphid= this.prodata.bm.PhId;//（部门主键）
+      this.PaymentMst.FDepcode= this.prodata.bm.OCode;//（部门编码）
+      this.PaymentMst.FDepname= this.prodata.bm.OName;//（部门名称）
+      console.log(this.prodata);
       this.$nextTick(
         this.getApply(),
         this.getOrgList()
@@ -298,10 +356,12 @@
       //申请单查看
       getApply:function(){
         console.log(this.applyNum+'这里添加数据查询方法');
-        let param={fPhId:'100'};
+        let param={fPhId:this.applyNum};
 
         this.getAxios('GBK/PaymentMstApi/GetPaymentMst',param).then(res=>{
           console.log(res);
+          this.PaymentMst=res.PaymentMst;
+          this.PaymentXmDtl=res.PaymentXmDtl;
         }).catch(err=>{
           console.log(err);
         })
@@ -319,6 +379,18 @@
 
       //保存0，保存并送审1，区别：是否调用送审组件
       save:function(type){
+        if(this.PaymentXmDtl.length==0){
+          this.$msgBox.show({
+            content: '请至少创建一个项目。',
+            fn: () => {
+              console.log('test fn')
+            }
+          });
+          return;
+        }
+
+        this.PaymentMst.FDate=new Date();
+
         for(var i in this.PaymentXmDtl){
           for(var j in this.PaymentXmDtl[i].PaymentDtls){
            // QtKmdm: '', //（预算项目编码）QtKmmc: '' , //（预算项目名称） XmProjcode: '', //（项目编码）XmProjname: '', //（项目名称）
@@ -335,19 +407,36 @@
         };
 
         console.log(data);
-        return;
-        this.$msgBox.show({
-          content: '保存成功。',
-          fn: () => {
-            console.log('test fn')
-          }
-        })
-        if(type==1){
-          setTimeout(()=>{
-            this.approvalDataS.openDialog=true;
-          },1000)
 
-        }
+        this.postAxios('GBK/PaymentMstApi/PostAdd',data).then( res => {
+          console.log(res)
+          if(res.Status=="success"){
+            this.$msgBox.show({
+              content: '保存成功。',
+              fn: () => {
+                console.log('test fn')
+              }
+            })
+            if(type==1){
+              setTimeout(()=>{
+                this.approvalDataS.openDialog=true;
+              },1000)
+
+            }
+          }else{
+            this.$msgBox.show({
+              content: '保存失败，请重试。',
+              fn: () => {
+                console.log('test fn')
+              }
+            })
+          }
+        }).catch( err => {
+          console.log(err);
+        })
+        return;
+
+
       },
       //新增项目
       add(){
@@ -413,6 +502,30 @@
             })
           }
 
+        }
+      },
+      //新增项目明细
+      addDtl:function(pindex,index){
+        let dtl={
+          XmMstPhid: '', //（预算项目主表主键）
+          BudgetdtlPhid: '', //（预算明细主键）
+          BudgetdtlName: '', //（预算明细名称）
+          FDepartmentcode: '', //（补助单位/部门）
+          FDepartmentname: '', //（补助单位名称）
+          FAmount: '', //（项目明细申请金额）
+          FRemarks: '', //（备注）
+          QtKmdm: '', //（预算项目编码）
+          QtKmmc: '' , //（预算项目名称）
+          FPayment:'', //(支付状态：0-待支付 1-支付异常  9-支付成功)
+          FPaymentdate:'' //（支付日期）
+        };
+        this.PaymentXmDtl[pindex].PaymentDtls.splice(index+1,0,dtl)
+      },
+      //删除项目明细
+      delDtl:function(pindex,index){
+        this.PaymentXmDtl[pindex].PaymentDtls.splice(index,1)
+        if(this.PaymentXmDtl[pindex].PaymentDtls.length==0){
+          this.addDtl(0)
         }
       },
       /*金额计算*/
@@ -503,15 +616,13 @@
             }
             sc.FDepartmentcode=val[i+1].OCode;
             sc.FDepartmentname=val[i+1].OName;
-            this.PaymentXmDtl[this.choosedPro.index[0]].PaymentDtls.splice(this.choosedPro.index[1]+1,0,sc);
+            this.PaymentXmDtl[this.choosedPro[0]].PaymentDtls.splice(this.choosedPro[1]+1,0,sc);
             sc=null;
           }
         }
       },
       confirmProDetail:function(){
         this.orgDetailType=false;
-        console.log(this.choosedProject);
-        console.log(this.prodataList);
         for(var i in this.prodataList){
           if(this.choosedProject==this.prodataList[i].FName){
             // BudgetdtlPhid: '484190514000010', //（预算明细主键）
@@ -545,8 +656,22 @@
             this.PaymentXmDtl[index].PaymentXm.XmProjname=this.prodata.Mst[i].FProjName;
             //this.PaymentXmDtl[index].PaymentXm.FAmountTotal=this.prodata.Mst[i].FProjAmount;
             this.PaymentXmDtl[index].PaymentXm.FRemarks='';
+            this.getProMoney(index,this.prodata.Mst[i].PhId);
           }
         }
+      },
+      //获取项目总额，已冻结，剩余金额
+      getProMoney:function(index,phid){
+        let param={xmPhid:phid};
+        this.getAxios('GBK/PaymentMstApi/GetAmountOfMoney',param).then(res=>{
+          console.log('获取项目总额，已冻结，剩余金额')
+          console.log(res);
+          this.PaymentXmDtl[index]['money']=res;
+          console.log(this.PaymentXmDtl);
+          this.$forceUpdate(this.PaymentXmDtl)
+        }).catch(err=>{
+          console.log(err);
+        })
       },
       //获取明细项目列表
       getProDetail:function(f){
@@ -564,6 +689,30 @@
 </script>
 
 <style scoped lang="scss">
+  .iconTd{
+    border: none;
+    position: absolute;
+  }
+  .iconTd i{
+    width: 15px;
+    height: 15px;
+    border-radius: 15px;
+    color: #fff;
+    font-size: 10px;
+    line-height: 15px;
+    margin: auto;
+    text-align: center;
+    display: none;
+  }
+  .iconTd .el-icon-minus{
+    background-color: red;
+  }
+  .iconTd .el-icon-plus{
+    background-color: #67971a;
+  }
+  tr:hover i{
+    display: inline-block;
+  }
   .dialog-title {
     > span {
       width: 100%;

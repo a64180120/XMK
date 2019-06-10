@@ -28,10 +28,7 @@
         </div>
       </tophandle>
     </div>
-
     <div class="container">
-
-
       <div class="formArea">
         <div class="btnArea">
           <i class="el-icon-d-arrow-left iicon" style="position:absolute;left:0;top: .12rem;" @click.stop="unionStateScroll(false)"></i>
@@ -246,7 +243,7 @@
             </div>
             <div>
               <p style="color:#f52c1d">
-                <num :vv="apartData.FAmount | NumFormat"></num>
+                <num :vv="apartData.Amount | NumFormat"></num>
                 <!--{{apartData.money}}--></p>
               <div>支出预算总额</div>
             </div>
@@ -295,24 +292,11 @@
         @delete="handleDelete"
       ></applybill>
     </el-dialog>
-    <!--组织树弹窗-->
-    <el-dialog id="orgdialog" width="350px" title="组织树"
-               :visible.sync="orgType">
-      <orgtree :currentOrg="searchData.searchorg" @choose="getOrg"></orgtree>
-     <!-- <span slot="body">
-        <orgtree></orgtree>
-      </span>
-  -->
-      <span slot="footer"   style="text-align: center">
-          <button class="cancelBtn"  @click="orgType=false">取消</button>
-          <button class="confirmBtn" style="margin-left: 30px" @click="confirmOrg">确定</button>
-        </span>
-    </el-dialog>
     <!--项目新增修改-->
     <el-dialog class="applydialog" :title="applyproTitle"
                :visible.sync="applyproType"
                >
-       <applypro :applyNum="applyNum" :prodata="apartData"  @delete="handleDelete"></applypro>
+       <applypro :applyNum="applyNum" :prodata="apartData" :isAdd="isAdd"  @delete="handleDelete"></applypro>
     </el-dialog>
 
     <go-approval  :data="approvalDataS"></go-approval>
@@ -330,7 +314,7 @@
   import Applybill from "../../components/applyBill/applybill";
   import Orgtree from "../../components/orgtree/index";
   import Applypro from "../../components/applyPro/applyPro";
-  import goApproval from '../paycenter/goApproval.vue';
+  import goApproval from '../../components/applyPro/goApproval';
   import Auditfollow from "../../components/auditFollow/auditfollow";
   import ApprovalDialog from "../payfundapproval/approvalDialog";
     export default {
@@ -362,7 +346,7 @@
             },
             approvalList:[{value:0,label:'全部'},{value:1,label:'待送审'},{value:2,label:'审批中'},{value:3,label:'审批未通过'},{value:4,label:'审批通过'}],
             payList:[{value:0,label:'全部'},{value:1,label:'待支付'},{value:2,label:'支付异常'},{value:3,label:'支付成功'}],
-            bmList:[],
+            bmList:[],//部门列表
             bzList:[{value:0,label:'全部'},{value:1,label:'救灾补助项目'},{value:2,label:'送温暖项目'}],
             spTypeList:{'0':'待送审','1':'审批中','2':'未通过','9':'审批通过'},
             payTypeList:{'0':'待支付','1':'支付异常','9':'支付成功'},
@@ -373,8 +357,6 @@
             },//图表数据
             applyType:false,//是否显示查看申请弹窗
             applyNum:'',//当前查看申请单的编号
-            orgType:false,//是否显示组织弹窗
-            choosedOrg:{},//选中的组织
             applyproType:false,//显示项目新增修改弹窗
             applyproTitle:'',
             approvalDataS: {
@@ -391,7 +373,8 @@
             },
             approvalData:{
             },
-            apartData:{Mst:[],Amount:'0'},//选择部门后获取的项目信息
+            apartData:{bm:{},Mst:[],Amount:'0'},//选择部门后获取的项目信息
+            isAdd:false,//判断是修改（false）还是新增(true)
           }
       },
       components:{Applypro, Orgtree, Applybill, tophandle,pieChart,goApproval,Auditfollow,ApprovalDialog,num},
@@ -423,15 +406,12 @@
           let unionStateConWidth=0;
           let scrollWidth=200;
           for(var i in eleChildren ){
-
             if(eleChildren[i].nodeType==1){
-              console.log(eleChildren[i].clientWidth);
               unionStateConWidth+=eleChildren[i].clientWidth+15;
             }
 
           }
           unionStateCon.style.width=unionStateConWidth+'px';
-          console.log(unionStateConWidth);
 
           var pWidth=parseInt(window.getComputedStyle(union).width);//父级宽度
           //return;
@@ -501,11 +481,11 @@
 
         //获取部门
         getDataC:function(){
-          let param={Unit:'101',UserNo:9999};
+          let param={Unit:'101',UserNo:'9999'};
           this.getAxios('GQT/CorrespondenceSettingsApi/GetDeptByUnit',param).then(res=>{
-            console.log(res);
             this.bmList=res.Record;
             this.searchData.bmType=res.Record[0].OCode;
+            this.apartData['bm']=this.bmList[0];
             this.getData();
             this.getAllProByBm();
           }).catch(err=>{
@@ -520,14 +500,8 @@
             FBudgetDept: this.searchData.bmType //部门代码
           };
           this.getAxios('GYS/BudgetMstApi/GetBudgetMstList',param).then(res=>{
-            this.apartData=res;
-            let bmCode=this.searchData.bmType;
-            for(var i in this.bmList){
-              if(bmCode==this.bmList[i].OCode){
-                this.apartData['bm']=this.bmList[i];
-                return;
-              }
-            }
+            this.apartData.Mst=res.Mst;
+            this.apartData.Amount=res.FAmount;
           }).catch(err=>{
             console.log(err);
           })
@@ -543,12 +517,11 @@
             EndDate:this.searchData.date,
             MaxAmount:this.searchData.money.smoney==0?'':this.searchData.money.smoney,
             MinAmount:this.searchData.money.emoney==0?'':this.searchData.money.emoney,
-            FOrgphid: 521180820000002,
-            FDepphid:288180827000002,
+            FOrgphid: 488181024000002,
+            FDepphid:this.apartData['bm'].PhId,
             FYear:2019
           }
           this.getAxios('GBK/PaymentMstApi/GetPaymentMstList',param).then(res=>{
-            console.log(res);
             this.dataList.total=res.totalRows;
             this.dataList.data=res.Record;
           }).catch(err=>{
@@ -584,33 +557,54 @@
         showOrg(){
             this.orgType=true;
         },
-        //组织树点击选择事件
-        getOrg:function(data){
-            console.log(data);//这边可以得到选中的组织，当点击确定时，进行选中组织赋值，建议添加中间变量，用于保存点击组织树获取的值
-          this.choosedOrg=data;
-        },
-        //点击组织树确定按钮进行选中组织赋值
-        confirmOrg:function(){
-          this.orgType=false;
-          if(this.choosedOrg!==this.searchData.searchorg){
-            this.searchData.searchorg=this.choosedOrg;
-          }
-        },
+
         //
-        showAuditAdd(val){  //流程编辑
+        showAuditAdd(val){
 
           switch (val) {
             case 'add':
               this.applyproTitle='新增申请';
               this.applyproType=true;
+              this.isAdd=true;
               break;
             case 'update':
-              this.applyproTitle='修改申请';
-              this.applyproType=true;
+
+              let upList=this.getCheckedList();
+              console.log(upList);
+              if(upList.length==0){
+                this.$msgBox.show({
+                  content: '请选择要修改的数据。',
+                  fn: () => {
+                    console.log('test fn')
+                  }
+                })
+              }else if(upList.length>1){
+                this.$msgBox.show({
+                  content: '一次只允许修改一条数据。',
+                  fn: () => {
+                    console.log('test fn')
+                  }
+                })
+              }else{
+                if(upList[0].FApproval!=0&&upList[0].FApproval!=2){
+                  this.$msgBox.show({
+                    content: '只允许修改待送审及未通过项目。',
+                    fn: () => {
+                      console.log('test fn')
+                    }
+                  })
+                }else{
+                  this.applyproTitle='修改申请';
+                  this.applyproType=true;
+                  this.applyNum=upList[0].PhId;
+                  this.isAdd=false;
+
+                }
+              }
+
               break;
             case 'delete':
               let delList=this.getCheckedList();
-              console.log(delList);
               if(delList.length==0){
                 this.$msgBox.show({
                   content: '请选择要删除的数据。',
@@ -619,12 +613,35 @@
                   }
                 })
               }else{
-                this.$msgBox.show({
-                  content: '删除成功。',
-                  fn: () => {
-                    console.log('test fn')
+                let phidList=[];
+                for(var i in delList){
+                  phidList.push(delList[i].PhId);
+                }
+                let param={
+                  fPhIdList:phidList
+                }
+                this.postAxios('GBK/PaymentMstApi/PostDelete',param).then(res=>{
+                  if(res.Status=='success'){
+                    this.$msgBox.show({
+                      content: '删除成功。',
+                      fn: () => {
+                        console.log('test fn')
+                      }
+                    });
+                    this.getData();
+                  }else{
+                    this.$msgBox.show({
+                      content: '删除失败，请稍后重试。',
+                      fn: () => {
+                        console.log('test fn')
+                      }
+                    })
                   }
+
+                }).catch(err=>{
+                  console.log(err);
                 })
+
               }
               break;
             case 'SS':
@@ -655,7 +672,11 @@
           this.$refs.approvalDialog.changeDialog()
         },
         changeApart:function(val){
-          console.log(val);
+         for(var i in this.bmList){
+            if(this.searchData.bmType==this.bmList[i].OCode){
+              this.apartData.bm=this.bmList[i];
+            }
+          }
           this.getData();
           this.getAllProByBm();
         }
