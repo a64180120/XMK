@@ -216,14 +216,9 @@ export default {
     }
   },
   created() {
-    console.log(this.data.data)
-    if (Array.isArray(this.data.data)) {
-      this.data.data.forEach(item => {
-        this.gridData = [...this.gridData, ...item.Dtls]
-      })
-    } else {
-      this.gridData = [...this.gridData, ...this.data.data.Dtls]
-    }
+    this.data.data.forEach(item => {
+      this.gridData = [...this.gridData, ...item.Dtls]
+    })
   },
   methods: {
     // 提交口令设置
@@ -319,71 +314,6 @@ export default {
         this.$msgBox.error('支付口令为6位数字！')
         return
       }
-      if (Array.isArray(this.data.data) && this.data.data.length > 0) {
-        var ids = this.data.data.map(item => {
-          return item.Mst.PhId
-        })
-        console.log(ids)
-        postSubmitPayments({
-          infoData: ids,
-          // id: this.data.data.Mst.PhId,
-          uid: '521180820000001',
-          orgid: '547181121000001'
-        })
-          .then(res => {
-            if (res.Status == 'error') {
-              this.$msgBox.error(res.Msg)
-              console.log(res)
-              return
-            }
-            this.refreshIndexData()
-            this.$msgBox.show({
-              content:
-                res.Msg || '支付操作成功！具体到账情况以银行处理时间为准。',
-              fn: () => {
-                this.showPassword = false
-                this.showMergePay = true
-                if (this.father) this.father.openDialog = false
-                this.data.openDialog = false
-              }
-            })
-          })
-          .catch(err => {
-            console.log(err)
-            this.$msgBox.error(err.Message || '支付失败！')
-          })
-        return
-      } else {
-        postSubmitPayment({
-          id: '324190603000001',
-          // id: this.data.data.Mst.PhId,
-          uid: '521180820000001',
-          orgid: '547181121000001',
-          ryear: '2019'
-        })
-          .then(res => {
-            if (res.Status == 'error') {
-              this.$msgBox.error(res.Msg)
-              console.log(res)
-              return
-            }
-            this.refreshIndexData()
-            this.$msgBox.show({
-              content: '支付操作成功！具体到账情况以银行处理时间为准。',
-              fn: () => {
-                this.showPassword = false
-                this.showMergePay = true
-                if (this.father) this.father.openDialog = false
-                this.data.openDialog = false
-              }
-            })
-          })
-          .catch(err => {
-            console.log(err)
-            this.$msgBox.error('支付失败！')
-          })
-      }
-      return
       // 判断口令是否正确
       postJudgePayPsd({
         TypeCode: '999999',
@@ -401,44 +331,37 @@ export default {
             return
           }
           // 发起支付请求
-          if (Array.isArray(this.data.data) && this.data.data.length > 0) {
-            if (this.data.data.length > 1) {
-              var ids = this.data.data.map(item => {
-                return item.PhId
-              })
-              console.log(ids)
-            }
-            return
-          } else {
-            postSubmitPayment({
-              id: '324190603000001',
-              // id: this.data.data.Mst.PhId,
-              uid: '521180820000001',
-              orgid: '547181121000001',
-              ryear: '2019'
-            })
-              .then(res => {
-                if (res.Status == 'error') {
-                  this.$msgBox.error(res.Msg)
-                  console.log(res)
-                  return
+          var ids = this.data.data.map(item => {
+            return item.Mst.PhId
+          })
+          console.log(ids)
+          postSubmitPayments({
+            infoData: ids,
+            // id: this.data.data.Mst.PhId,
+            uid: '521180820000001',
+            orgid: '547181121000001'
+          })
+            .then(res => {
+              if (res.Status == 'error') {
+                this.$msgBox.error(res.Msg)
+                console.log(res)
+                return
+              }
+              this.refreshIndexData()
+              this.$msgBox.show({
+                content: '支付操作成功！具体到账情况以银行处理时间为准。',
+                fn: () => {
+                  this.showPassword = false
+                  this.showMergePay = true
+                  if (this.father) this.father.openDialog = false
+                  this.data.openDialog = false
                 }
-                this.refreshIndexData()
-                this.$msgBox.show({
-                  content: '支付操作成功！具体到账情况以银行处理时间为准。',
-                  fn: () => {
-                    this.showPassword = false
-                    this.showMergePay = true
-                    if (this.father) this.father.openDialog = false
-                    this.data.openDialog = false
-                  }
-                })
               })
-              .catch(err => {
-                console.log(err)
-                this.$$msgBox.error('支付失败！')
-              })
-          }
+            })
+            .catch(err => {
+              console.log(err)
+              this.$msgBox.error(err.Message || '支付失败！')
+            })
         })
         .catch(err => {
           this.$msgBox.error('口令验证失败！')
@@ -461,13 +384,9 @@ export default {
         : ''
     },
     money() {
-      if (Array.isArray(this.data.data)) {
-        return this.data.data.reduce((prev, item) => {
-          return prev + item.Mst.FAmountTotal
-        }, 0)
-      } else {
-        return this.data.data.Mst.FAmountTotal
-      }
+      return this.data.data.reduce((prev, item) => {
+        return prev + item.Mst.FAmountTotal
+      }, 0)
     }
   },
   watch: {

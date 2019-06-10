@@ -481,6 +481,7 @@ export default {
         .then(res => {
           console.log(res)
           if (res.Status == 'error') {
+            this.$msgBox.error(res.Msg)
             return
           }
           this.total = res.totalRows
@@ -491,6 +492,7 @@ export default {
         })
         .catch(err => {
           console.log(err)
+          this.$msgBox.error('获取支付单列表失败！')
         })
     },
     // 主体全选事件
@@ -526,6 +528,7 @@ export default {
           if (cur.Mst.checked) handleitem.push(cur)
           return prev + cur.Mst.checked
         }, 0)
+        console.log(handleitem)
         if (handleitem.length < 1) {
           this.$msgBox.error({
             content: '请至少选择一条数据进行操作。',
@@ -610,7 +613,7 @@ export default {
             break
         }
       }
-      this[type].data = item || handleitem
+      this[type].data = item ? [item] : handleitem
       this[type].openDialog = true
     },
     // 筛选

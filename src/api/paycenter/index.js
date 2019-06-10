@@ -114,6 +114,14 @@ export function getAppvalProc(param) {
 }
 
 /*
+PhId：审批流程的phid
+*/
+// 获取审批岗位
+export function GetFirstStepOperator(param) {
+  return Vue.prototype.getAxios('GGK/GAppvalPost/GetFirstStepOperator', param)
+}
+
+/*
 RefbillPhid：单据id
 ProcPhid：审批流程id
 FBilltype：单据类型（"001":资金拨付单,"002":支付单）
@@ -136,5 +144,5 @@ FOpinion: 'FFFF', （备注）
 */
 // 送审
 export function postAddAppvalRecord(param) {
-  return Vue.prototype.postAxios('GBK/GAppvalRecord/PostAddAppvalRecord', param)
+  return Vue.prototype.postAxios('GSP/GAppvalRecord/PostAddAppvalRecord', param)
 }

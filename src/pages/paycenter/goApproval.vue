@@ -10,7 +10,7 @@
       <div slot="title" class="dialog-title">
         <p>送审</p>
       </div>
-      <div class="content">
+      <!-- <div class="content">
         <div class="handle">
           <div class="title">
             <span>送审备注</span>
@@ -21,7 +21,7 @@
           </div>
         </div>
         <div class="sub-table">
-          <!--审批流程-->
+          审批流程
           <div class="sub-approval">
             <div class="title">
               <span>送审流程</span>
@@ -69,7 +69,15 @@
             </div>
           </div>
         </div>
-      </div>
+      </div>-->
+      <approval-bill
+        v-model="content"
+        :approvalFollow="approvalFollow"
+        @approvalRowClick="approvalRowClick"
+        :nextApprovaler="nextApprovaler"
+        @dialogFlow="dialogFlow"
+        @selectApprovaler="selectApprovaler"
+      ></approval-bill>
       <div class="approval-btn">
         <el-button
           size="small"
@@ -85,11 +93,16 @@
 
 <script>
 import auditfollow from '../../components/auditFollow/auditfollow'
-import { getAppvalProc, postAddAppvalRecord } from '@/api/paycenter'
+import {
+  getAppvalProc,
+  postAddAppvalRecord,
+  GetFirstStepOperator
+} from '@/api/paycenter'
+import approvalBill from '../../components/approvalBill/approvalBill.vue'
 
 export default {
   name: 'goApproval',
-  components: { auditfollow },
+  components: { auditfollow, approvalBill },
   props: {
     data: {
       type: Object,
@@ -157,10 +170,38 @@ export default {
             name: '王关关'
           }
         ]
-      ]
+      ],
+      approvalFollow: [],
+      nextApprovaler: [],
+      ProcPhid: '',
+      PostPhid: '',
+      NextOperators: []
     }
   },
   methods: {
+    approvalRowClick(item) {
+      console.log(item)
+      this.ProcPhid = item.PhId
+      GetFirstStepOperator({
+        PhId: item.PhId
+      })
+        .then(res => {
+          if (res.Status == 'error') {
+            this.$msgBox.error(res.Msg)
+            return
+          }
+          this.PostPhid = res.Data.PhId
+          this.nextApprovaler = res.Data.Operators
+        })
+        .catch(err => {
+          console.log(err)
+          this.$msgBox.error('获取审批人失败！')
+        })
+    },
+    selectApprovaler(list) {
+      console.log(list)
+      this.NextOperators = list
+    },
     closeAuditFollow() {
       this.showAuditfollow = false
     },
@@ -168,86 +209,64 @@ export default {
       this.openDialog = true
     },
     //查看详细流程
-    searchFlow(row, column, index, store) {
+    dialogFlow(row, column, index, store) {
       this.showAuditfollow = true
     },
-    //表格单选
-    handleSelect(selection, row) {},
-    //表格全选
-    handleSelectAll(selection) {},
     //取消
     cancel() {
       this.openDialog = false
     },
-    handleCurrentChange(newRow, oldRow) {
-      this.nextData = this.nextDataList[
-        this.subData.findIndex(item => item.code == newRow.code)
-      ]
+    // 送审请求
+    postAddAppvalRecord() {
+      if (this.ProcPhid == '') {
+        this.$msgBox.error('请选择一条审批流程！')
+        return
+      }
+      if (this.NextOperators.length == 0) {
+        this.$msgBox.error('请至少选择一位审批人！')
+        return
+      }
+      postAddAppvalRecord({
+        RefbillPhidList: this.data.data.map(item => {
+          return item.Mst.PhId
+        }),
+        FBilltype: '002',
+        ProcPhid: this.ProcPhid,
+        PostPhid: this.PostPhid,
+        NextOperators: this.nextApprovaler.map(item => {
+          return item.PhId
+        }),
+        FSeq: '',
+        FSendDate: '',
+        FApproval: '1',
+        FOpinion: this.content
+      })
+        .then(res => {
+          if (res.Status == 'error') {
+            this.$msgBox.error(res.Msg)
+            return
+          }
+          this.data.openDialog = false
+          this.$msgBox.show('送审成功')
+          this.refreshIndexData()
+        })
+        .catch(err => {
+          console.log(err)
+          this.$msgBox.error('送审失败！')
+        })
     },
     //确认
     submit() {
-      console.log(this.data.data)
       if (this.$parent.reSetting == undefined) {
         // 直接送审
-        postAddAppvalRecord({
-          RefbillPhid: '230190527000002',
-          FBilltype: '002',
-          ProcPhid: '1',
-          PostPhid: '1',
-          NextOperators: ['1'],
-          FSeq: '',
-          FSendDate: '',
-          FApproval: '1',
-          FOpinion: this.content
-        })
-          .then(res => {
-            if (res.Status == 'error') {
-              this.$msgBox.error(res.Msg)
-              return
-            }
-            this.refreshIndexData()
-            console.log(res)
-          })
-          .catch(err => {
-            console.log(err)
-            this.$msgBox.error('送审失败！')
-          })
+        this.postAddAppvalRecord()
       } else if (this.$parent.reSetting) {
         // 生成新的支付单，送审
+        this.$parent.postAddPayList(this.postAddAppvalRecord)
       } else {
         // 保存支付单，送审
+        this.$parent.savePayList(this.postAddAppvalRecord)
       }
-      return
-
-      return
-      var vm = this
-      this.$msgBox.show({
-        content: '送审成功',
-        fn: () => {
-          if (vm.reSetting) {
-            vm.father.itemType = 'error'
-            vm.$parent.reSetting = false
-            vm.$parent.detail.Dtls.unshift(vm.$parent.oldDtls)
-          } else {
-            vm.father ? (vm.father.openDialog = false) : ''
-          }
-          console.log(this.data.data)
-          if (Array.isArray(this.data.data)) {
-            this.data.data.forEach(item => {
-              if (item.FApproval !== 9) {
-                item.Mst.checked = false
-                item.Mst.FApproval = 1
-              }
-            })
-          } else {
-            if (this.data.data.FApproval !== 9) {
-              this.data.data.Mst.checked = false
-              this.data.data.Mst.FApproval = 1
-            }
-          }
-          vm.data.openDialog = false
-        }
-      })
     }
   },
   created() {
@@ -260,19 +279,13 @@ export default {
           this.$msgBox.error(res.Msg)
           return
         }
-        console.log(res)
+        this.approvalFollow = res.Data
       })
       .catch(err => {
         console.log(err)
         this.$msgBox.error('获取送审流程失败！')
       })
     console.log(this.father, this.reSetting)
-    this.nextData = this.nextDataList[0]
-    if (this.data.openDialog) {
-      this.$nextTick(() => {
-        this.$refs.content.setCurrentRow(this.subData[0])
-      })
-    }
   },
   watch: {
     'data.openDialog'(newVal) {
@@ -401,8 +414,6 @@ export default {
 </style>
 
 <style scoped>
-.dialog {
-}
 .dialog >>> .el-dialog {
   margin: 0 !important;
   height: 310px;

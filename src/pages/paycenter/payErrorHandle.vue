@@ -67,24 +67,16 @@ export default {
       }
       if (this.radio == 0) {
         // 重新刷新支付状态
-        if (!Array.isArray(this.data.data)) {
-          this.postRefreshPaymentState()
-        } else {
-          var ids = this.data.data.map(item => {
-            return item.Mst.PhId
-          })
-          this.postRefreshPaymentsState(ids)
-        }
+        var ids = this.data.data.map(item => {
+          return item.Mst.PhId
+        })
+        this.postRefreshPaymentsState(ids)
       } else {
         // 直接更改支付状态
-        if (!Array.isArray(this.data.data)) {
-          this.postUpdatePaymentsState([this.data.data.Mst.PhId])
-        } else {
-          var ids = this.data.data.map(item => {
-            return item.Mst.PhId
-          })
-          this.postUpdatePaymentsState(ids)
-        }
+        var ids = this.data.data.map(item => {
+          return item.Mst.PhId
+        })
+        this.postUpdatePaymentsState(ids)
       }
     },
     // 刷新并获取支付单支付状态
@@ -129,7 +121,7 @@ export default {
           this.refreshIndexData()
           this.data.openDialog = false
           this.$msgBox.show({
-            content: res.Msg || '处理成功',
+            content: '操作成功！请在2小时后查看状态。',
             fn: () => {
               if (this.father) this.father.openDialog = false
             }

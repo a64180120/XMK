@@ -605,7 +605,7 @@ export default {
         })
     },
     // 重新生成支付单
-    postAddPayList(suc) {
+    postAddPayList(postAddAppvalRecord) {
       postAddPayList({
         uid: 521180820000001, //用户id
         orgid: 547181121000001, //组织id
@@ -616,14 +616,17 @@ export default {
           if (res.Status == 'error') {
             this.$msgBox.error(res.Msg)
           } else {
-            this.$msgBox.show('保存成功')
+            this.detail.Mst.PhId = res.KeyCodes[0]
             this.oldDetail.Dtls.forEach(item => {
               if (item.choosed) {
                 item.FNewCode = res.KeyCodes[0]
               }
             })
-            if (suc) suc()
-            this.refreshIndexData()
+            this.detail.Dtls.forEach(item => {
+              item.FNewCode = res.KeyCodes[0]
+            })
+            console.log(this.oldDetail)
+            this.savePayList(this.oldDetail, postAddAppvalRecord)
           }
         })
         .catch(err => {
@@ -632,8 +635,8 @@ export default {
         })
     },
     // 保存支付单接口
-    savePayList(suc, fail) {
-      let saveData = JSON.parse(JSON.stringify(this.detail))
+    savePayList(data, postAddAppvalRecord) {
+      let saveData = JSON.parse(JSON.stringify(data))
       delete saveData.Mst.checked
       saveData.Mst.PersistentState = 2
       if (saveData.Dtls.length > 0) {
@@ -650,12 +653,12 @@ export default {
       })
         .then(res => {
           if (res.Status == 'error') {
-            if (typeof fail == 'function') fail()
             this.$msgBox.error(res.Msg)
           } else {
-            if (typeof suc == 'function') suc()
             this.getData()
+            this.$msgBox.show('保存成功')
             this.refreshIndexData()
+            if (postAddAppvalRecord) postAddAppvalRecord()
           }
         })
         .catch(err => {
@@ -718,15 +721,11 @@ export default {
     save(type) {
       switch (type) {
         case '':
-          if (this.reSetting) {
+          if (this.reSetting && !this.detail.Mst.PhId) {
             this.postAddPayList()
             return
           }
-          this.savePayList(() => {
-            this.$msgBox.show({
-              content: '保存成功。'
-            })
-          })
+          this.savePayList(this.detail)
           break
         case 'approvalData':
         case 'payErrorHandleData':
@@ -747,7 +746,7 @@ export default {
             return
           } else if (
             errorArr.some(item => {
-              item.FNewCode
+              return item.FNewCode
             })
           ) {
             this.$msgBox.error('只能对未生成新的支付单的项目重新支付！')
@@ -917,9 +916,7 @@ export default {
       if (newVal) {
         console.log(this.data.data)
         this.allSelected = false
-        this.detail = Array.isArray(this.data.data)
-          ? this.data.data[0]
-          : this.data.data
+        this.detail = this.data.data[0]
         this.detail.Dtls.forEach(item => {
           // item.choosed = false
           this.$set(item, 'choosed', false)
@@ -936,6 +933,8 @@ export default {
             this.getBudgetAccountsList()
           }
         })
+      } else {
+        this.closeAuditFollow()
       }
     }
   }
