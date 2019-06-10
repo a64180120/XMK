@@ -7,6 +7,8 @@ const state = {
     token: "",
     //用户id
     userid: "",
+    //用户code
+    usercode:'',
     //用户名称
     username: "",
     //组织列表
