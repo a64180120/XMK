@@ -176,7 +176,16 @@
     </el-dialog>
     <!--送审-->
     <go-approval  :data="approvalDataS"></go-approval>
-
+    <!--<approval-dialog ></approval-dialog>
+    <approval-bill @dialogFlow="searchFlow"
+                   @approvalRowClick="approvalRowClick"
+                   @selectApprovaler="selectApprovaler"
+                   @isArgeen="backAproval"
+                   :approvalFollow="approvalFollow"
+                   :nextApprovaler="nextApprovaler"
+                   :backPersonnel="backPersonnel"
+                   ref="approval"
+                   v-model="textare"></approval-bill>-->
     <!--附件查看-->
     <el-dialog class="dialog img-dialog" :visible.sync="dialogVisible" :append-to-body="true" :close-on-click-modal="false" width="40%">
       <div slot="title" class="dialog-title">
@@ -194,9 +203,10 @@
 
 <script>
   import Orgtree from "../../components/orgtree/index";
-  import goApproval from '../../pages/paycenter/goApproval.vue';
+  import goApproval from './goApproval.vue';
   import ImgView from "../imgView/imgView";
   import {mapState} from 'vuex'
+  import ApprovalDialog from "../../pages/payfundapproval/approvalDialog";
   export default {
     name: "applypro",
     props:{
@@ -294,7 +304,7 @@
         orgname:state => state.orgname//名称
       })
     },
-    components:{Orgtree,goApproval,ImgView},
+    components:{ApprovalDialog, Orgtree,goApproval,ImgView},
     watch:{
       /*applyNum(){
         this.getApply();

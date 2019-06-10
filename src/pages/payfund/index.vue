@@ -314,7 +314,7 @@
   import Applybill from "../../components/applyBill/applybill";
   import Orgtree from "../../components/orgtree/index";
   import Applypro from "../../components/applyPro/applyPro";
-  import goApproval from '../paycenter/goApproval.vue';
+  import goApproval from '../../components/applyPro/goApproval';
   import Auditfollow from "../../components/auditFollow/auditfollow";
   import ApprovalDialog from "../payfundapproval/approvalDialog";
     export default {
