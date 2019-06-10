@@ -19,15 +19,15 @@
                     <div class="content">
                       <ul>
                         <li class="content-item" v-for="(item,idx) in myApproval">
-                          <div class="item-box" @click="openApprovalList(item.path)">
-                            <img v-if="idx === 0" src="../../assets/images/yk1(w).png">
-                            <img v-else-if="idx === 1" src="../../assets/images/yk(w).png">
-                            <img v-else-if="idx === 2" src="../../assets/images/pz(w).png">
-                            <img v-else-if="idx === 3"  src="../../assets/images/y1(w).png">
-                            <img v-else-if="idx === 4" src="../../assets/images/ys(w).png">
-                            <p>{{item.label}}</p>
-                            <div v-if="item.approvalValue != 0" class="triangle"></div>
-                            <div v-if="item.approvalValue != 0" class="inner-triangle"></div>
+                          <div class="item-box" @click="openApprovalList(item)">
+                            <img v-if="item.Value === '001'" src="../../assets/images/yk1(w).png">
+                            <img v-else-if="item.Value === '002'" src="../../assets/images/yk(w).png">
+                            <img v-else-if="item.Value === '003'" src="../../assets/images/pz(w).png">
+                            <img v-else-if="item.Value === '004'"  src="../../assets/images/y1(w).png">
+                            <img v-else-if="item.Value === '005'" src="../../assets/images/ys(w).png">
+                            <p>{{item.TypeName}}</p>
+                            <div v-if="item.approvalValue != 0 && item.approvalValue" class="triangle"></div>
+                            <div v-if="item.approvalValue != 0 && item.approvalValue" class="inner-triangle"></div>
                             <div v-if="item.approvalValue >0" class="number" :class="[item.approvalValue< 10?'position1':(item.approvalValue< 100 && item.approvalValue>9?'position2':'position3')]">
                               <span v-if="item.approvalValue<100">{{item.approvalValue}}</span>
                               <span v-else>99+</span>
@@ -47,8 +47,8 @@
                     <div class="approval-content">
                       <ul>
                         <li v-for="(item,idx) in approvaled" >
-                          <span :class="[idx %3 === 0 ? 'blue':(idx %3 === 1 ? 'green':'orange')]" @click="approvaledClick(item.path,item.label)">{{item.value}}</span>
-                          <p :class="[idx %3 === 0 ? 'blue':(idx %3 === 1 ? 'green':'orange')]" @click="approvaledClick(item.path,item.label)">{{item.label}}</p>
+                          <span :class="[idx %3 === 0 ? 'blue':(idx %3 === 1 ? 'green':'orange')]" @click="approvaledClick(item)">{{item.value?item.value:"0"}}</span>
+                          <p :class="[idx %3 === 0 ? 'blue':(idx %3 === 1 ? 'green':'orange')]" @click="approvaledClick(item,)">{{item.TypeName}}</p>
                         </li>
                       </ul>
                     </div>
@@ -69,62 +69,85 @@
       components: {TopHandle, SearchInput},
       data(){
           return{
-            myApproval:[{
-              label:"资金拨付审批",
-              approvalValue:'12',
-              path:'/payfundapproval'
-            },{
-              label:"支付单审批",
-              approvalValue:'12',
-              path:'/paylistapproval'
-            },{
-              label:"项目用款审批",
-              approvalValue:'0',
-              path:''
-            },{
-              label:"项目申报审批",
-              approvalValue:'100',
-              path:''
-            },{
-              label:"年度预算审批",
-              approvalValue:'1',
-              path:''
-            }],
-            approvaled:[{
-              label:"资金拨付单",
-              value:"12",
-              path:'/payfundapproval'
-            },{
-              label:"支付单",
-              value:"12",
-              path:'/paylistapproval'
-            },{
-              label:"项目用款单",
-              value:"0",
-              path:''
-            }]
+            myApproval:[],
+            approvaled:[]
           }
       },
+      mounted(){
+        this.getProcTypes()
+      },
       methods:{
+        //获取审批类型
+        getProcTypes(){
+          let data = {
+            Orgid:''
+          }
+          this.getAxios('/GAppvalProc/GetProcTypes',data).then(success=>{
+              console.log(success);
+            this.myApproval = success.Data;
+            this.approvaled = success.Data
+          }).catch(err =>{
+            console.log(err)
+          })
+        },
           //搜索框的回车与按钮事件
         search(val){
           console.log(val)
         },
         //跳转到置顶的详情页面
-        openApprovalList(path){
+        openApprovalList(item){
+          /**
+           * '001':'资金拨付单',
+           '002':'支付单',
+           '003':'项目用款单',
+           '004':'预算审核单',
+           '005':'项目申报单'
+           */
+          let path = '';
+          if (item.Value ==='001') {
+            path = '/payfundapproval' //资金拨付页面路由
+          }else if (item.Value ==='002') {
+            path = '/paylistapproval'//支付单页面路由
+          } else if(item.Value ==='003'){
+            path = ''
+          } else if(item.Value ==='004'){
+            path = ''
+          } else if(item.Value ==='005'){
+            path = ''
+          } else {
+            path=''
+          }
+          console.log(item.PhId)
           this.$router.push({
             path:path,
             query:{
-              approval:true
+              approval:true,
+              SplxPhid:item.PhId,
             }
           })
         },
         //我已审批
-        approvaledClick(path,label){
+        approvaledClick(item){
+          let path = '';
+          if (item.Value ==='001') {
+            path = '/payfundapproval' //资金拨付页面路由
+          }else if (item.Value ==='002') {
+            path = '/paylistapproval'//支付单页面路由
+          } else if(item.Value ==='003'){
+            path = ''
+          } else if(item.Value ==='004'){
+            path = ''
+          } else if(item.Value ==='005'){
+            path = ''
+          } else {
+            path=''
+          }
+
           this.$router.push({
             path:path,
             query:{
-              approval:false
+              approval:false,
+              SplxPhid:item.PhId,
             }})
         }
       }

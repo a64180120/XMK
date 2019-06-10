@@ -64,7 +64,7 @@
                         :header-row-class-name="headerRowClass">
                 <el-table-column type="selection" width="30">
                 </el-table-column>
-                <el-table-column prop="OperatorPhid" align="center"  label="操作员编码">
+                <el-table-column prop="OperatorCode" align="center"  label="操作员编码">
                 </el-table-column>
                 <el-table-column prop="OperatorName" align="center"  label="姓名">
                 </el-table-column>
@@ -85,11 +85,14 @@
    * 1、 dialogFlow():审批流程当前行搜索图标点击时触发，传递当前行数据
    * 2、selectApprovaler():下一审批人选中时触发，传递选中行的数据
    * 3、approvalRowClick()：审批流列表当前行的点击事件，传递审批流程列表当前行的数据
-   * 4、isAgree:是否同意事件改变时触发 传递一个布尔值 ，ture为同意  false为不同意
+   * 4、isAgree:审批需要,送审时不需要。是否同意事件改变时触发 传递一个布尔值 ，ture为同意  false为不同意
    * 属性：
    * 1、approvalFollow ，左边审批流程列表数据
    * 2、nextApprovaler，下一审批人列表数据
-   * 3、backPersonnel，返回人员数据
+   * 3、backPersonnel，审批需要,送审时不需要。用于显示回退人员数据,
+   * 4、isApproval，判断是否是送审，true送审 false审核 默认为false
+   *
+   * v-model:绑定文本域内容
    */
 
     export default {
@@ -119,26 +122,36 @@
           default:function () {
             return []
           }
+        },
+        value:{
+          type:String,
+          default:''
         }
 
       },
       data(){
         return{
           list:1,
-          textare:'',
+          textare:this.value,
           openDialog:false,
           handleValue:'',
           subPeople:[]
         }
       },
       watch:{
+        value(newValue){
+          this.textare = newValue
+        },
+        textare(newValue){
+          this.$emit('input',newValue)
+        },
         handleValue(val){
           if(val === "2" ){
             this.$emit("isArgeen",false)
           }else {
             this.$emit("isArgeen",true)
           }
-        }
+        },
       },
       methods:{
         changeDialog(){

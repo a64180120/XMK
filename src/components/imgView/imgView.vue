@@ -19,23 +19,21 @@
         <img src="../../assets/test.jpg">
       </div>
       <div class="img-nav">
-        <ul>
-          <li class="prev">
-            <i class="el-icon-d-arrow-left" @click="prevImg()"></i>
-          </li>
-          <li  class="img-content">
-            <div class="img-main">
-              <div class="img-item" v-for="(item,idx) in images">
-                <div  class="img-bg" :class="[idx === 2?'active':'']">
-                  <img src="../../assets/test.jpg" alt="图片">
-                </div>
-              </div>
+        <div class="prev" @click="prevImg">
+          <span></span>
+        </div>
+        <div id="img-main" class="img-main">
+          <div class="nav-body" :style="{left:nowMoveLength+'px'}">
+            <div  class="nav-item" v-for="(item,idx) in images" :class="[idx ===activeIdx?'active':'']">
+              <img v-if="idx % 3 === 0" @click="clickImg(item,idx)"  src="../../assets/test.jpg" alt="图片">
+              <img v-if="idx % 3 === 1" @click="clickImg(item,idx)" src="../../assets/images/sptg.png" alt="图片">
+              <img v-if="idx % 3 === 2" @click="clickImg(item,idx)" src="../../assets/images/y3.png" alt="图片">
             </div>
-          </li>
-          <li class="next">
-            <i class="el-icon-d-arrow-right" @click="nextImg()"></i>
-          </li>
-        </ul>
+          </div>
+        </div>
+        <div class="next" @click="nextImg">
+          <span></span>
+        </div>
       </div>
     </section>
 </template>
@@ -77,6 +75,7 @@
           return{
             img:[],
             activeItem:Number,
+            activeIdx:"",
             imgDialog:false,
             options:{
               navbar:true,
@@ -86,7 +85,8 @@
               title:false
             },
             width:'100%',
-            listLeight:Number
+            maxMoveLength:0,//最大移动距离
+            nowMoveLength:0,//当前移动距离
           }
       },
       mounted(){
@@ -106,15 +106,25 @@
 
         },
         prevImg(){
-          this.activeItem --
+          if (this.nowMoveLength < 0){
+            this.nowMoveLength = this.nowMoveLength + 114
+          }
         },
         nextImg(){
-          this.activeItem ++
-          if (this.activeItem === 2 &&this.listLeight.length>4 ){
-            for (let i in this.images){
-              this.$set(this.img,i+this.activeItem-1,this.images[i+this.activeItem-1])
-            }
+          let imgLeight = this.images.length - 5
+          if (imgLeight >= 0){
+            this.maxMoveLength = 94 * imgLeight
+          }else {
+            this.maxMoveLength = 0
           }
+          if(Math.abs(this.nowMoveLength) < this.maxMoveLength){
+            this.nowMoveLength = this.nowMoveLength - 114
+            console.log(this.nowMoveLength)
+          }
+        },
+        clickImg(item,idx){
+           this.activeIdx = idx;
+           this.activeItem = item
         }
       }
     }
@@ -145,53 +155,124 @@
     }
     >.img-nav{
       margin-top: 25px;
-      >ul{
-        list-style: none;
-        text-align: left;
-        height: 55px;
-        display: flex;
-        >.img-content{
-          width: 100%;
-          >.img-main{
-            width: 100%;
-            white-space: nowrap;
-            overflow: hidden;
-            >.img-item{
-              margin: auto;
-              white-space: normal;
-              overflow: auto;
-              display: inline-block;
-              width: 20%;
-              height: 55px;
-              padding: 0 10px;
-              .img-bg{
-                width: 100%;
-                background-color: #eaeaea;
-                >img{
-                  width: 100%;
-                  height: 55px;
-                  object-fit: contain;
-                }
-              }
-              .active{
-                background-color: #00b7ee;
-              }
+      >.prev{
+        display: inline-block;
+        vertical-align: middle;
+        width: 50px;
+        height: 50px;
+        cursor: pointer;
+        margin: 0 10px;
+        background-color:#00b7ee;
+        &:hover{
+          /*background:linear-gradient(to left,rgba(96,110,112,0.8),rgba(96,110,112,0));*/
+        }
+        >span{
+          position: relative;
+          &:before{
+            content:'';
+            display: inline-block;
+            width: 20px;
+            height: 10px;
+            transform: skewY(-45deg);
+            background-color: #eee;
+            position: absolute;
+            top: 10px;
+            left: 10px;
+          }
+          &:after{
+            content:'';
+            display: inline-block;
+            width:  20px;
+            height: 10px;
+            transform: skewY(45deg);
+            background-color: #eee;
+            position: absolute;
+            top: 30px;
+            left: 10px;
+          }
+        }
+      }
+      >.img-main{
+        width: 570px;
+        height: 80px;
+        padding: 10px 0;
+        vertical-align: middle;
+        display: inline-block;
+        white-space: nowrap;
+        overflow-x: hidden;
+        overflow-y: hidden;
+        transition: all 0.5s;
+        position: relative;
+        >.nav-body{
+          position: absolute;
+          transition: all 0.8s;
+          >.nav-item{
+            width: 94px;
+            height: 55px;
+            display: inline-block;
+            margin: 0 10px 0 10px;
+            background-color: #E3E3E3;
+            /*box-shadow: 0 1px 6px 2px rgba(227,227,227,0.6);*/
+            border-radius: 2px;
+            border: 2px solid rgba(227,227,227,0.6);
+            transition: all 0.5s;
+            position: relative;
+            cursor: pointer;
+            >img{
+              max-width: 66px;
+              max-height: 51px;
+            }
+            &:hover{
+              transform: scale(1.05);
+              box-shadow: 0 1px 8px 4px rgba(227,227,227,0.8);
+              border:2px solid rgba(227,227,227,0.8); ;
             }
           }
         }
-        >.prev{
-          width: 5%;
-          >i{
-            font-size: 0.32rem;
-          }
+      }
+      >.next{
+        display: inline-block;
+        vertical-align: middle;
+        width: 50px;
+        height: 50px;
+        cursor: pointer;
+        margin: 0 10px;
+        background-color:#00b7ee;
+        &:hover{
+          /*background:linear-gradient(to left,rgba(96,110,112,0.8),rgba(96,110,112,0));*/
         }
-        >.next{
-          width: 5%;
-          font-size: 0.32rem;
-          text-align: right;
+        >span{
+          position: relative;
+          &:before{
+            content:'';
+            display: inline-block;
+            width: 20px;
+            height: 10px;
+            transform: skewY(45deg);
+            background-color: #eee;
+            position: absolute;
+            top: 10px;
+            left: 10px;
+          }
+          &:after{
+            content:'';
+            display: inline-block;
+            width:  20px;
+            height: 10px;
+            transform: skewY(-45deg);
+            background-color: #eee;
+            position: absolute;
+            top: 30px;
+            left: 10px;
+          }
         }
       }
     }
+  }
+  .active{
+    transform: scale(1.1);
+    box-shadow: 0 1px 8px 4px rgba(145,145,45,0.8);
+    border:2px solid rgba(227,227,227,0.8);
   }
 </style>
 <style>
