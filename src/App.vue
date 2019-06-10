@@ -49,10 +49,10 @@ export default {
                       this.$msgBox.show(res.Msg);
                   }else{
                       this.$store.commit('user/setOrglist',res.Record);
-                      if(!this.$store.user.orgcode){
+                      if(!this.$store.state.user.orgcode){
                         this.$store.commit('user/setOrganize',res.Record[0]);
                       }
-                      if(!this.$store.user.year){
+                      if(!this.$store.state.user.year){
                         this.$store.commit('user/setYear',new Date().getFullYear());
                       }  
                   }

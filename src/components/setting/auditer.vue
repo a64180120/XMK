@@ -15,8 +15,26 @@
                     :value="item.value">
                     </el-option>
                 </el-select> -->
-                <span>组织/部门</span>
-                <span></span>
+                <span>组织/部门:&nbsp; </span>
+                <div @click.stop="orgTreeShow" class="fl" style=" border-bottom: 1px solid #ccc;
+    height: 90%;
+    cursor: pointer;" >
+                    <el-popover width="300" placement="right" :popper-class="'maxH'" trigger="click">
+                        <el-tree
+                        ref="orgtree"
+                        node-key="OCode"
+                        :highlight-current="true"
+                        :props="defaultProps"
+                        
+                        :default-expanded-keys="[org.OCode]"
+                        :data="orgList"
+                        :expand-on-click-node="false"
+                        @node-click="orgChange"
+                        ></el-tree>
+                        <span slot="reference" class="orgName">{{org.OName}}</span>
+                    </el-popover>
+                    
+                </div>
             </div>
             <div class="rightBtn">
                 <search :placeholder="'操作员编码/姓名'"  v-model="searchInfo"/>
@@ -34,7 +52,7 @@
             </div>
             <div class="list2">
                 <ul v-for="(user,n) of userList" class="listContent">
-                    <li><el-checkbox @change="choose(user)" v-model="user.checked"> {{n}}</el-checkbox></li>
+                    <li><el-checkbox @change="choose(user)" v-model="user.checked"> {{n+1+((pageIndex-1)*pageSize)}}</el-checkbox></li>
                     <li>{{user.Dwdm}}</li>
                     <li>{{user.DefStr1}}</li>
                     <li>{{user.DefStr5}}</li>
@@ -59,6 +77,7 @@
 </template>
 
 <script>
+import {mapState} from 'vuex'
 import search from '@/components/searchInput/searchInput'
 import {getUserByOrg} from '@/api/systemSetting/post'
 export default {
@@ -77,6 +96,7 @@ export default {
     },
     data(){
         return {
+            org:{OCode:101},
             options:[],
             search:'',
             checked:false,
@@ -87,14 +107,26 @@ export default {
             total:0,
             indeterminate:false,
             searchInfo:'',
+            defaultProps: {
+              children: 'children',
+              label: 'OName'
+            }
         }
     },
+     computed:{
+            ...mapState({
+                  orgList: state=>state.user.orglist,
+                  orgcode: state=>state.user.orgcode,
+                  orgname: state=>state.user.orgname,
+            })
+        },
     mounted(){
+        this.org.OCode=this.orgcode;
+        this.org.OName=this.orgname;
         this.getData();
     },
     watch:{
         getuser(val){
-            console.log(val,this.info)
             if(val){
                 this.allChecked(false);
                 this.checked=false;
@@ -102,7 +134,6 @@ export default {
                 this.userList.map(user => {
                     for(let u of this.info){
                         if(u.OperatorPhid==user.DefStr6){
-                            console.log(u.OperatorPhid,user.DefStr6)
                             this.$set(user,'checked',true);
                             this.choosedItem.push(user);
                         }
@@ -125,6 +156,15 @@ export default {
         }
     },
     methods:{
+        orgChange(val){
+            this.org=val;
+            this.getData();
+            let p = document.querySelector('.auditer .orgName');
+            p.click();
+        },
+        orgTreeShow(){//组织树显示
+            this.$refs.orgtree.setCurrentNode({OCode:this.org.OCode});
+          },
         handleCurrentChange(val){
             this.pageIndex=val;
             this.getData();
@@ -138,7 +178,7 @@ export default {
         },
         getData(){
             let data={
-                OrgCode:100,
+                OrgCode:this.org.OCode,
                 PageIndex:this.pageIndex-1,
                 PageSize:this.pageSize,
                 queryStr:this.searchInfo

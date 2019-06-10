@@ -255,8 +255,9 @@ export default {
             let data={
                 PageIndex:this.pageIndex-1,//  (分页页码)
                 PageSize:this.pageSize,//  （分页大小）
-                Orgid: '521180820000001', //  （组织id）
-                Ucode: 'Admin' //（用户编码）
+                Orgid: this.$store.state.user.orgid, //  （组织id）
+                Ucode: 'Admin', //（用户编码）  admin为显示全部
+               // Ucode:this.$store.state.user.usercode,
             }
             GetAppvalPostOpersList(data).then(res => {
                 if(res.Status=='error'){
