@@ -52,6 +52,7 @@
                 multiple
                 placeholder="请选择"
                 size="mini"
+                @visible-change="statusBlur"
               >
                 <el-option
                   v-for="item in statusList"
@@ -474,8 +475,8 @@ export default {
         queryfilter: JSON.stringify(query),
         PageIndex: this.currentPage - 1, //当前第几页，从0开始
         PageSize: this.pageSize, //每页显示行数
-        uid: '521180820000001', //用户id
-        orgid: '547181121000001', //组织id
+        uid: '488181024000001', //用户id
+        orgid: '488181024000001', //组织id
         ryear: '2019'
       })
         .then(res => {
@@ -627,11 +628,13 @@ export default {
           this.status = ['']
         } else if (cur.includes('')) {
           cur.splice(cur.findIndex(item => item === ''), 1)
-        } else if (cur.length == 3) {
+        } else if (cur.length == this.statusList.length - 1) {
           this.status = ['']
         }
       }
-      this.getData()
+    },
+    statusBlur(visible) {
+      if (!visible) this.getData()
     },
     // 分页
     handleSizeChange(val) {

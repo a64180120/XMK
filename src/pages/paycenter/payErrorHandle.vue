@@ -95,14 +95,11 @@ export default {
           this.data.openDialog = false
           this.refreshIndexData()
           this.$msgBox.show({
-            content: '处理成功',
-            fn: () => {
-              if (this.father) this.father.openDialog = false
-            }
+            content: '处理成功'
           })
         })
         .catch(err => {
-          this.$msgBox.err('发起线上异常处理失败！')
+          this.$msgBox.error('发起线上异常处理失败！')
           console.log(err)
         })
     },
@@ -121,14 +118,11 @@ export default {
           this.refreshIndexData()
           this.data.openDialog = false
           this.$msgBox.show({
-            content: '操作成功！请在2小时后查看状态。',
-            fn: () => {
-              if (this.father) this.father.openDialog = false
-            }
+            content: '操作成功！请在2小时后查看状态。'
           })
         })
         .catch(err => {
-          this.$msgBox.err('发起线上异常处理失败！')
+          this.$msgBox.error('发起线上异常处理失败！')
           console.log(err)
         })
     },
@@ -152,7 +146,7 @@ export default {
           })
         })
         .catch(err => {
-          this.$msgBox.err('消除异常失败！')
+          this.$msgBox.error('消除异常失败！')
           console.log(err)
         })
     }

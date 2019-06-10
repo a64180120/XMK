@@ -11,16 +11,7 @@ MessageBox.install = function(Vue, options) {
     document.body.appendChild(msgBoxEl)
   }
   const initShow = options => {
-    // if (!currentMsg) {
     initInstance()
-    // } else {
-    //   currentMsg.$destroy()
-    //   console.log(currentMsg.openDialog)
-    //   clearInterval(currentMsg.interval)
-    //   currentMsg.interval = null
-    //   currentMsg = new MessageBoxInstance()
-    //   currentMsg.$mount().$el
-    // }
     if (typeof options === 'string') {
       currentMsg.content = options
     } else if (typeof options === 'object') {

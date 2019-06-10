@@ -555,6 +555,13 @@ export default {
         openDialog: false,
         data: {}
       },
+      appDialog: {
+        title: '',
+        btnGroup: {
+          cancelName: '',
+          onfirmName: ''
+        }
+      },
       reSetting: false,
       allSelected: false,
       detail: {
@@ -564,15 +571,7 @@ export default {
         },
         Dtls: []
       },
-      oldDetail: null,
-      errorDetail: null,
-      appDialog: {
-        title: '',
-        btnGroup: {
-          cancelName: '',
-          onfirmName: ''
-        }
-      }
+      oldDetail: null
     }
   },
   methods: {
@@ -582,9 +581,9 @@ export default {
       e.QtKmmc = this.kemuList.find(item => item.KMDM == e.QtKmdm).KMMC
     },
     // 获取支付单详情
-    getData() {
+    getData(type) {
       getPayment({
-        id: this.detail.Mst.PhId,
+        id: type ? this.oldDetail.Mst.PhId : this.detail.Mst.PhId,
         // id: 401190528000001,
         uid: '521180820000001', //用户id
         orgid: '547181121000001', //组织id
@@ -595,16 +594,22 @@ export default {
           if (res.Status == 'error') {
             return
           }
-          this.detail.Mst = res.Mst
-          res.Dtls.forEach(item => (item.choosed = false))
-          this.detail.Dtls = res.Dtls
+          if (type) {
+            Object.assign(this.oldDetail.Mst, res.Mst)
+            res.Dtls.forEach(item => (item.choosed = false))
+            this.oldDetail.Dtls = res.Dtls
+          } else {
+            Object.assign(this.detail.Mst, res.Mst)
+            res.Dtls.forEach(item => (item.choosed = false))
+            this.detail.Dtls = res.Dtls
+          }
         })
         .catch(err => {
           this.$msgBox.error('获取支付单详情失败！')
           console.log('payList', err)
         })
     },
-    // 重新生成支付单
+    // 重新生成支付单-提交新增请求，将返回id保存到旧支付单请求（保存完新的旧支付单请求，原因：两行可能分开重新支付！旧支付单需要更新！），获取新增的支付单最新情况（多次保存，如果有新的Mst.PhId，则为保存）
     postAddPayList(postAddAppvalRecord) {
       postAddPayList({
         uid: 521180820000001, //用户id
@@ -656,6 +661,7 @@ export default {
             this.$msgBox.error(res.Msg)
           } else {
             this.getData()
+            this.getData('old')
             this.$msgBox.show('保存成功')
             this.refreshIndexData()
             if (postAddAppvalRecord) postAddAppvalRecord()
