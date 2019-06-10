@@ -195,7 +195,7 @@
               <col width="15%">
             </colgroup>
             <tbody>
-            <tr  :class="{trActive:checkList[index]}" v-for="(item,index) in dataList.data" v-if="(searchData.approvalType==0&&searchData.payType==0)||(searchData.approvalType==0&&searchData.payType==item.billZfType)||(searchData.payType==0&&searchData.approvalType==item.billSpType)||(searchData.payType==item.billZfType&&searchData.approvalType==item.billSpType)">
+            <tr  :class="{trActive:checkList[index]}" v-for="(item,index) in dataList.data">
               <td style="text-align: left;padding-left: .2rem">
                 <el-checkbox v-model="checkList[index]">{{index+1}}</el-checkbox>
               </td>
@@ -298,8 +298,8 @@
                >
        <applypro :applyNum="applyNum" :prodata="apartData" :isAdd="isAdd"  @delete="handleDelete"></applypro>
     </el-dialog>
-
-    <go-approval  :data="approvalDataS"></go-approval>
+<!--送审-->
+    <go-approval  :data="approvalDataS" @delete="handleDelete"></go-approval>
     <!--生成支付单-->
     <approval-dialog ref="approvalDialog" :title="appDialog.title" :btn-group="appDialog.btnGroup" :data="approvalData" ></approval-dialog>
     <!--查看审批流程-->
@@ -317,6 +317,7 @@
   import goApproval from '../../components/applyPro/goApproval';
   import Auditfollow from "../../components/auditFollow/auditfollow";
   import ApprovalDialog from "../payfundapproval/approvalDialog";
+  import {mapState} from 'vuex'
     export default {
         name: "index",
       data(){
@@ -374,10 +375,10 @@
             approvalData:{
             },
             apartData:{bm:{},Mst:[],Amount:'0'},//选择部门后获取的项目信息
-            isAdd:false,//判断是修改（false）还是新增(true)
+            isAdd:true,//判断是修改（false）还是新增(true)
           }
       },
-      components:{Applypro, Orgtree, Applybill, tophandle,pieChart,goApproval,Auditfollow,ApprovalDialog,num},
+      components:{mapState,Applypro, Orgtree, Applybill, tophandle,pieChart,goApproval,Auditfollow,ApprovalDialog,num},
       mounted(){
           //this.getData();
           this.getDataC();
@@ -395,6 +396,22 @@
           }
           this.$forceUpdate(this.checkList);*/
         },
+        searchData:{
+          handler(val){
+            this.getData();
+          },
+          deep:true
+        }
+      },
+
+      computed: {
+        ...mapState({
+          orgid: state => state.user.orgid, //id
+          orgcode:state => state.user.orgcode, //编码
+          orgname:state => state.user.orgname,//名称
+          year:state => state.user.year,//年份
+          userid:state => state.user.userid
+        })
       },
       methods:{
         //滚动
@@ -448,7 +465,7 @@
             checkList.push(false);
           }
           this.checkList=checkList;
-
+          this.checked=false;
         },
         //获取当前选中的数组
         getCheckedList:function(){
@@ -481,7 +498,7 @@
 
         //获取部门
         getDataC:function(){
-          let param={Unit:'101',UserNo:'9999'};
+          let param={Unit:this.orgcode,UserNo:this.userid||'9999'};
           this.getAxios('GQT/CorrespondenceSettingsApi/GetDeptByUnit',param).then(res=>{
             this.bmList=res.Record;
             this.searchData.bmType=res.Record[0].OCode;
@@ -495,8 +512,8 @@
         //获取部门对应的项目及项目总额
         getAllProByBm:function(){
           let param={
-            FYear: '2019',  //年度
-            FDeclarationUnit: '101', //组织代码
+            FYear: this.year,  //年度
+            FDeclarationUnit: this.orgcode, //组织代码
             FBudgetDept: this.searchData.bmType //部门代码
           };
           this.getAxios('GYS/BudgetMstApi/GetBudgetMstList',param).then(res=>{
@@ -507,6 +524,7 @@
           })
         },
         getData:function(){
+          console.log(this.searchData.date);
           let param={
             PageIndex:this.searchData.pageSearch.pageIndex,
             PageSize:this.searchData.pageSearch.pageSize,
@@ -517,14 +535,15 @@
             EndDate:this.searchData.date,
             MaxAmount:this.searchData.money.smoney==0?'':this.searchData.money.smoney,
             MinAmount:this.searchData.money.emoney==0?'':this.searchData.money.emoney,
-            FOrgphid: 488181024000002,
+            FOrgphid:this.orgid,
             FDepphid:this.apartData['bm'].PhId,
-            FYear:2019
+            FYear:this.year
           }
           this.getAxios('GBK/PaymentMstApi/GetPaymentMstList',param).then(res=>{
             this.dataList.total=res.totalRows;
             this.dataList.data=res.Record;
-            this.getCheckList();
+            this.getCheckList(res.Record.length);
+            this.$forceUpdate(this.dataList)
           }).catch(err=>{
             console.log(err);
           })
@@ -548,9 +567,13 @@
           this.applyNum=num+'';
         },
         //删除事件
-        handleDelete:function(flag){
-          if(flag){
-            this.applyType=false;
+        handleDelete:function(val){
+          if(val.flag){
+            if(val.type=='applyproType'){
+              this.applyproType=false;
+            }else{
+              this.approvalDataS.openDialog=false;
+            }
             this.getData();
           }
         },
@@ -564,7 +587,7 @@
 
           switch (val) {
             case 'add':
-              this.isAdd=false;
+              this.isAdd=true;
               this.$forceUpdate(this.isAdd);
               this.applyproTitle='新增申请';
               this.applyproType=true;
@@ -595,7 +618,7 @@
                   })
                 }else{
                   this.applyNum=upList[0].PhId+'';
-                  this.isAdd=true;
+                  this.isAdd=false;
                   this.$forceUpdate(this.isAdd);
                   this.applyproTitle='修改申请';
                   this.applyproType=true;
@@ -647,7 +670,29 @@
               break;
             case 'SS':
               //this.applyproTitle='修改申请';
-              this.approvalDataS.openDialog=true
+              let ssList=this.getCheckedList();
+              if(ssList.length==0){
+                this.$msgBox.show({
+                  content: '请选择要送审的数据。'
+                })
+              }else{
+                let count=0,data=[];
+                for(var i in ssList){
+                  if(ssList[i].FApproval!=0&&ssList[i].FApproval!=2){
+                    this.$msgBox.show({
+                      content: '只允许送审待送审及未通过项目。'
+                    })
+                  }else{
+                    count++;
+                    data.push(ssList[i].PhId)
+                  }
+                }
+                if(count==ssList.length){
+                  this.approvalDataS.openDialog=true;
+                  this.approvalDataS.data=data;
+                }
+              }
+
               break;
             case 'SC':
               this.appDialog.title = '审批并生成支付单'
