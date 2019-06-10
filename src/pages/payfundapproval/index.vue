@@ -289,6 +289,13 @@
       <auditfollow :visible.sync="visible" :auditMsg="auditMsg"></auditfollow>
       <!--组织树-->
       <orgtree :data="orgtreeData" :checkedOrg="checkedOrg" :visible.sync="orgType" @confirm="getOrg"></orgtree>
+      <!--图片预览-->
+      <el-dialog class="dialog img-dialog" :visible.sync="imgVisible" :append-to-body="true" :close-on-click-modal="false" width="40%">
+        <div slot="title" class="dialog-title">
+          <span style="float: left">查看附件</span>
+        </div>
+        <img-view v-if="imgVisible"></img-view>
+      </el-dialog>
     </div>
 
 
@@ -314,6 +321,7 @@
       ImgView, Orgtree, Applybill, Auditfollow, ApprovalDialog, SearchInput, HandleBtn, FundDetail},
     data(){
       return{
+        imgVisible:true,
         BType:"001", //单据类型 资金拨付 001  申请单 002
         searchForm:{
           BName:'',//申报单名称或编号查询内容
@@ -4741,7 +4749,7 @@
         approvalData:{},
         openApprovalDialog:false,
         checked:'',
-        tableData:[],//模拟表格数据
+        tableData:[{}],//模拟表格数据
         page:{
           currentPage:1,//当前页
           pageSizes:[20,50,100], //每页显示多少条
@@ -4761,17 +4769,19 @@
         openInnerDialog:false,//打开详情内层弹框
 
         //判断显示为已审批页面还是未审批页面
-        isApproval:"",
+        isApproval:true,
         applyNum:"",//当前查看申请单的编号
         SplxPhid:""
       }
     },
 
     mounted() {
+      console.log(this.isApproval)
       this.selection = []
       this.isApproval = this.$route.query.approval
       this.SplxPhid = this.$route.query.SplxPhid
       // this.testData()
+      debugger
       this.loadData()
     },
     watch:{
@@ -4824,6 +4834,7 @@
             for (let i in success.Data) {
               that.check.push(false)
             }
+            that.tableData=[{}]
           }else {
             this.$msgBox.show(success.Msg)
           }

@@ -29,7 +29,6 @@ function apiAxios(method, url, params, hastimeout) {
     UserId: '488181024000001',
     OrgName: '',
     OCode: '',
-    UserId: '521180820000001',
     UserKey: '9999',
     UserName: '',
     TokenKey: '',

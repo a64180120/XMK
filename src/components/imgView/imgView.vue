@@ -17,6 +17,16 @@
 
       <div class="img-body">
         <img src="../../assets/test.jpg">
+        <div class="img-mask">
+          <div class="icon-btn">
+            <div class="icon icon-play">
+              <i class="el-icon-video-play icon"></i>
+            </div>
+            <div class="icon icon-download">
+              <i class="el-icon-download icon"></i>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="img-nav">
         <div class="prev" @click="prevImg">
@@ -50,6 +60,15 @@
             type:Array,
             default:function () {
               return [{
+                path:'../../assets/test.jpg',
+                name:'name'
+              },{
+                path:'../../assets/test.jpg',
+                name:'name'
+              },{
+                path:'../../assets/test.jpg',
+                name:'name'
+              },{
                 path:'../../assets/test.jpg',
                 name:'name'
               },{
@@ -124,7 +143,8 @@
         },
         clickImg(item,idx){
            this.activeIdx = idx;
-           this.activeItem = item
+           this.activeItem = item;
+           console.log(item)
         }
       }
     }
@@ -144,6 +164,46 @@
       display: flex;
       justify-content: center;
       align-items: center;
+      position: relative;
+      >.img-mask{
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        background-color: rgba(115,115,115,0.6);
+        z-index: 0;
+        >.icon-btn{
+          width: 200px;
+          height: 50px;
+          position: absolute;
+          top: 0;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          margin: auto;
+          >.icon{
+            color: #00b7ee;
+            width: 50px;
+            height: 50px;
+            background-color: #ffffff;
+            text-align: center;
+            border-radius: 25px;
+            display: inline-block;
+            >i{
+              line-height: 50px;
+              font-size: 0.4rem;
+            }
+          }
+          >.icon-paly{
+            margin-right: 20px;
+          }
+          >.icon-download{
+            margin-left: 20px;
+          }
+        }
+
+      }
       >img{
         /*max-width:100%;*/
         /*max-height: 100%;*/
@@ -223,8 +283,8 @@
               max-height: 51px;
             }
             &:hover{
-              transform: scale(1.05);
-              box-shadow: 0 1px 8px 4px rgba(227,227,227,0.8);
+              transform: scale(1.1);
+              box-shadow: 0 1px 8px 4px #00b7ee;
               border:2px solid rgba(227,227,227,0.8); ;
             }
           }
@@ -271,7 +331,7 @@
   }
   .active{
     transform: scale(1.1);
-    box-shadow: 0 1px 8px 4px rgba(145,145,45,0.8);
+    box-shadow: 0 1px 8px 4px #00b7ee;
     border:2px solid rgba(227,227,227,0.8);
   }
 </style>
