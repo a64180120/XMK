@@ -371,7 +371,6 @@ export default {
                     this.$msgBox.show(res.Msg)
                 }else{
                     this.codeList=res;
-                    console.log(this.codeList)
                 }
             }).catch(
                 err => {
