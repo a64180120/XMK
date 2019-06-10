@@ -274,7 +274,7 @@ export default {
                 let posts=[],maxMin=[],splx;
                 this.postList.map((pos,i )=> {
                     posts.push({
-                        PostPhid:pos.post,
+                        PostPhid:pos.PhId,
                         FSeq:i+1,
                         FMode:pos.FMode
                     })

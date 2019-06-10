@@ -25,7 +25,7 @@
                         <span v-for="org of search.org">{{org.OName}}&nbsp;&nbsp;</span>    
                     </div> 
                     <span>启用/停用:</span>
-                    <el-select v-model="search.enable" @change="getData" placeholder="请选择">
+                    <el-select class="enableCss" v-model="search.enable" @change="getData" placeholder="请选择">
                         <el-option
                         v-for="item in options"
                         :key="item.value"
@@ -35,7 +35,7 @@
                     </el-select>
                 </div>
                  <div class="rightBtn">
-                    <search placeholder='岗位代码/岗位名称' @btnClick="searchFn"></search>
+                    <search placeholder='岗位代码/岗位名称' v-model="search.val" @btnClick="searchFn"></search>
                 </div>
             </div>
             <div class="content">
@@ -162,11 +162,11 @@ export default {
     data(){
         return{
             options:[
-                {label:'全部',value:''},
+                {label:'全部',value:'0'},
                 {label:'启用',value:'1'},
                 {label:'停用',value:'2'}
             ],
-            search:{org:[]},
+            search:{org:[],enable:'0',val:''},
             indeterminate:false,
             checked:false,
             postList:[],
@@ -175,7 +175,7 @@ export default {
             postBtn:'',
             pageSize:30,
             pageIndex:1,
-            total:9,
+            total:0,
             orgSelected:[],
             postinfo:'',//修改时传入的phid
             orgVisible:false,
@@ -259,12 +259,16 @@ export default {
                 Orgid: this.$store.state.user.orgid, //  （组织id）
                 Ucode: 'Admin', //（用户编码）  admin为显示全部
                // Ucode:this.$store.state.user.usercode,
+                PostName:this.search.val,//搜索框值
+                EnableMark:this.search.enable,//启用停用
+                // SearchOrgid:this.search.org
             }
             GetAppvalPostOpersList(data).then(res => {
                 if(res.Status=='error'){
                     this.$msgBox.show(res.Msg)
                 }else{
                     this.postList=res;
+
                     this.checked=false;
                     this.allChecked(false);
                 }
@@ -281,6 +285,7 @@ export default {
         },
         getOrg(val){
             this.search.org=val;
+            console.log(val)
         },
          //流程选择
         choose(val,index){
@@ -452,6 +457,9 @@ export default {
 }
 .post .el-dialog__body>div{
     border-top:1px solid #ccc;
+}
+.post .enableCss input{
+        height: 32px;
 }
 </style>
 
