@@ -4,8 +4,8 @@
       <el-row :gutter="10">
         <el-col :span="24">
           <div class="top-btn">
-            <el-button class="btn" size="mini" @click="save(0)">保存</el-button>
-            <el-button class="btn" size="mini" @click="save(1)" style="padding: 0">保存并送审</el-button>
+            <el-button :disabled="PaymentMst.length==0" class="btn" size="mini" @click="save(0)">保存</el-button>
+            <el-button :disabled="PaymentMst.length==0" class="btn" size="mini" @click="save(1)" style="padding: 0">保存并送审</el-button>
             <el-button class="btn" size="mini" @click="add">增加项目</el-button>
             <el-button class="btn" size="mini" @click="delPro">删除项目</el-button>
           </div>
@@ -20,7 +20,7 @@
               <!--申请信息-->
               <div class="apply-info">
                 <ul>
-                  <li><span>申报部门：</span><span>{{PaymentMst.FOrgname+'-'+PaymentMst.FDepname}}</span></li>
+                  <li><span>申报部门：</span><span>{{PaymentMst.FOrgname&&PaymentMst.FDepname?PaymentMst.FOrgname+'-'+PaymentMst.FDepname:''}}</span></li>
                   <li><span>金额合计：</span><span>{{PaymentMst.FAmountTotal | NumFormat}}</span></li>
                 </ul>
                 <el-card class="payText">
@@ -306,12 +306,12 @@
     },
     components:{ApprovalDialog, Orgtree,goApproval,ImgView},
     watch:{
-      /*applyNum(){
-        this.getApply();
-      },*/
       isAdd(val){
         if(val){
           this.getApply();
+        }else{
+          this.PaymentMst=[];
+          this.PaymentXmDtl=[];
         }
       },
       prodata:{
