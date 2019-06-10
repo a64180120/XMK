@@ -1,9 +1,9 @@
 <template>
   <section>
     <handle-btn title="审批中心在线工作平台" :auditBtn="true">
-      <div class="top" v-if="isApproval">
+      <div class="top" >
          <ul>
-           <li @click="aprovalItem()">
+           <li @click="aprovalItem()" v-if="isApproval">
              <div>
                <img src="../../assets/images/sp.png">
              </div>
@@ -284,7 +284,7 @@
       <!--审批弹框-->
       <approval-dialog ref="approvalDialog" :rowData="selection" @dialogFlow="childrenAuditfollow" @subSuc="plSubSuc()"></approval-dialog>
       <!--生成支付单弹框-->
-      <paylist-dialog ref="paylistDialog" :rowData="selection"  @dialogFlow="childrenAuditfollow" @subSuc="plSubSuc()"></paylist-dialog>
+      <paylist-dialog ref="paylistDialog" :rowData="selection" :isApproval="isApproval"  @dialogFlow="childrenAuditfollow" @subSuc="plSubSuc()"></paylist-dialog>
       <!--查看审批流程-->
       <auditfollow :visible.sync="visible" :auditMsg="auditMsg"></auditfollow>
       <!--组织树-->

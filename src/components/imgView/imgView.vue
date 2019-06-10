@@ -22,11 +22,15 @@
         <div class="prev" @click="prevImg">
           <span></span>
         </div>
-        <ul id="img-main">
-          <li  class="img-content" v-for="(item,idx) in images">
-            <img src="../../assets/test.jpg" alt="图片">
-          </li>
-        </ul>
+        <div id="img-main" class="img-main">
+          <div class="nav-body" :style="{left:nowMoveLength+'px'}">
+            <div  class="nav-item" v-for="(item,idx) in images" :class="[idx ===activeIdx?'active':'']">
+              <img v-if="idx % 3 === 0" @click="clickImg(item,idx)"  src="../../assets/test.jpg" alt="图片">
+              <img v-if="idx % 3 === 1" @click="clickImg(item,idx)" src="../../assets/images/sptg.png" alt="图片">
+              <img v-if="idx % 3 === 2" @click="clickImg(item,idx)" src="../../assets/images/y3.png" alt="图片">
+            </div>
+          </div>
+        </div>
         <div class="next" @click="nextImg">
           <span></span>
         </div>
@@ -71,6 +75,7 @@
           return{
             img:[],
             activeItem:Number,
+            activeIdx:"",
             imgDialog:false,
             options:{
               navbar:true,
@@ -80,7 +85,8 @@
               title:false
             },
             width:'100%',
-            listLeight:Number
+            maxMoveLength:0,//最大移动距离
+            nowMoveLength:0,//当前移动距离
           }
       },
       mounted(){
@@ -100,23 +106,25 @@
 
         },
         prevImg(){
-          let scrollLeft = document.getElementById('img-main')
-          // console.log(scrollLeft.scrollLeft)
-          this.$nextTick(()=>{
-            scrollLeft.scrollLeft = 0
-          })
-          console.log(document.getElementById('img-main').scrollLeft)
+          if (this.nowMoveLength < 0){
+            this.nowMoveLength = this.nowMoveLength + 114
+          }
         },
         nextImg(){
-
-          let scrollLeft = document.getElementById('img-main')
-          // console.log(scrollLeft.scrollLeft)
-          this.$nextTick(()=>{
-            for (let i=0;i<50;i++) {
-                scrollLeft.scrollLeft = i
-            }
-          })
-          console.log(document.getElementById('img-main').scrollLeft)
+          let imgLeight = this.images.length - 5
+          if (imgLeight >= 0){
+            this.maxMoveLength = 94 * imgLeight
+          }else {
+            this.maxMoveLength = 0
+          }
+          if(Math.abs(this.nowMoveLength) < this.maxMoveLength){
+            this.nowMoveLength = this.nowMoveLength - 114
+            console.log(this.nowMoveLength)
+          }
+        },
+        clickImg(item,idx){
+           this.activeIdx = idx;
+           this.activeItem = item
         }
       }
     }
@@ -184,7 +192,7 @@
           }
         }
       }
-      >ul{
+      >.img-main{
         width: 570px;
         height: 80px;
         padding: 10px 0;
@@ -194,26 +202,31 @@
         overflow-x: hidden;
         overflow-y: hidden;
         transition: all 0.5s;
-        >li{
-          width: 94px;
-          height: 55px;
-          display: inline-block;
-          margin: 0 10px 0 10px;
-          background-color: #E3E3E3;
-          box-shadow: 0 1px 6px 2px rgba(227,227,227,0.6);
-          border-radius: 2px;
-          border: 2px solid rgba(227,227,227,0.6);
-          transition: all 0.5s;
-          position: relative;
-          cursor: pointer;
-          >img{
-            max-width: 66px;
-            max-height: 51px;
-          }
-          &:hover{
-            transform: scale(1.05);
-            box-shadow: 0 1px 8px 4px rgba(227,227,227,0.8);
-            border:2px solid rgba(227,227,227,0.8); ;
+        position: relative;
+        >.nav-body{
+          position: absolute;
+          transition: all 0.8s;
+          >.nav-item{
+            width: 94px;
+            height: 55px;
+            display: inline-block;
+            margin: 0 10px 0 10px;
+            background-color: #E3E3E3;
+            /*box-shadow: 0 1px 6px 2px rgba(227,227,227,0.6);*/
+            border-radius: 2px;
+            border: 2px solid rgba(227,227,227,0.6);
+            transition: all 0.5s;
+            position: relative;
+            cursor: pointer;
+            >img{
+              max-width: 66px;
+              max-height: 51px;
+            }
+            &:hover{
+              transform: scale(1.05);
+              box-shadow: 0 1px 8px 4px rgba(227,227,227,0.8);
+              border:2px solid rgba(227,227,227,0.8); ;
+            }
           }
         }
       }
@@ -255,6 +268,11 @@
         }
       }
     }
+  }
+  .active{
+    transform: scale(1.1);
+    box-shadow: 0 1px 8px 4px rgba(145,145,45,0.8);
+    border:2px solid rgba(227,227,227,0.8);
   }
 </style>
 <style>

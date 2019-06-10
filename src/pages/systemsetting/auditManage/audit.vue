@@ -247,7 +247,6 @@ export default {
             console.log(val)
         },
         getOrg(val){
-            console.log(val,this.orgInfo)
             let arr=[];
 
             val.map(v => {
@@ -258,16 +257,15 @@ export default {
                     })
             })
             this.orgInfo.NewOrganizes=arr;
-            console.log()
             this.updateOrg(this.orgInfo);
         },
         getData(val){
             let data={
-                orgid:'521180820000001',
+                orgid:this.$store.state.user.orgid,
                 ApprovalTypeId:val.PhId,
                 BillType:val.Value,
-                PageIndex:1,
-                PageSize:20,
+                PageIndex:this.pageIndex,
+                PageSize:this.pageSize,
                 QueryFilter:''
                 // Orgid：组织id
                 // ApprovalTypeId：审批类型id
@@ -365,7 +363,7 @@ export default {
         //获取岗位列表
         getPosts(){
             let data={
-                Orgid:'521180820000001'
+                Orgid:this.$store.state.user.orgid,
             }
             GetAppvalPostList(data).then(res => {
                 if(res.Status=='error'){
@@ -384,7 +382,7 @@ export default {
         //获取类型列表
         getTypeData(){
             let data={
-                orgid:'521180820000001'
+                orgid:this.$store.state.user.orgid,
             }
             GetProcTypes(data).then(res=>{
                 if(res.Status=='error'){
@@ -467,13 +465,16 @@ export default {
             }
         },
         handleCurrentChange(val){
-            console.log(1111,val)
+            this.pageIndex=val;
+            this.getData();
         },
         handleSizeChange(val){
-             console.log(1111,val)
+            this.pageSize=val;
+            this.getData();
         },
         refresh(){
-            console.log(22222);
+           this.getTypeData();
+           this.getPosts();
         },
         orgTree(val){
             if(val){

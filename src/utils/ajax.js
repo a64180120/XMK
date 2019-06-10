@@ -20,13 +20,8 @@ function apiAxios(method, url, params, hastimeout) {
 
   //sql 数据库
   var appinfo = {
-    //sql 数据库
-/*    DbName: 'NG0001',
-    OrgId: '547181121000001',
-    UserId: '521180820000001',*/
     DbName: 'NG0006',
-    OrgId:'488181024000001',
-    UserId: '488181024000001',
+    OrgId: '547181121000001',
     OrgName: '',
     OCode: '',
     UserId: '521180820000001',
