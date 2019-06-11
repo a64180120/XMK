@@ -334,7 +334,6 @@
         orgtreeData:[], //工会组织列表
         checkedOrg:[],//设置组织树默认选中项
         orgType:false,//控制组织树的展示与隐藏
-        detailData:{},
         approvalData:{},
         openApprovalDialog:false,
         checked:'',
@@ -487,7 +486,8 @@
         // this.$refs.fundDetail.changeDialog()
         this.applyNum = row.RefbillPhid
         this.detailDialog = true
-        this.detailData = row
+        this.selection = []
+        this.selection[0] = row
       },
       //当前页显示多少条数据
       handleSizeChange(val){

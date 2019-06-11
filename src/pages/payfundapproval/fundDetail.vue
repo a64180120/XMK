@@ -188,7 +188,10 @@
         this.openDialog = true
       },
       approval(){
-        this.$refs.approvalDialog.changeDialog()
+        this.$emit('detailBtn','approvl',this.data)
+      },
+      payList(){
+        this.$emit('detailBtn','payList',this.data)
       }
     }
   }
