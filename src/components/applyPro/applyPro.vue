@@ -425,10 +425,6 @@
         }
         this.postAxios(url,data).then( res => {
           if(res.Status=="success"){
-            var tim=setTimeout(()=>{
-              this.approvalDataS.openDialog=true;
-              this.approvalDataS.data=res.KeyCodes;
-            },3000);
             this.$msgBox.show({
               content: '保存成功。',
               fn: () => {
@@ -436,7 +432,6 @@
                 if(type==1){
                     this.approvalDataS.openDialog=true;
                     this.approvalDataS.data=res.KeyCodes;
-                    clearTimeout(tim);
                 }
               }
             })
@@ -700,6 +695,7 @@
       handleDelete:function(val){
         if(val.flag){
           this.approvalDataS.openDialog=false;
+          this.$emit('delete',{flag:true,type:'applyproType'})
         }
       }
     }

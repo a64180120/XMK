@@ -184,13 +184,13 @@
     <!--生成支付单-->
     <approval-dialog ref="approvalDialog" :title="appDialog.title" :btn-group="appDialog.btnGroup" :data="approvalData"></approval-dialog>
     <!--附件查看-->
-    <el-dialog class="dialog img-dialog" :visible.sync="dialogVisible" :append-to-body="true" :close-on-click-modal="false" width="40%">
+    <el-dialog class="dialog img-dialog" :visible.sync="dialogVisible" :append-to-body="true" :close-on-click-modal="false" width="50%">
       <div slot="title" class="dialog-title">
         <span style="float: left">查看附件</span>
       </div>
-      <div class="btn-load">
+      <!--<div class="btn-load">
         <el-button class="btn">下载</el-button>
-      </div>
+      </div>-->
       <img-view v-if="dialogVisible"></img-view>
     </el-dialog>
   </section>
@@ -619,6 +619,9 @@
 
 </style>
 <style>
+  #delDialog .el-dialog__body{
+    height: 550px;
+  }
   #delDialog .el-dialog__footer{
     text-align: center;
   }

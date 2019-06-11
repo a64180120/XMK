@@ -5,24 +5,24 @@
       width="37.5%"
       :close-on-click-modal="false"
       class="dialog"
+      :append-to-body="true"
       @close="closeDialog"
     >
       <div slot="title" class="dialog-title">
-        <p>审批并生成支付单</p>
+        <p>查看</p>
       </div>
-      <approval-bill
-        :approvalFollow="approvalFollow"
-        :nextApprovaler="nextApprovaler"
-        @dialogFlow="searchFlow"
-        @isArgeen="backAproval"
-        @selectApprovaler="selectApprovaler"
-        :backPersonnel="backPersonnel"
-        ref="approval"
-        v-model="textare"
-      ></approval-bill>
+      <approval-bill @dialogFlow="searchFlow"
+                     @approvalRowClick="approvalRowClick"
+                     @selectApprovaler="selectApprovaler"
+                     @isArgeen="backAproval"
+                     :approvalFollow="approvalFollow"
+                     :nextApprovaler="nextApprovaler"
+                     :backPersonnel="backPersonnel"
+                     ref="approval"
+                     v-model="textare"></approval-bill>
       <div class="approval-btn">
         <el-button size="small" type="primary" @click="cancel()">取消</el-button>
-        <el-button size="small" type="primary" @click="submit()">生成支付单</el-button>
+        <el-button size="small" type="primary" @click="submit()">确认</el-button>
       </div>
     </el-dialog>
     <back-approval v-if="visible" :visible.sync="visible" :auditMsg="backData" @getBackPeople="getBackPeople" @closeBack="closeBack"></back-approval>
@@ -33,7 +33,7 @@
   import ApprovalBill from "../../components/approvalBill/approvalBill";
   import BackApproval from "../../components/backApproval/backApproval";
   export default {
-    name: "paylistDialog",
+    name: "payDialog",
     components: {BackApproval, ApprovalBill},
     props:{
       rowData:{
@@ -45,7 +45,7 @@
       BType:{
         type: String,
         default:'002'
-      },
+      }
     },
     data(){
       return{
@@ -55,13 +55,17 @@
         handleValue:'',
         approvalFollow:[],
         nextApprovaler:[],
-        backPost:[],//获取回退的审批人岗位
-        isAgree:'', //保存是否同意审批
         backPersonnel:[],//回退审批人集合
         backData:[],//回退的审批人岗位集合
-        operatorID:[], //操作人员集合,
-        isApproval:Boolean
+        backPost:[],//获取回退的审批人岗位
+        isAgree:'', //保存是否同意审批
+        operatorID:[] //操作人员集合
+
       }
+    },
+    mounted(){
+    },
+    watch:{
     },
     methods:{
       //根据组织id，单据类型获取所有的审批流程
@@ -75,11 +79,7 @@
           if (success && success.Status === 'success'){
             this.$set(this.approvalFollow,0,success.Process);
             this.nextApprovaler = success.AppvalPost.Operators;
-            for (let key in this.approvalFollow){
-              this.approvalFollow[key].RefbillPhid =this.rowData[0].RefbillPhid;
-              this.approvalFollow[key].ProcPhid = this.rowData[0].ProcPhid;
-            }
-            console.log(this.approvalFollow,this.nextApprovaler)
+            console.log(success)
           }else {
             let that = this
             this.$msgBox.show({
@@ -93,19 +93,28 @@
           console.log(err)
         })
       },
-      changeDialog(){
-        if (this.openDialog) {
-          this.openDialog = false
-        }else {
-          this.getAppvalProc()
-          this.openDialog = true
-        }
+      //审批流列表行点击事件
+      approvalRowClick(e){
+        console.log(e)
       },
       //下一审批人选中弹框
       selectApprovaler(e){
         for (let k in e){
           this.operatorID[k] = e[k].OperatorPhid
         }
+      },
+      //开启或关闭弹框
+      changeDialog(){
+        this.openDialog = true
+        this.getAppvalProc()
+      },
+      //表头样式回调
+      headerRowClass(val){
+        return "table-header"
+      },
+      //查看详细流程
+      searchFlow(row){
+        this.$emit("dialogFlow",row)
       },
       //取消
       cancel(){
@@ -114,25 +123,23 @@
         this.backPersonnel = [];
         this.$refs.approval.handleValue = ''
       },
-      //审批通过
-      submit(){
-        // let that = this
-        // this.visible = false
-        // this.$msgBox.show({
-        //   content:'操作成功',
-        //   fn:function () {
-        //     that.openDialog = false
-        //     that.$emit('subSuc')
-        //   }
-        // })
+      //关闭弹框
+      closeDialog(){
+        this.openDialog = false;
+        this.visible = false;
+        this.backPersonnel = [];
+        this.$refs.approval.handleValue = ''
+      },
 
+      //确认
+      submit(){
         //同意数据 单条
         let data = {
           PhId:this.rowData[0].PhId,//单据ID
           ProcPhid:this.rowData[0].ProcPhid,//审批流程id
           PostPhid:this.rowData[0].PostPhid,//审批岗位id
           RefbillPhid:this.rowData[0].RefbillPhid,//单据id
-          FBilltype:'001',//单据类型 先支付单审批
+          FBilltype:this.BType,//单据类型
           FApproval:this.isAgree,//审批意见(0- 未审批 1-待审批 2- 未通过 9-审批通过)
           NextOperators:"",//下一岗位审批人id的集合
           FOpinion:this.textare //审批备注
@@ -147,83 +154,46 @@
           data.NextOperators = arr
           data.BackPostPhid = this.backPost.PhId
         }
-        if (this.isApproval){
-          this.postAxios('/GAppvalRecord/PostApprovalRecord',data).then(success=>{
-            if (success.Status == 'success'&&success) {
-              let that= this
-              this.visible = false
-              this.$msgBox.show({
-                content:'审批成功',
-                fn:function () {
-                  that.openDialog = false;
-                  that.$emit('subSuc');
-                  that.$refs.approval.handleValue = '';
-                  this.textare = ''
-                }
-              })
-              this.creatPayList()
-            }else {
-              this.$msgBox.show(success.Msg)
-            }
-          }).catch(err=>{
-            this.$msgBox.show('请求出错')
-          })
-        } else {
-          this.creatPayList()
-        }
-
-      },
-      //生成支付单
-      creatPayList(){
-        let data = {
-          RefbillPhid:this.rowData[0].RefbillPhid
-        }
-        this.postAxios('/GAppvalRecord/PostAddPayMent',data).then(success=>{
-          this.$msgBox.show({
-            content:'生成支付单成功',
-            fn:function () {
-              that.openDialog = false;
-              that.$emit('subSuc');
-              that.$refs.approval.handleValue = '';
-              this.textare = ''
-            }
-          })
-            console.log(success)
+        debugger
+        this.postAxios('/GAppvalRecord/PostApprovalRecord',data).then(success=>{
+          if (success.Status == 'success'&&success) {
+            let that= this
+            this.visible = false
+            this.$msgBox.show({
+              content:'审批成功',
+              fn:function () {
+                that.openDialog = false;
+                that.$emit('subSuc');
+                that.$refs.approval.handleValue = '';
+                this.textare = ''
+                that.$emit('refresh')
+              }
+            })
+          }else {
+            this.$msgBox.show(success.Msg)
+          }
         }).catch(err=>{
-          console.log(err)
+          this.$msgBox.show('请求出错')
         })
       },
+
+      //关闭销毁回退,下次打开执行生命周期
+      closeBack(){
+        this.visible = false;
+        this.textare = '';
+        this.$emit('refresh')
+      },
       backAproval(val){
-        if (!val){
-          // this.visible = true
+        console.log(val)
+        if (!val ){
           this.getBackApprovalPost()
+          // this.getGetOperators()
           this.isAgree = '2'
         } else {
           this.isAgree = '9'
           this.visible = false
           this.backPersonnel = []
         }
-      },
-      //关闭销毁回退,下次打开执行生命周期
-      closeBack(){
-        this.visible = false
-
-      },
-      getBackPeople(item){
-        for (let key in item.Operators){
-          this.$set(this.backPersonnel,key,item.Operators[key])
-        }
-        console.log(this.backPersonnel)
-      },
-      //关闭弹框
-      closeDialog(){
-        this.openDialog = false
-        this.visible = false
-        this.textare = ''
-      },
-      //查看详细流程
-      searchFlow(row){
-        this.$emit("dialogFlow",row)
       },
       //拉去回退时,获取之前的所有岗位,包括发起人(岗位id为0)
       getBackApprovalPost(){
@@ -232,6 +202,7 @@
           ProcPhid:this.rowData[0].ProcPhid,
           PostPhid:this.rowData[0].PostPhid,
           RefbillPhid:this.rowData[0].RefbillPhid,
+          OperaPhid:this.rowData[0].OperaPhid
         }
         this.getAxios('/GAppvalPost/GetBackApprovalPost',data).then(success=>{
           if (success && success.Status == 'success') {
@@ -243,6 +214,13 @@
         }).catch(err =>{
           this.$msgBox.show('请求出错')
         })
+      },
+      //点击获取回退人员名字 以及回退的岗位信息
+      getBackPeople(item){
+        this.backPost = item
+        for (let key in item.Operators){
+          this.$set(this.backPersonnel,key,item.Operators[key])
+        }
       },
     }
   }
