@@ -2,7 +2,7 @@
   <section>
     <el-dialog
       :visible.sync="data.openDialog"
-      width="540px"
+      width="620px"
       :close-on-click-modal="false"
       class="dialog goApproval"
       append-to-body
@@ -72,6 +72,7 @@
       </div>-->
       <approval-bill
         v-model="content"
+        :isApproval="true"
         :approvalFollow="approvalFollow"
         @approvalRowClick="approvalRowClick"
         :nextApprovaler="nextApprovaler"
@@ -99,6 +100,7 @@ import {
   GetFirstStepOperator
 } from '@/api/paycenter'
 import approvalBill from '../../components/approvalBill/approvalBill.vue'
+import { mapState } from 'vuex'
 
 export default {
   name: 'goApproval',
@@ -138,47 +140,19 @@ export default {
       openDialog: false,
       handleValue: '',
       content: '',
-      subData: [
-        {
-          code: '0001',
-          name: '资金拨付流程1'
-        },
-        {
-          code: '0002',
-          name: '资金拨付流程2'
-        }
-      ],
+      subData: [],
       nextData: [],
-      nextDataList: [
-        [
-          {
-            code: '1001',
-            name: '王官官'
-          },
-          {
-            code: '1002',
-            name: '王管管'
-          }
-        ],
-        [
-          {
-            code: '2001',
-            name: '王罐罐'
-          },
-          {
-            code: '2002',
-            name: '王关关'
-          }
-        ]
-      ],
+      nextDataList: [],
       approvalFollow: [],
       nextApprovaler: [],
       ProcPhid: '',
       PostPhid: '',
-      NextOperators: []
+      NextOperators: [],
+      mode: 0 //0普通模式1会签模式
     }
   },
   methods: {
+    // 获取审批人
     approvalRowClick(item) {
       console.log(item)
       this.ProcPhid = item.PhId
@@ -190,6 +164,7 @@ export default {
             this.$msgBox.error(res.Msg)
             return
           }
+          this.mode = res.Data.FMode
           this.PostPhid = res.Data.PhId
           this.nextApprovaler = res.Data.Operators
         })
@@ -222,15 +197,22 @@ export default {
         this.$msgBox.error('请选择一条审批流程！')
         return
       }
-      if (this.NextOperators.length == 0) {
-        this.$msgBox.error('请至少选择一位审批人！')
-        return
+      if (this.mode) {
+        if (this.NextOperators.length != this.nextApprovaler.length) {
+          this.$msgBox.error('请选择所有审批人！')
+          return
+        }
+      } else {
+        if (this.NextOperators.length == 0) {
+          this.$msgBox.error('请至少选择一位审批人！')
+          return
+        }
       }
       postAddAppvalRecord({
         RefbillPhidList: this.data.data.map(item => {
           return item.Mst.PhId
         }),
-        FBilltype: '002',
+        FBilltype: this.bType,
         ProcPhid: this.ProcPhid,
         PostPhid: this.PostPhid,
         NextOperators: this.nextApprovaler.map(item => {
@@ -270,8 +252,9 @@ export default {
     }
   },
   created() {
+    // 获取所有审批流程
     getAppvalProc({
-      Orgid: '521180820000002',
+      Orgid: this.orgid,
       BType: this.bType
     })
       .then(res => {
@@ -295,6 +278,11 @@ export default {
         })
       }
     }
+  },
+  computed: {
+    ...mapState({
+      orgid: state => state.user.orgid
+    })
   }
 }
 </script>
@@ -456,6 +444,9 @@ export default {
     vertical-align: middle;
     .el-dialog__body {
       padding-top: 0px;
+      section .content {
+        height: auto;
+      }
     }
     .el-table__body tr.current-row > td {
       background-color: $primaryColor;
@@ -463,6 +454,9 @@ export default {
   }
   &.el-dialog__wrapper {
     text-align: center;
+  }
+  .el-table__body-wrapper.is-scrolling-none {
+    max-height: 90px !important;
   }
   &.el-dialog__wrapper::after {
     display: inline-block;

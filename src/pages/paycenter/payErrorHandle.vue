@@ -33,6 +33,7 @@ import {
   postRefreshPaymentsState,
   postUpdatePaymentsState
 } from '@/api/paycenter'
+import { mapState } from 'vuex'
 export default {
   name: 'payErrorHandle',
   components: {},
@@ -83,8 +84,8 @@ export default {
     postRefreshPaymentState() {
       postRefreshPaymentState({
         id: this.data.data.Mst.PhId,
-        uid: '521180820000001',
-        orgid: '547181121000001',
+        uid: this.userid,
+        orgid: this.orgid,
         ryear: '2019'
       })
         .then(res => {
@@ -107,8 +108,8 @@ export default {
     postRefreshPaymentsState(ids) {
       postRefreshPaymentsState({
         infoData: ids,
-        uid: '521180820000001',
-        orgid: '547181121000001'
+        uid: this.userid,
+        orgid: this.orgid
       })
         .then(res => {
           if (res.Status == 'error') {
@@ -129,8 +130,8 @@ export default {
     // 批量更新支付单支付状态
     postUpdatePaymentsState(infoData) {
       postUpdatePaymentsState({
-        uid: '631181115000001',
-        orgid: '547181121000001',
+        uid: this.userid,
+        orgid: this.orgid,
         infoData: infoData,
         value: 1
       })
@@ -151,7 +152,13 @@ export default {
         })
     }
   },
-  watch: {}
+  watch: {},
+  computed: {
+    ...mapState({
+      orgid: state => state.user.orgid,
+      userid: state => state.user.userid
+    })
+  }
 }
 </script>
 <style lang="scss" scoped>

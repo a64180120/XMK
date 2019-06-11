@@ -234,6 +234,7 @@ import payList from './payList.vue'
 import mergePay from './mergePay.vue'
 import payErrorHandle from './payErrorHandle.vue'
 import goApproval from './goApproval.vue'
+import { mapState } from 'vuex'
 export default {
   name: 'pay',
   components: {
@@ -475,8 +476,8 @@ export default {
         queryfilter: JSON.stringify(query),
         PageIndex: this.currentPage - 1, //当前第几页，从0开始
         PageSize: this.pageSize, //每页显示行数
-        uid: '488181024000001', //用户id
-        orgid: '488181024000001', //组织id
+        uid: this.userid || 488181024000001, //用户id
+        orgid: this.orgid, //组织id
         ryear: '2019'
       })
         .then(res => {
@@ -649,6 +650,12 @@ export default {
       console.log(page)
       this.currentPage = page
     }
+  },
+  computed: {
+    ...mapState({
+      orgid: state => state.user.orgid,
+      userid: state => state.user.userid
+    })
   }
 }
 </script>

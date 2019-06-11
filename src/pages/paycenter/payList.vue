@@ -371,6 +371,7 @@ import {
   getBudgetAccountsList,
   postAddPayList
 } from '@/api/paycenter'
+import { mapState } from 'vuex'
 
 export default {
   name: 'payList',
@@ -585,8 +586,8 @@ export default {
       getPayment({
         id: type ? this.oldDetail.Mst.PhId : this.detail.Mst.PhId,
         // id: 401190528000001,
-        uid: '521180820000001', //用户id
-        orgid: '547181121000001', //组织id
+        uid: this.userid || 488181024000001, //用户id
+        orgid: this.orgid, //组织id
         ryear: '2019' //年度
       })
         .then(res => {
@@ -612,8 +613,8 @@ export default {
     // 重新生成支付单-提交新增请求，将返回id保存到旧支付单请求（保存完新的旧支付单请求，原因：两行可能分开重新支付！旧支付单需要更新！），获取新增的支付单最新情况（多次保存，如果有新的Mst.PhId，则为保存）
     postAddPayList(postAddAppvalRecord) {
       postAddPayList({
-        uid: 521180820000001, //用户id
-        orgid: 547181121000001, //组织id
+        uid: this.userid, //用户id
+        orgid: this.orgid, //组织id
         ryear: '2019', //年度
         infoData: this.detail
       })
@@ -652,8 +653,8 @@ export default {
       }
       console.log('save', saveData)
       savePayList({
-        uid: 521180820000001,
-        orgid: 521180820000002,
+        uid: this.userid,
+        orgid: this.orgid,
         infoData: saveData
       })
         .then(res => {
@@ -696,7 +697,7 @@ export default {
           if (res.Status == 'error') {
             this.$msgBox.error(res.Msg)
           } else {
-            this.account = this.detail.Mst.OrgPhid
+            // this.account = this.detail.Mst.OrgPhid
             this.accountList = res.Record
           }
         })
@@ -943,6 +944,12 @@ export default {
         this.closeAuditFollow()
       }
     }
+  },
+  computed: {
+    ...mapState({
+      orgid: state => state.user.orgid,
+      userid: state => state.user.userid
+    })
   }
 }
 </script>

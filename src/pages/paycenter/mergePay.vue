@@ -180,6 +180,7 @@ import {
   postSubmitPayments
 } from '@/api/paycenter'
 import md5 from 'js-md5'
+import { mapState } from 'vuex'
 
 export default {
   name: 'mergePay',
@@ -238,7 +239,7 @@ export default {
       postSavePayPsd({
         TypeCode: '999',
         TypeName: '管理员',
-        Orgid: '488181024000001',
+        Orgid: this.orgid,
         Orgcode: '1',
         value: md5(this.confirmPassword),
         Isactive: this.radio
@@ -272,7 +273,7 @@ export default {
       postPayPsd({
         TypeCode: '999',
         TypeName: '管理员',
-        Orgid: '488181024000001',
+        Orgid: this.orgid,
         Orgcode: '1'
       })
         .then(res => {
@@ -341,8 +342,8 @@ export default {
       postSubmitPayments({
         infoData: ids,
         // id: this.data.data.Mst.PhId,
-        uid: '521180820000001',
-        orgid: '547181121000001'
+        uid: this.userid,
+        orgid: this.orgid
       })
         .then(res => {
           if (res.Status == 'error') {
@@ -412,7 +413,11 @@ export default {
       return this.data.data.reduce((prev, item) => {
         return prev + item.Mst.FAmountTotal
       }, 0)
-    }
+    },
+    ...mapState({
+      userid: state => state.user.userid,
+      orgid: state => state.user.orgid
+    })
   },
   watch: {
     // 隐藏后关闭弹框
