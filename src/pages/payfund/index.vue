@@ -410,7 +410,8 @@
           orgcode:state => state.user.orgcode, //编码
           orgname:state => state.user.orgname,//名称
           year:state => state.user.year,//年份
-          userid:state => state.user.userid
+          userid:state => state.user.userid,
+          usercode:state => state.user.usercode
         })
       },
       methods:{
@@ -498,7 +499,7 @@
 
         //获取部门
         getDataC:function(){
-          let param={Unit:this.orgcode,UserNo:this.userid||'9999'};
+          let param={Unit:this.orgcode,UserNo:this.usercode||'9999'};
           this.searchData.bmType='';
           this.getAxios('GQT/CorrespondenceSettingsApi/GetDeptByUnit',param).then(res=>{
             this.bmList=res.Record;
@@ -576,6 +577,8 @@
           if(val.flag){
             if(val.type=='applyproType'){
               this.applyproType=false;
+            }else if(val.type=='applyBill'){
+              this.applyType=false;
             }else{
               this.approvalDataS.openDialog=false;
             }
