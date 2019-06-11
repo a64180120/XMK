@@ -46,10 +46,6 @@
         type: String,
         default:'002'
       },
-      isApproval:{
-        type:Boolean,
-        default:false
-      }
     },
     data(){
       return{
@@ -63,7 +59,8 @@
         isAgree:'', //保存是否同意审批
         backPersonnel:[],//回退审批人集合
         backData:[],//回退的审批人岗位集合
-        operatorID:[] //操作人员集合
+        operatorID:[], //操作人员集合,
+        isApproval:Boolean
       }
     },
     methods:{
@@ -135,12 +132,11 @@
           ProcPhid:this.rowData[0].ProcPhid,//审批流程id
           PostPhid:this.rowData[0].PostPhid,//审批岗位id
           RefbillPhid:this.rowData[0].RefbillPhid,//单据id
-          FBilltype:this.BType,//单据类型
+          FBilltype:'001',//单据类型 先支付单审批
           FApproval:this.isAgree,//审批意见(0- 未审批 1-待审批 2- 未通过 9-审批通过)
           NextOperators:"",//下一岗位审批人id的集合
           FOpinion:this.textare //审批备注
         }
-
         if (this.isAgree === '9') {
           data.NextOperators = this.operatorID
         }else if(this.isAgree === '2'){
@@ -152,11 +148,10 @@
           data.BackPostPhid = this.backPost.PhId
         }
         if (this.isApproval){
-          this.postAxios('/GAppvalRecord/PostApprovalRecord').then(success=>{
+          this.postAxios('/GAppvalRecord/PostApprovalRecord',data).then(success=>{
             if (success.Status == 'success'&&success) {
               let that= this
               this.visible = false
-              this.creatPayList()
               this.$msgBox.show({
                 content:'审批成功',
                 fn:function () {
@@ -166,6 +161,7 @@
                   this.textare = ''
                 }
               })
+              this.creatPayList()
             }else {
               this.$msgBox.show(success.Msg)
             }
@@ -180,11 +176,11 @@
       //生成支付单
       creatPayList(){
         let data = {
-
+          RefbillPhid:this.rowData[0].RefbillPhid
         }
-        this.postAxios('/GAppvalRecord/PostAddPayMent').then(success=>{
+        this.postAxios('/GAppvalRecord/PostAddPayMent',data).then(success=>{
           this.$msgBox.show({
-            content:'审批成功',
+            content:'生成支付单成功',
             fn:function () {
               that.openDialog = false;
               that.$emit('subSuc');

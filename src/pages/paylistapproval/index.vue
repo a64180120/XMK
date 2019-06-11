@@ -19,22 +19,22 @@
           <div class="btnArea">
             <el-form :inline="true">
               <el-form-item label="申报部门" class="top-form-left">
-                <el-input size="mini" v-model="form.depart" @focus="openOrg()" placeholder="全部"></el-input>
+                <el-input size="mini" v-model="searchForm.OrgName" @focus="openOrg()" @change="changeInput()" style="width: 120px" placeholder="全部"></el-input>
               </el-form-item>
               <el-form-item label="停留时长" class="top-form-left">
-                <el-input size="mini" v-model="form.long" style="width: 200px" placeholder="请输入停留时长">
-                  <el-select v-model="select" slot="prepend" placeholder="类型" class="select-input" style="width: 75px">
-                    <el-option label="大于" value="1"></el-option>
-                    <el-option label="等于" value="2"></el-option>
+                <el-input size="mini" v-model="searchForm.StopHour" style="width: 200px" placeholder="请输入停留时长" @change="changeInput()">
+                  <el-select v-model="searchForm.Operator" slot="prepend" placeholder="类型" class="select-input" style="width: 75px" @change="changeInput('operator')">
+                    <el-option label="等于" value="1"></el-option>
+                    <el-option label="大于" value="2"></el-option>
                     <el-option label="小于" value="3"></el-option>
                   </el-select>
                 </el-input>
               </el-form-item>
               <el-form-item label="申报日期" class="top-form-left">
-                <el-date-picker v-model="form.date" style="width: 240px" size="mini" type="daterange" start-placeholder="开始时间" end-placeholder="开始时间"></el-date-picker>
+                <el-date-picker v-model="searchForm.BDate" @change="changeInput()" style="width: 240px" size="mini" type="daterange" start-placeholder="开始时间" end-placeholder="开始时间"></el-date-picker>
               </el-form-item>
               <el-form-item label="" class="top-form-right">
-                <search-input @btnClick="search()" placeholder="申请单名称/编号"></search-input>
+                <search-input @btnClick="search()" placeholder="申请单名称/编号" v-model="searchForm.BName"></search-input>
               </el-form-item>
             </el-form>
           </div>
@@ -236,7 +236,7 @@
             @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
             :current-page="page.currentPage"
-            :page-sizes="page.pageSize"
+            :page-sizes="page.pageSizes"
             layout="total,sizes,prev,pager,next,jumper"
             :total="page.total"></el-pagination>
         </div>
@@ -263,11 +263,13 @@
   import Orgtree from "../../components/orgtree/index";
   import Paylist from "./payList";
   import { selection} from "../payfundapproval/selection";
+  import {mapState} from 'vuex'
   export default {
     name: "index",
     components: {Paylist, Orgtree, ApprovalDialog, Applybill, Auditfollow, SearchInput, HandleBtn},
     data(){
       return{
+        BType:"002", //单据类型 资金拨付 001  申请单 002
         checkedAll:false, //是否全选
         IsIndeterminate:false, //列表中是否有选中的值并且不是全选
         payListData: {
@@ -283,16 +285,20 @@
         },
         openApprovalDialog:false,
         check:[],
-        form:{
-          depart:'',
-          long:'',
-          date:[]
+        searchForm:{
+          BName:'',//申报单名称或编号查询内容
+          BDate:[],//申报时间段
+          Operator:"",//停留时长的判断条件(1:等于,2:大于,3:小于)
+          StopHour:'',//停留时长
+          OrgCode:'100',//组织编码
+          OrgName:''//组织名称
         },
         tableData:[{}],//模拟表格数据
         page:{
           currentPage:1,//当前页
-          pageSize:[20,50,100], //每页显示多少条
-          total:3//总条数
+          pageSizes:[20,50,100], //每页显示多少条
+          total:0,//总条数
+          pageSize:10,//当前每页显示多少条
         },//分页
         visible:false,
         appDialog:{
@@ -4711,51 +4717,23 @@
             "customsort": null,
             "iconCls": null,
             "disabled": false
-          }], //工会组织列表
+          }
+          ], //工会组织列表
         checkedOrg:[],//设置组织树默认选中项
         orgType:false,//控制组织树的展示与隐藏
+        SplxPhid:"",
       }
+    },
+    computed:{
+      ...mapState({
+        OrgCode:state =>state.user.orgcode
+      })
     },
     mounted() {
       this.isApproval = this.$route.query.approval
-      console.log(this.isApproval)
-      let data1 = {
-        applyDepart:'财务与资产部',
-        applyCode:'201904180004',
-        payListCode:'201904180001',
-        applyAmount:'4,567.90',
-        payListType:"1",
-        applyDate:'2019-04-17',
-        approvalStutas:'1'
-      };
-      let data2 = {
-        applyDepart:'杭州总工会财务与资产部',
-        applyCode:'201904180004',
-        payListCode:'201904180001',
-        applyAmount:'4,567.90',
-        payListType:"1",
-        applyDate:'2019-04-17',
-        approvalStutas:'2'
-      };
-      let data3 = {
-        applyDepart:'财务与资产管理部',
-        applyCode:'201904180004',
-        payListCode:'201904180001',
-        applyAmount:'4,567.90',
-        payListType:"1",
-        applyDate:'2019-04-17',
-        approvalStutas:'3'
-      };
-      for (let i = 0;i<12;i++){
-        if(i%4 == 1){
-          this.tableData[i] = data1
-        }else if (i%4 == 2) {
-          this.tableData[i] = data2
-        } else {
-          this.tableData[i] = data3
-        }
-        this.check.push(false)
-      }
+      this.SplxPhid = this.$route.query.SplxPhid
+      debugger
+      this.loadData()
     },
     watch:{
       check(val,oldval){
@@ -4782,6 +4760,42 @@
       },
     },
     methods:{
+      //拉取列表数据
+      loadData(){
+        debugger
+        let data = {
+          Uid:488181024000001,
+          OrgCode:this.OrgCode,
+          Year:'2019',
+          PageIndex:this.page.currentPage,
+          PageSize:this.page.pageSize,
+          BType:this.BType,
+          BName:this.searchForm.BName,
+          Operator:this.searchForm.Operator,
+          StopHour:this.searchForm.StopHour,
+          BStartDate:this.searchForm.BDate === null  ? '':this.searchForm.BDate[0],
+          BEndTime:this.searchForm.BDate === null ? '':this.searchForm.BDate[1],
+          Splx_Phid:this.SplxPhid,
+        }
+        let that = this
+        debugger
+        this.getAxios('/GAppvalRecord/GetUnDoRecordList',data).then(success=>{
+          console.log(success.Data)
+          if (success && success.Status === "success") {
+            that.tableData = success.Data
+            that.page.total = success.Total
+            // this.page.total = 100
+            console.log(success)
+            for (let i in success.Data) {
+              that.check.push(false)
+            }
+          }else {
+            this.$msgBox.show(success.Msg)
+          }
+        }).catch(err=>{
+          that.$msgBox.show("数据获取异常")
+        })
+      },
       //搜索框事件
       search(val){
 
