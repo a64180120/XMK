@@ -67,7 +67,7 @@
                   </div>
                   <div
                     v-else
-                  >{{accountList.length?accountList.find(item=>item.PhId == account).FBankname:''}}</div>
+                  >{{(accountList.length && account&&account!='0')?(accountList.find(item=>{return item.PhId == account})).FBankname:''}}</div>
                 </li>
                 <li>
                   <span>支付方式：</span>
@@ -87,7 +87,7 @@
                   </div>
                   <div
                     v-else
-                  >{{FPaymethodList.find(item=>item.value == detail.Mst.FPaymethod).label}}</div>
+                  >{{FPaymethod?(FPaymethodList.find(item=>item.value == detail.Mst.FPaymethod)).label:''}}</div>
                 </li>
               </ul>
             </div>
@@ -603,6 +603,7 @@ export default {
             Object.assign(this.detail.Mst, res.Mst)
             res.Dtls.forEach(item => (item.choosed = false))
             this.detail.Dtls = res.Dtls
+            this.account = res.Dtls[0].BankPhid
           }
         })
         .catch(err => {
@@ -646,9 +647,22 @@ export default {
       delete saveData.Mst.checked
       saveData.Mst.PersistentState = 2
       if (saveData.Dtls.length > 0) {
+        if (this.account) {
+          var acc = this.accountList.find(acc => {
+            return acc.PhId == this.account
+          })
+        }
         saveData.Dtls.forEach(item => {
           item.PersistentState = 2
           delete item.choosed
+          if (this.account) {
+            item.BankPhid = this.account
+            item.FPayAcnt = acc.FAccount
+            item.FPayAcntname = acc.FBankname
+            item.FPayBankcode = acc.FBankcode
+            item.FPayBankname = acc.FOpenAccount
+            item.FPayCityname = acc.FCity
+          }
         })
       }
       console.log('save', saveData)
@@ -932,8 +946,7 @@ export default {
         this.$nextTick(() => {
           this.getData()
           this.getAccountList({
-            OrgPhid: 488181024000001,
-            // OrgPhid: this.detail.Mst.OrgPhid,
+            OrgPhid: this.orgid,
             selectStr: ''
           })
           if (this.kemuList.length == 0) {
@@ -948,7 +961,8 @@ export default {
   computed: {
     ...mapState({
       orgid: state => state.user.orgid,
-      userid: state => state.user.userid
+      userid: state => state.user.userid,
+      orgid: state => state.user.orgid
     })
   }
 }

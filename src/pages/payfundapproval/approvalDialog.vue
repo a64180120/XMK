@@ -154,7 +154,6 @@
             data.NextOperators = arr
             data.BackPostPhid = this.backPost.PhId
           }
-          debugger
           this.postAxios('/GAppvalRecord/PostApprovalRecord',data).then(success=>{
             if (success.Status == 'success'&&success) {
               let that= this
@@ -184,6 +183,7 @@
           this.$emit('refresh')
         },
         backAproval(val){
+          debugger
           console.log(val)
           if (!val ){
             this.getBackApprovalPost()
