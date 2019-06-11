@@ -498,7 +498,7 @@
 
         //获取部门
         getDataC:function(){
-          let param={Unit:this.orgcode,UserNo:this.userid||'9999'};
+          let param={Unit:this.orgcode,UserNo: '9999'};
           this.searchData.bmType='';
           this.getAxios('GQT/CorrespondenceSettingsApi/GetDeptByUnit',param).then(res=>{
             this.bmList=res.Record;
