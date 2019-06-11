@@ -366,7 +366,6 @@
 
     mounted() {
       console.log(this.isApproval)
-      debugger
       this.selection = []
       this.isApproval = this.$route.query.approval
       this.SplxPhid = this.$route.query.SplxPhid
@@ -420,10 +419,8 @@
         }
 
         let that = this
-        debugger
         if(this.isApproval){
           this.getAxios('/GAppvalRecord/GetUnDoRecordList',data).then(success=>{
-            debugger
             console.log(success.Data)
             if (success && success.Status === "success") {
               that.tableData = success.Data
@@ -443,7 +440,6 @@
           this.getAxios('/GAppvalRecord/GetDoneRecordList',data).then(success=>{
             console.log(success.Data)
             if (success && success.Status === "success") {
-              debugger
               that.tableData = success.Data
               that.page.total = success.Total
               // this.page.total = 100

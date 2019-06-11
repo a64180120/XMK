@@ -70,7 +70,7 @@
           ProcPhid:this.rowData[0].ProcPhid,
           PostPhid:this.rowData[0].PostPhid
         }
-
+        debugger
         this.getAxios('/GAppvalPost/GetAppvalProcAndOperator',data).then(success=>{
           if (success && success.Status === 'success'){
             this.$set(this.approvalFollow,0,success.Process);
