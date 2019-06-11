@@ -253,10 +253,10 @@
               <span>对下补助项目名称：</span>
               <!--部门选择-->
               <el-select size="small" style="width: 100px" v-model="searchData.bzType" @change="getChartList">
-                <el-option v-for="item in bzList"
-                           :key="item.value"
-                           :label="item.label"
-                           :value="item.value">
+                <el-option v-for="item in apartData.Mst"
+                           :key="item.PhId"
+                           :label="item.FProjName"
+                           :value="item.PhId">
                 </el-option>
               </el-select>
             </div>
@@ -480,21 +480,17 @@
         },
         //q切换右侧项目是进行并状态数据切换
         getChartList:function(val){
-          switch(val){
-            case 0:
-              this.chartData.chart=[{name:'可申请',value:13210},{name:'冻结',value:1200},{name:'已使用',value:2301}];
-              break;
-            case 1:
-              this.chartData.chart=[{name:'可申请',value:6210},{name:'冻结',value:4100},{name:'已使用',value:2101}];
-              break;
-            case 2:
-              this.chartData.chart=[{name:'可申请',value:7000},{name:'冻结',value:5200},{name:'已使用',value:5001}];
-              break;
-            default:
-              this.$msgBox.show({
-                content: '数据获取错误'
-              })
-          }
+          let param={xmPhid:val};
+          this.getAxios('GBK/PaymentMstApi/GetAmountOfMoney',param).then(res=>{
+            this.chartData.chart=[{name:'可申请',value:res.sum},{name:'冻结',value:res.frozen},{name:'已使用',value:res.use}];
+          }).catch(err=>{
+            console.log(err);
+          })
+         /* for(var i in this.apartData.Mst){
+            if(val==this.apartData.Mst[i].XmMstPhid){//FProjAmount FBudgetAmount RemainAmount UseAmount
+              this.chartData.chart=[{name:'可申请',value:FBudgetAmount},{name:'冻结',value:1200},{name:'已使用',value:2301}];
+            }
+          }*/
         },
 
         //获取部门
@@ -523,6 +519,7 @@
           this.getAxios('GYS/BudgetMstApi/GetBudgetMstList',param).then(res=>{
             this.apartData.Mst=res.Mst;
             this.apartData.Amount=res.FAmount;
+            this.searchData.bzType=res.Mst[0].PhId;
           }).catch(err=>{
             console.log(err);
           })

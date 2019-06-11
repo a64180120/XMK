@@ -343,8 +343,6 @@
       },
     },
     mounted(){
-      console.log(this.sta);
-      console.log(this.prodata);
       this.$nextTick(
         this.getOrgList()
       );
@@ -658,7 +656,6 @@
       },
       //选择主项目
       changePro:function(index){
-        console.log(index);
         let proCode=this.PaymentXmDtl[index].PaymentXm.XmProjcode;
         for(var i in this.prodata.Mst){
           if(proCode==this.prodata.Mst[i].FProjCode){
