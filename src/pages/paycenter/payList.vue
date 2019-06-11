@@ -67,7 +67,7 @@
                   </div>
                   <div
                     v-else
-                  >{{accountList.length?accountList.find(item=>item.PhId == account).FBankname:''}}</div>
+                  >{{(accountList.length && account&&account!='0')?(accountList.find(item=>{return item.PhId == account})).FBankname:''}}</div>
                 </li>
                 <li>
                   <span>支付方式：</span>
@@ -87,7 +87,7 @@
                   </div>
                   <div
                     v-else
-                  >{{FPaymethodList.find(item=>item.value == detail.Mst.FPaymethod).label}}</div>
+                  >{{FPaymethod?(FPaymethodList.find(item=>item.value == detail.Mst.FPaymethod)).label:''}}</div>
                 </li>
               </ul>
             </div>

@@ -221,7 +221,9 @@ export default {
         FSeq: '',
         FSendDate: '',
         FApproval: '1',
-        FOpinion: this.content
+        FOpinion: this.content,
+        OperaPhid: '488181024000002',
+        OperatorCode: '9999'
       })
         .then(res => {
           if (res.Status == 'error') {
