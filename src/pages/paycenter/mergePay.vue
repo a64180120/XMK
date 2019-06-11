@@ -237,7 +237,8 @@ export default {
         return
       }
       postSavePayPsd({
-        TypeCode: '999',
+        OldPsd: '',
+        TypeCode: '9998',
         TypeName: '管理员',
         Orgid: this.orgid,
         Orgcode: '1',
@@ -271,7 +272,7 @@ export default {
     // 进入支付页面
     enterPassword() {
       postPayPsd({
-        TypeCode: '999',
+        TypeCode: '9998',
         TypeName: '管理员',
         Orgid: this.orgid,
         Orgcode: '1'
