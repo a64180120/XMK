@@ -131,7 +131,7 @@
             this.$refs.orgtree.setCurrentNode({OCode:this.orgcode});
           },
           goHome(){  //回首页
-            window.open('http://218.108.53.106/ghc/web','_self')
+            window.open('/g6h/web','_self')
           },
           setyearList(){ //年度列表
             for(let y=2018;y<=new Date().getFullYear();y++){
