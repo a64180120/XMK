@@ -18,7 +18,7 @@
         </topHandle>
         <div class="container">
             <div class="searchCon">
-                <search placeholder="流程编码/流程名称" @btnClick="search"></search>
+                <search placeholder="流程编码/流程名称" v-model="serachVal" @btnClick="search"></search>
             </div>
             <div class="content">
                 <div class="auditType">
@@ -235,7 +235,8 @@ export default {
             defaultProps: {
               children: 'children',
               label: 'OName'
-            }
+            },
+            serachVal:'',//搜索值
         }
     },
     mounted(){
@@ -243,8 +244,8 @@ export default {
         this.getPosts();
     },
     methods:{
-        search(val){
-            console.log(val)
+        search(){
+            this.getData(this.typechoosedItem[0]);
         },
         getOrg(val){
             let arr=[];
@@ -266,7 +267,7 @@ export default {
                 BillType:val.Value,
                 PageIndex:this.pageIndex,
                 PageSize:this.pageSize,
-                QueryFilter:''
+                QueryFilter:this.serachVal
                 // Orgid：组织id
                 // ApprovalTypeId：审批类型id
                 // BillType：单据类型
@@ -370,7 +371,6 @@ export default {
                     this.$msgBox.show(res.Msg)
                 }else{
                     this.codeList=res;
-                    console.log(this.codeList)
                 }
             }).catch(
                 err => {

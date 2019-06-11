@@ -4,8 +4,8 @@
       <el-row :gutter="10">
         <el-col :span="24">
           <div class="top-btn">
-            <el-button class="btn" size="mini" @click="save(0)">保存</el-button>
-            <el-button class="btn" size="mini" @click="save(1)" style="padding: 0">保存并送审</el-button>
+            <el-button :disabled="PaymentXmDtl.length==0" class="btn" size="mini" @click="save(0)">保存</el-button>
+            <el-button :disabled="PaymentXmDtl.length==0" class="btn" size="mini" @click="save(1)" style="padding: 0">保存并送审</el-button>
             <el-button class="btn" size="mini" @click="add">增加项目</el-button>
             <el-button class="btn" size="mini" @click="delPro">删除项目</el-button>
           </div>
@@ -20,7 +20,7 @@
               <!--申请信息-->
               <div class="apply-info">
                 <ul>
-                  <li><span>申报部门：</span><span>{{PaymentMst.FOrgname+'-'+PaymentMst.FDepname}}</span></li>
+                  <li><span>申报部门：</span><span>{{PaymentMst.FOrgname&&PaymentMst.FDepname?PaymentMst.FOrgname+'-'+PaymentMst.FDepname:''}}</span></li>
                   <li><span>金额合计：</span><span>{{PaymentMst.FAmountTotal | NumFormat}}</span></li>
                 </ul>
                 <el-card class="payText">
@@ -162,7 +162,7 @@
     <el-dialog width="600px" id="prodetail" title="请选择项目明细"
                :visible.sync="orgDetailType" :append-to-body="true">
         <el-radio-group v-model="choosedProject">
-            <el-radio v-for="item in prodataList"
+            <el-radio v-for="item in prodataList" v-if="prodataList.length>0"
                       :key="item.PhId"
                       :label="item.FName"
                       :value="item.PhId"
@@ -175,7 +175,7 @@
         </span>
     </el-dialog>
     <!--送审-->
-    <go-approval  :data="approvalDataS"></go-approval>
+    <go-approval  :data="approvalDataS" @delete="handleDelete"></go-approval>
     <!--<approval-dialog ></approval-dialog>
     <approval-bill @dialogFlow="searchFlow"
                    @approvalRowClick="approvalRowClick"
@@ -246,24 +246,24 @@
 
         approvalDataS: {//送审弹窗
           openDialog: false,
-          data: {}
+          data: []
         },
         dialogVisible:false,//附件查看弹窗
 
         /*项目新增数据*/
         PaymentMst:{
-          FYear: '2019',//（年度）
+          FYear: '',//（年度）
           FName: '',//（申请单名）
-          FOrgphid: '488181024000002',//（组织主键）
-          FOrgcode: '101',//（组织编码）
-          FOrgname: '浙江省总本级',//（组织名）
+          FOrgphid: '',//（组织主键）
+          FOrgcode: '',//（组织编码）
+          FOrgname: '',//（组织名）
           FDepphid: "",//（部门主键）
           FDepcode: '',//（部门编码）
           FDepname: '',//（部门名称）
           FAmountTotal: '',//（申请单金额）
           FDate: '',//（申请单时间）2019-05-30
-          FApproval: '0',//（审批状态：0- 未审批 1-待审批 2- 未通过 9-审批通过）
-          IsPay: '0',//（支付状态：0- 否 1-待支付 9-支付完成）
+          FApproval: '',//（审批状态：0- 未审批 1-待审批 2- 未通过 9-审批通过）
+          IsPay: '',//（支付状态：0- 否 1-待支付 9-支付完成）
           FDescribe: '', //（申报说明）
           FRemarks: '', //（备注）
         },
@@ -299,25 +299,40 @@
     },
     computed: {
       ...mapState({
-        orgid: state => state.orgid, //id
-        orgcode:state => state.orgcode, //编码
-        orgname:state => state.orgname//名称
+        orgid: state => state.user.orgid, //id
+        orgcode:state => state.user.orgcode, //编码
+        orgname:state => state.user.orgname,//名称
+        year:state => state.user.year,//年份
+        sta:state => state.user
       })
     },
     components:{ApprovalDialog, Orgtree,goApproval,ImgView},
     watch:{
-      /*applyNum(){
-        this.getApply();
-      },*/
       isAdd(val){
-        if(val){
+        if(!val){
           this.getApply();
+        }else{
+          this.PaymentMst={
+            FYear: this.year,//（年度）
+              FName: '',//（申请单名）
+              FOrgphid: this.orgid,//（组织主键）
+              FOrgcode: this.orgcode,//（组织编码）
+              FOrgname: this.orgname,//（组织名）
+              FDepphid: "",//（部门主键）
+              FDepcode: '',//（部门编码）
+              FDepname: '',//（部门名称）
+              FAmountTotal: '',//（申请单金额）
+              FDate: '',//（申请单时间）2019-05-30
+              FApproval: '0',//（审批状态：0- 未审批 1-待审批 2- 未通过 9-审批通过）
+              IsPay: '0',//（支付状态：0- 否 1-待支付 9-支付完成）
+              FDescribe: '', //（申报说明）
+              FRemarks: '', //（备注）
+          };
+          this.PaymentXmDtl=[];
         }
       },
       prodata:{
         handler(val){
-          console.log('bumen ');
-          console.log(val);
           if(val){
             this.PaymentMst.FDepphid= val.bm.PhId;//（部门主键）
             this.PaymentMst.FDepcode= val.bm.OCode;//（部门编码）
@@ -326,31 +341,33 @@
         },
         deep:true,
       },
-      /*prodata(val){
-        console.log('bumen ');
-        console.log(val);
-        if(val){
-          this.PaymentMst.FDepphid= val.bm.PhId;//（部门主键）
-          this.PaymentMst.FDepcode= val.bm.OCode;//（部门编码）
-          this.PaymentMst.FDepname= val.bm.OName;//（部门名称）
-        }
-
-      }*/
     },
     mounted(){
-      //等有组织的是后再解开
-     /*this.PaymentMst.FOrgphid=this.orgid;//（组织主键）
-      this.PaymentMst.FOrgcode=this.orgcode;//（组织编码）
-      this.PaymentMst.FOrgname=this.orgname;//（组织名）*/
-      this.PaymentMst.FDepphid= this.prodata.bm.PhId;//（部门主键）
-      this.PaymentMst.FDepcode= this.prodata.bm.OCode;//（部门编码）
-      this.PaymentMst.FDepname= this.prodata.bm.OName;//（部门名称）
+      console.log(this.sta);
       console.log(this.prodata);
       this.$nextTick(
-        this.getApply(),
         this.getOrgList()
       );
+      if(!this.isAdd){
+        this.getApply();
+      }else{
+        this.PaymentMst.FYear= this.year;//（年度）
+        this.PaymentMst.FName= '';//（申请单名）
+        this.PaymentMst. FOrgphid=this.orgid;//（组织主键）
+        this.PaymentMst.  FOrgcode=this.orgcode;//（组织编码）
+        this.PaymentMst.  FOrgname=this.orgname;//（组织名）
+        this.PaymentMst. FDepphid=this.prodata.bm.PhId;//（部门主键）
+        this.PaymentMst.  FDepcode=this.prodata.bm.OCode;//（部门编码）
+        this.PaymentMst.  FDepname=this.prodata.bm.OName;//（部门名称）
+        this.PaymentMst. FAmountTotal= '';//（申请单金额）
+        this.PaymentMst.  FDate= '';//（申请单时间）2019-05-30
+        this.PaymentMst.  FApproval='0';//（审批状态：0- 未审批 1-待审批 2- 未通过 9-审批通过）
+        this.PaymentMst. IsPay= '0';//（支付状态：0- 否 1-待支付 9-支付完成）
+        this.PaymentMst. FDescribe= ''; //（申报说明）
+        this.PaymentMst.FRemarks= '' //（备注）
 
+        this.PaymentXmDtl=[];
+      }
     },
     methods:{
       //申请单查看
@@ -367,7 +384,7 @@
         })
       },
 
-      //获取组织数数据
+      //获取组织树数据
       getOrgList:function(){
         this.getAxios('GQT/CorrespondenceSettingsApi/GetALLOrgTree').then(res=>{
           console.log(res);
@@ -381,10 +398,7 @@
       save:function(type){
         if(this.PaymentXmDtl.length==0){
           this.$msgBox.show({
-            content: '请至少创建一个项目。',
-            fn: () => {
-              console.log('test fn')
-            }
+            content: '请至少创建一个项目。'
           });
           return;
         }
@@ -405,24 +419,23 @@
             PaymentXmDtl: this.PaymentXmDtl
           },
         };
-
-        console.log(data);
-
-        this.postAxios('GBK/PaymentMstApi/PostAdd',data).then( res => {
-          console.log(res)
+        var   url='GBK/PaymentMstApi/PostAdd';
+        if(!this.isAdd){
+          url='GBK/PaymentMstApi/PostUpdate';
+        }
+        this.postAxios(url,data).then( res => {
           if(res.Status=="success"){
             this.$msgBox.show({
               content: '保存成功。',
               fn: () => {
-                console.log('test fn')
+                this.$emit('delete',{flag:true,type:'applyproType'});
+                if(type==1){
+                    this.approvalDataS.openDialog=true;
+                    this.approvalDataS.data=res.KeyCodes;
+                }
               }
             })
-            if(type==1){
-              setTimeout(()=>{
-                this.approvalDataS.openDialog=true;
-              },1000)
 
-            }
           }else{
             this.$msgBox.show({
               content: '保存失败，请重试。',
@@ -481,10 +494,7 @@
           }
           if(delList.length==0){
             this.$msgBox.show({
-              content: '请选择要删除的项目。',
-              fn: () => {
-                console.log('test fn')
-              }
+              content: '请选择要删除的项目。'
             })
           }else{
             for(var i=delList.length-1;i>=0;i--){
@@ -495,10 +505,7 @@
             }
             this.xmCheckList.splice(this.xmCheckList.length-delList.length,this.xmCheckList.length-delList.length)
             this.$msgBox.show({
-              content: '删除成功。',
-              fn: () => {
-                console.log('test fn')
-              }
+              content: '删除成功。'
             })
           }
 
@@ -568,7 +575,7 @@
       handleClose:function(){
         this.delmsgType=false;
         if(this.delSOD){
-          this.$emit('delete',true)
+          this.$emit('delete',{flag:true,type:'applyproType'})
         };
       },
       //提示窗口倒计时
@@ -623,14 +630,17 @@
       },
       confirmProDetail:function(){
         this.orgDetailType=false;
-        for(var i in this.prodataList){
-          if(this.choosedProject==this.prodataList[i].FName){
-            // BudgetdtlPhid: '484190514000010', //（预算明细主键）
+        if(this.prodataList.length>0){
+          for(var i in this.prodataList){
+            if(this.choosedProject==this.prodataList[i].FName){
+              // BudgetdtlPhid: '484190514000010', //（预算明细主键）
               // BudgetdtlName: 'mx1', //（预算明细名称）
-            this.PaymentXmDtl[this.choosedPro[0]].PaymentDtls[this.choosedPro[1]].BudgetdtlPhid=this.prodataList[i].PhId;
-            this.PaymentXmDtl[this.choosedPro[0]].PaymentDtls[this.choosedPro[1]].BudgetdtlName=this.prodataList[i].FName;
+              this.PaymentXmDtl[this.choosedPro[0]].PaymentDtls[this.choosedPro[1]].BudgetdtlPhid=this.prodataList[i].PhId;
+              this.PaymentXmDtl[this.choosedPro[0]].PaymentDtls[this.choosedPro[1]].BudgetdtlName=this.prodataList[i].FName;
+            }
           }
         }
+
        // this.PaymentXmDtl[this.choosedPro[0]].PaymentDtls[this.choosedPro[1]].pdName=this.prodataList[this.choosedProject];
       },
       //弹出明细项目，f表示项目下标，s,表示项目对应pdlist下标
@@ -664,10 +674,7 @@
       getProMoney:function(index,phid){
         let param={xmPhid:phid};
         this.getAxios('GBK/PaymentMstApi/GetAmountOfMoney',param).then(res=>{
-          console.log('获取项目总额，已冻结，剩余金额')
-          console.log(res);
           this.PaymentXmDtl[index]['money']=res;
-          console.log(this.PaymentXmDtl);
           this.$forceUpdate(this.PaymentXmDtl)
         }).catch(err=>{
           console.log(err);
@@ -684,6 +691,13 @@
           console.log(err);
         })
       },
+      //关闭送审弹窗
+      handleDelete:function(val){
+        if(val.flag){
+          this.approvalDataS.openDialog=false;
+          this.$emit('delete',{flag:true,type:'applyproType'})
+        }
+      }
     }
   }
 </script>

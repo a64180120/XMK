@@ -17,7 +17,7 @@
             <span style="float:right;color:#333;">附单据 0 张</span>
           </div>
           <div class="textare">
-            <el-input type="textarea" v-model="content"></el-input>
+            <el-input type="textarea" v-model="param.FOpinion"></el-input>
           </div>
         </div>
         <div class="sub-table">
@@ -56,15 +56,16 @@
             <div class="table">
               <el-table
                 class="table-next"
-                :data="nextData"
+                :data="nextDataList"
                 :border="true"
                 @select="handleSelect"
                 @select-all="handleSelectAll"
                 header-row-class-name="table-header"
+                ref="opTable"
               >
                 <el-table-column type="selection" width="30"></el-table-column>
-                <el-table-column prop="code" align="center" label="操作员编码"></el-table-column>
-                <el-table-column prop="name" align="center" label="姓名"></el-table-column>
+                <el-table-column prop="OperatorCode" align="center" label="操作员编码"></el-table-column>
+                <el-table-column prop="OperatorName" align="center" label="姓名"></el-table-column>
               </el-table>
             </div>
           </div>
@@ -86,10 +87,11 @@
 <script>
 import auditfollow from '../../components/auditFollow/auditfollow'
 import { getAppvalProc, postAddAppvalRecord } from '@/api/paycenter'
+import {mapState} from 'vuex'
 
 export default {
   name: 'goApproval',
-  components: { auditfollow },
+  components: { auditfollow,mapState },
   props: {
     data: {
       type: Object,
@@ -124,52 +126,33 @@ export default {
       openDialog: false,
       handleValue: '',
       content: '',
-      subData: [
-        {
-          OrgCode: '0001',
-          FName: '资金拨付流程1'
-        },
-        {
-          code: '0002',
-          name: '资金拨付流程2'
-        }
-      ],
-      nextData: [],
-      nextDataList: [
-        [
-          {
-            code: '1001',
-            name: '王官官'
-          },
-          {
-            code: '1002',
-            name: '王管管'
-          }
-        ],
-        [
-          {
-            code: '2001',
-            name: '王罐罐'
-          },
-          {
-            code: '2002',
-            name: '王关关'
-          }
-        ]
-      ],
+      subData: [],
+      nextDataList: [],
       /*送审数据*/
       param:{
-        RefbillPhidList: ['10'], //（单据主键集合）
+        RefbillPhidList: [], //（单据主键集合）
         FBilltype: '001', //（单据类型）
-        ProcPhid: '1',  //（流程主键）
-        PostPhid: '1',  //（岗位主键）
-        NextOperators: ['1'], //（下个岗位操作员主键集合）
+        ProcPhid: '',  //（流程主键）
+        PostPhid: '',  //（岗位主键）
+        NextOperators: [], //（下个岗位操作员主键集合）
         FSeq: '', //（序号）
         FSendDate: '', //（送审时间）
         FApproval: '1', //（审批状态）
-        FOpinion: 'FFFF', //（备注）
+        FOpinion: '', //（备注）
+        OperaPhid:this.userid,//(当前人的phid)
+        OperatorCode :this.usercode//(当前人code)
       }
     }
+  },
+  computed: {
+    ...mapState({
+      orgid: state => state.user.orgid, //id
+      orgcode:state => state.user.orgcode, //编码
+      orgname:state => state.user.orgname,//名称
+      year:state => state.user.year,//年份
+      userid:state => state.user.userid,//用户id
+      usercode:state => state.user.usercode//用户code
+    })
   },
   methods: {
     closeAuditFollow() {
@@ -181,18 +164,31 @@ export default {
     //获取审批流
     getAppvalProc:function(){
       let param={
-        Orgid:'521180820000002',//组织id
+        Orgid:this.orgid,//组织id
         BType:'001' //单据类型（"001":资金拨付单,"002":支付单）
        };
       this.getAxios('GSP/GAppvalProc/GetAppvalProc',param).then(res=>{
-        console.log(res);
+        this.subData=res.Data;
+        this.getApprovalPerson(res.Data[0].PhId);
       }).catch(err=>{
         console.log(err);
       })
     },
+    //获取审批人
+    getApprovalPerson:function(phid){
+      let param={PhId:phid};
+      this.getAxios('GSP/GAppvalPost/GetFirstStepOperator',param).then(res=>{
+        console.log(res);
+        this.nextDataList=res.Data.Operators;
+        this.param.PostPhid=res.Data.PhId;
+      }).catch(err=>{
+        console.log(err)
+      })
+
+    },
     //查看详细流程
     searchFlow(row, column, index, store) {
-      this.showAuditfollow = true
+      this.showAuditfollow = true;
     },
     //表格单选
     handleSelect(selection, row) {},
@@ -203,19 +199,54 @@ export default {
       this.openDialog = false
     },
     handleCurrentChange(newRow, oldRow) {
-      this.nextData = this.nextDataList[
-        this.subData.findIndex(item => item.code == newRow.code)
-      ]
+      this.param.ProcPhid=newRow.PhId;
+      this.getApprovalPerson(newRow.PhId)
     },
     //确认
     submit() {
+      let nextOperatorsList=this.$refs.opTable.selection;
+      if(nextOperatorsList.length==0){
+        this.$msgBox.show({
+          content: '请至少选择一个接收人。',
+          fn: () => {
+            console.log('test fn')
+          }
+        });
+        return;
+      }else{
+        this.param.NextOperators=[];
+        for(var i in nextOperatorsList){
+          this.param.NextOperators.push(nextOperatorsList[i].PhId)
+        }
+      }
+      this.param.FSendDate=new Date();
+      this.param.OperaPhid=this.userid;
+      this.param.OperatorCode=this.usercode;
       this.postAxios('GSP/GAppvalRecord/PostAddAppvalRecord',this.param).then(res=>{
-        console.log(res);
         if (res.Status == 'error') {
           this.$msgBox.error(res.Msg)
           return
         }else{
-          this.subData=res.Record;
+          this.$msgBox.show({
+            content:'送审成功',
+            fn:() => {
+              this.$emit('delete',{flag:true,type:'dsa'});
+              this.openDialog=false;
+              this.param={
+                RefbillPhidList: [], //（单据主键集合）
+                FBilltype: '001', //（单据类型）
+                ProcPhid: '',  //（流程主键）
+                PostPhid: '',  //（岗位主键）
+                NextOperators: [], //（下个岗位操作员主键集合）
+                FSeq: '', //（序号）
+                FSendDate: '', //（送审时间）
+                FApproval: '1', //（审批状态）
+                FOpinion: '', //（备注）
+                OperaPhid:'',//(当前人的phid)
+                OperatorCode:''//(当前人code)
+              }
+            }
+          })
         }
       }).catch(err=>{
         console.log(err)
@@ -224,39 +255,27 @@ export default {
   },
   created() {
     this.getAppvalProc();
-    //GAppvalProc/GetAppvalProc
-
-   /* getAppvalProc({
-      Orgid: '521180820000002',
-      BType: this.bType
-    })
-      .then(res => {
-        if (res.Status == 'error') {
-          this.$msgBox.error(res.Msg)
-          return
-        }
-        console.log(res)
-      })
-      .catch(err => {
-        console.log(err)
-        this.$msgBox.error('获取送审流程失败！')
-      })*/
-    console.log(this.father, this.reSetting)
-    this.nextData = this.nextDataList[0]
-    if (this.data.openDialog) {
-      this.$nextTick(() => {
-        this.$refs.content.setCurrentRow(this.subData[0])
-      })
-    }
   },
   watch: {
-    'data.openDialog'(newVal) {
+    data:{
+      handler(val){
+        console.log(val);
+        if(val){
+          this.param.RefbillPhidList=val.data;
+          /*this.PaymentMst.FDepphid= val.bm.PhId;//（部门主键）
+          this.PaymentMst.FDepcode= val.bm.OCode;//（部门编码）
+          this.PaymentMst.FDepname= val.bm.OName;//（部门名称）*/
+        }
+      },
+      deep:true,
+    },
+    /*'data.openDialog'(newVal) {
       if (newVal) {
         this.$nextTick(() => {
           this.$refs.content.setCurrentRow(this.subData[0])
         })
       }
-    }
+    }*/
   }
 }
 </script>
