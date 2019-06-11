@@ -139,6 +139,8 @@ export default {
         FSendDate: '', //（送审时间）
         FApproval: '1', //（审批状态）
         FOpinion: '', //（备注）
+        OperaPhid:this.userid,//(当前人的phid)
+        OperatorCode :this.usercode//(当前人code)
       }
     }
   },
@@ -148,7 +150,8 @@ export default {
       orgcode:state => state.user.orgcode, //编码
       orgname:state => state.user.orgname,//名称
       year:state => state.user.year,//年份
-      userCode:state => state.user.usercode
+      userid:state => state.user.userid,//用户id
+      usercode:state => state.user.usercode//用户code
     })
   },
   methods: {
@@ -165,11 +168,8 @@ export default {
         BType:'001' //单据类型（"001":资金拨付单,"002":支付单）
        };
       this.getAxios('GSP/GAppvalProc/GetAppvalProc',param).then(res=>{
-        console.log('获取审批流');
-        console.log(res);
         this.subData=res.Data;
         this.getApprovalPerson(res.Data[0].PhId);
-        //this.getApprovalPerson('188190610000001')//res.Data[0].PhId
       }).catch(err=>{
         console.log(err);
       })
@@ -220,8 +220,9 @@ export default {
         }
       }
       this.param.FSendDate=new Date();
+      this.param.OperaPhid=this.userid;
+      this.param.OperatorCode=this.usercode;
       this.postAxios('GSP/GAppvalRecord/PostAddAppvalRecord',this.param).then(res=>{
-        console.log(res);
         if (res.Status == 'error') {
           this.$msgBox.error(res.Msg)
           return
@@ -230,22 +231,22 @@ export default {
             content:'送审成功',
             fn:() => {
               this.$emit('delete',{flag:true,type:'dsa'});
+              this.openDialog=false;
+              this.param={
+                RefbillPhidList: [], //（单据主键集合）
+                FBilltype: '001', //（单据类型）
+                ProcPhid: '',  //（流程主键）
+                PostPhid: '',  //（岗位主键）
+                NextOperators: [], //（下个岗位操作员主键集合）
+                FSeq: '', //（序号）
+                FSendDate: '', //（送审时间）
+                FApproval: '1', //（审批状态）
+                FOpinion: '', //（备注）
+                OperaPhid:'',//(当前人的phid)
+                OperatorCode:''//(当前人code)
+              }
             }
           })
-          setTimeout( ()=>{
-            this.openDialog=false;
-            this.param={
-              RefbillPhidList: [], //（单据主键集合）
-              FBilltype: '001', //（单据类型）
-              ProcPhid: '',  //（流程主键）
-              PostPhid: '',  //（岗位主键）
-              NextOperators: [], //（下个岗位操作员主键集合）
-              FSeq: '', //（序号）
-              FSendDate: '', //（送审时间）
-              FApproval: '1', //（审批状态）
-              FOpinion: '', //（备注）
-            }
-          },3000)
         }
       }).catch(err=>{
         console.log(err)
