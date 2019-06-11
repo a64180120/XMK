@@ -17,9 +17,6 @@
         <div slot="title" class="dialog-title">
           <span style="float: left">查看附件</span>
         </div>
-        <div class="btn-load">
-          <el-button class="btn">下载</el-button>
-        </div>
         <img-view v-if="dialogVisible"></img-view>
       </el-dialog>
     </div>
@@ -116,4 +113,9 @@ export default {
   font-size: 0.16rem;
   border-bottom: 1px solid #eaeaea;
 }
+</style>
+<style scoped>
+  .img-dialog >>> .el-dialog__body{
+    height: 550px;
+  }
 </style>

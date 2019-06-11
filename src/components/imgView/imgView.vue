@@ -1,49 +1,40 @@
 <template>
     <section class="img-view">
-        <viewer v-if="false" :options="options"
-                :images="images"
-                @inited="inited"
-                class="images"
-                :style="{width:width}"
-                ref="viewer"
-        >
-          <template slot-scope="scope">
-            <img   src="../../assets/images/sj2.png"  style="display: none">
-            <img   src="../../assets/images/by.png"  style="display: none">
-            <img   src="../../assets/logo.png"  style="display: none">
-          </template>
-        </viewer>
 
 
-      <div class="img-body">
-        <img src="../../assets/test.jpg">
-        <div class="img-mask">
+      <div class="img-body" @mouseenter="enter()" @mouseleave="leave()">
+        <img :src="nowImg">
+        <div class="img-mask" v-show="maskShow">
           <div class="icon-btn">
-            <div class="icon icon-play">
-              <i class="el-icon-video-play icon"></i>
+            <div class="icon icon-play" @click="imgPlay()">
+              <i class="el-icon-video-play"></i>
             </div>
             <div class="icon icon-download">
-              <i class="el-icon-download icon"></i>
+              <a :href="nowImg" download="">
+                <i class="el-icon-download"></i>
+              </a>
             </div>
           </div>
         </div>
       </div>
       <div class="img-nav">
         <div class="prev" @click="prevImg">
-          <span></span>
+          <i class="el-icon-d-arrow-left"></i>
         </div>
         <div id="img-main" class="img-main">
           <div class="nav-body" :style="{left:nowMoveLength+'px'}">
-            <div  class="nav-item" v-for="(item,idx) in images" :class="[idx ===activeIdx?'active':'']">
-              <img v-if="idx % 3 === 0" @click="clickImg(item,idx)"  src="../../assets/test.jpg" alt="图片">
-              <img v-if="idx % 3 === 1" @click="clickImg(item,idx)" src="../../assets/images/sptg.png" alt="图片">
-              <img v-if="idx % 3 === 2" @click="clickImg(item,idx)" src="../../assets/images/y3.png" alt="图片">
+            <div  class="nav-item" v-for="(item,idx) in images" :class="[idx ===activeIdx ?'active':'']">
+              <img  @click="clickImg(item,idx)" :src="item.path" alt="图片">
             </div>
           </div>
         </div>
         <div class="next" @click="nextImg">
-          <span></span>
+          <i class="el-icon-d-arrow-right"></i>
         </div>
+      </div>
+      <div class="img-read" v-if="isPlay">
+        <img :src="nowImg" title="">
+        <i class="el-icon-close close" @click="closeRead()"></i>
       </div>
     </section>
 </template>
@@ -60,31 +51,31 @@
             type:Array,
             default:function () {
               return [{
-                path:'../../assets/test.jpg',
+                path:require('@/assets/test.jpg'),
                 name:'name'
               },{
-                path:'../../assets/test.jpg',
+                path:require('@/assets/images/sp.png'),
                 name:'name'
               },{
-                path:'../../assets/test.jpg',
+                path:require('@/assets/images/sptg.png'),
                 name:'name'
               },{
-                path:'../../assets/test.jpg',
+                path:require('@/assets/test.jpg'),
                 name:'name'
               },{
-                path:'../../assets/test.jpg',
+                path:require('@/assets/test.jpg'),
                 name:'name'
               },{
-                path:'../../assets/test.jpg',
+                path:require('@/assets/test.jpg'),
                 name:'name'
               },{
-                path:'../../assets/test.jpg',
+                path:require('@/assets/test.jpg'),
                 name:'name'
               },{
-                path:'../../assets/test.jpg',
+                path:require('@/assets/test.jpg'),
                 name:'name'
               },{
-                path:'../../assets/test.jpg',
+                path:require('@/assets/test.jpg'),
                 name:'name'
               }]
             }
@@ -94,41 +85,28 @@
           return{
             img:[],
             activeItem:Number,
-            activeIdx:"",
+            activeIdx:0,//默认显示第一个
             imgDialog:false,
-            options:{
-              navbar:true,
-              inline:true,
-              transition:true,
-              button:false,
-              title:false
-            },
             width:'100%',
+            nowImg:this.images[0].path,
             maxMoveLength:0,//最大移动距离
             nowMoveLength:0,//当前移动距离
+            maskShow:false,//遮罩层是否隐藏
+            isPlay:false,
           }
       },
       mounted(){
+          //默认预览第一个
+          this.nowImg = this.images[0].path
       },
       methods:{
-          inited(viewer){
-
-            this.$viewer = viewer;
-            this.$refs.viewer = viewer;
-            this.$emit('getViewer',viewer)
-          },
-        show(){
-            this.$nextTick(()=>{
-              const vuer = this.$el.querySelector('.images').viewer
-              vuer.show()
-            })
-
-        },
+        //左移动图片列表
         prevImg(){
           if (this.nowMoveLength < 0){
             this.nowMoveLength = this.nowMoveLength + 114
           }
         },
+        //右移动图片列表
         nextImg(){
           let imgLeight = this.images.length - 5
           if (imgLeight >= 0){
@@ -141,10 +119,27 @@
             console.log(this.nowMoveLength)
           }
         },
+        //列表获取当前点击的图片
         clickImg(item,idx){
            this.activeIdx = idx;
            this.activeItem = item;
-           console.log(item)
+           this.nowImg = item.path
+        },
+        //鼠标移入预览
+        enter(){
+           this.maskShow = true
+        },
+        //鼠标移出预览
+        leave(){
+            this.maskShow = false
+        },
+        //放大预览
+        imgPlay(){
+          this.isPlay = true
+        },
+        //关闭阅览
+        closeRead(){
+          this.isPlay = false
         }
       }
     }
@@ -157,9 +152,12 @@
   }
 
   .img-view{
-    .img-body{
+    width: 100%;
+    height:405px;
+    position: relative;
+    >.img-body{
       width: 100%;
-      height: 300px;
+      height: 310px;
       background-color: #e3e3e3;
       display: flex;
       justify-content: center;
@@ -194,12 +192,24 @@
               line-height: 50px;
               font-size: 0.4rem;
             }
+            >a{
+              >i{
+                line-height: 50px;
+                font-size: 0.4rem;
+              }
+            }
           }
-          >.icon-paly{
-            margin-right: 20px;
+          >.icon-play{
+            margin-right: 10px;
+            &:hover{
+              cursor: pointer;
+            }
           }
           >.icon-download{
-            margin-left: 20px;
+            margin-left: 10px;
+            &:hover{
+              cursor: pointer;
+            }
           }
         }
 
@@ -208,7 +218,7 @@
         /*max-width:100%;*/
         /*max-height: 100%;*/
         width: 100%;
-        height: 300px;
+        height: 310px;
         object-fit: contain;
 
       }
@@ -219,42 +229,23 @@
         display: inline-block;
         vertical-align: middle;
         width: 50px;
-        height: 50px;
+        height: 100px;
         cursor: pointer;
         margin: 0 10px;
-        background-color:#00b7ee;
+        /*background-color:#00b7ee;*/
         &:hover{
+          color: #409EFF;
           /*background:linear-gradient(to left,rgba(96,110,112,0.8),rgba(96,110,112,0));*/
         }
-        >span{
-          position: relative;
-          &:before{
-            content:'';
-            display: inline-block;
-            width: 20px;
-            height: 10px;
-            transform: skewY(-45deg);
-            background-color: #eee;
-            position: absolute;
-            top: 10px;
-            left: 10px;
-          }
-          &:after{
-            content:'';
-            display: inline-block;
-            width:  20px;
-            height: 10px;
-            transform: skewY(45deg);
-            background-color: #eee;
-            position: absolute;
-            top: 30px;
-            left: 10px;
-          }
+        >i{
+          font-stretch: condensed;
+          font-size: 0.48rem;
+          line-height: 100px;
         }
       }
       >.img-main{
         width: 570px;
-        height: 80px;
+        height: 130px;
         padding: 10px 0;
         vertical-align: middle;
         display: inline-block;
@@ -268,7 +259,7 @@
           transition: all 0.8s;
           >.nav-item{
             width: 94px;
-            height: 55px;
+            height: 105px;
             display: inline-block;
             margin: 0 10px 0 10px;
             background-color: #E3E3E3;
@@ -279,12 +270,19 @@
             position: relative;
             cursor: pointer;
             >img{
-              max-width: 66px;
-              max-height: 51px;
+              width: 90px;
+              height: 101px;
+              object-fit: contain;
+              position: absolute;
+              top: 0;
+              left: 0;
+              right: 0;
+              bottom: 0;
+              margin: auto;
             }
             &:hover{
-              transform: scale(1.1);
-              box-shadow: 0 1px 8px 4px #00b7ee;
+              transform: scale(1.05);
+              box-shadow: 0px 0px 4px 0px #747575;
               border:2px solid rgba(227,227,227,0.8); ;
             }
           }
@@ -297,41 +295,44 @@
         height: 50px;
         cursor: pointer;
         margin: 0 10px;
-        background-color:#00b7ee;
         &:hover{
+          color: #409EFF;
           /*background:linear-gradient(to left,rgba(96,110,112,0.8),rgba(96,110,112,0));*/
         }
-        >span{
-          position: relative;
-          &:before{
-            content:'';
-            display: inline-block;
-            width: 20px;
-            height: 10px;
-            transform: skewY(45deg);
-            background-color: #eee;
-            position: absolute;
-            top: 10px;
-            left: 10px;
-          }
-          &:after{
-            content:'';
-            display: inline-block;
-            width:  20px;
-            height: 10px;
-            transform: skewY(-45deg);
-            background-color: #eee;
-            position: absolute;
-            top: 30px;
-            left: 10px;
-          }
+        >i{
+          font-stretch: condensed;
+          font-size: 0.48rem;
+
         }
+      }
+    }
+    >.img-read{
+      width: 80%;
+      height:90%;
+      position: fixed;
+      background-color: #E3E3E3;
+      top: 5%;
+      left: 10%;
+      z-index: 9999;
+      >.close{
+        font-size: 0.24rem;
+        position: absolute;
+        right: 5px;
+        top: 5px;
+        &:hover{
+          cursor: pointer;
+        }
+      }
+      >img{
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
       }
     }
   }
   .active{
-    transform: scale(1.1);
-    box-shadow: 0 1px 8px 4px #00b7ee;
+    transform: scale(1.05);
+    box-shadow: 0px 0px 4px 0px #747575;
     border:2px solid rgba(227,227,227,0.8);
   }
 </style>
