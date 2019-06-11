@@ -118,7 +118,7 @@
 <script>
 import fDialog from "@/components/attechment/dialog"
 import Orgtree from "@/components/orgtree/index";
-import {PostAddProc,GetProcDetail} from '@/api/systemSetting/audit'
+import {PostAddProc,GetProcDetail,PostUpdateProc} from '@/api/systemSetting/audit'
 import {mapState} from 'vuex'
 export default {
     name:'auditAdd',
@@ -194,7 +194,7 @@ export default {
         auditinfo(val){
             this.selected=1;
             console.log(val)
-             if(val){ 
+             if(val){ //修改时获取详细数据
                  let orgs=[];
                  this.auditinfo.Organizes.map(org => {
                      orgs.push(org.OrgId);
@@ -259,7 +259,6 @@ export default {
         //自动带出岗位名称
         selectName(id,n){
             let name='';
-            debugger
             this.codeList.map(po => {
                 if(po.PhId==id){
                     name=po.FName;
@@ -273,6 +272,7 @@ export default {
                 let arr=[],info;
                 let posts=[],maxMin=[],splx;
                 this.postList.map((pos,i )=> {
+                    //岗位列表
                     posts.push({
                         PostPhid:pos.PhId,
                         FSeq:i+1,
@@ -322,9 +322,10 @@ export default {
                         splx=opt;
                     }
                 })
+                debugger
                 info={
-                    OrgPhid:'521180820000001',
-                    OrgCode:'1',
+                    OrgPhid:this.$store.state.user.orgid,
+                    OrgCode:this.$store.state.user.orgcode,
                     FCode:this.info.FCode,
                     FName:this.info.FName,
                     FBilltype:splx.Value,
@@ -337,16 +338,27 @@ export default {
                 }
                 for(let org of this.info.org){
                     let inf = JSON.parse(JSON.stringify(info));
-                    inf.OrgPhid=org.PhId;
-                    inf.OrgCode=org.OCode;
+                    inf.OrgPhid=org.PhId?org.PhId:org.OrgId;
+                    inf.OrgCode=org.OCode?org.OCode:org.OrgCode;
                     arr.push(inf);
                 }
-                let data={
-                    infoData:arr
-                }
+                
                 if(type=='add'){
+                    let data={
+                        infoData:arr
+                    }
                     this.add(data);
                 }else{
+                    let orgids=[],data={};
+                    for(let org of this.info.org){
+                        orgids.push(org.OrgId);
+                    }
+                    console.log(orgids,this.info.org)
+                    data.ApprovalTypeId=splx.PhId;
+                    data.BillType=splx.Value;
+                    data.ProcCode=this.info.FCode;
+                    data.OrgIds=orgids;
+                    data.ProcModels=arr;
                     this.update(data);
                 }
             }

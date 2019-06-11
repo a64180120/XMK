@@ -1,39 +1,36 @@
 <template>
-  <div class="messageDialog" v-if="openDialog">
-    <el-dialog
-      append-to-body
-      :visible.sync="openDialog"
-      width="390px"
-      :close-on-click-modal="false"
-      :before-close="close"
-      class="saasMsgCon"
-    >
-      <div slot="title" class="dialog-title">
-        <span style="float: left">{{title}}</span>
-      </div>
-      <div class="saasMsg">
-        <div>
-          <div class="imgCon">
-            <img v-if="status === 'success'" src="../../assets/images/message.png">
-            <img v-else-if="status === 'error'" src="../../assets/images/cw.png">
-          </div>
-          <span style="float:right;width:290px">
-            <span v-html="content"></span>
-            ({{count}}s) 后自动关闭
-          </span>
+  <el-dialog
+    append-to-body
+    :visible.sync="openDialog"
+    width="390px"
+    :close-on-click-modal="false"
+    :before-close="close"
+    class="saasMsgCon"
+  >
+    <div slot="title" class="dialog-title">
+      <span style="float: left">{{title}}</span>
+    </div>
+    <div class="saasMsg">
+      <div>
+        <div class="imgCon">
+          <img v-if="status === 'success'" src="../../assets/images/message.png">
+          <img v-else-if="status === 'error'" src="../../assets/images/cw.png">
         </div>
-        <div>
-          <button @click="close" class="btn">{{cancelBtnText}}</button>
-        </div>
+        <span style="float:right;width:290px">
+          <span v-html="content"></span>
+          ({{count}}s) 后自动关闭
+        </span>
       </div>
-    </el-dialog>
-  </div>
+      <div>
+        <button @click="close" class="btn">{{cancelBtnText}}</button>
+      </div>
+    </div>
+  </el-dialog>
 </template>
 
 <script>
 export default {
-  name: 'mergePay',
-  components: {},
+  name: 'messageDialog',
   props: {
     title: {
       type: String,
@@ -56,8 +53,9 @@ export default {
     return {
       openDialog: false,
       interval: null,
-      count: 3,
-      status: 'success'
+      count: 0,
+      status: 'success',
+      timeOut: 3
     }
   },
   mounted() {},
@@ -70,10 +68,11 @@ export default {
         clearInterval(this.interval)
         this.interval = null
       }
+      this.$destroy()
     },
     showMsgBox: function() {
       console.log('show')
-      this.count = 3
+      this.count = this.timeOut
       this.openDialog = true
       this.status = 'success'
       this.$nextTick(() => {
@@ -82,7 +81,7 @@ export default {
     },
     showError: function() {
       console.log('Alert')
-      this.count = 3
+      this.count = this.timeOut
       this.openDialog = true
       this.status = 'error'
       this.$nextTick(() => {
@@ -91,6 +90,7 @@ export default {
     },
     beginCount: function() {
       var that = this
+      this.count = this.timeOut
       this.interval = setInterval(() => {
         that.count--
         if (that.count == 0) {

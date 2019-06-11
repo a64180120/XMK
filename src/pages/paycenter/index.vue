@@ -24,66 +24,75 @@
     <div class="container">
       <div class="formArea">
         <div class="selects">
-          <div ref="selectsContainer">
-            <i class="el-icon-d-arrow-left"></i>
-            <i class="el-icon-d-arrow-right"></i>
-            <span>支付单据</span>
-            <el-select
-              @change="selectType"
-              collapse-tags
-              v-model="type"
-              placeholder="请选择"
-              size="mini"
-              style="width:110px"
-            >
-              <el-option
-                v-for="item in typeList"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              ></el-option>
-            </el-select>
-            <span>支付状态</span>
-            <el-select
-              @change="selectStatus"
-              collapse-tags
-              v-model="status"
-              multiple
-              placeholder="请选择"
-              size="mini"
-            >
-              <el-option
-                v-for="item in statusList"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              ></el-option>
-            </el-select>
-            <span>申报日期</span>
-            <el-date-picker
-              v-model="sbrq"
-              type="datetimerange"
-              range-separator="至"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期"
-              size="mini"
-              class="large-input"
-              value-format="yyyy-MM-dd HH:mm:ss"
-              @change="getData"
-            ></el-date-picker>
-            <span>支付日期</span>
-            <el-date-picker
-              v-model="zfrq"
-              type="datetimerange"
-              range-separator="至"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期"
-              size="mini"
-              class="large-input"
-              @change="getData"
-              value-format="yyyy-MM-dd HH:mm:ss"
-            ></el-date-picker>
+          <div ref="selectsContainer" style="transform:translateX(0)">
+            <div class="tab">
+              <span>支付单据</span>
+              <el-select
+                @change="selectType"
+                collapse-tags
+                v-model="type"
+                placeholder="请选择"
+                size="mini"
+                style="width:110px"
+              >
+                <el-option
+                  v-for="item in typeList"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                ></el-option>
+              </el-select>
+            </div>
+            <div class="tab">
+              <span>支付状态</span>
+              <el-select
+                @change="selectStatus"
+                collapse-tags
+                v-model="status"
+                multiple
+                placeholder="请选择"
+                size="mini"
+                @visible-change="statusBlur"
+              >
+                <el-option
+                  v-for="item in statusList"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                ></el-option>
+              </el-select>
+            </div>
+            <div class="tab">
+              <span>申报日期</span>
+              <el-date-picker
+                v-model="sbrq"
+                type="datetimerange"
+                range-separator="至"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+                size="mini"
+                class="large-input"
+                value-format="yyyy-MM-dd HH:mm:ss"
+                @change="getData"
+              ></el-date-picker>
+            </div>
+            <div class="tab">
+              <span>支付日期</span>
+              <el-date-picker
+                v-model="zfrq"
+                type="datetimerange"
+                range-separator="至"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+                size="mini"
+                class="large-input"
+                @change="getData"
+                value-format="yyyy-MM-dd HH:mm:ss"
+              ></el-date-picker>
+            </div>
           </div>
+          <i class="el-icon-d-arrow-left"></i>
+          <i class="el-icon-d-arrow-right"></i>
         </div>
         <div class="btns">
           <div class="search">
@@ -168,6 +177,7 @@
                   <div v-if="item.Mst.FState==0">待支付</div>
                   <div v-else-if="item.Mst.FState==1">支付成功</div>
                   <div v-else-if="item.Mst.FState==2">支付异常</div>
+                  <div v-else-if="item.Mst.FState==3">支付中</div>
                   <div v-else>————</div>
                 </td>
                 <td>
@@ -224,6 +234,7 @@ import payList from './payList.vue'
 import mergePay from './mergePay.vue'
 import payErrorHandle from './payErrorHandle.vue'
 import goApproval from './goApproval.vue'
+import { mapState } from 'vuex'
 export default {
   name: 'pay',
   components: {
@@ -233,6 +244,9 @@ export default {
     payErrorHandle,
     goApproval,
     searchInput
+  },
+  provide() {
+    return { refreshIndexData: this.getData }
   },
   data() {
     return {
@@ -291,6 +305,10 @@ export default {
         {
           value: 1,
           label: '支付成功'
+        },
+        {
+          value: 3,
+          label: '支付中'
         }
       ],
       status: [0, 2],
@@ -336,30 +354,74 @@ export default {
     this.getData()
   },
   mounted() {
-    let spans = document.querySelectorAll('.selects>div>span'),
-      selects = document.querySelectorAll('.selects>div>div'),
-      contentWidth = 0,
-      count = 0
-    spans.forEach(item => {
+    var vm = this
+    let container = vm.$refs.selectsContainer, //滚动容器
+      tabs = document.querySelectorAll('.selects>div>.tab'),
+      contentWidth = 0, //所有tab总宽度
+      tabsWidth = [], //各个tab筛选条件宽度
+      left = document.querySelector('.selects>i.el-icon-d-arrow-left'),
+      right = document.querySelector('.selects>i.el-icon-d-arrow-right')
+    tabs.forEach(item => {
       contentWidth += item.offsetWidth
-      count++
+      tabsWidth.push(item.offsetWidth)
     })
-    selects.forEach(item => {
-      contentWidth += item.offsetWidth
-      count++
-    })
-    contentWidth += count * 10
-    window.onresize = () => {
-      let container = this.$refs.selectsContainer
-      let containerWidth = container.offsetWidth
+    function getComWidth(ele, cla) {
+      return parseInt(
+        (window.getComputedStyle
+          ? window.getComputedStyle(ele, cla || null)
+          : ele.currentStyle
+        ).width
+      )
+    }
+    function resize() {
+      let containerWidth = getComWidth(container)
       if (containerWidth >= contentWidth) {
         container.className = ''
-        console.log('big')
+        container.style.transform = 'translateX(0)'
       } else {
-        console.log('small')
         container.className = 'scroll'
+        if (contentWidth - getTrans() <= containerWidth) {
+          container.style.transform = `translateX(-${contentWidth -
+            containerWidth}px)`
+        }
       }
     }
+    function getTrans() {
+      return container.style.transform.match(/\d+/) == -1
+        ? 0
+        : container.style.transform.match(/\d+/)[0]
+    }
+    left.onclick = () => {
+      let trans = getTrans()
+      if (trans != 0) {
+        let containerWidth = getComWidth(container),
+          index = 0,
+          totalWidth = 0
+        for (let i of tabsWidth) {
+          if (totalWidth + i >= trans) {
+            container.style.transform = `translateX(-${totalWidth}px)`
+            break
+          }
+          totalWidth += i
+        }
+      }
+    }
+    right.onclick = () => {
+      let containerWidth = getComWidth(container),
+        index = 0,
+        totalWidth = 0
+      for (let i of tabsWidth) {
+        if (totalWidth - getTrans() + i > containerWidth) {
+          container.style.transform = `translateX(-${totalWidth +
+            i -
+            containerWidth}px)`
+          break
+        }
+        totalWidth += i
+      }
+    }
+    window.onresize = resize
+    resize()
   },
   methods: {
     getData() {
@@ -414,13 +476,14 @@ export default {
         queryfilter: JSON.stringify(query),
         PageIndex: this.currentPage - 1, //当前第几页，从0开始
         PageSize: this.pageSize, //每页显示行数
-        uid: '521180820000001', //用户id
-        orgid: '547181121000001', //组织id
+        uid: this.userid || 488181024000001, //用户id
+        orgid: this.orgid, //组织id
         ryear: '2019'
       })
         .then(res => {
           console.log(res)
           if (res.Status == 'error') {
+            this.$msgBox.error(res.Msg)
             return
           }
           this.total = res.totalRows
@@ -431,6 +494,7 @@ export default {
         })
         .catch(err => {
           console.log(err)
+          this.$msgBox.error('获取支付单列表失败！')
         })
     },
     // 主体全选事件
@@ -466,6 +530,7 @@ export default {
           if (cur.Mst.checked) handleitem.push(cur)
           return prev + cur.Mst.checked
         }, 0)
+        console.log(handleitem)
         if (handleitem.length < 1) {
           this.$msgBox.error({
             content: '请至少选择一条数据进行操作。',
@@ -550,7 +615,7 @@ export default {
             break
         }
       }
-      this[type].data = item || handleitem
+      this[type].data = item ? [item] : handleitem
       this[type].openDialog = true
     },
     // 筛选
@@ -564,11 +629,13 @@ export default {
           this.status = ['']
         } else if (cur.includes('')) {
           cur.splice(cur.findIndex(item => item === ''), 1)
-        } else if (cur.length == 3) {
+        } else if (cur.length == this.statusList.length - 1) {
           this.status = ['']
         }
       }
-      this.getData()
+    },
+    statusBlur(visible) {
+      if (!visible) this.getData()
     },
     // 分页
     handleSizeChange(val) {
@@ -583,6 +650,12 @@ export default {
       console.log(page)
       this.currentPage = page
     }
+  },
+  computed: {
+    ...mapState({
+      orgid: state => state.user.orgid,
+      userid: state => state.user.userid
+    })
   }
 }
 </script>
@@ -639,27 +712,57 @@ export default {
       box-sizing: border-box;
       color: #757575;
       overflow: hidden;
-
+      position: relative;
+      > i {
+        font-size: 0.2rem;
+        width: 0;
+        transition: all 0.3s linear;
+        background: #fff;
+        z-index: 2;
+        line-height: 29px;
+        position: absolute;
+        height: 100%;
+        cursor: pointer;
+      }
       > div {
         white-space: nowrap;
         font-size: 0;
-        > i {
-          font-size: 0.2rem;
-        }
+        transition: all 0.3s linear;
+        height: 29px;
+        box-sizing: content-box;
         &.scroll {
-          padding: 0 20px;
+          padding: 0 0.2rem;
+          ~ i {
+            width: 0.2rem;
+            &:hover {
+              color: $btnColor;
+            }
+            &.el-icon-d-arrow-left {
+              left: 0;
+              top: 0px;
+            }
+            &.el-icon-d-arrow-right {
+              right: 0;
+              top: 0px;
+            }
+          }
         }
-        > span {
-          font-size: 0.14rem;
-        }
-        > span:not(:first-of-type) {
-          margin-left: 10px;
-        }
-        > span + div {
-          width: 150px;
-          margin-left: 10px;
-          &.large-input {
-            width: 320px;
+        .tab {
+          height: 29px;
+          display: inline-block;
+          &:first-of-type > span {
+            margin-left: 0;
+          }
+          > span {
+            font-size: 0.14rem;
+            margin-left: 10px;
+          }
+          > span + div {
+            width: 150px;
+            margin-left: 10px;
+            &.large-input {
+              width: 320px;
+            }
           }
         }
       }
