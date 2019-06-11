@@ -17,7 +17,6 @@ MessageBox.install = function(Vue, options) {
         initInstance()
       } else {
         currentMsg.$destroy()
-        console.log(currentMsg.openDialog)
         clearInterval(currentMsg.interval)
         currentMsg.interval = null
         currentMsg = new MessageBoxInstance()
@@ -35,7 +34,6 @@ MessageBox.install = function(Vue, options) {
         initInstance()
       } else {
         currentMsg.$destroy()
-        console.log(currentMsg.openDialog)
         clearInterval(currentMsg.interval)
         currentMsg.interval = null
         currentMsg = new MessageBoxInstance()
