@@ -5,14 +5,13 @@
         <el-col :span="24">
           <div class="top-btn">
             <slot name="btn-group">
-              <el-button class="btn" size="mini" style="padding: 0;" @click="creatApply">生成支付单</el-button>
-              <el-button class="btn" size="mini" @click="postApply">送审</el-button>
-              <el-button class="btn" size="mini" @click="msgType=true">删除</el-button>
+              <el-button class="btn" size="mini" style="padding: 0;" @click="creatApply"  v-if="record.PaymentMst.FApproval==9">生成支付单</el-button>
+              <el-button class="btn" size="mini" @click="postApply" v-if="record.PaymentMst.FApproval==0||record.PaymentMst.FApproval==2">送审</el-button>
+              <el-button class="btn" size="mini" @click="deleteApply"  v-if="record.PaymentMst.FApproval==0||record.PaymentMst.FApproval==2">删除</el-button>
               <!--<el-button class="btn" size="mini" @click="checkApply">审批</el-button>
               <el-button class="btn" size="mini" @click="cancelApply">取消审批</el-button>-->
               <el-button class="btn" size="mini" >打印</el-button>
             </slot>
-
           </div>
         </el-col>
       </el-row>
@@ -20,17 +19,17 @@
         <el-col :span="5">
           <div class="left-card">
             <i class="el-icon-edit-outline"></i>
-            <span>待审核</span>
+            <span>{{approvalType[record.PaymentMst.FApproval]}}</span>
             <div>
               <!--申请信息-->
               <div class="apply-info">
                 <span class="title">附件</span>
-                <div class="appendix-item" v-for="(item,idx) in projectItem">
+                <!--<div class="appendix-item" v-for="(item,idx) in projectItem">
                   <span class="title"><i class="el-icon-s-order"></i>{{item.projectName}}</span>
                   <ul>
                     <li  v-for="(folder,idx) in item.projectFolder" @click="clickFolder(folder)">{{folder}}</li>
                   </ul>
-                </div>
+                </div>-->
               </div>
             </div>
           </div>
@@ -153,34 +152,9 @@
         </el-col>
       </el-row>
     </div>
-    <el-dialog
-      title="提示"
-      :visible.sync="msgType"
-      width="500px"
-      height="100px"
-      append-to-body
-      id="delDialog"
-    >
-      <p>确定删除该记录？</p>
-      <span slot="footer"   style="text-align: center">
-        <button class="cancelBtn"  @click="msgType=false">取消</button>
-        <button class="confirmBtn" style="margin-left: 30px" @click="deleteApply">确定</button>
-      </span>
-    </el-dialog>
-    <el-dialog
-      title="提示"
-      :visible.sync="delmsgType"
-      width="500px"
-      height="100px"
-      :before-close="handleClose"
-      append-to-body>
-      <p>{{msg}} &nbsp（{{time}}s）后自动关闭</p>
-      <span slot="footer">
-        <button class="confirmBtn"  @click="handleClose">确定</button>
-      </span>
-    </el-dialog>
+
     <!--送审-->
-    <go-approval  :data="approvalDataS"></go-approval>
+    <go-approval  :data="approvalDataS" @delete="handleDelete"></go-approval>
     <!--生成支付单-->
     <approval-dialog ref="approvalDialog" :title="appDialog.title" :btn-group="appDialog.btnGroup" :data="approvalData"></approval-dialog>
     <!--附件查看-->
@@ -200,7 +174,7 @@
 
 <script>
     import ApprovalDialog from "../../pages/payfundapproval/approvalDialog";
-    import goApproval from '../../pages/paycenter/goApproval.vue';
+    import goApproval from '../applyPro/goApproval.vue';
     import ImgView from "../imgView/imgView";
     export default {
         name: "applybill",
@@ -212,11 +186,6 @@
       },
       data(){
           return {
-            msgType:false,//删除弹窗
-            delSOD:true,//是否删除成功
-            delmsgType:false,//点击删除后的提示弹窗
-            msg:'',//删除提示消息
-            time:3,//倒计时
             record:{
               PaymentMst:{
                 FDepname:'',
@@ -237,55 +206,7 @@
                   XmProjname:''
                 }}],
             },
-            data:{applyDepart:'浙江省总工会本级办公室',
-              applyDate:new Date().getFullYear()+"-"+ (new Date().getMonth()+1)+"-"+ new Date().getDate(),
-              applyAmount:'4,567.90',
-              BNum:'201904180001',
-              BDescribe:'本申请款用于工会基础设施建设使用',
-              table:[{
-                id:'2019050300001',
-                BName:'预算款报表项目申请',
-                depart:'宁波市总工会',
-                name:'预算款报表',
-                amount:"22,384.00",
-                remark:''
-              },{
-                id:'2019050300001',
-                BName:'预算款报表项目申请',
-                depart:'杭州市总工会',
-                name:'预算款报表',
-                amount:"384.40",
-                remark:''
-              },{
-                id:'2019050300001',
-                BName:'预算款报表项目申请',
-                depart:'舟山市总工会女工部',
-                name:'预算款报表',
-                amount:"26.60",
-                remark:''
-              },{
-                id:'2019050300001',
-                BName:'往来明细款项目申请',
-                depart:'宁波市总工会',
-                name:'往来明细款',
-                amount:"4,320.40",
-                remark:''
-              },{
-                id:'2019050300001',
-                BName:'往来明细款项目申请',
-                depart:'杭州市总工会',
-                name:'往来明细款',
-                amount:"30.40",
-                remark:''
-              }]
-            },
-            projectItem: [{
-              projectName: '预算款报表项目',
-              projectFolder: ['附件资料图片1.png', '附件资料图片2.png', '附件资料图片3.png', '附件资料图片4.png']
-            }, {
-              projectName: '往来款报表项目',
-              projectFolder: ['附件资料图片1.png', '附件资料图片2.png', '附件资料图片3.png']
-            }],
+            approvalType:{0:'待送审',1:'审批中',2:'未通过',9:'审批通过'},
             //生成支付单
             appDialog:{
               title:'',
@@ -299,32 +220,27 @@
             //送审
             approvalDataS: {
               openDialog: false,
-              data: {}
+              data: []
             },
             timeF:'',
             dialogVisible:false,//附件查看弹窗
           }
       },
       watch:{
-        applyNum(){
-
+        applyNum(val){
           this.getApply();
+          this.approvalDataS.data=[val]
         },
       },
       mounted(){
-         this.$nextTick(
-            this.getApply()
-          );
         this.getApply();
-          console.log(this.applyNum)
+        this.approvalDataS.data=[this.applyNum]
       },
       methods:{
           //申请单查看
         getApply:function(){
-          console.log(this.applyNum+'这里添加数据查询方法');
           let param={fPhId:this.applyNum};
           this.getAxios('GBK/PaymentMstApi/GetPaymentMst',param).then(res=>{
-            console.log(res);
             this.record=res;
           }).catch(err=>{
             console.log(err);
@@ -332,7 +248,6 @@
         },
         //生成支付单
         creatApply:function(){
-          console.log(this.applyNum+'这里添加数据查询方法');
           this.appDialog.title = '审批并生成支付单'
           this.appDialog.btnGroup.cancelName = '取消'
           this.appDialog.btnGroup.onfirmName = '生成支付单'
@@ -340,60 +255,53 @@
         },
         //送审
         postApply:function(){
-          console.log(this.applyNum+'这里添加数据查询方法');
           this.approvalDataS.openDialog=true
-        },
-        //审批
-        checkApply:function(){
-
-        },
-        //取消审批
-        cancelApply:function(){
-
         },
         //删除
         deleteApply:function(){
-          console.log(this.applyNum+'这里添加数据查询方法');
-          this.msgType=false;
-          this.delmsgType=true;
-          this.delSOD=true;
-          if(this.delSOD){
-            this.msg='删除成功！'
-          }else{
-            this.msg='删除失败，请稍后重试！'
-          }
-          this.timer()
+          this.$confirm('此操作将永久删除该申请，是否继续？','提示',{
+            confirmButtonText:'确定',
+            cancelBtnText: '取消',
+            type:'warning'
+          }).then( () => {
+            let param={
+              fPhIdList:[this.applyNum]
+            }
+            this.postAxios('GBK/PaymentMstApi/PostDelete',param).then(res=>{
+              if(res.Status=='success'){
+                this.$msgBox.show({
+                  content: '删除成功。',
+                  fn: () => {
+                    this.approvalDataS.openDialog=false;
+                    this.$emit('delete',{flag:true,type:'applyBill'})
+                  }
+                });
+              }else{
+                this.$msgBox.show({
+                  content: '删除失败，请稍后重试。'
+                })
+              }
+            }).catch(err=>{
+              console.log(err);
+            })
+          }).catch( () => {})
         },
         //打印
         printApply:function(){
           console.log(this.applyNum+'这里添加数据查询方法');
         },
-        //删除后提示弹窗关闭操作
-        handleClose:function(){
-          this.delmsgType=false;
-          if(this.delSOD){
-            clearTimeout(this.timeF);
-            this.time=3;
-            this.$emit('delete',true)
-          };
-        },
-        //提示窗口倒计时
-        timer:function(){
-          this.timeF=setTimeout(()=>{
-            if(this.time>1){
-              this.time--;
-              this.timer()
-            }else{
-              this.time=3;
-              this.handleClose();
-            }
-            //this.$forceUpdate();
-          },1000)
-        },
+
         //点击文件列表
         clickFolder(file){
           //this.$emit('showImg',file)
           this.dialogVisible=true;
+        },
+        //关闭送审弹窗
+        handleDelete:function(val){
+          if(val.flag){
+            this.approvalDataS.openDialog=false;
+            this.$emit('delete',{flag:true,type:'applyBill'})
+          }
         }
       }
     }
