@@ -259,7 +259,6 @@ export default {
   watch: {
     data:{
       handler(val){
-        console.log(val);
         if(val){
           this.param.RefbillPhidList=val.data;
           /*this.PaymentMst.FDepphid= val.bm.PhId;//（部门主键）
