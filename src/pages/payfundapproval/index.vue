@@ -342,7 +342,7 @@
           currentPage:1,//当前页
           pageSizes:[20,50,100], //每页显示多少条
           total:0,//总条数
-          pageSize:10,//当前每页显示多少条
+          pageSize:20,//当前每页显示多少条
         },//分页
         visible:false,
         appDialog:{
@@ -369,6 +369,9 @@
       this.selection = []
       this.isApproval = this.$route.query.approval
       this.SplxPhid = this.$route.query.SplxPhid
+      console.log(this.isApproval)
+      console.log(this.SplxPhid)
+      debugger
       // this.testData()
       this.loadData()
       this.getOrgList()
@@ -419,7 +422,8 @@
         }
 
         let that = this
-        if(this.isApproval){
+        debugger
+        if(eval(this.isApproval)){
           this.getAxios('/GAppvalRecord/GetUnDoRecordList',data).then(success=>{
             console.log(success.Data)
             if (success && success.Status === "success") {

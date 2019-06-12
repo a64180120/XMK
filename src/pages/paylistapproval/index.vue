@@ -450,11 +450,13 @@
       },
       //当前页显示多少条数据
       handleSizeChange(val){
-        console.log(val)
+        this.page.pageSize = val
+        this.loadData()
       },
       //调到第几页
       handleCurrentChange(val){
-        console.log(val)
+        this.page.currentPage = val
+        this.loadData()
       },
       //打开查看审批流
       openApproval(row,idx){
