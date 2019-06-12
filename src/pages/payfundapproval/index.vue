@@ -367,7 +367,7 @@
     mounted() {
       console.log(this.isApproval)
       this.selection = []
-      this.isApproval = this.$route.query.approval
+      this.isApproval = eval(this.$route.query.approval)
       this.SplxPhid = this.$route.query.SplxPhid
       console.log(this.isApproval)
       console.log(this.SplxPhid)
