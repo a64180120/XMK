@@ -147,6 +147,7 @@
           data.NextOperators = arr
           data.BackPostPhid = this.backPost.PhId
         }
+        console.log(1231321)
         if (this.isApproval){
           this.postAxios('/GAppvalRecord/PostApprovalRecord',data).then(res=>{
             if (res.Status == 'success'&&res) {
