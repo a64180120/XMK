@@ -26,10 +26,10 @@
                             <img v-else-if="item.Value === '004'"  src="../../assets/images/y1(w).png">
                             <img v-else-if="item.Value === '005'" src="../../assets/images/ys(w).png">
                             <p>{{item.TypeName}}</p>
-                            <div v-if="item.approvalValue != 0 && item.approvalValue" class="triangle"></div>
-                            <div v-if="item.approvalValue != 0 && item.approvalValue" class="inner-triangle"></div>
-                            <div v-if="item.approvalValue >0" class="number" :class="[item.approvalValue< 10?'position1':(item.approvalValue< 100 && item.approvalValue>9?'position2':'position3')]">
-                              <span v-if="item.approvalValue<100">{{item.approvalValue}}</span>
+                            <div v-if="item.NNum != 0 && item.NNum" class="triangle"></div>
+                            <div v-if="item.NNum != 0 && item.NNum" class="inner-triangle"></div>
+                            <div v-if="item.NNum >0" class="number" :class="[item.NNum< 10?'position1':(item.NNum< 100 && item.NNum>9?'position2':'position3')]">
+                              <span v-if="item.approvalValue<100">{{item.NNum}}</span>
                               <span v-else>99+</span>
                             </div>
                           </div>
@@ -47,7 +47,7 @@
                     <div class="approval-content">
                       <ul>
                         <li v-for="(item,idx) in approvaled" >
-                          <span :class="[idx %3 === 0 ? 'blue':(idx %3 === 1 ? 'green':'orange')]" @click="approvaledClick(item)">{{item.value?item.value:"0"}}</span>
+                          <span :class="[idx %3 === 0 ? 'blue':(idx %3 === 1 ? 'green':'orange')]" @click="approvaledClick(item)">{{item.YNum?item.YNum:"0"}}</span>
                           <p :class="[idx %3 === 0 ? 'blue':(idx %3 === 1 ? 'green':'orange')]" @click="approvaledClick(item,)">{{item.TypeName}}</p>
                         </li>
                       </ul>
@@ -80,14 +80,23 @@
         //获取审批类型
         getProcTypes(){
           let data = {
-            Orgid:''
+            Uid:"488181024000001",
+            OrgCode:'101',
+            Year:"2019"
           }
-          this.getAxios('/GAppvalProc/GetProcTypes',data).then(success=>{
-              console.log(success);
-            this.myApproval = success.Data;
-            this.approvaled = success.Data
-          }).catch(err =>{
-            console.log(err)
+          // this.getAxios('/GAppvalProc/GetProcTypes',data).then(success=>{
+          //     console.log(success);
+          //   this.myApproval = success.Data;
+          //   this.approvaled = success.Data
+          // }).catch(err =>{
+          //   console.log(err)
+          // })
+          this.getAxios('/GAppvalRecord/GetRecordListNum',data).then(res=>{
+              this.myApproval = res.Data;
+              this.approvaled = res.Data
+              console.log(res)
+          }).catch(err=>{
+
           })
         },
           //搜索框的回车与按钮事件
