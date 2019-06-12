@@ -1,7 +1,7 @@
 <template>
   <div class="self">
     <div style="position: relative">
-      <tophandle title="资金拨付在线工作平台">
+      <tophandle title="资金拨付在线工作平台" @refresh="getDataC">
         <div class="btnCon">
           <div @click.stop="showAuditAdd('add')" class="handle">
             <div class="topIcon"><img src="@/assets/images/xz.png" alt=""></div>
@@ -253,10 +253,10 @@
               <span>对下补助项目名称：</span>
               <!--部门选择-->
               <el-select size="small" style="width: 100px" v-model="searchData.bzType" @change="getChartList">
-                <el-option v-for="item in bzList"
-                           :key="item.value"
-                           :label="item.label"
-                           :value="item.value">
+                <el-option v-for="item in apartData.Mst"
+                           :key="item.PhId"
+                           :label="item.FProjName"
+                           :value="item.PhId">
                 </el-option>
               </el-select>
             </div>
@@ -329,12 +329,12 @@
               data:[],
             },
             searchData:{
-              approvalType:0,
-              payType:0,
+              approvalType:'',
+              payType:'',
               bmType:0,
               bzType:0,
               searchValue:'',
-              date:'',
+              date:[],
               money:{
                 smoney:'',
                 emoney:''
@@ -345,8 +345,8 @@
               },
               searchorg:{label:'女工部'}
             },
-            approvalList:[{value:0,label:'全部'},{value:1,label:'待送审'},{value:2,label:'审批中'},{value:3,label:'审批未通过'},{value:4,label:'审批通过'}],
-            payList:[{value:0,label:'全部'},{value:1,label:'待支付'},{value:2,label:'支付异常'},{value:3,label:'支付成功'}],
+            approvalList:[{value:'',label:'全部'},{value:0,label:'待送审'},{value:1,label:'审批中'},{value:2,label:'审批未通过'},{value:9,label:'审批通过'}],
+            payList:[{value:'',label:'全部'},{value:0,label:'待支付'},{value:1,label:'支付异常'},{value:9,label:'支付成功'}],
             bmList:[],//部门列表
             bzList:[{value:0,label:'全部'},{value:1,label:'救灾补助项目'},{value:2,label:'送温暖项目'}],
             spTypeList:{'0':'待送审','1':'审批中','2':'未通过','9':'审批通过'},
@@ -410,7 +410,8 @@
           orgcode:state => state.user.orgcode, //编码
           orgname:state => state.user.orgname,//名称
           year:state => state.user.year,//年份
-          userid:state => state.user.userid
+          userid:state => state.user.userid,
+          usercode:state => state.user.usercode
         })
       },
       methods:{
@@ -479,26 +480,23 @@
         },
         //q切换右侧项目是进行并状态数据切换
         getChartList:function(val){
-          switch(val){
-            case 0:
-              this.chartData.chart=[{name:'可申请',value:13210},{name:'冻结',value:1200},{name:'已使用',value:2301}];
-              break;
-            case 1:
-              this.chartData.chart=[{name:'可申请',value:6210},{name:'冻结',value:4100},{name:'已使用',value:2101}];
-              break;
-            case 2:
-              this.chartData.chart=[{name:'可申请',value:7000},{name:'冻结',value:5200},{name:'已使用',value:5001}];
-              break;
-            default:
-              this.$msgBox.show({
-                content: '数据获取错误'
-              })
-          }
+          let param={xmPhid:val};
+          this.getAxios('GBK/PaymentMstApi/GetAmountOfMoney',param).then(res=>{
+            this.chartData.chart=[{name:'可申请',value:res.sum},{name:'冻结',value:res.frozen},{name:'已使用',value:res.use}];
+          }).catch(err=>{
+            console.log(err);
+          })
+         /* for(var i in this.apartData.Mst){
+            if(val==this.apartData.Mst[i].XmMstPhid){//FProjAmount FBudgetAmount RemainAmount UseAmount
+              this.chartData.chart=[{name:'可申请',value:FBudgetAmount},{name:'冻结',value:1200},{name:'已使用',value:2301}];
+            }
+          }*/
         },
 
         //获取部门
         getDataC:function(){
-          let param={Unit:this.orgcode,UserNo:this.userid||'9999'};
+          let param={Unit:this.orgcode,UserNo:this.usercode||'9999'};
+          this.searchData.bmType='';
           this.getAxios('GQT/CorrespondenceSettingsApi/GetDeptByUnit',param).then(res=>{
             this.bmList=res.Record;
             this.searchData.bmType=res.Record[0].OCode;
@@ -516,23 +514,28 @@
             FDeclarationUnit: this.orgcode, //组织代码
             FBudgetDept: this.searchData.bmType //部门代码
           };
+          this.apartData.Mst=[];
+          this.apartData.Amount=0;
           this.getAxios('GYS/BudgetMstApi/GetBudgetMstList',param).then(res=>{
             this.apartData.Mst=res.Mst;
             this.apartData.Amount=res.FAmount;
+            this.searchData.bzType=res.Mst[0].PhId;
           }).catch(err=>{
             console.log(err);
           })
         },
+        //获取列表数据
         getData:function(){
-          console.log(this.searchData.date);
+          /*console.log(new Date(this.searchData.date[0]).getFullYear());
+          let startTime=new Date(this.searchData.date[0]).getFullYear()+'-'*/
           let param={
             PageIndex:this.searchData.pageSearch.pageIndex,
             PageSize:this.searchData.pageSearch.pageSize,
             FName:this.searchData.searchValue,
-            FApprovalBz:this.searchData.approvalType,
+            ApprovalBz:this.searchData.approvalType,
             PayBz:this.searchData.payType,
-            StartDate:this.searchData.date,
-            EndDate:this.searchData.date,
+            StartDate:this.searchData.date[0]||'',
+            EndDate:this.searchData.date[1]||'',
             MaxAmount:this.searchData.money.smoney==0?'':this.searchData.money.smoney,
             MinAmount:this.searchData.money.emoney==0?'':this.searchData.money.emoney,
             FOrgphid:this.orgid,
@@ -571,6 +574,8 @@
           if(val.flag){
             if(val.type=='applyproType'){
               this.applyproType=false;
+            }else if(val.type=='applyBill'){
+              this.applyType=false;
             }else{
               this.approvalDataS.openDialog=false;
             }

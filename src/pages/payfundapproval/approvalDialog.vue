@@ -79,10 +79,7 @@
             if (success && success.Status === 'success'){
               this.$set(this.approvalFollow,0,success.Process);
               this.nextApprovaler = success.AppvalPost.Operators;
-              console.log("+++++++++++++")
-              console.log(this.approvalFollow)
-              console.log("-------------")
-              console.log(this.nextApprovaler)
+              console.log(success)
             }else {
               let that = this
               this.$msgBox.show({
@@ -157,7 +154,7 @@
             data.NextOperators = arr
             data.BackPostPhid = this.backPost.PhId
           }
-          this.postAxios('/GAppvalRecord/PostApprovalRecord').then(success=>{
+          this.postAxios('/GAppvalRecord/PostApprovalRecord',data).then(success=>{
             if (success.Status == 'success'&&success) {
               let that= this
               this.visible = false
@@ -168,6 +165,7 @@
                   that.$emit('subSuc');
                   that.$refs.approval.handleValue = '';
                   this.textare = ''
+                  that.$emit('refresh')
                 }
               })
             }else {
@@ -182,8 +180,10 @@
         closeBack(){
           this.visible = false;
           this.textare = '';
+          this.$emit('refresh')
         },
         backAproval(val){
+          debugger
           console.log(val)
           if (!val ){
             this.getBackApprovalPost()
@@ -202,6 +202,7 @@
             ProcPhid:this.rowData[0].ProcPhid,
             PostPhid:this.rowData[0].PostPhid,
             RefbillPhid:this.rowData[0].RefbillPhid,
+            OperaPhid:this.rowData[0].OperaPhid
           }
           this.getAxios('/GAppvalPost/GetBackApprovalPost',data).then(success=>{
             if (success && success.Status == 'success') {

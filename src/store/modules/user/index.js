@@ -6,9 +6,9 @@ const state = {
     //签名
     token: "",
     //用户id
-    userid: "",
+    userid: "488181024000001",
     //用户code
-    usercode:'',
+    usercode:'9999',
     //用户名称
     username: "",
     //组织列表

@@ -343,8 +343,6 @@
       },
     },
     mounted(){
-      console.log(this.sta);
-      console.log(this.prodata);
       this.$nextTick(
         this.getOrgList()
       );
@@ -425,10 +423,6 @@
         }
         this.postAxios(url,data).then( res => {
           if(res.Status=="success"){
-            var tim=setTimeout(()=>{
-              this.approvalDataS.openDialog=true;
-              this.approvalDataS.data=res.KeyCodes;
-            },3000);
             this.$msgBox.show({
               content: '保存成功。',
               fn: () => {
@@ -436,7 +430,6 @@
                 if(type==1){
                     this.approvalDataS.openDialog=true;
                     this.approvalDataS.data=res.KeyCodes;
-                    clearTimeout(tim);
                 }
               }
             })
@@ -663,7 +656,6 @@
       },
       //选择主项目
       changePro:function(index){
-        console.log(index);
         let proCode=this.PaymentXmDtl[index].PaymentXm.XmProjcode;
         for(var i in this.prodata.Mst){
           if(proCode==this.prodata.Mst[i].FProjCode){
@@ -700,6 +692,7 @@
       handleDelete:function(val){
         if(val.flag){
           this.approvalDataS.openDialog=false;
+          this.$emit('delete',{flag:true,type:'applyproType'})
         }
       }
     }
