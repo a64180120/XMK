@@ -606,6 +606,22 @@ export default {
               })
               return
             }
+            if (
+              !handleitem.every(item => {
+                return (
+                  item.Mst.FPaymethod != 0 &&
+                  item.Dtls.every(subitem => {
+                    return !!subitem.BankPhid
+                  })
+                )
+              })
+            ) {
+              this.$msgBox.error('请先完善数据信息')
+              this.tableData.forEach(item => {
+                item.Mst.checked = false
+              })
+              return
+            }
             break
         }
       }

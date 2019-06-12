@@ -383,7 +383,7 @@ export default {
       type: Object,
       default: {
         openDialog: false,
-        data: {},
+        data: [],
         itemType: '' //'':审批中,error':支付异常,'notApprove':待送审、未通过,'success':支付成功,'approval':审批,
       }
     }
@@ -451,7 +451,7 @@ export default {
           width: '200'
         },
         {
-          name: 'FPayBankcode',
+          name: 'FRecBankname',
           label: '开户行',
           width: '200'
         },
@@ -728,15 +728,17 @@ export default {
           if (item.choosed) {
             item.FRecAcntname = data.FBankname
             item.FRecAcnt = data.FAccount
-            item.FPayBankcode = data.FOpenAccount
+            item.FRecBankname = data.FOpenAccount
             item.FRecBankcode = data.FBankcode
+            item.FRecCityname = data.FCity
           }
         })
       } else {
         this.bankChooseData.data.FRecAcntname = data.FBankname
         this.bankChooseData.data.FRecAcnt = data.FAccount
-        this.bankChooseData.data.FPayBankcode = data.FOpenAccount
+        this.bankChooseData.data.FRecBankname = data.FOpenAccount
         this.bankChooseData.data.FRecBankcode = data.FBankcode
+        this.bankChooseData.data.FRecCityname = data.FCity
       }
     },
     // 支付单 按钮事件
@@ -957,9 +959,15 @@ export default {
   computed: {
     orgName() {
       let orgListJson = JSON.stringify(this.orglist)
+      if (!this.data.data.length) {
+        return ''
+      }
       let phidIndex = orgListJson.indexOf(this.data.data[0].Mst.OrgPhid)
       let nameIndex = orgListJson.indexOf('OName', phidIndex) + 8
       let nameEndIndex = orgListJson.indexOf('"', nameIndex)
+      if (phidIndex == -1 || nameIndex == -1 || nameEndIndex == -1) {
+        return ''
+      }
       return orgListJson.slice(nameIndex, nameEndIndex)
     },
     ...mapState({

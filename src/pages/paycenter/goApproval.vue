@@ -273,7 +273,6 @@ export default {
         console.log(err)
         this.$msgBox.error('获取送审流程失败！')
       })
-    console.log(this.father, this.reSetting)
   },
   watch: {
     'data.openDialog'(newVal) {
