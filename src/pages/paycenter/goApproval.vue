@@ -193,21 +193,6 @@ export default {
     },
     // 送审请求
     postAddAppvalRecord() {
-      if (this.ProcPhid == '') {
-        this.$msgBox.error('请选择一条审批流程！')
-        return
-      }
-      if (this.mode) {
-        if (this.NextOperators.length != this.nextApprovaler.length) {
-          this.$msgBox.error('请选择所有审批人！')
-          return
-        }
-      } else {
-        if (this.NextOperators.length == 0) {
-          this.$msgBox.error('请至少选择一位审批人！')
-          return
-        }
-      }
       postAddAppvalRecord({
         RefbillPhidList: this.data.data.map(item => {
           return item.Mst.PhId
@@ -241,6 +226,21 @@ export default {
     },
     //确认
     submit() {
+      if (this.ProcPhid == '') {
+        this.$msgBox.error('请选择一条审批流程！')
+        return
+      }
+      if (this.mode) {
+        if (this.NextOperators.length != this.nextApprovaler.length) {
+          this.$msgBox.error('请选择所有审批人！')
+          return
+        }
+      } else {
+        if (this.NextOperators.length == 0) {
+          this.$msgBox.error('请至少选择一位审批人！')
+          return
+        }
+      }
       if (this.$parent.reSetting == undefined) {
         // 直接送审
         this.postAddAppvalRecord()
@@ -249,7 +249,7 @@ export default {
         this.$parent.postAddPayList(this.postAddAppvalRecord)
       } else {
         // 保存支付单，送审
-        this.$parent.savePayList(this.postAddAppvalRecord)
+        this.$parent.savePayList(this.$parent.detail, this.postAddAppvalRecord)
       }
     }
   },
@@ -265,6 +265,9 @@ export default {
           return
         }
         this.approvalFollow = res.Data
+        if (res.Data.length > 0) {
+          this.approvalRowClick(res.Data[0])
+        }
       })
       .catch(err => {
         console.log(err)

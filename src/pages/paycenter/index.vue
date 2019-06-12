@@ -346,14 +346,12 @@ export default {
           label: '支付日期'
         }
       ],
-      tableData: [],
-      checkAll: false
+      tableData: []
     }
   },
-  created() {
-    this.getData()
-  },
+  created() {},
   mounted() {
+    this.getData()
     var vm = this
     let container = vm.$refs.selectsContainer, //滚动容器
       tabs = document.querySelectorAll('.selects>div>.tab'),
@@ -504,11 +502,7 @@ export default {
       })
     },
     handleCheckOne(item) {
-      if (!item.Mst.checked) {
-        this.checkAll = false
-      } else {
-        this.checkAll = this.tableData.every(item => item.Mst.checked)
-      }
+      console.log(item)
     },
     // 导航栏事件
     payNav(type, item) {
@@ -652,6 +646,9 @@ export default {
     }
   },
   computed: {
+    checkAll() {
+      return this.tableData.every(item => item.Mst.checked)
+    },
     ...mapState({
       orgid: state => state.user.orgid,
       userid: state => state.user.userid
