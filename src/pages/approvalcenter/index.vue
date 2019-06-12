@@ -28,8 +28,8 @@
                             <p>{{item.TypeName}}</p>
                             <div v-if="item.NNum != 0 && item.NNum" class="triangle"></div>
                             <div v-if="item.NNum != 0 && item.NNum" class="inner-triangle"></div>
-                            <div v-if="item.NNum >0" class="number" :class="[item.NNum< 10?'position1':(item.NNum< 100 && item.NNum>9?'position2':'position3')]">
-                              <span v-if="item.approvalValue<100">{{item.NNum}}</span>
+                            <div v-if="item.NNum >0" class="number" :class="[item.NNum< 10?'position1':(item.NNum< 100 && item.NNum>11?'position2':'position3')]">
+                              <span v-if="item.NNum<100">{{item.NNum}}</span>
                               <span v-else>99+</span>
                             </div>
                           </div>
@@ -64,6 +64,7 @@
 <script>
     import SearchInput from "../../components/searchInput/searchInput";
     import TopHandle from "../../components/topNav/topHandle";
+    import {mapState} from 'vuex'
     export default {
         name: "index",
       components: {TopHandle, SearchInput},
@@ -76,12 +77,18 @@
       mounted(){
         this.getProcTypes()
       },
+      computed:{
+        ...mapState({
+          OrgCode:state =>state.user.orgcode,
+          UserId:state =>state.user.userid
+        })
+      },
       methods:{
         //获取审批类型
         getProcTypes(){
           let data = {
-            Uid:"488181024000001",
-            OrgCode:'101',
+            Uid:this.UserId,
+            OrgCode:this.OrgCode,
             Year:"2019"
           }
           // this.getAxios('/GAppvalProc/GetProcTypes',data).then(success=>{

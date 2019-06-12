@@ -338,7 +338,8 @@
     },
     computed:{
       ...mapState({
-        OrgCode:state =>state.user.orgcode
+        OrgCode:state =>state.user.orgcode,
+        UserId:state =>state.user.userid
       })
     },
     mounted() {
@@ -377,7 +378,7 @@
       //拉取列表数据
       loadData(){
         let data = {
-          Uid:488181024000001,
+          Uid:this.UserId,
           OrgCode:this.OrgCodeNum == ''?this.OrgCodeNum:this.OrgCode,
           Year:'2019',
           PageIndex:this.page.currentPage,

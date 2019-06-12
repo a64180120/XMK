@@ -105,9 +105,6 @@
         //回退的操作人员列表
         backPersonnel:{
           type: Array,
-          default: function () {
-            return []
-          }
         },
         //下一审批岗位的审批人列表 如果为空表示最后一个审批人
         nextApprovaler:{
@@ -138,6 +135,9 @@
           subPeople:[]
         }
       },
+    mounted(){
+      console.log(this.nextApprovaler)
+    },
       watch:{
         value(newValue){
           this.textare = newValue
