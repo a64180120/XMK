@@ -222,7 +222,15 @@ export default {
     },
     mounted(){
         if(this.orgList.length>0){
-            this.getData()
+            this.checkedOrg={
+                OCode:this.$store.state.user.orgcode,
+                OName:this.$store.state.user.orgname,
+                PhId:this.$store.state.user.orgid
+            };
+            this.getData();
+            this.$nextTick(function(){
+                this.$refs.orgtree.setCurrentNode({OCode:this.checkedOrg.OCode});
+            })
         }
 
     },
@@ -235,7 +243,7 @@ export default {
                     PhId:this.$store.state.user.orgid
                 };
                 
-                this.getData()
+                this.getData();
                 this.$nextTick(function(){
                  this.$refs.orgtree.setCurrentNode({OCode:this.checkedOrg.OCode});
                 })

@@ -64,7 +64,7 @@ export default {
           })
       },
     getUserInfo(){ //获取url传参
-      console.log(32313123000)
+
       let index = window.location.href.indexOf('?');
       let ind= window.location.href.indexOf('#');
       let info=window.location.href.slice(index+1).slice(0,ind-index-1).split('&');
@@ -75,7 +75,7 @@ export default {
         data[arr[0]]=arr[1];
       }      
       this.$store.commit('user/setAppinfo',data);
-       console.log(this.$store)
+
       this.getData(data);
     },
     

@@ -147,8 +147,8 @@
                                         <img v-if="audit.FEnable==0" src="@/assets/images/gou.svg" alt="">
                                         <img v-else src="@/assets/images/cha.svg" alt="">
                                         </td>
-                                        <td @click="orgTree(audit)">
-                                            <span  v-for="org of audit.Organizes" class="orgInfo">{{org.OrgName}}</span>
+                                        <td class="atype" @click="orgTree(audit)">
+                                            <span  v-for="org of audit.Organizes">{{org.OrgName}}</span>
                                         </td>
                                         <td>
                                         {{audit.FDescribe}}

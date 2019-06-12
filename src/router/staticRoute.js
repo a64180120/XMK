@@ -24,13 +24,13 @@ const staticRoute = [
       {
         path: '/fund',
         component: () =>
-          import(/* webpackChunkName:'home'*/ '../pages/payfund/index'),
+          import(/* webpackChunkName:'fund'*/ '../pages/payfund/index'),
         meta: { requireAuth: true, type: 'page', name: '资金拨付' }
       },
       {
         path: '/paycenter',
         component: () =>
-          import(/* webpackChunkName:'home'*/ '../pages/paycenter/index'),
+          import(/* webpackChunkName:'paycenter'*/ '../pages/paycenter/index'),
         meta: { requireAuth: true, type: 'page', name: '支付中心' }
       },{
         path: '/payfundapproval',
@@ -45,13 +45,13 @@ const staticRoute = [
       },{
         path: '/paylistapproval',
         component: () =>
-          import(/* webpackChunkName:'approvalcenter'*/ '../pages/paylistapproval/index'),
+          import(/* webpackChunkName:'paylistapproval'*/ '../pages/paylistapproval/index'),
         meta: { requireAuth: true, type: 'page', name: '支付单审批' }
       },
       {
         path: '/bankaccount',
         component: () =>
-          import(/* webpackChunkName:'bankorder'*/ '../pages/bankaccount'),
+          import(/* webpackChunkName:'bankaccount'*/ '../pages/bankaccount'),
         meta: { requireAuth: true, type: 'page', name: '银行账户档案' }
       }
     ]
@@ -62,20 +62,21 @@ const staticRoute = [
     children: [
       {
         path: '',
-        component: () =>
-          import(/* webpackChunkName:'audit'*/ '../pages/systemsetting/auditManage/audit'),
-        meta: { requireAuth: true, type: 'page', name: '审核工作流' }
+        redirect:'audit',
+        // component: () =>
+        //   import(/* webpackChunkName:'audit'*/ '../pages/systemsetting/auditManage/audit'),
+        // meta: { requireAuth: true, type: 'page', name: '审核工作流' }
       },
       {
         path: 'audit',
         component: () =>
-          import(/* webpackChunkName:'audit'*/ '../pages/systemsetting/auditManage/audit'),
+          import(/* webpackChunkName:'systemaudit'*/ '../pages/systemsetting/auditManage/audit'),
         meta: { requireAuth: true, type: 'page', name: '审核工作流' }
       },
       {
         path: 'post',
         component: () =>
-          import(/* webpackChunkName:'post'*/ '../pages/systemsetting/auditManage/post'),
+          import(/* webpackChunkName:'systempost'*/ '../pages/systemsetting/auditManage/post'),
         meta: { requireAuth: true, type: 'page', name: '岗位人员设置' }
       },
       {

@@ -7,17 +7,18 @@ import axios from 'axios'
 import { Message } from 'element-ui'
 import store from '@/store'
 import {  baseURL } from './config.js'
-
+import { Loading } from 'element-ui';
 // create an axios instance
 const service = axios.create({
   baseURL: baseURL, 
   timeout: 10000 // 请求超时时间
 })
-
+let loading;
 // 添加请求拦截器，在发送请求之前做些什么(**具体查看axios文档**)--------------------------------------------
 service.interceptors.request.use(
   config => {
     // 拦截请求 规则
+     loading =  Loading.service({text:'数据加载中...'}); //开启加载中图标..
     return config;
   },
   error => {
@@ -28,7 +29,7 @@ service.interceptors.request.use(
 // 添加响应拦截器 (**具体查看axios文档**)----------------------------------------------------------------
 service.interceptors.response.use(
   response => {
-
+    loading.close();  //关闭加载中图标..
     // 对响应数据做点什么，允许在数据返回客户端前，修改响应的数据
     // 如果只需要返回体中数据，则如下，如果需要全部，则 return response 即可 response.data
     const res = response.data
@@ -41,6 +42,7 @@ service.interceptors.response.use(
     }
   },
   error => {
+    loading.close(); //关闭加载中图标..
     // 对响应错误做点什么
     if (axios.isCancel(error)) {
       Message({ message: 'Ajax Abort: 该请求在axios拦截器中被中断', type: "error" });
