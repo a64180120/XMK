@@ -26,7 +26,7 @@ export default {
       isLogin: state => state.isLogin
     })
   },
- 
+   
   created() {
      this.getUserInfo();
   },
@@ -75,6 +75,7 @@ export default {
         data[arr[0]]=arr[1];
       }      
       this.$store.commit('user/setAppinfo',data);
+       console.log(this.$store)
       this.getData(data);
     },
     

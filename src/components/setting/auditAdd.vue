@@ -155,9 +155,7 @@ export default {
             }
         }
     },
-    mounted(){
-        console.log(this.orglist,2222)
-    },
+  
     data(){
         return{
             orders:{
@@ -195,16 +193,17 @@ export default {
          
         })
     },
+
     watch:{
-        splx(val){ 
-            if(val){
-                this.$set(this.info,'SPLXPhid',val)
-            }
-        },
-        auditinfo(val){
-            console.log(val)
-            this.selected=1;
-             if(val){ //修改时获取详细数据
+
+    },
+    created(){
+        this.updateInfo();
+    },
+    methods:{
+        updateInfo(){
+            this.$set(this.info,'SPLXPhid',this.splx);  //设置审批类型
+            if(this.auditinfo){ //修改时获取详细数据
                  let orgs=[];
                  this.auditinfo.Organizes.map(org => {
                      orgs.push(org.OrgId);
@@ -222,22 +221,12 @@ export default {
                         this.info=res.Data;
                         this.info.org=res.Data.Organizes;
                         this.postList=res.Data.PostModels;
-                        console.log(this.postList)
                     }
                 }).catch(err=>{
                     this.$msgBox.show('获取流程信息失败!')
                 })
-            }else{
-                this.postList=[ {FMode:0,post:''}]
-                this.info={  
-                    FEnable:0,
-                    org:[],
-                    SPLXPhid:this.splx
-                }
             }
-        }
-    },
-    methods:{
+        },
         //流程切换
         liucheng(str){
             if(str<1||str>3){

@@ -61,7 +61,7 @@
             </div>
         </div>
         <el-dialog class="postAddModel" append-to-body title="选择操作员" :visible.sync="showAddAuditer">
-            <auditer :info="userList" :getuser="users" @auditer-cancle="auditerCancle"/>
+            <auditer v-if="showAddAuditer" :info="userList" :getuser="users" @auditer-cancle="auditerCancle"/>
         </el-dialog>
     </div>
 </template>
@@ -77,8 +77,8 @@ export default {
             default:'add'
         },
         postinfo:{
-            type:String,
-            default:''
+            type:Number,
+            default:0
         }
     },
     watch:{
@@ -200,7 +200,6 @@ export default {
            
         },
         showAuditer(){
-            console.log(this.users)
             if(this.type=='add'){
                 this.users=''
             }else{
