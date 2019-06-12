@@ -211,8 +211,8 @@
 
 <script>
 import applyBill from '@/components/applyBill/applybill'
-import auditfollow from '../../components/auditFollow/auditfollow'
-import ImgView from '../../components/imgView/imgView'
+import auditfollow from '@/components/auditFollow/auditfollow'
+import ImgView from '@/components/imgView/imgView'
 import { getPayment, getBudgetAccountsList } from '@/api/paycenter'
 import { mapState } from 'vuex'
 
