@@ -47,7 +47,7 @@
               <ul class="apply-info">
                 <li>
                   <span>付款单位：</span>
-                  <!-- <div>{{JSON.stringify(orglist).indexOf(detail.Mst.)}}</div> -->
+                  <div>{{orgName}}</div>
                 </li>
                 <li>
                   <span>付款账户：</span>
@@ -955,6 +955,13 @@ export default {
     }
   },
   computed: {
+    orgName() {
+      let orgListJson = JSON.stringify(this.orglist)
+      let phidIndex = orgListJson.indexOf(this.data.data[0].Mst.OrgPhid)
+      let nameIndex = orgListJson.indexOf('OName', phidIndex) + 8
+      let nameEndIndex = orgListJson.indexOf('"', nameIndex)
+      return orgListJson.slice(nameIndex, nameEndIndex)
+    },
     ...mapState({
       orgid: state => state.user.orgid,
       userid: state => state.user.userid,
