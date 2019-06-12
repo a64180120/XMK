@@ -284,7 +284,7 @@
       <!--审批弹框-->
       <approval-dialog ref="approvalDialog" :rowData="selection" @refresh="loadData" @dialogFlow="childrenAuditfollow" @subSuc="plSubSuc()"></approval-dialog>
       <!--生成支付单弹框-->
-      <paylist-dialog ref="paylistDialog" :rowData="selection" :isApproval="Approval" @dialogFlow="childrenAuditfollow" @subSuc="plSubSuc()"></paylist-dialog>
+      <paylist-dialog ref="paylistDialog" :rowData="selection" @refresh="loadData" :isApproval="Approval" @dialogFlow="childrenAuditfollow" @subSuc="plSubSuc()"></paylist-dialog>
       <!--查看审批流程-->
       <auditfollow :visible.sync="visible" :auditMsg="auditMsg"></auditfollow>
       <!--组织树-->
@@ -367,11 +367,10 @@
     mounted() {
       console.log(this.isApproval)
       this.selection = []
-      this.isApproval = this.$route.query.approval
+      this.isApproval = eval(this.$route.query.approval)
       this.SplxPhid = this.$route.query.SplxPhid
       console.log(this.isApproval)
       console.log(this.SplxPhid)
-      debugger
       // this.testData()
       this.loadData()
       this.getOrgList()
@@ -400,14 +399,15 @@
     },
     computed:{
       ...mapState({
-        OrgCode:state =>state.user.orgcode
+        OrgCode:state =>state.user.orgcode,
+        UserId:state =>state.user.userid
       })
     },
     methods:{
       //拉取列表数据
       loadData(){
         let data = {
-          Uid:488181024000001,
+          Uid:this.UserId,
           OrgCode:this.OrgCodeNum == ''?this.OrgCodeNum:this.OrgCode,
           Year:'2019',
           PageIndex:this.page.currentPage,

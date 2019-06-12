@@ -178,6 +178,7 @@
  
         <fDialog :title="(auditBtn=='add'?'新增':'修改')+'审批流'"  :visible.sync="auditAddShow">
             <audit-add 
+                v-if="auditAddShow"
                 :orglist="orglist"
                 :splx="splx" 
                 :auditinfo="auditinfo" 
@@ -187,7 +188,7 @@
                  @add-cancle="addCancle"></audit-add>
         </fDialog>
          <fDialog  :title="'审批类型'+(typeBtn=='add'?'新增':'修改')" :visible.sync="auditTypeAddShow">
-            <audittype-add :type="typeBtn" :typeinfo="typeinfo" @add-cancle="typeCancle"></audittype-add>
+            <audittype-add v-if="auditTypeAddShow" :type="typeBtn" :typeinfo="typeinfo" @add-cancle="typeCancle"></audittype-add>
         </fDialog>
     </div>
 </template>
@@ -335,7 +336,6 @@ export default {
         //修改启用组织
         updateOrg(data){
             PostUpdateProcOrganize(data).then(res => {
-                debugger
                 if(res.Status=='error'){
                     this.$msgBox.error(res.Msg);
                 }else{

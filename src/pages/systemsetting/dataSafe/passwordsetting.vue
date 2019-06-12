@@ -18,7 +18,7 @@
                 :disabled="disabled"
                 :type="oldPasswordCanSee?'text':'password'"
                 v-model="oldPassword"
-                placeholder="请输入6位数字口令"
+                placeholder="请输入原数字口令"
               ></el-input>
               <img
                 v-show="oldPasswordCanSee&&!disabled"
@@ -41,7 +41,7 @@
                 :disabled="disabled"
                 :type="newPasswordCanSee?'text':'password'"
                 v-model="newPassword"
-                placeholder="请输入6位数字口令"
+                placeholder="请输入6位新数字口令"
               ></el-input>
               <img
                 v-show="newPasswordCanSee&&!disabled"
@@ -63,7 +63,7 @@
                 @keyup.native="clearNoNum($event)"
                 :type="confirmPasswordCanSee?'text':'password'"
                 v-model="confirmPassword"
-                placeholder="请输入6位数字口令"
+                placeholder="请再次输入6位数字口令"
               ></el-input>
               <img
                 v-show="confirmPasswordCanSee"

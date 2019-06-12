@@ -3,7 +3,7 @@
     <!-- 支付单查看 -->
     <el-dialog
       append-to-body
-      :visible.sync="data.openDialog"
+      :visible.sync="openDialog"
       width="80%"
       :close-on-click-modal="false"
       class="payCenter payList"
@@ -40,7 +40,7 @@
                 </li>
                 <li>
                   <span>支付方式：</span>
-                  <div>{{FPaymethod?(FPaymethodList.find(item=>item.value == detail.Mst.FPaymethod)).label:''}}</div>
+                  <div></div>
                 </li>
               </ul>
             </div>
@@ -158,7 +158,7 @@
       </el-row>
       <el-row :gutter="10">
         <div class="bottom">
-          <span v-if="!reSetting" @click="showAuditfollow = true">
+          <span >
             <template v-if="data.itemType == 'notApprove'">待送审</template>
             <template v-else-if="data.itemType == ''">审批中</template>
             <template v-else-if="data.itemType == 'approval'">待审批</template>
@@ -172,22 +172,22 @@
       </el-row>
     </el-dialog>
     <!-- 关联申请单信息查看 -->
-    <el-dialog
-      append-to-body
-      :visible.sync="fundDetailData.openDialog"
-      width="80%"
-      :close-on-click-modal="false"
-      class="dialog detail-dialog payCenter"
-    >
-      <div slot="title" class="dialog-title">
-        <span style="float: left;">查看申请</span>
-      </div>
-      <apply-bill :data="fundDetailData" @showImg="showImg">
-        <div slot="btn-group">
-          <el-button class="btn" size="mini">打印</el-button>
-        </div>
-      </apply-bill>
-    </el-dialog>
+<!--    <el-dialog-->
+<!--      append-to-body-->
+<!--      :visible.sync="fundDetailData.openDialog"-->
+<!--      width="80%"-->
+<!--      :close-on-click-modal="false"-->
+<!--      class="dialog detail-dialog payCenter"-->
+<!--    >-->
+<!--      <div slot="title" class="dialog-title">-->
+<!--        <span style="float: left;">查看申请</span>-->
+<!--      </div>-->
+<!--      <apply-bill :data="fundDetailData" @showImg="showImg">-->
+<!--        <div slot="btn-group">-->
+<!--          <el-button class="btn" size="mini">打印</el-button>-->
+<!--        </div>-->
+<!--      </apply-bill>-->
+<!--    </el-dialog>-->
     <!--图片预览-->
     <el-dialog
       class="dialog img-dialog payCenter"
@@ -204,7 +204,7 @@
       </div>
       <img-view v-if="imgDialog"></img-view>
     </el-dialog>
-    <auditfollow :visible="showAuditfollow" @update:visible="closeAuditFollow"></auditfollow>
+<!--    <auditfollow :visible="showAuditfollow" @update:visible="closeAuditFollow"></auditfollow>-->
     <!-- 审批弹框 -->
   </div>
 </template>
@@ -223,15 +223,16 @@ export default {
     auditfollow,
     ImgView
   },
-  inject: ['refreshIndexData'],
   props: {
     data: {
       type: Object,
-      default: {
-        openDialog: false,
-        data: {},
-        itemType: '' //'':审批中,error':支付异常,'notApprove':待送审、未通过,'success':支付成功,'approval':审批,
+      default:function () {
+        return {}
       }
+    },
+    openDialog:{
+      type: Boolean,
+      default:false
     }
   },
   data() {
@@ -399,11 +400,14 @@ export default {
       }
     }
   },
+  mounted(){
+    this.getData()
+  },
   methods: {
     // 获取支付单详情
     getData() {
       getPayment({
-        id: this.detail.Mst.PhId,
+        id: this.data.RefbillPhid,
         // id: 401190528000001,
         uid: this.userid || 488181024000001, //用户id
         orgid: this.orgid, //组织id
@@ -516,7 +520,7 @@ export default {
     },
     // 关闭支付单弹框
     payListClose(done) {
-      done()
+      this.$emit('closeDetail',false)
     },
     // dialog中的check事件
     selectOne($scope) {
@@ -541,26 +545,6 @@ export default {
     }
   },
   watch: {
-    'data.openDialog'(newVal) {
-      if (newVal) {
-        console.log(this.data.data)
-        this.allSelected = false
-        this.detail = this.data.data[0]
-        // this.$forceUpdate()
-        this.$nextTick(() => {
-          this.getData()
-          this.getAccountList({
-            OrgPhid: this.orgid,
-            selectStr: ''
-          })
-          if (this.kemuList.length == 0) {
-            this.getBudgetAccountsList()
-          }
-        })
-      } else {
-        this.closeAuditFollow()
-      }
-    }
   },
   computed: {
     ...mapState({

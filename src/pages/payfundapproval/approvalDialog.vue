@@ -75,15 +75,15 @@
             PostPhid:this.rowData[0].PostPhid
           }
 
-          this.getAxios('/GAppvalPost/GetAppvalProcAndOperator',data).then(success=>{
-            if (success && success.Status === 'success'){
-              this.$set(this.approvalFollow,0,success.Process);
-              this.nextApprovaler = success.AppvalPost.Operators;
-              console.log(success)
+          this.getAxios('/GAppvalPost/GetAppvalProcAndOperator',data).then(res=>{
+            if (res && res.Status === 'success'){
+              this.$set(this.approvalFollow,0,res.Process);
+              this.nextApprovaler = res.AppvalPost.Operators;
+              console.log(res)
             }else {
               let that = this
               this.$msgBox.show({
-                content: success.Msg,
+                content: res.Msg,
                 fn:function () {
                   that.openDialog =false
                 }
@@ -154,8 +154,8 @@
             data.NextOperators = arr
             data.BackPostPhid = this.backPost.PhId
           }
-          this.postAxios('/GAppvalRecord/PostApprovalRecord',data).then(success=>{
-            if (success.Status == 'success'&&success) {
+          this.postAxios('/GAppvalRecord/PostApprovalRecord',data).then(res=>{
+            if (res.Status == 'success'&&res) {
               let that= this
               this.visible = false
               this.$msgBox.show({
@@ -169,7 +169,7 @@
                 }
               })
             }else {
-              this.$msgBox.show(success.Msg)
+              this.$msgBox.show(res.Msg)
             }
           }).catch(err=>{
             this.$msgBox.show('请求出错')
@@ -183,7 +183,6 @@
           this.$emit('refresh')
         },
         backAproval(val){
-          debugger
           console.log(val)
           if (!val ){
             this.getBackApprovalPost()
