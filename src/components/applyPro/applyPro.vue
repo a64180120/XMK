@@ -406,9 +406,9 @@
         for(var i in this.PaymentXmDtl){
           for(var j in this.PaymentXmDtl[i].PaymentDtls){
            // QtKmdm: '', //（预算项目编码）QtKmmc: '' , //（预算项目名称） XmProjcode: '', //（项目编码）XmProjname: '', //（项目名称）
-            this.PaymentXmDtl[i].PaymentDtls[j].XmMstPhid=this.PaymentXmDtl[i].PaymentXm.XmMstPhid;
+            this.PaymentXmDtl[i].PaymentDtls[j].XmMstPhid=this.PaymentXmDtl[i].PaymentXm.XmMstPhid;/*
             this.PaymentXmDtl[i].PaymentDtls[j].QtKmdm=this.PaymentXmDtl[i].PaymentXm.XmProjcode;
-            this.PaymentXmDtl[i].PaymentDtls[j].QtKmmc=this.PaymentXmDtl[i].PaymentXm.XmProjname;
+            this.PaymentXmDtl[i].PaymentDtls[j].QtKmmc=this.PaymentXmDtl[i].PaymentXm.XmProjname;*/
           }
         }
         var data = {
@@ -633,8 +633,12 @@
             if(this.choosedProject==this.prodataList[i].FName){
               // BudgetdtlPhid: '484190514000010', //（预算明细主键）
               // BudgetdtlName: 'mx1', //（预算明细名称）
+              //QtKmdm: '', //（预算项目编码）
+              //QtKmmc: '' , //（预算项目名称）
               this.PaymentXmDtl[this.choosedPro[0]].PaymentDtls[this.choosedPro[1]].BudgetdtlPhid=this.prodataList[i].PhId;
               this.PaymentXmDtl[this.choosedPro[0]].PaymentDtls[this.choosedPro[1]].BudgetdtlName=this.prodataList[i].FName;
+              this.PaymentXmDtl[this.choosedPro[0]].PaymentDtls[this.choosedPro[1]].QtKmdm=this.prodataList[i].FBudgetAccounts;
+              this.PaymentXmDtl[this.choosedPro[0]].PaymentDtls[this.choosedPro[1]].QtKmmc=this.prodataList[i].FBudgetAccounts_EXName;
             }
           }
         }
