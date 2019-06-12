@@ -35,7 +35,7 @@
                     </el-select>
                 </div>
                  <div class="rightBtn">
-                    <search placeholder='岗位代码/岗位名称' v-model="search.val" @btnClick="searchFn"></search>
+                    <search placeholder='岗位代码/岗位名称' v-model="search.val" @btnClick="getData"></search>
                 </div>
             </div>
             <div class="content">
@@ -188,10 +188,6 @@ export default {
         this.getorglist();
     },
     methods:{
-        searchFn(val){
-            this.search.val=val;
-            this.getData();
-        },
         refresh(){
             this.getData();
         },
@@ -273,22 +269,27 @@ export default {
         },
         //获取岗位列表
         getData(){
+            let orgids=[];
+            for(let id of this.search.org){
+                orgids.push(id.PhId)
+            }
             let data={
                 PageIndex:this.pageIndex-1,//  (分页页码)
                 PageSize:this.pageSize,//  （分页大小）
                 Orgid: this.$store.state.user.orgid, //  （组织id）
                 Ucode: 'Admin', //（用户编码）  admin为显示全部
-               // Ucode:this.$store.state.user.usercode,
+               //Ucode:this.$store.state.user.usercode,
                 PostName:this.search.val,//搜索框值
                 EnableMark:this.search.enable,//启用停用
-                // SearchOrgid:this.search.org
+                SearchOrgid:orgids
             }
             GetAppvalPostOpersList(data).then(res => {
                 if(res.Status=='error'){
                     this.$msgBox.show(res.Msg)
                 }else{
-                    this.postList=res;
-
+                    
+                    this.postList=res.Record;
+                    this.total=res.totalRows;
                     this.checked=false;
                     this.allChecked(false);
                 }

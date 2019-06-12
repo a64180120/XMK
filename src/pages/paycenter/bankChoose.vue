@@ -51,7 +51,7 @@ export default {
     bankConfirm() {
       var data = this.$refs.bankorder.choosedItem
       if (data.length != 1) {
-        this.$msgBox.error('请选择一条数据。')
+        this.$msgBox.error('请选择一条数据!')
         return
       }
       this.data.openDialog = false

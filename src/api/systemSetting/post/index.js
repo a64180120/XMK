@@ -19,7 +19,7 @@ export function PostUpdate(param){
 export function PostDelete(param){
     return Vue.prototype.postAxios('GSP/GAppvalPost/PostDelete',param)
 }
-//获取组织
+//获取当前组织下部门
 export function GetAllChildTree(param){
     return Vue.prototype.getAxios('GQT/CorrespondenceSettingsApi/GetAllChildTree',param)
 }

@@ -34,7 +34,7 @@
             <li class="auditInfo clear">
                 <div>启用组织</div>
                 <div style="position:relative" @click.stop="orgVisible=true"  :class="{fontRed:checkContent.org}">
-                    <orgtree :visible.sync="orgVisible"  @confirm="getOrg" :data="orgList" :checked-org="orgSelected"></orgtree>
+                    <orgtree :visible.sync="orgVisible"  @confirm="getOrg" :data="orglist" :checked-org="orgSelected"></orgtree>
                     <el-input   readonly   placeholder="请选择组织(必填)"></el-input>
                     <div class="orgInfoCon">
                         <input style="border:0;cursor:pointer" v-if="info.org.length==0" type="text" disabled placeholder="请选择组织(必填)">
@@ -118,6 +118,7 @@
 <script>
 import fDialog from "@/components/attechment/dialog"
 import Orgtree from "@/components/orgtree/index";
+
 import {PostAddProc,GetProcDetail,PostUpdateProc} from '@/api/systemSetting/audit'
 import {mapState} from 'vuex'
 export default {
@@ -146,7 +147,16 @@ export default {
             default(){
                 return [{PhId:'003',FCode:'1111',FName:'财务资产部'},{PhId:'001',FCode:'2222',FName:'资源部'}]
             }
+        },
+        orglist:{  //组织部门列表
+            type:Array,
+            default(){
+                return []
+            }
         }
+    },
+    mounted(){
+        console.log(this.orglist,2222)
     },
     data(){
         return{
@@ -182,7 +192,7 @@ export default {
     },
     computed:{
         ...mapState({
-            orgList : state => state.user.orglist,
+         
         })
     },
     watch:{
@@ -192,8 +202,8 @@ export default {
             }
         },
         auditinfo(val){
-            this.selected=1;
             console.log(val)
+            this.selected=1;
              if(val){ //修改时获取详细数据
                  let orgs=[];
                  this.auditinfo.Organizes.map(org => {
@@ -218,7 +228,7 @@ export default {
                     this.$msgBox.show('获取流程信息失败!')
                 })
             }else{
-                console.log(this.info,this.splx)
+                this.postList=[ {FMode:0,post:''}]
                 this.info={  
                     FEnable:0,
                     org:[],
@@ -322,7 +332,6 @@ export default {
                         splx=opt;
                     }
                 })
-                debugger
                 info={
                     OrgPhid:this.$store.state.user.orgid,
                     OrgCode:this.$store.state.user.orgcode,
@@ -351,9 +360,8 @@ export default {
                 }else{
                     let orgids=[],data={};
                     for(let org of this.info.org){
-                        orgids.push(org.OrgId);
+                        orgids.push(org.OrgId?org.OrgId:org.PhId);
                     }
-                    console.log(orgids,this.info.org)
                     data.ApprovalTypeId=splx.PhId;
                     data.BillType=splx.Value;
                     data.ProcCode=this.info.FCode;
@@ -373,7 +381,8 @@ export default {
                         PostAddProc(data).then(res => {
                             this.$msgBox.show(res.Msg);
                             if(res.Status=='success'){
-                                this.$emit('add-cancle');
+                                this.$emit('add-cancle',true);
+                                this.reset();
                             }
                         }).catch(err => {
                             this.$msgBox.show('保存失败!');
@@ -388,7 +397,8 @@ export default {
                     PostAddProc(data).then(res => {
                         this.$msgBox.show(res.Msg);
                         if(res.Status=='success'){
-                            this.$emit('add-cancle');
+                            this.$emit('add-cancle',true);
+                            this.reset();
                         }
                     }).catch(err => {
                         this.$msgBox.show('保存失败!');
@@ -405,7 +415,8 @@ export default {
                     PostUpdateProc(data).then(res => {
                         this.$msgBox.show(res.Msg);
                         if(res.Status=='success'){
-                            this.$emit('add-cancle');
+                            this.$emit('add-cancle',true);
+                            this.reset();
                         }
                     }).catch(err => {
                         this.$msgBox.show('修改失败!');
@@ -420,7 +431,8 @@ export default {
                 PostUpdateProc(data).then(res => {
                     this.$msgBox.show(res.Msg);
                     if(res.Status=='success'){
-                        this.$emit('add-cancle');
+                        this.$emit('add-cancle',true);
+                        this.reset();
                     }
                 }).catch(err => {
                     this.$msgBox.show('修改失败!');
@@ -443,6 +455,15 @@ export default {
                     this.deleteList.push(item);
                 }
                 this.postList.splice(index,1);
+            }
+        },
+        reset(){
+            this.selected=1;
+            this.postList=[ {FMode:0,post:''}]
+            this.info={  
+                FEnable:0,
+                org:[],
+                SPLXPhid:this.splx
             }
         }
     },
