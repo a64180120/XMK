@@ -17,6 +17,7 @@ const state = {
     orgid:'', //id
     orgcode:'', //编码
     orgname:'',//名称
+    year:'',//年份
     appinfo:{},//ajax登录信息
 };
 
