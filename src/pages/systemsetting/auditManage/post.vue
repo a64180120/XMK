@@ -146,7 +146,7 @@
         <!--组织树弹窗   visible:显示,,,,@confirm接收选中的值   data组织列表  checked-org当前选中的组织的code列表-->
         <orgtree :visible.sync="orgVisible"  @confirm="getOrg" :data="orglist" :checked-org="orgSelected"></orgtree>
         <el-dialog  :title="(postBtn=='add'?'新增':'修改')+'岗位'" :visible.sync="postAddShow">
-            <post-add :postinfo="postinfo" :type="postBtn" @add-cancle="addCancle"></post-add>
+            <post-add v-if="postAddShow" :postinfo="postinfo" :type="postBtn" @add-cancle="addCancle"></post-add>
         </el-dialog>
     </div>
 </template>
@@ -179,7 +179,7 @@ export default {
             pageIndex:1,
             total:0,
             orgSelected:[],
-            postinfo:'',//修改时传入的phid
+            postinfo:0,//修改时传入的phid
             orgVisible:false,
         }
     },
@@ -212,7 +212,7 @@ export default {
             if(str=='update'){
                 this.postinfo=this.choosedItem[0].GAppvalPost.PhId;
             }else{
-                this.postinfo=''
+                this.postinfo=0
             }
             this.postAddShow=true;
             this.postBtn=str;

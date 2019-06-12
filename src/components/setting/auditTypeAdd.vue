@@ -45,7 +45,7 @@ export default {
     data(){
         return{
             orderType:'001',
-            auditType:{TypeCode:666,TypeName:''},
+            auditType:{TypeCode:'',TypeName:''},
             options:[
                 {Value:'001',label:'资金拨付单'},
                 {Value:'002',label:'支付单'},
@@ -56,38 +56,39 @@ export default {
         }
     },
     watch:{
-        typeinfo(val){
+    },
+    created(){
+        this.updateInfo();
+    },
+    methods:{
 
+        //修改
+        updateInfo(){
+            let val =this.typeinfo;
             if(val){
                 this.orderType=val.Value;
                 this.auditType.TypeName=val.TypeName;
                 this.auditType.TypeCode=val.TypeCode;   
-            }else{
-                this.auditType.TypeName='';
-
             }
-           
-        }
-    },
-    methods:{
+        },
         update(){  //保存
             let data={
                 "BillType":this.orderType,
                 "ApprovalTypeName":this.auditType.TypeName,
                 "ApprovalTypeCode":this.auditType.TypeCode,
                 ApprovalTypeId:this.typeinfo.PhId,
-                "Orgid":'521180820000001',
-                "OrgCode":'1'
+                "Orgid":this.$store.state.user.orgid,
+                "OrgCode":this.$store.state.user.orgcode
             }
             this.fnType(this.typeinfo.PhId,data).then(res=>{
                 if(res.Status=="error"){
-                    this.$msgBox.show(res.Msg);
+                    this.$msgBox.error(res.Msg);
                 }else{
                     this.$msgBox.show('保存成功!')
                     this.$emit('add-cancle',true);
                 }
             }).catch(err=>{
-                this.$msgBox.show('保存失败!')
+                this.$msgBox.error('保存失败!')
             })
         },
         fnType(bool,data){
