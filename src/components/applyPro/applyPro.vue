@@ -56,6 +56,7 @@
                                :label="pro.FProjName"
                                :key="pro.FProjCode"
                                :value="pro.FProjCode"
+                               :disabled="pro.checked"
                     ></el-option>
                   </el-select>
                 </span>
@@ -337,6 +338,9 @@
             this.PaymentMst.FDepphid= val.bm.PhId;//（部门主键）
             this.PaymentMst.FDepcode= val.bm.OCode;//（部门编码）
             this.PaymentMst.FDepname= val.bm.OName;//（部门名称）
+            for(var i in val.Mst){
+              val.Mst[i].checked=false;
+            }
           }
         },
         deep:true,
@@ -346,22 +350,26 @@
       this.$nextTick(
         this.getOrgList()
       );
+      for(var i in this.prodata.Mst){
+        this.prodata.Mst[i].checked=false;
+      }
+      console.log(this.prodata.Mst);
       if(!this.isAdd){
         this.getApply();
       }else{
         this.PaymentMst.FYear= this.year;//（年度）
         this.PaymentMst.FName= '';//（申请单名）
-        this.PaymentMst. FOrgphid=this.orgid;//（组织主键）
-        this.PaymentMst.  FOrgcode=this.orgcode;//（组织编码）
-        this.PaymentMst.  FOrgname=this.orgname;//（组织名）
-        this.PaymentMst. FDepphid=this.prodata.bm.PhId;//（部门主键）
-        this.PaymentMst.  FDepcode=this.prodata.bm.OCode;//（部门编码）
-        this.PaymentMst.  FDepname=this.prodata.bm.OName;//（部门名称）
-        this.PaymentMst. FAmountTotal= '';//（申请单金额）
-        this.PaymentMst.  FDate= '';//（申请单时间）2019-05-30
-        this.PaymentMst.  FApproval='0';//（审批状态：0- 未审批 1-待审批 2- 未通过 9-审批通过）
-        this.PaymentMst. IsPay= '0';//（支付状态：0- 否 1-待支付 9-支付完成）
-        this.PaymentMst. FDescribe= ''; //（申报说明）
+        this.PaymentMst.FOrgphid=this.orgid;//（组织主键）
+        this.PaymentMst.FOrgcode=this.orgcode;//（组织编码）
+        this.PaymentMst.FOrgname=this.orgname;//（组织名）
+        this.PaymentMst.FDepphid=this.prodata.bm.PhId;//（部门主键）
+        this.PaymentMst.FDepcode=this.prodata.bm.OCode;//（部门编码）
+        this.PaymentMst.FDepname=this.prodata.bm.OName;//（部门名称）
+        this.PaymentMst.FAmountTotal= '';//（申请单金额）
+        this.PaymentMst.FDate= '';//（申请单时间）2019-05-30
+        this.PaymentMst.FApproval='0';//（审批状态：0- 未审批 1-待审批 2- 未通过 9-审批通过）
+        this.PaymentMst.IsPay= '0';//（支付状态：0- 否 1-待支付 9-支付完成）
+        this.PaymentMst.FDescribe= ''; //（申报说明）
         this.PaymentMst.FRemarks= '' //（备注）
 
         this.PaymentXmDtl=[];
@@ -482,7 +490,8 @@
       delPro(index){
         let ds=index;
         if(typeof ds=="number"){
-          this.PaymentXmDtl.splice(ds,1)
+          this.PaymentXmDtl.splice(ds,1);
+          this.xmDisable()
         }else{
           let delList=[];
           for(var i in this.xmCheckList){
@@ -501,9 +510,12 @@
             for(var i in this.xmCheckList){
               this.xmCheckList[i]=false;
             }
-            this.xmCheckList.splice(this.xmCheckList.length-delList.length,this.xmCheckList.length-delList.length)
+            this.xmCheckList.splice(this.xmCheckList.length-delList.length,this.xmCheckList.length-delList.length);
             this.$msgBox.show({
-              content: '删除成功。'
+              content: '删除成功。',
+              fn:() => {
+                this.xmDisable()
+              }
             })
           }
 
@@ -554,7 +566,6 @@
       },
       //删除
       deleteApply:function(){
-        console.log(this.applyNum+'这里添加数据查询方法');
         this.msgType=false;
         this.delmsgType=true;
         this.delSOD=true;
@@ -668,6 +679,18 @@
             //this.PaymentXmDtl[index].PaymentXm.FAmountTotal=this.prodata.Mst[i].FProjAmount;
             this.PaymentXmDtl[index].PaymentXm.FRemarks='';
             this.getProMoney(index,this.prodata.Mst[i].PhId);
+          }
+        }
+        this.xmDisable();
+      },
+      //禁用项目选择
+      xmDisable:function(){
+        for(var i in this.prodata.Mst){
+          this.prodata.Mst[i].checked=false;
+          for(var j in this.PaymentXmDtl){
+            if( this.PaymentXmDtl[j].PaymentXm.XmMstPhid==this.prodata.Mst[i].PhId){
+              this.prodata.Mst[i].checked=true;
+            }
           }
         }
       },
