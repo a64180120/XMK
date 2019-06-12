@@ -264,7 +264,7 @@
     <!--组织树-->
     <orgtree :data="orgtreeData" :checkedOrg="checkedOrg" :visible.sync="orgType" @confirm="getOrg"></orgtree>
     <!--支付单查看-->
-    <paylist :data="payListData" :visible.sync="payListVisible" ref="payList"></paylist>
+    <paylist :data="payListData" v-if="openDialog" :openDialog="openDialog" @closeDetail="closeDetail" ref="payList"></paylist>
   </section>
 </template>
 
@@ -290,7 +290,8 @@
         IsIndeterminate:false, //列表中是否有选中的值并且不是全选
         check:[],//列表所有选中状态
         selection:[],//选中后的值
-        payListData:[],
+        payListData:{
+        },
         auditMsg:[],//审批流程 数据
         select:"",//类型
         openDetailDialog:false,
@@ -337,11 +338,14 @@
     },
     computed:{
       ...mapState({
-        OrgCode:state =>state.user.orgcode
+        OrgCode:state =>state.user.orgcode,
+        UserId:state =>state.user.userid
       })
     },
     mounted() {
-      this.isApproval = this.$route.query.approval
+      this.isApproval =eval(this.$route.query.approval)
+      console.log(this.isApproval)
+      console.log(typeof this.isApproval)
       this.SplxPhid = this.$route.query.SplxPhid
       this.loadData()
       this.getOrgList()
@@ -374,7 +378,7 @@
       //拉取列表数据
       loadData(){
         let data = {
-          Uid:488181024000001,
+          Uid:this.UserId,
           OrgCode:this.OrgCodeNum == ''?this.OrgCodeNum:this.OrgCode,
           Year:'2019',
           PageIndex:this.page.currentPage,
@@ -446,11 +450,10 @@
       },
       //单行点击事件
       handleRowClick(row,idx){
-        console.clear()
-        this.selection = row
-        console.log(this.selection)
+
         this.payListData = row
-        this.payListVisible =true
+
+        this.openDialog =true
         this.detailData = row
       },
       //当前页显示多少条数据
@@ -541,6 +544,10 @@
         }
         this.loadData()
       },
+      //
+      closeDetail(e){
+        this.openDialog=e
+      }
     }
   }
 </script>

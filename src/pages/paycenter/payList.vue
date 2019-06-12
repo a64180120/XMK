@@ -47,7 +47,7 @@
               <ul class="apply-info">
                 <li>
                   <span>付款单位：</span>
-                  <div>浙江省总工会</div>
+                  <div>{{orgName}}</div>
                 </li>
                 <li>
                   <span>付款账户：</span>
@@ -61,7 +61,7 @@
                         v-if="accountList.length>0"
                         v-for="item in accountList"
                         :label="item.FBankname"
-                        :value="item.PhId"
+                        :value="item.PhId.toString()"
                       ></el-option>
                     </el-select>
                   </div>
@@ -87,7 +87,7 @@
                   </div>
                   <div
                     v-else
-                  >{{FPaymethod?(FPaymethodList.find(item=>item.value == detail.Mst.FPaymethod)).label:''}}</div>
+                  >{{detail.Mst.FPaymethod?(FPaymethodList.find(item=>item.value == detail.Mst.FPaymethod)).label:''}}</div>
                 </li>
               </ul>
             </div>
@@ -337,6 +337,7 @@
     ></pay-error-handle>
     <!-- 送审 -->
     <go-approval
+      :bType="'002'"
       v-if="approvalData.openDialog"
       :father="data"
       :reSetting="reSetting"
@@ -345,13 +346,6 @@
     <!-- 银行档案 -->
     <bank-choose :data="bankChooseData" @getBank="getBank"></bank-choose>
     <auditfollow :visible="showAuditfollow" @update:visible="closeAuditFollow"></auditfollow>
-    <!-- 审批弹框 -->
-    <approval-dialog
-      ref="approvalDialog"
-      :title="appDialog.title"
-      :btn-group="appDialog.btnGroup"
-      :data="approvalData"
-    ></approval-dialog>
   </div>
 </template>
 
@@ -363,7 +357,6 @@ import goApproval from './goApproval.vue'
 import bankChoose from './bankChoose'
 import auditfollow from '../../components/auditFollow/auditfollow'
 import ImgView from '../../components/imgView/imgView'
-import approvalDialog from '../payfundapproval/approvalDialog.vue'
 import { BankAccountList } from '@/api/bankaccount'
 import {
   getPayment,
@@ -382,7 +375,6 @@ export default {
     goApproval,
     bankChoose,
     auditfollow,
-    approvalDialog,
     ImgView
   },
   inject: ['refreshIndexData'],
@@ -391,7 +383,7 @@ export default {
       type: Object,
       default: {
         openDialog: false,
-        data: {},
+        data: [],
         itemType: '' //'':审批中,error':支付异常,'notApprove':待送审、未通过,'success':支付成功,'approval':审批,
       }
     }
@@ -459,7 +451,7 @@ export default {
           width: '200'
         },
         {
-          name: 'FPayBankcode',
+          name: 'FRecBankname',
           label: '开户行',
           width: '200'
         },
@@ -568,7 +560,8 @@ export default {
       detail: {
         Mst: {
           FCode: '',
-          FPaymethod: 1
+          FPaymethod: 1,
+          PhId: ''
         },
         Dtls: []
       },
@@ -603,7 +596,11 @@ export default {
             Object.assign(this.detail.Mst, res.Mst)
             res.Dtls.forEach(item => (item.choosed = false))
             this.detail.Dtls = res.Dtls
-            this.account = res.Dtls[0].BankPhid
+            this.account =
+              res.Dtls[0].BankPhid == '0' ? '' : res.Dtls[0].BankPhid
+          }
+          if (res.Mst.FPaymethod == 0) {
+            this.detail.Mst.FPaymethod = ''
           }
         })
         .catch(err => {
@@ -665,7 +662,6 @@ export default {
           }
         })
       }
-      console.log('save', saveData)
       savePayList({
         uid: this.userid,
         orgid: this.orgid,
@@ -676,10 +672,15 @@ export default {
             this.$msgBox.error(res.Msg)
           } else {
             this.getData()
-            this.getData('old')
-            this.$msgBox.show('保存成功')
+            if (this.reSetting) {
+              this.getData('old')
+            }
             this.refreshIndexData()
-            if (postAddAppvalRecord) postAddAppvalRecord()
+            if (postAddAppvalRecord) {
+              postAddAppvalRecord()
+            } else {
+              this.$msgBox.show('保存成功')
+            }
           }
         })
         .catch(err => {
@@ -727,15 +728,17 @@ export default {
           if (item.choosed) {
             item.FRecAcntname = data.FBankname
             item.FRecAcnt = data.FAccount
-            item.FPayBankcode = data.FOpenAccount
+            item.FRecBankname = data.FOpenAccount
             item.FRecBankcode = data.FBankcode
+            item.FRecCityname = data.FCity
           }
         })
       } else {
         this.bankChooseData.data.FRecAcntname = data.FBankname
         this.bankChooseData.data.FRecAcnt = data.FAccount
-        this.bankChooseData.data.FPayBankcode = data.FOpenAccount
+        this.bankChooseData.data.FRecBankname = data.FOpenAccount
         this.bankChooseData.data.FRecBankcode = data.FBankcode
+        this.bankChooseData.data.FRecCityname = data.FCity
       }
     },
     // 支付单 按钮事件
@@ -935,34 +938,42 @@ export default {
   watch: {
     'data.openDialog'(newVal) {
       if (newVal) {
-        console.log(this.data.data)
         this.allSelected = false
-        this.detail = this.data.data[0]
-        this.detail.Dtls.forEach(item => {
-          // item.choosed = false
-          this.$set(item, 'choosed', false)
-        })
+        console.log(this.detail, this.data.data[0].Mst)
+        this.detail.Mst.PhId = this.data.data[0].Mst.PhId
         // this.$forceUpdate()
-        this.$nextTick(() => {
-          this.getData()
-          this.getAccountList({
-            OrgPhid: this.orgid,
-            selectStr: ''
-          })
-          if (this.kemuList.length == 0) {
-            this.getBudgetAccountsList()
-          }
+        this.getData()
+        // debugger
+        this.getAccountList({
+          OrgPhid: this.orgid,
+          selectStr: ''
         })
+        if (this.kemuList.length == 0) {
+          this.getBudgetAccountsList()
+        }
       } else {
         this.closeAuditFollow()
       }
     }
   },
   computed: {
+    orgName() {
+      let orgListJson = JSON.stringify(this.orglist)
+      if (!this.data.data.length) {
+        return ''
+      }
+      let phidIndex = orgListJson.indexOf(this.data.data[0].Mst.OrgPhid)
+      let nameIndex = orgListJson.indexOf('OName', phidIndex) + 8
+      let nameEndIndex = orgListJson.indexOf('"', nameIndex)
+      if (phidIndex == -1 || nameIndex == -1 || nameEndIndex == -1) {
+        return ''
+      }
+      return orgListJson.slice(nameIndex, nameEndIndex)
+    },
     ...mapState({
       orgid: state => state.user.orgid,
       userid: state => state.user.userid,
-      orgid: state => state.user.orgid
+      orglist: state => state.user.orglist
     })
   }
 }
