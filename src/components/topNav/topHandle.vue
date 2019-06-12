@@ -8,17 +8,44 @@
       <div class="btnContainer">
         <ul class="rightBtn">
           <li >
-            <el-popover width="300" placement="bottom" :popper-class="'maxH'" trigger="click">
+            <el-popover width="270" placement="bottom" :popper-class="'maxH'" trigger="click">
               
               <ul class="fastNav">
-                <li>1</li>
-                <li>2</li>
-                <li>3</li>
+                <li @click.stop="navPage('/approvalcenter')">
+                  <div>
+                    <img src="@/assets/images/zj6.png" alt>
+                  </div>
+                  <span>审批中心</span>
+                </li>
+                <li  @click.stop="navPage('/paycenter')">
+                  <div>
+                    <img src="@/assets/images/zfcg.png" alt>
+                  </div>
+                  <span>支付中心</span>
+                </li>
+                <li  @click.stop="navPage('/fund')">
+                  <div>
+                    <img src="@/assets/images/y1.png" alt>
+                  </div>
+                  <span>资金拨付</span>
+                </li>
+                <li  @click.stop="navPage('/bankaccount')">
+                  <div>
+                    <img src="@/assets/images/yk.png" alt>
+                  </div>
+                  <span>银行档案</span>
+                </li>
+                <li @click.stop="navPage('/setting')">
+                  <div>
+                    <img src="@/assets/images/setting.svg" alt>
+                  </div>
+                  <span>系统设置</span>
+                </li>
               </ul>
               
-              <div  slot="reference" class="orgName navIcon">
+              <div  slot="reference" class=" navIcon">
                 <div>
-                  <img src="@/assets/images/zj6.png" alt>
+                  <img src="@/assets/images/nav.svg" alt>
                 </div>
                 <span>导航</span>
               </div>
@@ -160,8 +187,8 @@
            yearChange(){  //年度改变
             this.refresh();
           },
-          auditPage(){  //审批中心
-            this.$router.push('/approvalcenter')
+          navPage(url){  //导航页面
+            this.$router.push(url)
           },
           refresh(){ //刷新
             this.$emit('refresh');
@@ -225,6 +252,7 @@
           text-align: center;
           > img {
             width: 28px;
+            height: 28px;
             margin:2px 0 ;
           }
         }
@@ -309,7 +337,13 @@
     float:left;
     width:60px;
     height:60px;
-     cursor: pointer;
+    cursor: pointer;
+    text-align: center;
+    padding-top:10px;
+    img {
+            width: 28px;
+            height: 28px;
+    }
     &:hover{
       background: #ddd;
     }
