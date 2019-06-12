@@ -7,11 +7,22 @@
       <p>{{title}}</p>
       <div class="btnContainer">
         <ul class="rightBtn">
-          <li v-if="auditBtn" @click.stop="auditPage">
-            <div>
-              <img src="@/assets/images/zj6.png" alt>
-            </div>
-            <span>审批中心</span>
+          <li >
+            <el-popover width="300" placement="bottom" :popper-class="'maxH'" trigger="click">
+              
+              <ul class="fastNav">
+                <li>1</li>
+                <li>2</li>
+                <li>3</li>
+              </ul>
+              
+              <div  slot="reference" class="orgName navIcon">
+                <div>
+                  <img src="@/assets/images/zj6.png" alt>
+                </div>
+                <span>导航</span>
+              </div>
+          </el-popover>
           </li>
           <li @click.stop="refresh">
             <div>
@@ -198,7 +209,8 @@
       overflow: hidden;
       position: absolute;
       right: 20px;
-      top: -2px; 
+      top: -2px;
+      .navIcon, 
       > li {
         float: left;
         width: 60px;
@@ -290,6 +302,18 @@
   top: 0;
   bottom: 0;
   background: none;
+}
+.fastNav{
+  overflow: hidden;
+  >li{
+    float:left;
+    width:60px;
+    height:60px;
+     cursor: pointer;
+    &:hover{
+      background: #ddd;
+    }
+  }
 }
 </style>
 <style>

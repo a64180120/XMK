@@ -5,11 +5,34 @@
             <span>支付口令设置</span> 
             <div @click="updatePsd" v-show="disabled">
                 <img src="@/assets/images/bj.png" alt="">
-                <i>编辑</i>
+                <i>修改口令</i>
             </div> 
         </div>
         <div class="payCenterDialog">
           <div class="content password setting">
+            <span v-show="!disabled">原始口令</span>
+            <div v-show="!disabled" class="passwordContent">
+              <el-input
+                maxlength="6"
+                @keyup.native="clearNoNum($event)"
+                :disabled="disabled"
+                :type="oldPasswordCanSee?'text':'password'"
+                v-model="oldPassword"
+                placeholder="请输入6位数字口令"
+              ></el-input>
+              <img
+                v-show="oldPasswordCanSee&&!disabled"
+                class="eye"
+                src="@/assets/images/zy.png"
+                @click="oldPasswordCanSee= !oldPasswordCanSee"
+              >
+              <img
+                v-show="!oldPasswordCanSee&&!disabled"
+                class="eye"
+                src="@/assets/images/by.png"
+                @click="oldPasswordCanSee= !oldPasswordCanSee"
+              >
+            </div>
             <span>支付口令</span>
             <div class="passwordContent">
               <el-input
@@ -56,10 +79,11 @@
               >
             </div>
             <span>启用/停用</span>
-            <el-radio-group :disabled="disabled" v-model="radio">
+            <el-radio-group style="width:60%"  v-model="radio">
               <el-radio :label="0">启用</el-radio>
               <el-radio :label="1">停用</el-radio>
             </el-radio-group>
+            <div v-show="disabled" @click="updateEnable" class="fr btn" style="margin-top:10px">保存</div>
           </div>
           <div v-show="!disabled" class="btns">
             <span class="btn btn-cancel" @click="beforeClose()">取消</span>
@@ -71,19 +95,24 @@
 
 <script>
 import md5 from 'js-md5'
-import {PostSavePayPsd} from '@/api/systemSetting/dataSafe'
+import {PostSavePayPsd,PostPayPsdIsactive,GetPayPsd} from '@/api/systemSetting/dataSafe'
 export default {
     name:'passwordsetting',
     data(){
         return {
+          oldPasswordCanSee:false,
+          oldPassword:'',
             showSetting:true,
             newPasswordCanSee:false,
-            newPassword:'sdfasdfas',
+            newPassword:'123456',
             confirmPasswordCanSee:false,
             confirmPassword:'',
             radio:0,
             disabled:true, //不可编辑
         }
+    },
+    mounted(){
+      this.getData();
     },
     methods:{
       //设置支付口令
@@ -116,13 +145,15 @@ export default {
             TypeName:'省总管理员',
             Value:md5(this.confirmPassword),
             Isactive:this.radio,
-            Orgid:'488181024000001',
-            Orgcode:1
+            Orgid:this.$store.state.user.orgid,
+            Orgcode:this.$store.state.user.orgcode,
+            DEFSTR1:md5(this.oldPassword)
           }
             PostSavePayPsd(data).then(res => {
               this.$msgBox.show(res.Msg);
               if(res.Status=='success'){
-                // this.getData();
+                this.disabled=true;
+                 this.getData();
               }
             }).catch(err => {
               this.$msgBox.show('保存支付口令失败!');
@@ -132,6 +163,28 @@ export default {
         updatePsd(){
           this.disabled=false;
           this.newPassword='';
+          this.oldPassword='';
+          this.confirmPassword='';
+        },
+        //启用/停用
+        updateEnable(){
+          let data={
+            TypeCode:'9999',
+            TypeName:'省总管理员',
+            Isactive:this.radio,
+            Orgid:this.$store.state.user.orgid,
+            Orgcode:1
+          }
+          PostPayPsdIsactive(data).then(res => {
+            if(res.Status=='success'){
+               this.$msgBox.show(res.Msg)
+            }else{
+              this.$msgBox.error(res.Msg)
+            }
+           
+          }).catch(err => {
+            this.$msgBox.error('修改失败!')
+          })  
         },
         //输入框限定***
         clearNoNum(event){
@@ -162,18 +215,18 @@ export default {
           return bool;
         },
         getData(){
-          // let data={
-
-          // }
-          // get(data).then(res => {
-          //   if(res.Status=="error"){
-          //     this.$msgBox.show(res.Msg)
-          //   }else{
-
-          //   }
-          // }).catch(err => {
-          //     this.$msgBox.show('获取支付口令失败!')
-          // })
+          let data={
+            TypeCode:'9999',
+          }
+          GetPayPsd(data).then(res => {
+            if(res.Status=="error"){
+              this.$msgBox.show(res.Msg)
+            }else{
+              this.radio=res.Isactive;
+            }
+          }).catch(err => {
+              this.$msgBox.show('获取支付口令失败!')
+          })
         },
         beforeClose(){
             this.disabled=true;

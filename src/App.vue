@@ -9,6 +9,7 @@
 import { baseURL } from "@/utils/config.js";
 import  {organizeTree} from '@/api/organize'
 import { mapState } from "vuex";
+import {GetLogininfo} from '@/api/login'
 export default {
   name: "App",
   beforeRouteEnter(to, from, next) {
@@ -26,7 +27,7 @@ export default {
     })
   },
   created() {
-
+    this.getUserInfo();
   },
   // TODO: 全局状态加载及变更。请根据实际情况改写
   beforeMount() {
@@ -34,33 +35,65 @@ export default {
   },
   // 初次加载时，可通过接口获取用户的主题信息，或者通过按钮触发，或者直接加载默认主题
   mounted() {
+    
     this.getOrganize();
     this.$nextTick(() => {
       console.log(baseURL);
     });
   },
   methods: {
-     getOrganize(){  
-              let data = {
-                UserId:488181024000001
-              };     
-              organizeTree(data).then(res=>{
-                  if(res.Status=='error'){
-                      this.$msgBox.show(res.Msg);
-                  }else{
-                      this.$store.commit('user/setOrglist',res.Record);
-                      if(!this.$store.state.user.orgcode){
-                        this.$store.commit('user/setOrganize',res.Record[0]);
-                      }
-                      if(!this.$store.state.user.year){
-                        this.$store.commit('user/setYear',new Date().getFullYear());
-                      }  
+    getOrganize(){ //获取组织树 
+          let data = {
+            UserId:this.$store.state.user.userid
+          };     
+          organizeTree(data).then(res=>{
+              if(res.Status=='error'){
+                  this.$msgBox.show(res.Msg);
+              }else{
+                  this.$store.commit('user/setOrglist',res.Record);
+                  if(!this.$store.state.user.orgcode){
+                    this.$store.commit('user/setOrganize',res.Record[0]);
                   }
-              }).catch(err=>{
-                   this.$msgBox.show('获取组织列表失败!');
-              })
-          },
-  }
+                  if(!this.$store.state.user.year){
+                    this.$store.commit('user/setYear',new Date().getFullYear());
+                  }  
+              }
+          }).catch(err=>{
+                this.$msgBox.show('获取组织列表失败!');
+          })
+      },
+    getUserInfo(){ //获取url传参
+      let index = window.location.href.indexOf('?');
+      let ind= window.location.href.indexOf('#');
+      let info=window.location.href.slice(index+1).slice(0,ind-index-1).split('&');
+      let data={}
+      for(let i of info){
+        let arr= i.split('=');
+        
+        data[arr[0]]=arr[1];
+      }      
+      this.$store.commit('user/setAppinfo',data);
+      this.getData(data);
+    },
+    
+    //完整信息
+    getData(data){
+      let param={
+        uid:data.UserId,
+        orgid:data.OrgId,
+      }
+      GetLogininfo(param).then(res => {
+        if(res.Status=='error'){
+          this.$msgBox.error(res.Msg)
+        }else{
+          this.$store.commit('user/setLoginInfo',res)
+        }
+        
+      }).catch(err => {
+          this.$msgBox.show('获取用户组织数据失败!');
+      })
+    }
+  },  
 };
 </script>
 

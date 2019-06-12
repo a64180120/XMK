@@ -17,6 +17,7 @@ const state = {
     orgid:'', //id
     orgcode:'', //编码
     orgname:'',//名称
+    appinfo:{},//ajax登录信息
 };
 
 //计算获取取新数据
@@ -39,6 +40,20 @@ const mutations = {
             state.token='';
             Session.removeToken();
         }
+    },
+    //ajax的appinfo信息
+    setAppinfo(state,data){
+        state.appinfo=data;
+        state.userid=data.UserId;
+    },
+    //组织用户的缓存信息
+    setLoginInfo(state,data){
+        state.userid=data.User.PhId,
+        state.usercode=data.User.UserNo,
+        state.username=data.User.UserName,
+        state.orgid=data.Org.PhId,
+        state.orgcode=data.Org.OCode,
+        state.orgname=data.Org.OName
     },
     //组织列表
     setOrglist(state,data){

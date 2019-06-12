@@ -7,7 +7,7 @@ import Qs from 'qs'
 import store from '../store'
 import { Message } from 'element-ui'
 import md5 from 'js-md5'
-
+import {appinfoUrl} from './config'
 // 在config.js文件中统一存放一些公共常量，方便之后维护
 import { getSha512 } from './validate.js'
 let Base64 = require('js-base64').Base64
@@ -17,14 +17,13 @@ function apiAxios(method, url, params, hastimeout) {
   //var token = store.state.user.token;
   //var timestamp = new Date().getTime();
   //var signature = getSha512(timestamp + "_" + token + "_newgrand");
-
   //sql 数据库
   var appinfo = {
-    DbName: 'NG0006',
-    OrgId: '547181121000001',
+    DbName: store.state.user.appinfo.DbName,
+    OrgId: store.state.user.appinfo.OrgId,
     OrgName: '',
     OCode: '',
-    UserKey: '9999',
+    UserKey:  '',
     UserName: '',
     TokenKey: '',
     AppKey: 'D31B7F91-3068-4A49-91EE-F3E13AE5C48C',
@@ -33,8 +32,9 @@ function apiAxios(method, url, params, hastimeout) {
     SessionKey: '',
     UName: ''
   }
+
   var reqTimeStamp = Date.parse(new Date())
-  var url1 = 'http://127.0.0.1:8099'
+  var url1 = appinfoUrl
   // oracle 数据库
   // var appKey = 'D31B7F91-3068-4A49-91EE-F3E13AE5C48C',
   //   appSecret = '103CB639-840C-4E4F-8812-220ECE3C4E4D',

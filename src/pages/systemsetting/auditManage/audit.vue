@@ -174,10 +174,11 @@
             </div>
         </div>
         <!--组织树弹窗   visible:显示,,,,@confirm接收选中的值   data组织列表  checked-org当前选中的组织的code列表-->
-        <orgtree :visible.sync="orgVisible"  @confirm="getOrg" :data="$store.state.user.orglist" :checked-org="orgSelected"></orgtree>
+        <orgtree :visible.sync="orgVisible"  @confirm="getOrg" :data="orglist" :checked-org="orgSelected"></orgtree>
  
-        <fDialog :title="(auditBtn=='add'?'新增':'修改')+'审批流'" :visible.sync="auditAddShow">
+        <fDialog :title="(auditBtn=='add'?'新增':'修改')+'审批流'"  :visible.sync="auditAddShow">
             <audit-add 
+                :orglist="orglist"
                 :splx="splx" 
                 :auditinfo="auditinfo" 
                 :type="auditBtn" 
@@ -198,6 +199,7 @@ import Orgtree from "@/components/orgtree/index"
 import fDialog from "@/components/attechment/dialog"
 import topHandle from '@/components/topNav/topHandle'
 import search from '@/components/searchInput/searchInput'
+import {GetAllChildTree} from '@/api/systemSetting/post'
 import {PostAddProcType,GetProcTypes,PostUpdateProcType,PostDeleteProcType,GetProcList,GetAppvalPostList,PostDeleteProcs,PostUpdateProcOrganize} from '@/api/systemSetting/audit'
 export default {
     name:'auditLiuCheng',
@@ -237,11 +239,13 @@ export default {
               label: 'OName'
             },
             serachVal:'',//搜索值
+            orglist:[],//组织下部门列表
         }
     },
     mounted(){
         this.getTypeData();
         this.getPosts();
+        this.getorglist();
     },
     methods:{
         search(){
@@ -281,6 +285,7 @@ export default {
                     this.$msgBox.show(res.Msg)
                 }else{
                     this.auditList=res.Data;
+                    this.total=res.Total;
                     this.checked=false;  
                     this.allChecked(false);  
                 }
@@ -330,7 +335,18 @@ export default {
         //修改启用组织
         updateOrg(data){
             PostUpdateProcOrganize(data).then(res => {
-                console.log(res)
+                debugger
+                if(res.Status=='error'){
+                    this.$msgBox.error(res.Msg);
+                }else{
+
+                    this.$msgBox.show(res.Msg);
+                    this.getData(this.typechoosedItem[0]);
+                }
+               
+            }).catch(err => {
+                console.log(err)
+                this.$msgBox.show('修改组织失败!');
             })
         },
         showAuditAdd(val){  //流程编辑
@@ -454,9 +470,13 @@ export default {
             }
             this.auditTypeAddShow=true;
         },
-        addCancle(){ //流程弹窗关闭
+        addCancle(bool){ //流程弹窗关闭
+            this.auditinfo=null;
             this.auditAddShow=false;
-            this.getData(this.typechoosedItem[0]);
+            if(bool){
+                this.getData(this.typechoosedItem[0]);
+            }
+
         },
         typeCancle(data){//类型弹窗关闭
             this.auditTypeAddShow=false;
@@ -486,6 +506,22 @@ export default {
             }
             this.orgInfo=val;
              this.orgVisible=true;
+        },
+        //获取组织下部门
+        getorglist(){
+            let data = {
+                orgid:this.$store.state.user.orgid
+            }
+            GetAllChildTree(data).then(res => {
+                if(res.Status=='error'){
+                    this.$msgBox.error(res.Msg)
+                }else{
+                    this.orglist=res.Record;
+                }
+            }).catch(err => {
+                this.$msgBox.error('获取组织下部门信息失败!')
+            })
+            
         },
         //流程选择
         choose(val,index){
