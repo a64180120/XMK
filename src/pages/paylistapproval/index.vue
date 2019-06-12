@@ -264,7 +264,7 @@
     <!--组织树-->
     <orgtree :data="orgtreeData" :checkedOrg="checkedOrg" :visible.sync="orgType" @confirm="getOrg"></orgtree>
     <!--支付单查看-->
-    <paylist :data="payListData" ref="payList"></paylist>
+    <paylist :data="payListData" :visible.sync="payListVisible" ref="payList"></paylist>
   </section>
 </template>
 
@@ -284,16 +284,13 @@
     components: {PayDialog, Paylist, Orgtree, ApprovalDialog, Applybill, Auditfollow, SearchInput, HandleBtn},
     data(){
       return{
+        payListVisible:false,
         BType:"002", //单据类型 资金拨付 001  申请单 002
         checkedAll:false, //是否全选
         IsIndeterminate:false, //列表中是否有选中的值并且不是全选
         check:[],//列表所有选中状态
         selection:[],//选中后的值
-        payListData: {
-          openDialog: false,
-          data: {},
-          itemType: 'approval'
-        },
+        payListData:[],
         auditMsg:[],//审批流程 数据
         select:"",//类型
         openDetailDialog:false,
@@ -305,7 +302,7 @@
           BDate:[],//申报时间段
           Operator:"",//停留时长的判断条件(1:等于,2:大于,3:小于)
           StopHour:'',//停留时长
-          OrgCode:'100',//组织编码
+          OrgCodeNum:this.OrgCode,//组织编码
           OrgName:''//组织名称
         },
         tableData:[],//模拟表格数据
@@ -347,6 +344,7 @@
       this.isApproval = this.$route.query.approval
       this.SplxPhid = this.$route.query.SplxPhid
       this.loadData()
+      this.getOrgList()
     },
     watch:{
       check(val,oldval){
@@ -377,7 +375,7 @@
       loadData(){
         let data = {
           Uid:488181024000001,
-          OrgCode:this.OrgCode,
+          OrgCode:this.OrgCodeNum == ''?this.OrgCodeNum:this.OrgCode,
           Year:'2019',
           PageIndex:this.page.currentPage,
           PageSize:this.page.pageSize,
@@ -390,28 +388,26 @@
           Splx_Phid:this.SplxPhid,
         }
         let that = this
-        if (this.isApproval) {
+        if (eval(this.isApproval)) {
           this.getAxios('/GAppvalRecord/GetUnDoRecordList',data).then(success=>{
             console.log(success.Data)
             if (success && success.Status === "success") {
               that.tableData = success.Data
               that.page.total = success.Total
               // this.page.total = 100
-              console.log(success)
               for (let i in success.Data) {
                 that.check.push(false)
               }
             }else {
-              this.$msgBox.show(success.Msg)
+              this.$msgBox.error(success.Msg)
             }
           }).catch(err=>{
-            that.$msgBox.show("数据获取异常")
+            that.$msgBox.error("数据获取异常")
           })
         }else {
           this.getAxios('/GAppvalRecord/GetDoneRecordList',data).then(success=>{
             console.log(success.Data)
             if (success && success.Status === "success") {
-              debugger
               that.tableData = success.Data
               that.page.total = success.Total
               // this.page.total = 100
@@ -423,9 +419,18 @@
               this.$msgBox.show(success.Msg)
             }
           }).catch(err=>{
-            that.$msgBox.show("数据获取异常")
+            that.$msgBox.error("数据获取异常")
           })
         }
+      },
+      //拉取组织树
+      getOrgList(){
+        this.getAxios('GQT/CorrespondenceSettingsApi/GetALLOrgTree').then(res=>{
+          console.log(res);
+          this.orgtreeData=res.Record;
+        }).catch(err=>{
+          that.$msgBox.error("组织树获取失败")
+        })
       },
       //搜索框事件
       search(val){
@@ -444,17 +449,19 @@
         console.clear()
         this.selection = row
         console.log(this.selection)
-        this.payListData.openDialog =true
-
+        this.payListData = row
+        this.payListVisible =true
         this.detailData = row
       },
       //当前页显示多少条数据
       handleSizeChange(val){
-        console.log(val)
+        this.page.pageSize = val
+        this.loadData()
       },
       //调到第几页
       handleCurrentChange(val){
-        console.log(val)
+        this.page.currentPage = val
+        this.loadData()
       },
       //打开查看审批流
       openApproval(row,idx){
@@ -506,7 +513,11 @@
       },
       //获取组织树
       getOrg(e){
-        this.form.depart = e[0].OName
+        this.searchForm.OrgName = e[0].OName
+        this.searchForm.OrgCode = e[0].OCode
+        console.log(this.searchForm)
+        this.OrgCodeNum =e.OrgCode
+        this.loadData()
       },
       //子组件审批流查看
       childrenAuditfollow(item,idx){
