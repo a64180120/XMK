@@ -147,8 +147,8 @@
                                         <img v-if="audit.FEnable==0" src="@/assets/images/gou.svg" alt="">
                                         <img v-else src="@/assets/images/cha.svg" alt="">
                                         </td>
-                                        <td @click="orgTree(audit)">
-                                            <span  v-for="org of audit.Organizes" class="orgInfo">{{org.OrgName}}</span>
+                                        <td class="atype" @click="orgTree(audit)">
+                                            <span  v-for="org of audit.Organizes">{{org.OrgName}}</span>
                                         </td>
                                         <td>
                                         {{audit.FDescribe}}
@@ -178,6 +178,7 @@
  
         <fDialog :title="(auditBtn=='add'?'新增':'修改')+'审批流'"  :visible.sync="auditAddShow">
             <audit-add 
+                v-if="auditAddShow"
                 :orglist="orglist"
                 :splx="splx" 
                 :auditinfo="auditinfo" 
@@ -187,7 +188,7 @@
                  @add-cancle="addCancle"></audit-add>
         </fDialog>
          <fDialog  :title="'审批类型'+(typeBtn=='add'?'新增':'修改')" :visible.sync="auditTypeAddShow">
-            <audittype-add :type="typeBtn" :typeinfo="typeinfo" @add-cancle="typeCancle"></audittype-add>
+            <audittype-add v-if="auditTypeAddShow" :type="typeBtn" :typeinfo="typeinfo" @add-cancle="typeCancle"></audittype-add>
         </fDialog>
     </div>
 </template>
@@ -335,7 +336,6 @@ export default {
         //修改启用组织
         updateOrg(data){
             PostUpdateProcOrganize(data).then(res => {
-                debugger
                 if(res.Status=='error'){
                     this.$msgBox.error(res.Msg);
                 }else{

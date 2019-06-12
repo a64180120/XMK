@@ -146,9 +146,14 @@ export default {
   },
   computed: {
     ...mapState({
+      /*组织信息*/
       orgid: state => state.user.orgid, //id
       orgcode:state => state.user.orgcode, //编码
       orgname:state => state.user.orgname,//名称
+      /*部门信息*/
+      bmid:state => state.user.bmid,
+      bmcode:state => state.user.bmcode, //编码
+      bmname:state => state.user.bmname,//名称
       year:state => state.user.year,//年份
       userid:state => state.user.userid,//用户id
       usercode:state => state.user.usercode//用户code
@@ -164,21 +169,22 @@ export default {
     //获取审批流
     getAppvalProc:function(){
       let param={
-        Orgid:this.orgid,//组织id
+        Orgid:this.bmid,//组织id
         BType:'001' //单据类型（"001":资金拨付单,"002":支付单）
        };
       this.getAxios('GSP/GAppvalProc/GetAppvalProc',param).then(res=>{
-        this.subData=res.Data;
-        this.getApprovalPerson(res.Data[0].PhId);
+          this.subData=res.Data;
+          this.getApprovalPerson(res.Data[0].PhId);
       }).catch(err=>{
         console.log(err);
       })
     },
+
+
     //获取审批人
     getApprovalPerson:function(phid){
       let param={PhId:phid};
       this.getAxios('GSP/GAppvalPost/GetFirstStepOperator',param).then(res=>{
-        console.log(res);
         this.nextDataList=res.Data.Operators;
         this.param.PostPhid=res.Data.PhId;
       }).catch(err=>{

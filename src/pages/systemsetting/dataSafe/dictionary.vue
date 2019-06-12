@@ -38,7 +38,7 @@
                 </div>
                 <div class="list listBodyCon">
                     <div class="listBody">
-                        <div v-if="typeInfoList.length==0">请添加类型</div>
+                        <div @click.stop="addInfo(0)" v-if="typeInfoList.length==0" style="cursor:pointer">请添加类型+</div>
                         <ul :class="{update:!disabled}" v-for="(item,n) of typeInfoList" :key="n">
                             <li>{{n+1}}</li>
                             <li>
@@ -135,7 +135,10 @@ export default {
                     this.$msgBox.show(res.Msg)
                 }else{
                     this.typeInfoList=res.Record;
-                    this.Value=res.Record[0].Value;
+                    if(res.Record.length>0){
+                        this.Value=res.Record[0].Value;
+                    }
+                    
                     this.typeInfoList.map(info => info.PersistentState=2)
                 }
             }).catch(err=>{
@@ -143,7 +146,10 @@ export default {
             })
         },
         update(){
-            this.typeInfoList[0].Value=this.Value;
+            if(this.typeInfoList.length>0){
+                this.typeInfoList[0].Value=this.Value;
+            }
+            
             let arr=this.typeInfoList.concat(this.deleteList);
             let data={
                 infoData:arr
@@ -166,17 +172,19 @@ export default {
         },
         //类型信息新增
         addInfo(index){
+            if(index==0){
+                this.disabled=false;
+            }
             this.typeInfoList.splice(index+1,0,{DicType:"PayMethod",Isactive:0,PersistentState:1,DicName:'支付方式'})
         },
         //类型信息删除
-        deleteInfo(index,item){
-            if(this.typeInfoList.length>1){
-                if(item.PhId){
-                    item.PersistentState=3;
-                    this.deleteList.push(item);
-                }
-                this.typeInfoList.splice(index,1);
+        deleteInfo(index,item){ 
+            if(item.PhId){
+                item.PersistentState=3;
+                this.deleteList.push(item);
             }
+            this.typeInfoList.splice(index,1);
+        
         }
     },
     components:{

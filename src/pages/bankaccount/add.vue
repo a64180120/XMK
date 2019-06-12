@@ -115,20 +115,24 @@ export default {
             return;
           }
             let data={
-              infoData:[this.info]       
-            }           
+                infoData:[this.info]       
+            }   
+                 
             BankAccountSave(data).then(res=>{
                 if(res.Status=='success'){
-                  this.$emit('add-cancle',true);
+                    this.$msgBox.show(res.Msg)
+                    this.$emit('add-cancle',true);
+                }else{
+                    this.$msgBox.error(res.Msg)
                 }
 
             }).catch(err=>{
-
+                 this.$msgBox.error('保存失败!')
             })
         }
     },
     mounted(){
-        
+        console.log(this.info)
     },
     components:{
         Orgtree

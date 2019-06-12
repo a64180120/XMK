@@ -22,7 +22,7 @@
       ></approval-bill>
       <div class="approval-btn">
         <el-button size="small" type="primary" @click="cancel()">取消</el-button>
-        <el-button size="small" type="primary" @click="submit()">生成支付单</el-button>
+        <el-button size="small" :disabled="disabled" type="primary" @click="submit()">生成支付单</el-button>
       </div>
     </el-dialog>
     <back-approval v-if="visible" :visible.sync="visible" :auditMsg="backData" @getBackPeople="getBackPeople" @closeBack="closeBack"></back-approval>
@@ -60,7 +60,8 @@
         backPersonnel:[],//回退审批人集合
         backData:[],//回退的审批人岗位集合
         operatorID:[], //操作人员集合,
-        isApproval:Boolean
+        isApproval:Boolean,
+        disabled:false
       }
     },
     methods:{
@@ -70,11 +71,10 @@
           ProcPhid:this.rowData[0].ProcPhid,
           PostPhid:this.rowData[0].PostPhid
         }
-        debugger
-        this.getAxios('/GAppvalPost/GetAppvalProcAndOperator',data).then(success=>{
-          if (success && success.Status === 'success'){
-            this.$set(this.approvalFollow,0,success.Process);
-            this.nextApprovaler = success.AppvalPost.Operators;
+        this.getAxios('/GAppvalPost/GetAppvalProcAndOperator',data).then(res=>{
+          if (res && res.Status === 'success'){
+            this.$set(this.approvalFollow,0,res.Process);
+            this.nextApprovaler = res.AppvalPost.Operators;
             for (let key in this.approvalFollow){
               this.approvalFollow[key].RefbillPhid =this.rowData[0].RefbillPhid;
               this.approvalFollow[key].ProcPhid = this.rowData[0].ProcPhid;
@@ -83,7 +83,7 @@
           }else {
             let that = this
             this.$msgBox.show({
-              content: success.Msg,
+              content: res.Msg,
               fn:function () {
                 that.openDialog =false
               }
@@ -147,9 +147,10 @@
           data.NextOperators = arr
           data.BackPostPhid = this.backPost.PhId
         }
+        console.log(1231321)
         if (this.isApproval){
-          this.postAxios('/GAppvalRecord/PostApprovalRecord',data).then(success=>{
-            if (success.Status == 'success'&&success) {
+          this.postAxios('/GAppvalRecord/PostApprovalRecord',data).then(res=>{
+            if (res.Status == 'success'&&res) {
               let that= this
               this.visible = false
               this.$msgBox.show({
@@ -163,13 +164,12 @@
               })
               this.creatPayList()
             }else {
-              this.$msgBox.show(success.Msg)
+              this.$msgBox.show(res.Msg)
             }
           }).catch(err=>{
             this.$msgBox.show('请求出错')
           })
         } else {
-          this.creatPayList()
         }
 
       },
@@ -178,19 +178,33 @@
         let data = {
           RefbillPhid:this.rowData[0].RefbillPhid
         }
-        this.postAxios('/GAppvalRecord/PostAddPayMent',data).then(success=>{
-          this.$msgBox.show({
-            content:'生成支付单成功',
-            fn:function () {
-              that.openDialog = false;
-              that.$emit('subSuc');
-              that.$refs.approval.handleValue = '';
-              this.textare = ''
-            }
-          })
-            console.log(success)
+        let that= this
+        this.postAxios('/GAppvalRecord/PostAddPayMent',data).then(res=>{
+          if (res && res.Status =='success') {
+            this.$msgBox.show({
+              content:'生成支付单成功',
+              fn:function () {
+                that.openDialog = false;
+                that.$emit('subSuc');
+                that.$refs.approval.handleValue = '';
+                that.textare = '';
+                that.$emit('refresh')
+              }
+            })
+          }else {
+            this.$msgBox.error({
+              content:res.Msg,
+              fn:function () {
+                that.openDialog = false;
+                that.$emit('subSuc');
+                that.$refs.approval.handleValue = '';
+                that.textare = '';
+                that.$emit('refresh')
+              }
+            })
+          }
         }).catch(err=>{
-          console.log(err)
+          this.$msgBox.error('请求失败')
         })
       },
       backAproval(val){

@@ -17,6 +17,10 @@ const state = {
     orgid:'', //id
     orgcode:'', //编码
     orgname:'',//名称
+    /*当前选中部门*/
+    bmid:'',
+    bmcode:'',
+    bmname:'',
     year:'',//年份
     appinfo:{},//ajax登录信息
 };
@@ -67,6 +71,13 @@ const mutations = {
         state.orgname=data.OName;
 
     },
+  //修改当前部门
+  setBm(state,data){
+    state.bmid=data.PhId;
+    state.bmcode=data.OCode;
+    state.bmname=data.OName;
+
+  },
     //修改年度
     setYear(state,data){
         state.year=data

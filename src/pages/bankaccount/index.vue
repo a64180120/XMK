@@ -20,7 +20,7 @@
             <order :type="'handle'"  ref="order"/>
         </div>
         <el-dialog :title="'银行账号'+(handleBtn=='add'?'新增':'修改')" :visible.sync="accountAddShow">
-            <accountAdd @add-cancle="addCancle" :type="handleBtn" :info="info"></accountAdd>
+            <accountAdd v-if="accountAddShow" @add-cancle="addCancle" :type="handleBtn" :info="info"></accountAdd>
         </el-dialog>
     </div>
 </template>
@@ -63,6 +63,9 @@ export default {
                  this.info.PersistentState=2;
             }else{
                 this.info={FLifecycle:'1',PersistentState:1};
+                this.info.OrgPhid=this.$refs.order.checkedOrg.PhId; 
+                this.info.OrgCode=this.$refs.order.checkedOrg.OCode; 
+                this.info.OrgName=this.$refs.order.checkedOrg.OName;
             }
             this.accountAddShow=true;
         },
