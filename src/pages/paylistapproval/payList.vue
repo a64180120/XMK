@@ -223,7 +223,6 @@ export default {
     auditfollow,
     ImgView
   },
-  inject: ['refreshIndexData'],
   props: {
     data: {
       type: Object,

@@ -264,7 +264,7 @@
     <!--组织树-->
     <orgtree :data="orgtreeData" :checkedOrg="checkedOrg" :visible.sync="orgType" @confirm="getOrg"></orgtree>
     <!--支付单查看-->
-    <paylist :data="payListData" ref="payList"></paylist>
+    <paylist :data="payListData" :visible.sync="payListVisible" ref="payList"></paylist>
   </section>
 </template>
 
@@ -284,16 +284,13 @@
     components: {PayDialog, Paylist, Orgtree, ApprovalDialog, Applybill, Auditfollow, SearchInput, HandleBtn},
     data(){
       return{
+        payListVisible:false,
         BType:"002", //单据类型 资金拨付 001  申请单 002
         checkedAll:false, //是否全选
         IsIndeterminate:false, //列表中是否有选中的值并且不是全选
         check:[],//列表所有选中状态
         selection:[],//选中后的值
-        payListData: {
-          openDialog: false,
-          data: {},
-          itemType: 'approval'
-        },
+        payListData:[],
         auditMsg:[],//审批流程 数据
         select:"",//类型
         openDetailDialog:false,
@@ -452,8 +449,8 @@
         console.clear()
         this.selection = row
         console.log(this.selection)
-        this.payListData.openDialog =true
-
+        this.payListData = row
+        this.payListVisible =true
         this.detailData = row
       },
       //当前页显示多少条数据
