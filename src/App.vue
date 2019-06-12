@@ -26,8 +26,11 @@ export default {
       isLogin: state => state.isLogin
     })
   },
-  created() {
+  beforeCreate(){
     this.getUserInfo();
+  },
+  created() {
+    
   },
   // TODO: 全局状态加载及变更。请根据实际情况改写
   beforeMount() {
