@@ -149,10 +149,7 @@
                   <el-checkbox v-model="item.Mst.checked" @change="handleCheckOne(item)">{{index+1}}</el-checkbox>
                 </td>
                 <td>
-                  <div
-                    @click="payNav('payListData',item)"
-                    style="cursor:pointer;text-decoration:underline;"
-                  >{{item.Mst.FCode}}</div>
+                  <div @click="payNav('payListData',item)" class="atype">{{item.Mst.FCode}}</div>
                 </td>
                 <td>
                   <div>{{item.Mst.FAmountTotal | NumFormat}}</div>
