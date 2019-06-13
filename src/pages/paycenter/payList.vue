@@ -56,6 +56,7 @@
                       popper-class="payList-largeSelects"
                       v-model="account"
                       placeholder="请选择"
+                      @change="accountChange"
                     >
                       <el-option
                         v-if="accountList.length>0"
@@ -218,7 +219,7 @@
                     <!-- 收款方账户名称 -->
                     <div
                       v-else-if="scope.column.property=='FRecAcntname'&&data.itemType == 'notApprove'"
-                      class="table-item"
+                      class="table-item atype"
                       @click="selectBank(scope.row)"
                     >{{scope.row[scope.column.property]}}</div>
                     <!-- 其他 -->
@@ -569,6 +570,13 @@ export default {
     }
   },
   methods: {
+    // 付款账号修改后立即赋值给子表
+    accountChange(phid) {
+      console.log(phid)
+      this.detail.Dtls.forEach(item => {
+        item.BankPhid = phid
+      })
+    },
     // 预算科目选择
     kumuChange(e) {
       console.log(e)
@@ -752,6 +760,21 @@ export default {
           this.savePayList(this.detail)
           break
         case 'approvalData':
+          if (
+            !this.detail.Mst.FPaymethod ||
+            this.detail.Dtls.some(item => {
+              return item.BankPhid == '0'
+            }) ||
+            this.detail.Dtls.some(item => {
+              return !item.FRecAcnt
+            })
+          ) {
+            this.$msgBox.error('请先完善数据信息')
+            return
+          }
+          this[type].openDialog = true
+          this[type].data = this.data.data
+          break
         case 'payErrorHandleData':
         case 'mergePayData':
           this[type].openDialog = true
