@@ -48,6 +48,7 @@ const mutations = {
     },
     //ajax的appinfo信息
     setAppinfo(state,data){
+
         state.appinfo=data;
         state.userid=data.UserId;
     },
