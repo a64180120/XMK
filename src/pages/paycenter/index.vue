@@ -145,11 +145,11 @@
                 v-for="(item,index) in tableData"
                 :key="index"
               >
-                <td>
+                <td @click.self="selectItem(item)">
                   <el-checkbox v-model="item.Mst.checked" @change="handleCheckOne(item)">{{index+1}}</el-checkbox>
                 </td>
                 <td>
-                  <div @click="payNav('payListData',item)" class="atype">{{item.Mst.FCode}}</div>
+                  <span @click.stop="payNav('payListData',item)" class="atype">{{item.Mst.FCode}}</span>
                 </td>
                 <td>
                   <div>{{item.Mst.FAmountTotal | NumFormat}}</div>
@@ -419,6 +419,9 @@ export default {
     resize()
   },
   methods: {
+    selectItem(item) {
+      item.Mst.checked = !item.Mst.checked
+    },
     getData() {
       let query = {
         'NgInsertDt*date*ge*1': this.sbrq ? this.sbrq[0] || '' : '', //申报日期开始

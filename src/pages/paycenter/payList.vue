@@ -127,11 +127,14 @@
                 :data="detail.Dtls"
                 border
                 :span-method="tabelColspan"
+                @row-click="rowClick"
+                @header-click="headerClick"
               >
                 <!-- 序号列 -->
                 <el-table-column type="index" width="80" header-align="center" align="center">
                   <template slot="header" slot-scope="scope">
                     <el-checkbox
+                      @click.stop.native="check"
                       @change="selectAll"
                       v-model="allSelected"
                       v-if="data.itemType == 'notApprove'||data.itemType == 'error'"
@@ -140,6 +143,7 @@
                   </template>
                   <template slot-scope="scope">
                     <el-checkbox
+                      @click.stop.native="check"
                       v-if="data.itemType == 'notApprove'||(data.itemType == 'error'&&scope.row.FState==2)"
                       @change="selectOne(scope)"
                       :label="scope.$index"
@@ -306,7 +310,7 @@
       <div slot="title" class="dialog-title">
         <span style="float: left;">查看申请</span>
       </div>
-      <apply-bill :data="fundDetailData" @showImg="showImg">
+      <apply-bill :applyNum="this.data.data[0].Mst.RefbillPhid.toString()" @showImg="showImg">
         <div slot="btn-group">
           <el-button class="btn" size="mini">打印</el-button>
         </div>
@@ -359,6 +363,7 @@ import bankChoose from './bankChoose'
 import auditfollow from '../../components/auditFollow/auditfollow'
 import ImgView from '../../components/imgView/imgView'
 import { BankAccountList } from '@/api/bankaccount'
+import { GetSysSetList } from '@/api/systemSetting/dataSafe'
 import {
   getPayment,
   savePayList,
@@ -749,6 +754,22 @@ export default {
         this.bankChooseData.data.FRecCityname = data.FCity
       }
     },
+    // 获取支付方式
+    GetSysSetList() {
+      GetSysSetList({
+        DicType: 'PayMethod'
+      })
+        .then(res => {
+          if (res.Status == 'error') {
+            this.$msgBox.error(res.Msg)
+          } else {
+            console.log(res)
+          }
+        })
+        .catch(err => {
+          this.$msgBox.error('获取支付列表信息失败!')
+        })
+    },
     // 支付单 按钮事件
     save(type) {
       switch (type) {
@@ -870,6 +891,22 @@ export default {
         })
       }
     },
+    // checkBox所在框选中
+    check(e) {},
+    headerClick(column, event) {
+      console.log(column)
+      if (column.type == 'index') {
+        this.allSelected = !this.allSelected
+        this.selectAll(this.allSelected)
+      }
+    },
+    rowClick(row, column, event) {
+      console.log(column)
+      if (column.type == 'index') {
+        row.choosed = !row.choosed
+        this.selectOne({ row })
+      }
+    },
     //打开图片预览
     showImg(file) {
       console.log(file)
@@ -932,7 +969,6 @@ export default {
     },
     // dialog中的check事件
     selectOne($scope) {
-      console.log($scope.row)
       if ($scope.row.choosed) {
         if (this.data.itemType == 'error') {
           var newDtls = this.detail.Dtls.filter(item => item.FState == 2)
@@ -951,9 +987,8 @@ export default {
       })
       this.$forceUpdate()
     },
-    // 测试用 选择银行
+    //  选择银行
     selectBank(item) {
-      console.log(123)
       this.bankChooseData.openDialog = true
       this.bankChooseData.data = item
     }
@@ -968,9 +1003,10 @@ export default {
         this.getData()
         // debugger
         this.getAccountList({
-          OrgPhid: this.orgid,
+          OrgPhid: this.data.data[0].Mst.OrgPhid,
           selectStr: ''
         })
+        this.GetSysSetList()
         if (this.kemuList.length == 0) {
           this.getBudgetAccountsList()
         }
