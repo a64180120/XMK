@@ -43,19 +43,19 @@
                         <div class="tableHead ">
                             <table>
                             <colgroup>
-                                <col width="5%">
+                                <col width="9%">
                                 <col width="10%">
                                 <col width="14%">
                                 <col width="12%">
                                 <col width="15%">
                                 <col width="15%">
                                 <col width="15%">
-                                <col width="14%">
+                                <col width="10%">
                             </colgroup>
                             <thead>
                                 <tr>
-                                    <td style="padding: 0 5px;">
-                                    <el-checkbox @change="allChecked" :indeterminate="indeterminate" v-model="checked">序号</el-checkbox>
+                                    <td @click.stop="allChecked('change')" style="cursor:pointer;padding: 0 5px;">
+                                    <el-checkbox @click.stop.native="1" @change="allChecked" :indeterminate="indeterminate" v-model="checked">序号</el-checkbox>
                                     </td>
                                     <td>
                                     岗位代码
@@ -85,19 +85,19 @@
                         <div class="tableBody">
                             <table>
                                 <colgroup>
-                                    <col width="5%">
+                                    <col width="9%">
                                     <col width="10%">
                                     <col width="14%">
                                     <col width="12%">
                                     <col width="15%">
                                     <col width="15%">
                                     <col width="15%">
-                                    <col width="14%">
+                                    <col width="10%">
                                 </colgroup>
                                 <thead>
                                     <tr v-for="(post,n) in postList" :key="n">
-                                        <td style="padding: 0 5px;">
-                                        <el-checkbox @change="choose(post)" v-model="post.checked">{{n+1}}</el-checkbox>
+                                        <td @click.stop="choose(post,'change')" style="cursor:pointer;padding: 0 5px;">
+                                        <el-checkbox @click.stop.native="1" @change="choose(post)" v-model="post.checked">{{n+1}}</el-checkbox>
                                         </td>
                                         <td>
                                         {{post.GAppvalPost.FCode}}
@@ -309,8 +309,11 @@ export default {
             this.search.org=val;
             this.getData();
         },
-         //流程选择
-        choose(val,index){
+         //岗位选择
+        choose(val,str){
+             if(str=='change'){
+                val.checked=!val.checked;
+            }
             if(val.checked){
                 this.choosedItem.push(val);
             }else{
@@ -335,10 +338,13 @@ export default {
                 }
             }
         },
-        //流程全选
+        //岗位全选
         allChecked(val){
             this.indeterminate=false;
-            if(val){
+            if(val=='change'){
+                this.checked=!this.checked;
+            }
+            if(this.checked){
                 this.postList.map(arr=>{
                     this.$set(arr,'checked',true); 
                     this.choosedItem=JSON.parse(JSON.stringify(this.postList));

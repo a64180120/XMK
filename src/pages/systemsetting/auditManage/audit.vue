@@ -57,8 +57,8 @@
                                 </colgroup>
                                 <thead>
                                     <tr :class="{trActive:type.checked}" v-for="(type,n) in typeList" :key="n">
-                                        <td style="padding: 0 5px;">
-                                        <el-checkbox v-model="type.checked" @change="typechoose(type)">{{n+1}}</el-checkbox>
+                                        <td @click.stop="typechoose(type)" style="padding: 0 5px;cursor:pointer;">
+                                        <el-checkbox v-model="type.checked" @click.stop.native="1" @change="typechoose(type,'change')">{{n+1}}</el-checkbox>
                                         </td>
                                         <td>
                                         {{type.TypeName}}
@@ -100,8 +100,8 @@
                             </colgroup>
                             <thead>
                                 <tr>
-                                    <td style="padding: 0 5px;">
-                                    <el-checkbox v-model="checked" @change="allChecked" :indeterminate="indeterminate">序号</el-checkbox>
+                                    <td @click.stop="allChecked('change')"  style="cursor:pointer;padding: 0 5px;">
+                                    <el-checkbox v-model="checked" @click.stop.native="1" @change="allChecked" :indeterminate="indeterminate">序号</el-checkbox>
                                     </td>
                                     <td>
                                     流程代码
@@ -134,8 +134,8 @@
                                 </colgroup>
                                 <thead>
                                     <tr :class="{trActive:audit.checked}" v-for="(audit,m) in auditList" :key="m">
-                                        <td style="padding: 0 5px;">
-                                        <el-checkbox @change="choose(audit)" v-model="audit.checked">{{m+1}}</el-checkbox>
+                                        <td @click.stop="choose(audit)"  style="cursor:pointer;padding: 0 5px;">
+                                        <el-checkbox @click.stop.native="1" @change="choose(audit,'change')" v-model="audit.checked">{{m+1}}</el-checkbox>
                                         </td>
                                         <td>
                                             {{audit.FCode}}
@@ -148,7 +148,7 @@
                                         <img v-else src="@/assets/images/cha.svg" alt="">
                                         </td>
                                         <td class="atype" @click="orgTree(audit)">
-                                            <span  v-for="org of audit.Organizes">{{org.OrgName}}</span>
+                                            <span  v-for="org of audit.Organizes">{{org.OrgName}}&nbsp;</span>
                                         </td>
                                         <td>
                                         {{audit.FDescribe}}
@@ -524,7 +524,10 @@ export default {
             
         },
         //流程选择
-        choose(val,index){
+        choose(val,str){
+            if(str!='change'){
+                val.checked=!val.checked;
+            }
             if(val.checked){
                 this.choosedItem.push(val);
             }else{
@@ -550,9 +553,12 @@ export default {
             }
         },
         //流程全选
-        allChecked(val){
+        allChecked(str){
             this.indeterminate=false;
-            if(val){
+            if(str=="change"){
+                this.checked=!this.checked;
+            }
+            if(this.checked){
                 this.auditList.map(arr=>{
                     this.$set(arr,'checked',true); 
                     this.choosedItem=JSON.parse(JSON.stringify(this.auditList));
@@ -565,17 +571,14 @@ export default {
             }
         },
         //类型单选
-        typechoose(val,index){    
-  
-            let ch = val.checked;  
-            this.typeallChecked(false);
-            this.$set(val,'checked',ch);
-            if(ch){
-                this.typechoosedItem[0]=val;
-                this.getData(val);
-            }else{
-                this.typechoosedItem=[];
-            }
+        typechoose(val){    
+            this.typeList.map(ty => {
+                ty.checked=false;
+            })
+            this.$set(val,'checked',true);
+            this.typechoosedItem[0]=val;
+            this.getData(val);
+            
         },
         //类型选择(多选)
         // typechoose(val,index){
