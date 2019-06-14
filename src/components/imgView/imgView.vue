@@ -307,7 +307,7 @@
       }
     }
     >.img-read{
-      width: 80%;
+      width: 75%;
       height:90%;
       position: fixed;
       background-color: #E3E3E3;

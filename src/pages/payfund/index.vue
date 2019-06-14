@@ -195,8 +195,8 @@
               <col width="15%">
             </colgroup>
             <tbody>
-            <tr  :class="{trActive:checkList[index]}" v-for="(item,index) in dataList.data">
-              <td style="text-align: left;padding-left: .2rem">
+            <tr :class="{trActive:checkList[index]}" v-for="(item,index) in dataList.data">
+              <td style="text-align: left;padding-left: .2rem" @click.self="changeCheck(index)">
                 <el-checkbox v-model="checkList[index]">{{index+1}}</el-checkbox>
               </td>
               <td @click="showApply(item.PhId)" class="atype">
@@ -211,7 +211,7 @@
               <td>
                 {{item.FDate.substring(0,10)}}
               </td>
-              <td class="atype" @click="openAuditfollow">
+              <td class="atype" @click="openAuditfollow(item,index)">
                 {{spTypeList[item.FApproval]}}
               </td>
               <td>
@@ -220,6 +220,9 @@
               <td>
                 {{item.FDescribe}}
               </td>
+            </tr>
+            <tr v-if="dataList.data.length==0">
+              <td colspan="8">未查询到数据</td>
             </tr>
             </tbody>
           </table>
@@ -252,7 +255,7 @@
             <div style="border-bottom: 1px solid #ccc">
               <span>对下补助项目名称：</span>
               <!--部门选择-->
-              <el-select size="small" style="width: 100px" v-model="searchData.bzType" @change="getChartList">
+              <el-select size="small" style="width: 100px" v-model="bzType" @change="getChartList">
                 <el-option v-for="item in apartData.Mst"
                            :key="item.PhId"
                            :label="item.FProjName"
@@ -270,13 +273,13 @@
       </div>
       <div class="pageArea">
         <el-pagination
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :current-page="searchData.pageSearch.pageIndex"
-          :page-sizes="[50,100,150,200]"
-          :page-size="searchData.pageSearch.pageSize"
+          :current-page="pageSearch.pageIndex"
+          :page-sizes="[20,30,50,100]"
+          :page-size="pageSearch.pageSize"
           layout="total,sizes,prev,pager,next,jumper"
           :total="dataList.total"
+          @size-change="changePagesize"
+          @current-change="changePageindex"
         >
 
         </el-pagination>
@@ -285,25 +288,26 @@
 
     <!--申请单弹窗-->
 
-    <el-dialog class="applydialog" title="查看申请"
+    <el-dialog v-if="applyType" class="applydialog" title="查看申请"
     :visible.sync="applyType"
     :before-close="handleClose">
       <applybill :applyNum="applyNum"
+                 :subData="approvalDataS.subData"
         @delete="handleDelete"
       ></applybill>
     </el-dialog>
     <!--项目新增修改-->
-    <el-dialog class="applydialog" :title="applyproTitle"
+    <el-dialog v-if="applyproType" class="applydialog" :title="applyproTitle"
                :visible.sync="applyproType"
                >
        <applypro :applyNum="applyNum" :prodata="apartData" :isAdd="isAdd"  @delete="handleDelete"></applypro>
     </el-dialog>
-<!--送审-->
-    <go-approval  :data="approvalDataS" @delete="handleDelete"></go-approval>
+    <!--送审-->
+    <go-approval v-if="approvalDataS.openDialog" :data="approvalDataS" @delete="handleDelete"></go-approval>
     <!--生成支付单-->
-    <approval-dialog ref="approvalDialog" :title="appDialog.title" :btn-group="appDialog.btnGroup" :data="approvalData" ></approval-dialog>
+    <approval-dialog v-if="approvalData.openDialog" ref="approvalDialog" :title="appDialog.title" :btn-group="appDialog.btnGroup" :data="approvalData" ></approval-dialog>
     <!--查看审批流程-->
-    <auditfollow :visible="visible" @update:visible="closeAuditFollow()"></auditfollow>
+    <auditfollow v-if="visible" :visible="visible" @update:visible="closeAuditFollow()" :auditMsg="auditMsg" ></auditfollow>
   </div>
 </template>
 
@@ -328,22 +332,22 @@
               total:7,
               data:[],
             },
+            bzType:0,
+            pageSearch:{
+              pageIndex:1,
+              pageSize:20
+            },
             searchData:{
               approvalType:'',
               payType:'',
               bmType:0,
-              bzType:0,
+
               searchValue:'',
               date:[],
               money:{
                 smoney:'',
                 emoney:''
-              },
-              pageSearch:{
-                pageIndex:1,
-                pageSize:50
-              },
-              searchorg:{label:'女工部'}
+              }
             },
             approvalList:[{value:'',label:'全部'},{value:0,label:'待送审'},{value:1,label:'审批中'},{value:2,label:'审批未通过'},{value:9,label:'审批通过'}],
             payList:[{value:'',label:'全部'},{value:0,label:'待支付'},{value:1,label:'支付异常'},{value:9,label:'支付成功'}],
@@ -362,7 +366,8 @@
             applyproTitle:'',
             approvalDataS: {
               openDialog: false,
-              data: {}
+              data: {},
+              subData:[],//审批流获取
             },
             visible:false,//审批流程
             appDialog:{
@@ -374,15 +379,16 @@
             },
             approvalData:{
             },
-            apartData:{bm:{},Mst:[],Amount:'0'},//选择部门后获取的项目信息
+            apartData:{bm:{},Mst:[],Amount:'0',subData:[]},//选择部门后获取的项目信息
             isAdd:true,//判断是修改（false）还是新增(true)
+            auditMsg:[],//审批流程 数据
           }
       },
       components:{mapState,Applypro, Orgtree, Applybill, tophandle,pieChart,goApproval,Auditfollow,ApprovalDialog,num},
       mounted(){
           //this.getData();
-          this.getDataC();
-        this.getCheckList(this.dataList.total);
+        this.getDataC();
+        //this.getCheckList(this.dataList.total);
       },
       watch:{
         checked:function(val){
@@ -398,10 +404,14 @@
         },
         searchData:{
           handler(val){
-            this.getData();
+            if(val.bmType){
+              this.pageSearch.pageIndex=1;
+              this.getData();
+            }
           },
           deep:true
-        }
+        },
+
       },
 
       computed: {
@@ -415,6 +425,11 @@
         })
       },
       methods:{
+          //td选中事件
+        changeCheck(val){
+          this.checkList[val]=!this.checkList[val];
+          this.$forceUpdate(this.checkList);
+        },
         //滚动
         unionStateScroll(bool){
 
@@ -502,7 +517,7 @@
             this.searchData.bmType=res.Record[0].OCode;
             this.apartData['bm']=this.bmList[0];
             this.$store.commit('user/setBm',this.bmList[0]);
-            this.getData();
+            this.getAppvalProc();
             this.getAllProByBm();
           }).catch(err=>{
             console.log(err);
@@ -520,7 +535,20 @@
           this.getAxios('GYS/BudgetMstApi/GetBudgetMstList',param).then(res=>{
             this.apartData.Mst=res.Mst;
             this.apartData.Amount=res.FAmount;
-            this.searchData.bzType=res.Mst[0].PhId;
+            this.bzType=res.Mst[0].PhId;
+          }).catch(err=>{
+            console.log(err);
+          })
+        },
+        //获取审批流
+        getAppvalProc:function(){
+          let param={
+            Orgid:this.apartData.bm.PhId,//组织id
+            BType:'001' //单据类型（"001":资金拨付单,"002":支付单）
+          };
+          this.getAxios('GSP/GAppvalProc/GetAppvalProc',param).then(res=>{
+            this.approvalDataS.subData=res.Data;
+            this.apartData.subData=res.Data;
           }).catch(err=>{
             console.log(err);
           })
@@ -529,9 +557,12 @@
         getData:function(){
           /*console.log(new Date(this.searchData.date[0]).getFullYear());
           let startTime=new Date(this.searchData.date[0]).getFullYear()+'-'*/
+          if(!this.apartData['bm'].PhId){
+            return;
+          }
           let param={
-            PageIndex:this.searchData.pageSearch.pageIndex,
-            PageSize:this.searchData.pageSearch.pageSize,
+            PageIndex:this.pageSearch.pageIndex,
+            PageSize:this.pageSearch.pageSize,
             FName:this.searchData.searchValue,
             ApprovalBz:this.searchData.approvalType,
             PayBz:this.searchData.payType,
@@ -552,14 +583,14 @@
             console.log(err);
           })
         },
-        //分页pagesize修改触发事件
+        /*//分页pagesize修改触发事件
         handleSizeChange:function(){
           this.getData();
         },
         //当前页码修改触发事件
         handleCurrentChange:function(){
           this.getData()
-        },
+        },*/
         //dialog关闭前触发事件
         handleClose:function(){
             //alert('cloase');
@@ -682,30 +713,44 @@
                   content: '请选择要送审的数据。'
                 })
               }else{
-                let count=0,data=[];
-                for(var i in ssList){
-                  if(ssList[i].FApproval!=0&&ssList[i].FApproval!=2){
-                    this.$msgBox.show({
-                      content: '只允许送审待送审及未通过项目。'
-                    })
-                  }else{
-                    count++;
-                    data.push(ssList[i].PhId)
+                if(this.approvalDataS.subData.length==0){
+                  this.$confirm('当前部门未创建审批流，无法送审。是否直接生成支付单','提示',{
+                    confirmButtonText:'确定',
+                    cancelBtnText: '取消',
+                    type:'warning'
+                  }).then( () => {
+                    this.showAuditAdd('SC')
+                  }).catch(() =>{})
+                }else{
+                  let data=[];
+                  for(var i in ssList){
+                    if(ssList[i].FApproval!=0&&ssList[i].FApproval!=2){
+                      this.$msgBox.show({
+                        content: '只允许送审待送审及未通过项目。'
+                      })
+                      return;
+                    }else{
+                      data.push(ssList[i].PhId)
+                    }
                   }
-                }
-                if(count==ssList.length){
                   this.approvalDataS.openDialog=true;
                   this.approvalDataS.data=data;
+
                 }
               }
-
               break;
             case 'SC':
+              if(this.approvalDataS.subData.length!=0){
+                this.$msgBox.show({
+                  content:  '当前部门已创建审批流，请送审后在审批页面进行生成支付单操作。'
+                });
+                return;
+              }
               let data=[],zfList=this.getCheckedList(),mCount=0;
               for(var i in zfList){
                 if(zfList[i].FApproval!=0){
                   this.$msgBox.show({
-                    content: '只允许待送审项目生成支付单。'
+                    content:'只允许待送审项目生成支付单。'
                   })
                   return;
                 }else{
@@ -732,8 +777,46 @@
         closeAuditFollow(){
           this.visible = false
         },
-        openAuditfollow(){
-          this.visible = true
+        openAuditfollow(item,idx){
+          if(this.apartData.subData.length==0){
+            this.$msgBox.show({
+              content: '当前部门未创建审批流。'
+            });
+            return;
+          }
+          if(item.FApproval==0){
+            this.visible = false;
+            this.$confirm('当前项目未送审，无法查看审批流。是否送审？','提示',{
+              confirmButtonText:'确定',
+              cancelBtnText: '取消',
+              type:'warning'
+            }).then( () => {
+              this.checkList[idx]=true;
+              this.showAuditAdd('SS')
+            }).catch(() =>{})
+          }else{
+            /*审批流查看*/
+            this.visible = true;
+            let data = {
+              RefbillPhid:item.PhId,
+              FBilltype:'001' //单据类型（"001":资金拨付单,"002":支付单）
+            }
+            this.getAuditfollow(data)
+          }
+
+        },
+        //拉去审批流数据查看
+        getAuditfollow(data){
+          this.getAxios("GSP/GAppvalRecord/GetAppvalRecordList",data).then(res =>{
+            console.log(res)
+            if (res && res.Status === "success") {
+              this.auditMsg = res.Data
+            }else {
+              this.$msgBox.show(res.Msg)
+            }
+          }).catch(err =>{
+            this.$msgBox.show("数据获取异常")
+          })
         },
         /*生成多条支付单  （post  ,  GSP ）
         /GAppvalRecord/PostAddPayMents
@@ -744,22 +827,16 @@
 
           let param={RefbillPhidList:data};
           this.postAxios('GSP//GAppvalRecord/PostAddPayMents',param).then(res=>{
-            console.log(res);
             if(res.Status=='success'){
               this.$msgBox.show({
                 content: '生成支付单成功。',
                 fn: () => {
-                  this.approvalDataS.openDialog=false;
-                  this.$emit('delete',{flag:true,type:'applyBill'})
+                  this.getData()
                 }
               });
             }else{
               this.$msgBox.show({
-                content: '生成支付单失败，请稍后重试。',
-                fn: () => {
-                  this.approvalDataS.openDialog=false;
-                  this.$emit('delete',{flag:true,type:'applyBill'})
-                }
+                content: '生成支付单失败，请稍后重试。'
               })
             }
           }).catch(err=>{
@@ -778,10 +855,20 @@
             if(this.searchData.bmType==this.bmList[i].OCode){
               this.apartData.bm=this.bmList[i];
               this.$store.commit('user/setBm',this.bmList[i]);
+
             }
           }
-          this.getData();
+          this.getAppvalProc();
+          //this.getData();
           this.getAllProByBm();
+        },
+
+        changePagesize:function(val){
+          this.pageSearch.pageSize=val;
+          this.pageSearch.pageIndex=1;
+        },
+        changePageindex:function(val){
+          this.pageSearch.pageIndex=val;
         }
       }
     }

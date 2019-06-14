@@ -62,7 +62,7 @@
                         v-if="accountList.length>0"
                         v-for="item in accountList"
                         :label="item.FBankname"
-                        :value="item.PhId.toString()"
+                        :value="item.PhId"
                       ></el-option>
                     </el-select>
                   </div>
@@ -604,7 +604,7 @@ export default {
         // id: 401190528000001,
         uid: this.userid || 488181024000001, //用户id
         orgid: this.orgid, //组织id
-        ryear: '2019' //年度
+        ryear: this.year || '2019' //年度
       })
         .then(res => {
           console.log('payList', res)
@@ -620,7 +620,7 @@ export default {
             res.Dtls.forEach(item => (item.choosed = false))
             this.detail.Dtls = res.Dtls
             this.account =
-              res.Dtls[0].BankPhid == '0' ? '' : res.Dtls[0].BankPhid
+              res.Dtls[0].BankPhid == '0' ? '' : parseInt(res.Dtls[0].BankPhid)
           }
           this.allSelected = false
           if (res.Mst.FPaymethod == 0) {
@@ -637,7 +637,7 @@ export default {
       postAddPayList({
         uid: this.userid, //用户id
         orgid: this.orgid, //组织id
-        ryear: '2019', //年度
+        ryear: this.year || '2019', //年度
         infoData: this.detail
       })
         .then(res => {
@@ -1055,6 +1055,7 @@ export default {
     ...mapState({
       orgid: state => state.user.orgid,
       userid: state => state.user.userid,
+      year: state => state.user.year,
       orglist: state => state.user.orglist
     })
   }

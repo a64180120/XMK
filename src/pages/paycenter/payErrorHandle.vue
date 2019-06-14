@@ -86,7 +86,7 @@ export default {
         id: this.data.data.Mst.PhId,
         uid: this.userid,
         orgid: this.orgid,
-        ryear: '2019'
+        ryear: this.year || '2019'
       })
         .then(res => {
           if (res.Status == 'error') {
@@ -156,7 +156,8 @@ export default {
   computed: {
     ...mapState({
       orgid: state => state.user.orgid,
-      userid: state => state.user.userid
+      userid: state => state.user.userid,
+      year: state => state.user.year
     })
   }
 }

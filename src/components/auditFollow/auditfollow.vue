@@ -1,8 +1,8 @@
 <template>
     <div v-show="visible" style="z-index: 3000;" class="auditfollow msFixed">
         <p class="title">
-            <span>{{title}}</span>  
-            <i @click="close"></i>  
+            <span>{{title}}</span>
+            <i @click="close"></i>
         </p>
         <div class="content">
             <ul>

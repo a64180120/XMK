@@ -34,7 +34,7 @@
                 <el-date-picker v-model="searchForm.BDate" @change="changeInput()" style="width: 240px" size="mini" type="daterange" start-placeholder="开始时间" end-placeholder="开始时间"></el-date-picker>
               </el-form-item>
               <el-form-item label="" class="top-form-right">
-                <search-input @btnClick="search()" placeholder="申请单名称/编号" v-model="searchForm.BName"></search-input>
+                <search-input @btnClick="search()" placeholder="申请单编号" v-model="searchForm.BName"></search-input>
               </el-form-item>
             </el-form>
           </div>
@@ -101,7 +101,7 @@
               </colgroup>
               <tbody>
               <tr :class="{trActive:check[idx]}" v-for="(item,idx) in tableData"  :key="idx">
-                <td>
+                <td @click.self="handleCheckBoxCellClick(item,idx)">
                   <el-checkbox v-model="check[idx]" >{{idx}}</el-checkbox>
                 </td>
                 <td @click="handleRowClick(item,idx)" class="apply-epart cell-click">
@@ -210,7 +210,7 @@
               </colgroup>
               <tbody>
               <tr :class="{trActive:check[idx]}" v-for="(item,idx) in tableData"  :key="idx">
-                <td>
+                <td @click.self="handleCheckBoxCellClick(item,idx)">
                   <el-checkbox v-model="check[idx]" >{{idx}}</el-checkbox>
                 </td>
                 <td @click="handleRowClick(item,idx)" class="apply-epart cell-click">
@@ -264,7 +264,7 @@
     <!--组织树-->
     <orgtree :data="orgtreeData" :checkedOrg="checkedOrg" :visible.sync="orgType" @confirm="getOrg"></orgtree>
     <!--支付单查看-->
-    <paylist :data="payListData" v-if="openDialog" :openDialog="openDialog" @closeDetail="closeDetail" ref="payList"></paylist>
+    <paylist :data="payListData" :OrgTree="orgtreeData" v-if="openDialog" :openDialog="openDialog" @closeDetail="closeDetail" ref="payList"></paylist>
   </section>
 </template>
 
@@ -309,9 +309,9 @@
         tableData:[],//模拟表格数据
         page:{
           currentPage:1,//当前页
-          pageSizes:[20,50,100], //每页显示多少条
+          pageSizes:[20,30,50,100], //每页显示多少条
           total:0,//总条数
-          pageSize:10,//当前每页显示多少条
+          pageSize:20,//当前每页显示多少条
         },//分页
         visible:false,
         appDialog:{
@@ -438,7 +438,9 @@
       },
       //搜索框事件
       search(val){
-
+        this.page.pageSize=20;
+        this.page.currentPage = 1;
+        this.loadData()
       },
       //单行选中事件
       handleSelect(selection,row){
@@ -456,6 +458,18 @@
         this.openDialog =true
         this.detailData = row
       },
+      //点击checkBox单元格事件
+      handleCheckBoxCellClick(row,idx){
+        for (let key in this.check){
+          if (idx === parseInt(key)){
+            if(this.check[key] === true){
+              this.$set(this.check,key,false)
+            }else {
+              this.$set(this.check,key,true)
+            }
+          }
+        }
+      },
       //当前页显示多少条数据
       handleSizeChange(val){
         this.page.pageSize = val
@@ -465,10 +479,6 @@
       handleCurrentChange(val){
         this.page.currentPage = val
         this.loadData()
-      },
-      //打开查看审批流
-      openApproval(row,idx){
-        console.log(row,idx)
       },
       //打开审批弹框
       aprovalItem(){
@@ -491,7 +501,6 @@
         this.visible = true;
         let data = {
           RefbillPhid:item.RefbillPhid,
-          ProcPhid:item.ProcPhid,
           FBilltype:this.BType
         }
         this.getAuditfollow(data)
@@ -499,7 +508,7 @@
       //拉去审批流数据查看
       getAuditfollow(data){
         let that= this
-        this.getAxios("/GAppvalRecord/GetAppvalRecord",data).then(success =>{
+        this.getAxios("/GAppvalRecord/GetAppvalRecordList",data).then(success =>{
           console.log(success)
           if (success && success.Status === "success") {
             that.auditMsg = success.Data
@@ -527,13 +536,14 @@
         this.visible = true
         let data = {
           RefbillPhid:this.selection[0].RefbillPhid,
-          ProcPhid:item.PhId,
           FBilltype:this.BType
         }
         this.getAuditfollow(data)
       },
       //输入框值改变
       changeInput(e){
+        this.page.pageSize=20;
+        this.page.currentPage = 1;
         if(e ==='operator'){
           if(this.searchForm.StopHour !== ''){
             this.loadData()

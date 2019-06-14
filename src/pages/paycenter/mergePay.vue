@@ -238,10 +238,10 @@ export default {
       }
       postSavePayPsd({
         OldPsd: '',
-        TypeCode: '9999',
-        TypeName: '管理员',
+        TypeCode: this.usercode,
+        TypeName: this.username,
         Orgid: this.orgid,
-        Orgcode: '1',
+        Orgcode: this.orgcode,
         value: md5(this.confirmPassword),
         Isactive: this.radio
       })
@@ -272,10 +272,10 @@ export default {
     // 进入支付页面
     enterPassword() {
       postPayPsd({
-        TypeCode: '9999',
-        TypeName: '管理员',
+        TypeCode: this.usercode,
+        TypeName: this.username,
         Orgid: this.orgid,
-        Orgcode: '1'
+        Orgcode: this.orgcode
       })
         .then(res => {
           if (res.Status == 'error') {
@@ -369,7 +369,7 @@ export default {
     // 请求-判断口令正确-正确直接发起支付
     postJudgePayPsd(suc) {
       postJudgePayPsd({
-        TypeCode: '9999',
+        TypeCode: this.usercode,
         Value: md5(this.password)
       })
         .then(res => {
@@ -413,7 +413,10 @@ export default {
     },
     ...mapState({
       userid: state => state.user.userid,
-      orgid: state => state.user.orgid
+      orgid: state => state.user.orgid,
+      username: state => state.user.username,
+      orgcode: state => state.user.orgcode,
+      usercode: state => state.user.usercode
     })
   },
   watch: {
