@@ -77,15 +77,18 @@ function apiAxios(method, url, params, hastimeout) {
     // `data` 是作为请求主体被发送的数据
     params: method === 'GET' || method === 'DELETE' ? params : null,
     data:
-      method === 'POST' || method === 'PUT' || method === 'FORM'
+      method === 'POST' || method === 'PUT' 
         ? Qs.stringify(params)
-        : null
+        : method === 'FORM' ? params :null
   }
   // 请求超时时间
   if (!hastimeout) {
     httpDefault.timeout = 10000
   }
-
+  if(httpDefault.method === 'FORM'){
+    httpDefault.method = 'post'
+    httpDefault.headers.Accept = "application/json;"
+  }
   // 注意**Promise**使用(Promise首字母大写)
   return new Promise((resolve, reject) => {
     axios(httpDefault)
@@ -112,6 +115,7 @@ export default {
       apiAxios('PUT', url, params, timeout)
     Vue.prototype.delectAxios = (url, params, timeout) =>
       apiAxios('DELECT', url, params, timeout)
-    //Vue.prototype.formAxios = (url, params, timeout) => apiAxios('FORM', url, params, timeout)
+    Vue.prototype.formAxios = (url, params, timeout) => 
+      apiAxios('FORM', url, params, timeout)
   }
 }

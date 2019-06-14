@@ -257,6 +257,18 @@ export default {
         // },
         //自动带出岗位名称
         selectName(id,n){
+            console.log(this.postList,id,n)
+            let count=0;
+            this.postList.map(pos => {
+                if(pos.PhId==id){
+                    count++;
+                }
+            })
+            if(count>1){
+                this.postList.splice(n,1,{FMode:0});
+                this.$msgBox.error('当前审批流程中已有一个相同岗位,不能重复设置!');
+                return;
+            }
             let name='';
             this.codeList.map(po => {
                 if(po.PhId==id){

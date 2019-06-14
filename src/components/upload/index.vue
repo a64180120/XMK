@@ -4,7 +4,7 @@
         ref='upload'
         class="upload-demo"
         drag
-        :on-progress="submit"
+        :on-change="progress"
         :file-list="filelist"
         action=""
         :auto-upload="false"
@@ -27,8 +27,11 @@
             }
         },
         methods:{
-            submit(val){
-                console.log(this.filelist,val)
+            progress(file,filelist){
+                this.filelist=filelist
+            },
+            submit(){
+                this.$emit('submit',this.filelist);
             }
         }
     }

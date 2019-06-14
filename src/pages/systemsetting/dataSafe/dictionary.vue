@@ -53,10 +53,10 @@
                                     <el-input v-model="item.TypeName" placeholder="请输入类型名称"></el-input>
                                 </div>
                             </li>
-                            <li>
-                                <div v-show="disabled">{{item.Bz}}</div>
-                                <div v-show="!disabled">
-                                    <el-input v-model="item.Bz" placeholder="请输入备注"></el-input>
+                            <li :class="{gray:!disabled&&item.Issystem==1}">
+                                <div  v-show="disabled || item.Issystem==1">{{item.Bz}}</div>
+                                <div v-show="!disabled&&item.Issystem!=1">
+                                    <el-input  v-model="item.Bz" placeholder="请输入备注"></el-input>
                                 </div>
                             </li>
                             <li class="enable">
@@ -152,6 +152,7 @@ export default {
             
             let arr=this.typeInfoList.concat(this.deleteList);
             let data={
+
                 infoData:arr
             }
             dictionarySave(data).then(res=>{
@@ -175,10 +176,14 @@ export default {
             if(index==0){
                 this.disabled=false;
             }
-            this.typeInfoList.splice(index+1,0,{DicType:"PayMethod",Isactive:0,PersistentState:1,DicName:'支付方式'})
+            this.typeInfoList.splice(index+1,0,{DicType:"PayMethod",Isactive:0,PersistentState:1,DicName:'支付方式',Orgid:this.$store.state.user.orgid,Orgcode:this.$store.state.user.orgcode})
         },
         //类型信息删除
         deleteInfo(index,item){ 
+            if(item.Issystem==1){
+                this.$msgBox.error('系统内置类型不能删除!')
+                return;
+            }
             if(item.PhId){
                 item.PersistentState=3;
                 this.deleteList.push(item);
@@ -373,6 +378,9 @@ export default {
             }
         }
     }
+}
+.gray{
+    background: #ddd;
 }
 </style>
 <style>
