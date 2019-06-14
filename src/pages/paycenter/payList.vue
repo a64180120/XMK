@@ -62,7 +62,7 @@
                         v-if="accountList.length>0"
                         v-for="item in accountList"
                         :label="item.FBankname"
-                        :value="item.PhId.toString()"
+                        :value="item.PhId"
                       ></el-option>
                     </el-select>
                   </div>
@@ -620,7 +620,7 @@ export default {
             res.Dtls.forEach(item => (item.choosed = false))
             this.detail.Dtls = res.Dtls
             this.account =
-              res.Dtls[0].BankPhid == '0' ? '' : res.Dtls[0].BankPhid
+              res.Dtls[0].BankPhid == '0' ? '' : parseInt(res.Dtls[0].BankPhid)
           }
           this.allSelected = false
           if (res.Mst.FPaymethod == 0) {
