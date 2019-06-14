@@ -604,7 +604,7 @@ export default {
         // id: 401190528000001,
         uid: this.userid || 488181024000001, //用户id
         orgid: this.orgid, //组织id
-        ryear: '2019' //年度
+        ryear: this.year || '2019' //年度
       })
         .then(res => {
           console.log('payList', res)
@@ -637,7 +637,7 @@ export default {
       postAddPayList({
         uid: this.userid, //用户id
         orgid: this.orgid, //组织id
-        ryear: '2019', //年度
+        ryear: this.year || '2019', //年度
         infoData: this.detail
       })
         .then(res => {
@@ -1055,6 +1055,7 @@ export default {
     ...mapState({
       orgid: state => state.user.orgid,
       userid: state => state.user.userid,
+      year: state => state.user.year,
       orglist: state => state.user.orglist
     })
   }
