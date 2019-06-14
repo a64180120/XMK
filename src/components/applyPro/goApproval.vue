@@ -29,7 +29,7 @@
             <div class="table">
               <el-table
                 class="table-content"
-                :data="subData"
+                :data="data.subData"
                 :border="true"
                 highlight-current-row
                 @current-change="handleCurrentChange"
@@ -98,6 +98,7 @@ export default {
       default: {
         openDialog: false,
         data: null,
+        subData:[],
         itemType: ''
       }
     },
@@ -126,7 +127,6 @@ export default {
       openDialog: false,
       handleValue: '',
       content: '',
-      subData: [],
       nextDataList: [],
       /*送审数据*/
       param:{
@@ -166,7 +166,7 @@ export default {
     changeDialog() {
       this.openDialog = true
     },
-    //获取审批流
+    /*//获取审批流
     getAppvalProc:function(){
       let param={
         Orgid:this.bmid,//组织id
@@ -178,7 +178,7 @@ export default {
       }).catch(err=>{
         console.log(err);
       })
-    },
+    },*/
 
 
     //获取审批人
@@ -228,6 +228,8 @@ export default {
       this.param.FSendDate=new Date();
       this.param.OperaPhid=this.userid;
       this.param.OperatorCode=this.usercode;
+      this.param.RefbillPhidList=this.data.data;
+      console.log(this.param);
       this.postAxios('GSP/GAppvalRecord/PostAddAppvalRecord',this.param).then(res=>{
         if (res.Status == 'error') {
           this.$msgBox.error(res.Msg)
@@ -259,29 +261,19 @@ export default {
       })
     }
   },
-  created() {
+  /*created() {
     this.getAppvalProc();
-  },
-  watch: {
+  },*/
+  /*watch: {
     data:{
       handler(val){
         if(val){
           this.param.RefbillPhidList=val.data;
-          /*this.PaymentMst.FDepphid= val.bm.PhId;//（部门主键）
-          this.PaymentMst.FDepcode= val.bm.OCode;//（部门编码）
-          this.PaymentMst.FDepname= val.bm.OName;//（部门名称）*/
         }
       },
       deep:true,
     },
-    /*'data.openDialog'(newVal) {
-      if (newVal) {
-        this.$nextTick(() => {
-          this.$refs.content.setCurrentRow(this.subData[0])
-        })
-      }
-    }*/
-  }
+  }*/
 }
 </script>
 

@@ -5,9 +5,9 @@
         <el-col :span="24">
           <div class="top-btn">
             <slot name="btn-group">
-              <el-button class="btn" size="mini" style="padding: 0;" @click="creatApply"  v-if="record.PaymentMst.FApproval==9">生成支付单</el-button>
-              <el-button class="btn" size="mini" @click="postApply" v-if="record.PaymentMst.FApproval==0||record.PaymentMst.FApproval==2">送审</el-button>
-              <el-button class="btn" size="mini" @click="deleteApply"  v-if="record.PaymentMst.FApproval==0||record.PaymentMst.FApproval==2">删除</el-button>
+              <el-button class="btn" size="mini" style="padding: 0;" @click="creatApply"  :disabled="!(record.PaymentMst.FApproval==0&&approvalDataS.subData.length==0)">生成支付单</el-button>
+              <el-button class="btn" size="mini" @click="postApply" :disabled="!(record.PaymentMst.FApproval==0||record.PaymentMst.FApproval==2)">送审</el-button>
+              <el-button class="btn" size="mini" @click="deleteApply"  :disabled="!(record.PaymentMst.FApproval==0||record.PaymentMst.FApproval==2)">删除</el-button>
               <!--<el-button class="btn" size="mini" @click="checkApply">审批</el-button>
               <el-button class="btn" size="mini" @click="cancelApply">取消审批</el-button>-->
               <el-button class="btn" size="mini" >打印</el-button>
@@ -179,9 +179,16 @@
     export default {
         name: "applybill",
       components: {ApprovalDialog,goApproval,ImgView},
-      props:{applyNum: {
-          type: String,
-          default: ''
+      props:{
+          applyNum: {
+            type: String,
+            default: ''
+          },
+        subData:{
+          type:Array,
+          default:function () {
+            return {}
+          }
         }
       },
       data(){
@@ -220,21 +227,28 @@
             //送审
             approvalDataS: {
               openDialog: false,
-              data: []
+              data: [],
+              subData:[]
             },
             timeF:'',
             dialogVisible:false,//附件查看弹窗
           }
       },
-      watch:{
+      /*watch:{
         applyNum(val){
           this.getApply();
           this.approvalDataS.data=[val]
         },
-      },
+        subData:{
+          handler(val) {
+            this.approvalDataS.subData=val;
+          }
+        }
+      },*/
       mounted(){
         this.getApply();
-        this.approvalDataS.data=[this.applyNum]
+        this.approvalDataS.data=[this.applyNum];
+        this.approvalDataS.subData=this.subData;
       },
       methods:{
           //申请单查看
@@ -248,14 +262,57 @@
         },
         //生成支付单
         creatApply:function(){
-          this.appDialog.title = '审批并生成支付单'
-          this.appDialog.btnGroup.cancelName = '取消'
-          this.appDialog.btnGroup.onfirmName = '生成支付单'
-          this.$refs.approvalDialog.changeDialog()
+          this.$confirm('合计支付'+(this.record.PaymentMst.FAmountTotal)+'元，确定生成支付单？','提示',{
+            confirmButtonText:'确定',
+            cancelBtnText: '取消',
+            type:'warning'
+          }).then( () => {
+            this.postBill();
+          }).catch(() =>{
+          })
+        },
+        /*生成多条支付单  （post  ,  GSP ）
+        /GAppvalRecord/PostAddPayMents
+        参数：
+        RefbillPhidList: ['10'], （单据主键集合）
+        * */
+        postBill:function(){
+          let param={RefbillPhidList:[this.applyNum]};
+          this.postAxios('GSP//GAppvalRecord/PostAddPayMents',param).then(res=>{
+            console.log(res);
+            if(res.Status=='success'){
+              this.$msgBox.show({
+                content: '生成支付单成功。',
+                fn: () => {
+                  this.approvalDataS.openDialog=false;
+                  this.$emit('delete',{flag:true,type:'applyBill'})
+                }
+              });
+            }else{
+              this.$msgBox.show({
+                content: '生成支付单失败，请稍后重试。'
+              })
+            }
+          }).catch(err=>{
+            console.log(err);
+          })
         },
         //送审
         postApply:function(){
-          this.approvalDataS.openDialog=true
+          if(this.approvalDataS.subData.length==0){
+            this.$confirm('当前部门未创建审批流，无法送审。是否直接生成支付单？','提示',{
+              confirmButtonText:'确定',
+              cancelBtnText: '取消',
+              type:'warning'
+            }).then( () => {
+              this.creatApply();
+            }).catch( () => {
+
+            })
+          }else{
+            this.approvalDataS.openDialog=true
+          }
+
         },
         //删除
         deleteApply:function(){

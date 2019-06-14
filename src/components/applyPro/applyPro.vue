@@ -176,7 +176,7 @@
         </span>
     </el-dialog>
     <!--送审-->
-    <go-approval  :data="approvalDataS" @delete="handleDelete"></go-approval>
+    <go-approval v-if="approvalDataS.openDialog"  :data="approvalDataS" @delete="handleDelete"></go-approval>
     <!--<approval-dialog ></approval-dialog>
     <approval-bill @dialogFlow="searchFlow"
                    @approvalRowClick="approvalRowClick"
@@ -247,7 +247,8 @@
 
         approvalDataS: {//送审弹窗
           openDialog: false,
-          data: []
+          data: [],
+          subData:[],
         },
         dialogVisible:false,//附件查看弹窗
 
@@ -304,11 +305,10 @@
         orgcode:state => state.user.orgcode, //编码
         orgname:state => state.user.orgname,//名称
         year:state => state.user.year,//年份
-        sta:state => state.user
       })
     },
     components:{ApprovalDialog, Orgtree,goApproval,ImgView},
-    watch:{
+    /*watch:{
       isAdd(val){
         if(!val){
           this.getApply();
@@ -338,6 +338,7 @@
             this.PaymentMst.FDepphid= val.bm.PhId;//（部门主键）
             this.PaymentMst.FDepcode= val.bm.OCode;//（部门编码）
             this.PaymentMst.FDepname= val.bm.OName;//（部门名称）
+            this.approvalDataS.subData= val.subData;//审批流
             for(var i in val.Mst){
               val.Mst[i].checked=false;
             }
@@ -345,15 +346,15 @@
         },
         deep:true,
       },
-    },
+    },*/
     mounted(){
+      this.approvalDataS.subData= this.prodata.subData;//审批流
       this.$nextTick(
         this.getOrgList()
       );
       for(var i in this.prodata.Mst){
         this.prodata.Mst[i].checked=false;
       }
-      console.log(this.prodata.Mst);
       if(!this.isAdd){
         this.getApply();
       }else{
@@ -434,10 +435,19 @@
             this.$msgBox.show({
               content: '保存成功。',
               fn: () => {
-                this.$emit('delete',{flag:true,type:'applyproType'});
+
                 if(type==1){
+                  if(this.approvalDataS.subData.length==0){
+                    this.$msgBox.show({
+                      content: '当前部门未创建审批流，无法送审。'
+                    })
+                    this.$emit('delete',{flag:true,type:'applyproType'})
+                  }else{
                     this.approvalDataS.openDialog=true;
                     this.approvalDataS.data=res.KeyCodes;
+                  }
+                }else{
+                  this.$emit('delete',{flag:true,type:'applyproType'})
                 }
               }
             })
