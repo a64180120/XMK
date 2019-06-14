@@ -199,7 +199,7 @@
               <td style="text-align: left;padding-left: .2rem">
                 <el-checkbox v-model="checkList[index]">{{index+1}}</el-checkbox>
               </td>
-              <td @click="showApply(item.PhId)">
+              <td @click="showApply(item.PhId)" class="atype">
                 {{item.FCode}}
               </td>
               <td>
@@ -501,6 +501,7 @@
             this.bmList=res.Record;
             this.searchData.bmType=res.Record[0].OCode;
             this.apartData['bm']=this.bmList[0];
+            this.$store.commit('user/setBm',this.bmList[0]);
             this.getData();
             this.getAllProByBm();
           }).catch(err=>{
@@ -700,10 +701,29 @@
 
               break;
             case 'SC':
-              this.appDialog.title = '审批并生成支付单'
-              this.appDialog.btnGroup.cancelName = '取消'
-              this.appDialog.btnGroup.onfirmName = '生成支付单'
-              this.$refs.approvalDialog.changeDialog()
+              let data=[],zfList=this.getCheckedList(),mCount=0;
+              for(var i in zfList){
+                if(zfList[i].FApproval!=0){
+                  this.$msgBox.show({
+                    content: '只允许待送审项目生成支付单。'
+                  })
+                  return;
+                }else{
+                  mCount+=Math.floor(zfList[i].FAmountTotal*100);
+                  data.push(zfList[i].PhId)
+                }
+              }
+                this.$confirm('合计支付'+(mCount/100)+'元，确定生成支付单？','提示',{
+                  confirmButtonText:'确定',
+                  cancelBtnText: '取消',
+                  type:'warning'
+                }).then( () => {
+                  this.postBill(data);
+                }).catch(() =>{
+                  this.approvalDataS.openDialog=false;
+                  this.$emit('delete',{flag:true,type:'applyBill'})
+                })
+
               break;
             default:
               break;
@@ -714,6 +734,37 @@
         },
         openAuditfollow(){
           this.visible = true
+        },
+        /*生成多条支付单  （post  ,  GSP ）
+        /GAppvalRecord/PostAddPayMents
+        参数：
+        RefbillPhidList: ['10'], （单据主键集合）
+        * */
+        postBill:function(data){
+
+          let param={RefbillPhidList:data};
+          this.postAxios('GSP//GAppvalRecord/PostAddPayMents',param).then(res=>{
+            console.log(res);
+            if(res.Status=='success'){
+              this.$msgBox.show({
+                content: '生成支付单成功。',
+                fn: () => {
+                  this.approvalDataS.openDialog=false;
+                  this.$emit('delete',{flag:true,type:'applyBill'})
+                }
+              });
+            }else{
+              this.$msgBox.show({
+                content: '生成支付单失败，请稍后重试。',
+                fn: () => {
+                  this.approvalDataS.openDialog=false;
+                  this.$emit('delete',{flag:true,type:'applyBill'})
+                }
+              })
+            }
+          }).catch(err=>{
+            console.log(err);
+          })
         },
         //生成支付单弹框
         creatPayItem(){
@@ -726,6 +777,7 @@
          for(var i in this.bmList){
             if(this.searchData.bmType==this.bmList[i].OCode){
               this.apartData.bm=this.bmList[i];
+              this.$store.commit('user/setBm',this.bmList[i]);
             }
           }
           this.getData();

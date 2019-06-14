@@ -28,7 +28,7 @@ export default {
   },
    
   created() {
-     this.getUserInfo();
+   
   },
   // TODO: 全局状态加载及变更。请根据实际情况改写
   beforeMount() {
@@ -36,7 +36,7 @@ export default {
   },
   // 初次加载时，可通过接口获取用户的主题信息，或者通过按钮触发，或者直接加载默认主题
   mounted() {
-    
+    this.getData();
     this.getOrganize();
     this.$nextTick(() => {
       console.log(baseURL);
@@ -63,27 +63,13 @@ export default {
                 this.$msgBox.show('获取组织列表失败!');
           })
       },
-    getUserInfo(){ //获取url传参
-      console.log(32313123000)
-      let index = window.location.href.indexOf('?');
-      let ind= window.location.href.indexOf('#');
-      let info=window.location.href.slice(index+1).slice(0,ind-index-1).split('&');
-      let data={}
-      for(let i of info){
-        let arr= i.split('=');
-        
-        data[arr[0]]=arr[1];
-      }      
-      this.$store.commit('user/setAppinfo',data);
-       console.log(this.$store)
-      this.getData(data);
-    },
+  
     
     //完整信息
-    getData(data){
+    getData(){
       let param={
-        uid:data.UserId,
-        orgid:data.OrgId,
+        uid:this.$store.state.user.userid,
+        orgid:this.$store.state.user.orgid,
       }
       GetLogininfo(param).then(res => {
         if(res.Status=='error'){

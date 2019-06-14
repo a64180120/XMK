@@ -119,7 +119,6 @@ export default {
             }   
                  
             BankAccountSave(data).then(res=>{
-                console.log(res)
                 if(res.Status=='success'){
                     this.$msgBox.show(res.Msg)
                     this.$emit('add-cancle',true);
@@ -133,7 +132,7 @@ export default {
         }
     },
     mounted(){
-        
+        console.log(this.info)
     },
     components:{
         Orgtree

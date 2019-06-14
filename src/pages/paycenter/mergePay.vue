@@ -238,7 +238,7 @@ export default {
       }
       postSavePayPsd({
         OldPsd: '',
-        TypeCode: '9998',
+        TypeCode: '9999',
         TypeName: '管理员',
         Orgid: this.orgid,
         Orgcode: '1',
@@ -272,7 +272,7 @@ export default {
     // 进入支付页面
     enterPassword() {
       postPayPsd({
-        TypeCode: '9998',
+        TypeCode: '9999',
         TypeName: '管理员',
         Orgid: this.orgid,
         Orgcode: '1'
@@ -287,7 +287,7 @@ export default {
             this.needSet = true
           }
           if (res == 1) {
-            this.pay()
+            this.postSubmitPayments()
             return
           }
           this.showMergePay = false
@@ -319,19 +319,15 @@ export default {
     },
     // 发起支付
     pay() {
-      if (this.needSet) {
-        if (this.password == '') {
-          this.$msgBox.error('支付口令不能为空！')
-          return
-        }
-        if (this.password.length < 6) {
-          this.$msgBox.error('支付口令为6位数字！')
-          return
-        }
-        this.postJudgePayPsd()
-      } else {
-        this.postSubmitPayments()
+      if (this.password == '') {
+        this.$msgBox.error('支付口令不能为空！')
+        return
       }
+      if (this.password.length < 6) {
+        this.$msgBox.error('支付口令为6位数字！')
+        return
+      }
+      this.postJudgePayPsd()
       // 判断口令是否正确
     },
     // 请求-支付
@@ -373,7 +369,7 @@ export default {
     // 请求-判断口令正确-正确直接发起支付
     postJudgePayPsd(suc) {
       postJudgePayPsd({
-        TypeCode: '999999',
+        TypeCode: '9999',
         Value: md5(this.password)
       })
         .then(res => {

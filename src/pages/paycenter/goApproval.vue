@@ -71,6 +71,7 @@
         </div>
       </div>-->
       <approval-bill
+        ref="approvalbill"
         v-model="content"
         :isApproval="true"
         :approvalFollow="approvalFollow"
@@ -156,6 +157,7 @@ export default {
     approvalRowClick(item) {
       console.log(item)
       this.ProcPhid = item.PhId
+      this.NextOperators = []
       GetFirstStepOperator({
         PhId: item.PhId
       })
@@ -253,7 +255,7 @@ export default {
       }
     }
   },
-  created() {
+  mounted() {
     // 获取所有审批流程
     getAppvalProc({
       Orgid: this.orgid,
@@ -267,6 +269,9 @@ export default {
         this.approvalFollow = res.Data
         if (res.Data.length > 0) {
           this.approvalRowClick(res.Data[0])
+          this.$refs.approvalbill.$refs.approvalFollowTable.setCurrentRow(
+            res.Data[0]
+          )
         }
       })
       .catch(err => {
@@ -274,6 +279,7 @@ export default {
         this.$msgBox.error('获取送审流程失败！')
       })
   },
+  created() {},
   watch: {
     'data.openDialog'(newVal) {
       if (newVal) {

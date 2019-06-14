@@ -6,9 +6,9 @@ const state = {
     //签名
     token: "",
     //用户id
-    userid: "488181024000001",
+    userid: "",
     //用户code
-    usercode:'9999',
+    usercode:'',
     //用户名称
     username: "",
     //组织列表
@@ -17,6 +17,10 @@ const state = {
     orgid:'', //id
     orgcode:'', //编码
     orgname:'',//名称
+    /*当前选中部门*/
+    bmid:'',
+    bmcode:'',
+    bmname:'',
     year:'',//年份
     appinfo:{},//ajax登录信息
 };
@@ -46,6 +50,8 @@ const mutations = {
     setAppinfo(state,data){
         state.appinfo=data;
         state.userid=data.UserId;
+        state.orgid=data.OrgId;
+        state.year=data.Year
     },
     //组织用户的缓存信息
     setLoginInfo(state,data){
@@ -67,6 +73,13 @@ const mutations = {
         state.orgname=data.OName;
 
     },
+  //修改当前部门
+  setBm(state,data){
+    state.bmid=data.PhId;
+    state.bmcode=data.OCode;
+    state.bmname=data.OName;
+
+  },
     //修改年度
     setYear(state,data){
         state.year=data

@@ -61,7 +61,6 @@ export default {
   mounted() {},
   methods: {
     close(done) {
-      console.log('close')
       this.openDialog = false
       this.fn()
       if (this.interval) {
@@ -71,7 +70,6 @@ export default {
       this.$destroy()
     },
     showMsgBox: function() {
-      console.log('show')
       this.count = this.timeOut
       this.openDialog = true
       this.status = 'success'
@@ -80,7 +78,6 @@ export default {
       })
     },
     showError: function() {
-      console.log('Alert')
       this.count = this.timeOut
       this.openDialog = true
       this.status = 'error'
