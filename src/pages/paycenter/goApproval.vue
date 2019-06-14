@@ -209,8 +209,8 @@ export default {
         FSendDate: '',
         FApproval: '1',
         FOpinion: this.content,
-        OperaPhid: '488181024000002',
-        OperatorCode: '9999'
+        OperaPhid: this.userid,
+        OperatorCode: this.usercode
       })
         .then(res => {
           if (res.Status == 'error') {
@@ -219,6 +219,7 @@ export default {
           }
           this.data.openDialog = false
           this.$msgBox.show('送审成功')
+          if (this.father) this.father.openDialog = false
           this.refreshIndexData()
         })
         .catch(err => {
@@ -291,7 +292,9 @@ export default {
   },
   computed: {
     ...mapState({
-      orgid: state => state.user.orgid
+      orgid: state => state.user.orgid,
+      usercode: state => state.user.usercode,
+      userid: state => state.user.userid
     })
   }
 }

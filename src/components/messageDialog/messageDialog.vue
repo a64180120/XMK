@@ -18,6 +18,7 @@
         </div>
         <span style="float:right;width:290px">
           <span v-html="content"></span>
+          &nbsp;
           ({{count}}s) 后自动关闭
         </span>
       </div>

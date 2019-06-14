@@ -194,6 +194,7 @@
           layout="total,sizes,prev,pager,next,jumper"
           @current-change="getData"
           :total="total"
+          :page-sizes="[20,30,50,100]"
         >
           <!-- <span>当前 第 {{currentPage}} 页</span>
           <span>共 {{Math.ceil(total/pageSize)}} 页</span>
@@ -324,7 +325,7 @@ export default {
       // 搜索数据
       search: '',
       // 分页
-      pageSize: 10,
+      pageSize: 20,
       currentPage: 1,
       total: 0,
       // 首页表格数据
@@ -488,7 +489,7 @@ export default {
         PageSize: this.pageSize, //每页显示行数
         uid: this.userid || 488181024000001, //用户id
         orgid: this.orgid, //组织id
-        ryear: '2019'
+        ryear: this.year || '2019'
       })
         .then(res => {
           console.log(res)
@@ -679,7 +680,8 @@ export default {
     },
     ...mapState({
       orgid: state => state.user.orgid,
-      userid: state => state.user.userid
+      userid: state => state.user.userid,
+      year: state => state.user.year
     })
   }
 }
