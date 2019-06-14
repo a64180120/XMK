@@ -44,6 +44,7 @@
               highlight-current-row
               ref="approvalFollowTable"
               @row-click="handleRowClick"
+              max-height="130px"
             >
               <el-table-column prop="FCode" width="80" align="center" label="流程编码"></el-table-column>
               <el-table-column prop="FName" align="center" label="流程名称"></el-table-column>

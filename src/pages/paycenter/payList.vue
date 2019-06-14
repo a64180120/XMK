@@ -80,15 +80,15 @@
                     >
                       <el-option
                         v-for="(item,index) in FPaymethodList"
-                        :label="item.label"
-                        :value="item.value"
+                        :label="item.TypeName"
+                        :value="item.PhId.toString()"
                         :key="index"
                       ></el-option>
                     </el-select>
                   </div>
                   <div
                     v-else
-                  >{{detail.Mst.FPaymethod?(FPaymethodList.find(item=>item.value == detail.Mst.FPaymethod)).label:''}}</div>
+                  >{{detail.Mst.FPaymethod.length==17?(FPaymethodList.find(item=>item.PhId == detail.Mst.FPaymethod)).TypeName:''}}</div>
                 </li>
               </ul>
             </div>
@@ -127,11 +127,14 @@
                 :data="detail.Dtls"
                 border
                 :span-method="tabelColspan"
+                @row-click="rowClick"
+                @header-click="headerClick"
               >
                 <!-- 序号列 -->
                 <el-table-column type="index" width="80" header-align="center" align="center">
                   <template slot="header" slot-scope="scope">
                     <el-checkbox
+                      @click.stop.native="check"
                       @change="selectAll"
                       v-model="allSelected"
                       v-if="data.itemType == 'notApprove'||data.itemType == 'error'"
@@ -140,6 +143,7 @@
                   </template>
                   <template slot-scope="scope">
                     <el-checkbox
+                      @click.stop.native="check"
                       v-if="data.itemType == 'notApprove'||(data.itemType == 'error'&&scope.row.FState==2)"
                       @change="selectOne(scope)"
                       :label="scope.$index"
@@ -274,7 +278,7 @@
       </el-row>
       <el-row :gutter="10">
         <div class="bottom">
-          <span v-if="!reSetting" @click="showAuditfollow = true">
+          <span v-if="!reSetting" @click="getAuditfollow">
             <template v-if="data.itemType == 'notApprove'">待送审</template>
             <template v-else-if="data.itemType == ''">审批中</template>
             <template v-else-if="data.itemType == 'approval'">待审批</template>
@@ -298,6 +302,7 @@
     <!-- 关联申请单信息查看 -->
     <el-dialog
       append-to-body
+      v-if="fundDetailData.openDialog"
       :visible.sync="fundDetailData.openDialog"
       width="80%"
       :close-on-click-modal="false"
@@ -306,7 +311,7 @@
       <div slot="title" class="dialog-title">
         <span style="float: left;">查看申请</span>
       </div>
-      <apply-bill :data="fundDetailData" @showImg="showImg">
+      <apply-bill :applyNum="this.data.data[0].Mst.RefbillPhid.toString()" @showImg="showImg">
         <div slot="btn-group">
           <el-button class="btn" size="mini">打印</el-button>
         </div>
@@ -345,8 +350,8 @@
       :data="approvalData"
     ></go-approval>
     <!-- 银行档案 -->
-    <bank-choose :data="bankChooseData" @getBank="getBank"></bank-choose>
-    <auditfollow :visible="showAuditfollow" @update:visible="closeAuditFollow"></auditfollow>
+    <bank-choose v-if="bankChooseData.openDialog" :data="bankChooseData" @getBank="getBank"></bank-choose>
+    <auditfollow :auditMsg="auditMsg" :visible="showAuditfollow" @update:visible="closeAuditFollow"></auditfollow>
   </div>
 </template>
 
@@ -359,6 +364,7 @@ import bankChoose from './bankChoose'
 import auditfollow from '../../components/auditFollow/auditfollow'
 import ImgView from '../../components/imgView/imgView'
 import { BankAccountList } from '@/api/bankaccount'
+import { GetSysSetList } from '@/api/systemSetting/dataSafe'
 import {
   getPayment,
   savePayList,
@@ -393,6 +399,7 @@ export default {
     return {
       imgDialog: false, //图片预览弹框
       showAuditfollow: false,
+      auditMsg: [], //审批流程 数据
       // 支付单表单
       // 未送审
       payHeaders1: [
@@ -503,20 +510,7 @@ export default {
           value: 3
         }
       ],
-      FPaymethodList: [
-        {
-          label: '现金',
-          value: 1
-        },
-        {
-          label: '网银',
-          value: 2
-        },
-        {
-          label: '支票',
-          value: 3
-        }
-      ],
+      FPaymethodList: [],
       bankType: '',
       kemuList: [],
       FSamebankList: [
@@ -570,6 +564,27 @@ export default {
     }
   },
   methods: {
+    //拉取审批流数据查看
+    getAuditfollow() {
+      if (this.data.data[0].Mst.FApproval != 0) {
+        let that = this
+        this.getAxios('GSP/GAppvalRecord/GetAppvalRecordList', {
+          RefbillPhid: this.data.data[0].Mst.PhId,
+          FBilltype: '002'
+        })
+          .then(res => {
+            if (res && res.Status === 'success') {
+              that.auditMsg = res.Data
+              that.showAuditfollow = true
+            } else {
+              that.$msgBox.show(res.Msg)
+            }
+          })
+          .catch(err => {
+            that.$msgBox.show('获取审批流程数据异常')
+          })
+      }
+    },
     // 付款账号修改后立即赋值给子表
     accountChange(phid) {
       console.log(phid)
@@ -607,6 +622,7 @@ export default {
             this.account =
               res.Dtls[0].BankPhid == '0' ? '' : res.Dtls[0].BankPhid
           }
+          this.allSelected = false
           if (res.Mst.FPaymethod == 0) {
             this.detail.Mst.FPaymethod = ''
           }
@@ -749,6 +765,34 @@ export default {
         this.bankChooseData.data.FRecCityname = data.FCity
       }
     },
+    // 获取支付方式
+    GetSysSetList() {
+      GetSysSetList({
+        DicType: 'PayMethod'
+      })
+        .then(res => {
+          if (res.Status == 'error') {
+            this.$msgBox.error(res.Msg)
+          } else {
+            if (this.data.itemType == 'notApprove') {
+              this.FPaymethodList = res.Record.filter(item => {
+                return (
+                  item.Isactive == 0 ||
+                  item.PhId == this.data.data[0].Mst.FPaymethod
+                )
+              })
+            } else {
+              this.FPaymethodList = res.Record.filter(item => {
+                return item.PhId == this.data.data[0].Mst.FPaymethod
+              })
+            }
+          }
+        })
+        .catch(err => {
+          console.log(err)
+          this.$msgBox.error('获取支付列表信息失败!')
+        })
+    },
     // 支付单 按钮事件
     save(type) {
       switch (type) {
@@ -870,6 +914,22 @@ export default {
         })
       }
     },
+    // checkBox所在框选中
+    check(e) {},
+    headerClick(column, event) {
+      console.log(column)
+      if (column.type == 'index') {
+        this.allSelected = !this.allSelected
+        this.selectAll(this.allSelected)
+      }
+    },
+    rowClick(row, column, event) {
+      console.log(column)
+      if (column.type == 'index') {
+        row.choosed = !row.choosed
+        this.selectOne({ row })
+      }
+    },
     //打开图片预览
     showImg(file) {
       console.log(file)
@@ -932,7 +992,6 @@ export default {
     },
     // dialog中的check事件
     selectOne($scope) {
-      console.log($scope.row)
       if ($scope.row.choosed) {
         if (this.data.itemType == 'error') {
           var newDtls = this.detail.Dtls.filter(item => item.FState == 2)
@@ -951,9 +1010,8 @@ export default {
       })
       this.$forceUpdate()
     },
-    // 测试用 选择银行
+    //  选择银行
     selectBank(item) {
-      console.log(123)
       this.bankChooseData.openDialog = true
       this.bankChooseData.data = item
     }
@@ -968,9 +1026,10 @@ export default {
         this.getData()
         // debugger
         this.getAccountList({
-          OrgPhid: this.orgid,
+          OrgPhid: this.data.data[0].Mst.OrgPhid,
           selectStr: ''
         })
+        this.GetSysSetList()
         if (this.kemuList.length == 0) {
           this.getBudgetAccountsList()
         }

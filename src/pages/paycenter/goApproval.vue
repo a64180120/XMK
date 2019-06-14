@@ -157,6 +157,7 @@ export default {
     approvalRowClick(item) {
       console.log(item)
       this.ProcPhid = item.PhId
+      this.NextOperators = []
       GetFirstStepOperator({
         PhId: item.PhId
       })
