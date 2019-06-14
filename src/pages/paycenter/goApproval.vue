@@ -71,6 +71,7 @@
         </div>
       </div>-->
       <approval-bill
+        ref="approvalbill"
         v-model="content"
         :isApproval="true"
         :approvalFollow="approvalFollow"
@@ -156,6 +157,7 @@ export default {
     approvalRowClick(item) {
       console.log(item)
       this.ProcPhid = item.PhId
+      this.NextOperators = []
       GetFirstStepOperator({
         PhId: item.PhId
       })
@@ -207,8 +209,8 @@ export default {
         FSendDate: '',
         FApproval: '1',
         FOpinion: this.content,
-        OperaPhid: '488181024000002',
-        OperatorCode: '9999'
+        OperaPhid: this.userid,
+        OperatorCode: this.usercode
       })
         .then(res => {
           if (res.Status == 'error') {
@@ -217,6 +219,7 @@ export default {
           }
           this.data.openDialog = false
           this.$msgBox.show('送审成功')
+          if (this.father) this.father.openDialog = false
           this.refreshIndexData()
         })
         .catch(err => {
@@ -253,7 +256,7 @@ export default {
       }
     }
   },
-  created() {
+  mounted() {
     // 获取所有审批流程
     getAppvalProc({
       Orgid: this.orgid,
@@ -267,6 +270,9 @@ export default {
         this.approvalFollow = res.Data
         if (res.Data.length > 0) {
           this.approvalRowClick(res.Data[0])
+          this.$refs.approvalbill.$refs.approvalFollowTable.setCurrentRow(
+            res.Data[0]
+          )
         }
       })
       .catch(err => {
@@ -274,6 +280,7 @@ export default {
         this.$msgBox.error('获取送审流程失败！')
       })
   },
+  created() {},
   watch: {
     'data.openDialog'(newVal) {
       if (newVal) {
@@ -285,7 +292,9 @@ export default {
   },
   computed: {
     ...mapState({
-      orgid: state => state.user.orgid
+      orgid: state => state.user.orgid,
+      usercode: state => state.user.usercode,
+      userid: state => state.user.userid
     })
   }
 }

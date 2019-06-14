@@ -142,7 +142,7 @@
         data(){
           return {
             options: [],//年度列表    
-            year: new Date().getFullYear(),//年度
+            year: '',//年度
             org:{ //当前组织
                "OCode": "101",
                "OName": "浙江省总本级",
@@ -172,6 +172,7 @@
             window.open('/g6h/web','_self')
           },
           setyearList(){ //年度列表
+            this.year=this.$store.state.user.year;//当前默认选中的年份
             for(let y=2018;y<=new Date().getFullYear();y++){
               this.options.unshift({label:y,value:y})
             }
@@ -184,7 +185,8 @@
             p.click();
             this.refresh();
           },
-           yearChange(){  //年度改变
+           yearChange(val){  //年度改变
+            this.$store.commit('user/setYear',val)
             this.refresh();
           },
           navPage(url){  //导航页面

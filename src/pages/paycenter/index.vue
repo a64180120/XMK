@@ -145,20 +145,17 @@
                 v-for="(item,index) in tableData"
                 :key="index"
               >
-                <td>
+                <td @click.self="selectItem(item)">
                   <el-checkbox v-model="item.Mst.checked" @change="handleCheckOne(item)">{{index+1}}</el-checkbox>
                 </td>
                 <td>
-                  <div
-                    @click="payNav('payListData',item)"
-                    style="cursor:pointer;text-decoration:underline;"
-                  >{{item.Mst.FCode}}</div>
+                  <span @click.stop="payNav('payListData',item)" class="atype">{{item.Mst.FCode}}</span>
                 </td>
                 <td>
                   <div>{{item.Mst.FAmountTotal | NumFormat}}</div>
                 </td>
                 <td>
-                  <div>{{item.Mst.FBilltype}}</div>
+                  <div>{{typeList.find(i=>item.Mst.FBilltype == i.value).label}}</div>
                 </td>
                 <td>
                   <div>{{item.Mst.RefbillCode}}</div>
@@ -197,6 +194,7 @@
           layout="total,sizes,prev,pager,next,jumper"
           @current-change="getData"
           :total="total"
+          :page-sizes="[20,30,50,100]"
         >
           <!-- <span>当前 第 {{currentPage}} 页</span>
           <span>共 {{Math.ceil(total/pageSize)}} 页</span>
@@ -280,12 +278,24 @@ export default {
           label: '全部'
         },
         {
-          value: 'zjbf',
+          value: '001',
           label: '资金拨付单'
         },
         {
-          value: 'xmzc',
-          label: '项目支出单'
+          value: '002',
+          label: '支付单'
+        },
+        {
+          value: '003',
+          label: '项目用款单'
+        },
+        {
+          value: '004',
+          label: '预算审核单'
+        },
+        {
+          value: '005',
+          label: '项目申报单'
         }
       ],
       type: '',
@@ -315,7 +325,7 @@ export default {
       // 搜索数据
       search: '',
       // 分页
-      pageSize: 10,
+      pageSize: 20,
       currentPage: 1,
       total: 0,
       // 首页表格数据
@@ -422,6 +432,9 @@ export default {
     resize()
   },
   methods: {
+    selectItem(item) {
+      item.Mst.checked = !item.Mst.checked
+    },
     getData() {
       let query = {
         'NgInsertDt*date*ge*1': this.sbrq ? this.sbrq[0] || '' : '', //申报日期开始
@@ -476,7 +489,7 @@ export default {
         PageSize: this.pageSize, //每页显示行数
         uid: this.userid || 488181024000001, //用户id
         orgid: this.orgid, //组织id
-        ryear: '2019'
+        ryear: this.year || '2019'
       })
         .then(res => {
           console.log(res)
@@ -667,7 +680,8 @@ export default {
     },
     ...mapState({
       orgid: state => state.user.orgid,
-      userid: state => state.user.userid
+      userid: state => state.user.userid,
+      year: state => state.user.year
     })
   }
 }

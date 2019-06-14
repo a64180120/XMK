@@ -77,8 +77,8 @@
                             </colgroup>
                             <thead>
                                 <tr :class="{trActive:item.checked}" v-for="(item,index) in accountList" :key="index">
-                                    <td style="padding: 0 5px;">
-                                    <el-checkbox @change="choose(item,index)" v-model="item.checked" >{{index+1}}</el-checkbox>
+                                    <td  @click.stop="choose(item,index)" style="padding: 0 5px;cursor:pointer;">
+                                        <el-checkbox @click.stop.native="1" @change="choose(item,index,'change')"   v-model="item.checked" >{{index+1}}</el-checkbox>
                                     </td>
                                     <td>
                                     {{item.FBankname}}
@@ -179,7 +179,10 @@ export default {
            
         },
         //选择行
-        choose(val,index){
+        choose(val,index,str){
+            if(str!='change'){
+                 val.checked=!val.checked;
+            }
             if(val.checked){
                 this.choosedItem.push(val);
             }else{
@@ -222,7 +225,15 @@ export default {
     },
     mounted(){
         if(this.orgList.length>0){
-            this.getData()
+            this.checkedOrg={
+                OCode:this.$store.state.user.orgcode,
+                OName:this.$store.state.user.orgname,
+                PhId:this.$store.state.user.orgid
+            };
+            this.getData();
+            this.$nextTick(function(){
+                this.$refs.orgtree.setCurrentNode({OCode:this.checkedOrg.OCode});
+            })
         }
 
     },
@@ -235,7 +246,7 @@ export default {
                     PhId:this.$store.state.user.orgid
                 };
                 
-                this.getData()
+                this.getData();
                 this.$nextTick(function(){
                  this.$refs.orgtree.setCurrentNode({OCode:this.checkedOrg.OCode});
                 })
@@ -320,5 +331,6 @@ export default {
 
     }
 }
+
 </style>
 
