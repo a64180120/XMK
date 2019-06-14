@@ -155,7 +155,7 @@
                   <div>{{item.Mst.FAmountTotal | NumFormat}}</div>
                 </td>
                 <td>
-                  <div>{{item.Mst.FBilltype}}</div>
+                  <div>{{typeList.find(i=>item.Mst.FBilltype == i.value).label}}</div>
                 </td>
                 <td>
                   <div>{{item.Mst.RefbillCode}}</div>
@@ -277,12 +277,24 @@ export default {
           label: '全部'
         },
         {
-          value: 'zjbf',
+          value: '001',
           label: '资金拨付单'
         },
         {
-          value: 'xmzc',
-          label: '项目支出单'
+          value: '002',
+          label: '支付单'
+        },
+        {
+          value: '003',
+          label: '项目用款单'
+        },
+        {
+          value: '004',
+          label: '预算审核单'
+        },
+        {
+          value: '005',
+          label: '项目申报单'
         }
       ],
       type: '',

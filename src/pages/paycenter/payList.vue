@@ -80,15 +80,15 @@
                     >
                       <el-option
                         v-for="(item,index) in FPaymethodList"
-                        :label="item.label"
-                        :value="item.value"
+                        :label="item.TypeName"
+                        :value="item.PhId.toString()"
                         :key="index"
                       ></el-option>
                     </el-select>
                   </div>
                   <div
                     v-else
-                  >{{detail.Mst.FPaymethod?(FPaymethodList.find(item=>item.value == detail.Mst.FPaymethod)).label:''}}</div>
+                  >{{detail.Mst.FPaymethod.length==17?(FPaymethodList.find(item=>item.PhId == detail.Mst.FPaymethod)).TypeName:''}}</div>
                 </li>
               </ul>
             </div>
@@ -278,7 +278,7 @@
       </el-row>
       <el-row :gutter="10">
         <div class="bottom">
-          <span v-if="!reSetting" @click="showAuditfollow = true">
+          <span v-if="!reSetting" @click="getAuditfollow">
             <template v-if="data.itemType == 'notApprove'">待送审</template>
             <template v-else-if="data.itemType == ''">审批中</template>
             <template v-else-if="data.itemType == 'approval'">待审批</template>
@@ -302,6 +302,7 @@
     <!-- 关联申请单信息查看 -->
     <el-dialog
       append-to-body
+      v-if="fundDetailData.openDialog"
       :visible.sync="fundDetailData.openDialog"
       width="80%"
       :close-on-click-modal="false"
@@ -349,8 +350,8 @@
       :data="approvalData"
     ></go-approval>
     <!-- 银行档案 -->
-    <bank-choose :data="bankChooseData" @getBank="getBank"></bank-choose>
-    <auditfollow :visible="showAuditfollow" @update:visible="closeAuditFollow"></auditfollow>
+    <bank-choose v-if="bankChooseData.openDialog" :data="bankChooseData" @getBank="getBank"></bank-choose>
+    <auditfollow :auditMsg="auditMsg" :visible="showAuditfollow" @update:visible="closeAuditFollow"></auditfollow>
   </div>
 </template>
 
@@ -398,6 +399,7 @@ export default {
     return {
       imgDialog: false, //图片预览弹框
       showAuditfollow: false,
+      auditMsg: [], //审批流程 数据
       // 支付单表单
       // 未送审
       payHeaders1: [
@@ -508,20 +510,7 @@ export default {
           value: 3
         }
       ],
-      FPaymethodList: [
-        {
-          label: '现金',
-          value: 1
-        },
-        {
-          label: '网银',
-          value: 2
-        },
-        {
-          label: '支票',
-          value: 3
-        }
-      ],
+      FPaymethodList: [],
       bankType: '',
       kemuList: [],
       FSamebankList: [
@@ -575,6 +564,27 @@ export default {
     }
   },
   methods: {
+    //拉取审批流数据查看
+    getAuditfollow() {
+      if (this.data.data[0].Mst.FApproval != 0) {
+        let that = this
+        this.getAxios('GSP/GAppvalRecord/GetAppvalRecordList', {
+          RefbillPhid: this.data.data[0].Mst.PhId,
+          FBilltype: '002'
+        })
+          .then(res => {
+            if (res && res.Status === 'success') {
+              that.auditMsg = res.Data
+              that.showAuditfollow = true
+            } else {
+              that.$msgBox.show(res.Msg)
+            }
+          })
+          .catch(err => {
+            that.$msgBox.show('获取审批流程数据异常')
+          })
+      }
+    },
     // 付款账号修改后立即赋值给子表
     accountChange(phid) {
       console.log(phid)
@@ -612,6 +622,7 @@ export default {
             this.account =
               res.Dtls[0].BankPhid == '0' ? '' : res.Dtls[0].BankPhid
           }
+          this.allSelected = false
           if (res.Mst.FPaymethod == 0) {
             this.detail.Mst.FPaymethod = ''
           }
@@ -763,10 +774,22 @@ export default {
           if (res.Status == 'error') {
             this.$msgBox.error(res.Msg)
           } else {
-            console.log(res)
+            if (this.data.itemType == 'notApprove') {
+              this.FPaymethodList = res.Record.filter(item => {
+                return (
+                  item.Isactive == 0 ||
+                  item.PhId == this.data.data[0].Mst.FPaymethod
+                )
+              })
+            } else {
+              this.FPaymethodList = res.Record.filter(item => {
+                return item.PhId == this.data.data[0].Mst.FPaymethod
+              })
+            }
           }
         })
         .catch(err => {
+          console.log(err)
           this.$msgBox.error('获取支付列表信息失败!')
         })
     },
