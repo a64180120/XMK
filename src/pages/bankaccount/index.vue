@@ -22,6 +22,10 @@
         <el-dialog :title="'银行账号'+(handleBtn=='add'?'新增':'修改')" :visible.sync="accountAddShow">
             <accountAdd v-if="accountAddShow" @add-cancle="addCancle" :type="handleBtn" :info="info"></accountAdd>
         </el-dialog>
+        <!-- <el-dialog  :visible.sync="upload">
+            <upload/>
+        </el-dialog> -->
+
     </div>
 </template>
 
@@ -31,10 +35,12 @@ import accountAdd from '@/pages/bankaccount/add'
 import topHandle from '@/components/topNav/topHandle'
 import order from '@/components/bankorder'
 import {BankAccountDelete} from '@/api/bankaccount'
+import upload from '@/components/upload'
 export default {
     name:'bankaccount',
     data(){
         return{ 
+            upload:true,
             handleBtn:'',
             accountAddShow:false,
             info:''
@@ -109,7 +115,8 @@ export default {
     components:{
         topHandle,
         order,
-        accountAdd
+        accountAdd,
+        upload
     }
 }
 </script>

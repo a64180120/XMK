@@ -14,7 +14,7 @@ const vuerouters = new VueRouter({
 });
 
 function getUserInfo(){ //获取url传参
-
+  
   let index = window.location.href.indexOf('?');
   let ind= window.location.href.indexOf('#');
   let info=window.location.href.slice(index+1).slice(0,ind-index-1).split('&');
@@ -29,7 +29,7 @@ function getUserInfo(){ //获取url传参
 
 // 路由跳转前验证(全局守卫)
 vuerouters.beforeEach((to, from, next) => {
-  if(from.meta=={}){  //如果是从i8那边过来的
+  if(from.fullPath=='/'){  //如果是从i8那边过来的
     getUserInfo();
   }
   next();

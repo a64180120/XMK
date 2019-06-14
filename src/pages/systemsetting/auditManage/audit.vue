@@ -244,6 +244,7 @@ export default {
         }
     },
     mounted(){
+        console.log('auditmounted',this.$store)
         this.getTypeData();
         this.getPosts();
         this.getorglist();

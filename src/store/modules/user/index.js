@@ -6,9 +6,9 @@ const state = {
     //签名
     token: "",
     //用户id
-    userid: "488181024000001",
+    userid: "",
     //用户code
-    usercode:'9999',
+    usercode:'',
     //用户名称
     username: "",
     //组织列表
@@ -48,9 +48,10 @@ const mutations = {
     },
     //ajax的appinfo信息
     setAppinfo(state,data){
-
         state.appinfo=data;
         state.userid=data.UserId;
+        state.orgid=data.OrgId;
+        state.year=data.Year
     },
     //组织用户的缓存信息
     setLoginInfo(state,data){

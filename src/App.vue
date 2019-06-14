@@ -66,10 +66,10 @@ export default {
   
     
     //完整信息
-    getData(data){
+    getData(){
       let param={
-        uid:data.UserId,
-        orgid:data.OrgId,
+        uid:this.$store.state.user.userid,
+        orgid:this.$store.state.user.orgid,
       }
       GetLogininfo(param).then(res => {
         if(res.Status=='error'){
