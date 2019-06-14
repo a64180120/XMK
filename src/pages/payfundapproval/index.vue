@@ -574,7 +574,6 @@
         this.visible = true
         let data = {
           RefbillPhid:this.selection[0].RefbillPhid,
-          ProcPhid:item.PhId,
           FBilltype:this.BType
         }
         this.getAuditfollow(data)
@@ -584,7 +583,6 @@
         this.visible = true
         let data = {
           RefbillPhid:item.RefbillPhid,
-          ProcPhid:item.ProcPhid,
           FBilltype:this.BType
         }
         this.getAuditfollow(data)
@@ -592,12 +590,13 @@
       //拉去审批流数据查看
       getAuditfollow(data){
         let that= this
-        this.getAxios("/GAppvalRecord/GetAppvalRecord",data).then(success =>{
-          console.log(success)
-          if (success && success.Status === "success") {
-            that.auditMsg = success.Data
+        this.getAxios("/GAppvalRecord/GetAppvalRecordList",data).then(res =>{
+          debugger
+          console.log(res)
+          if (res && res.Status === "success") {
+            that.auditMsg = res.Data
           }else {
-            that.$msgBox.show(success.Msg)
+            that.$msgBox.show(res.Msg)
           }
         }).catch(err =>{
           that.$msgBox.show("数据获取异常")
