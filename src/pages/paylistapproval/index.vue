@@ -1,6 +1,6 @@
 <template>
   <section>
-    <handle-btn title="审批中心在线工作平台" :auditBtn="true">
+    <handle-btn title="审批中心在线工作平台" :auditBtn="true" @refresh="refresh()">
       <div class="top" v-if="isApproval">
         <ul>
           <li @click="aprovalItem()">
@@ -339,7 +339,8 @@
     computed:{
       ...mapState({
         OrgCode:state =>state.user.orgcode,
-        UserId:state =>state.user.userid
+        UserId:state =>state.user.userid,
+        Orgid:state =>state.user.orgid,
       })
     },
     mounted() {
@@ -380,6 +381,7 @@
         let data = {
           Uid:this.UserId,
           OrgCode:this.OrgCodeNum == ''?this.OrgCodeNum:this.OrgCode,
+          Orgid:this.Orgid,
           Year:'2019',
           PageIndex:this.page.currentPage,
           PageSize:this.page.pageSize,
@@ -557,6 +559,17 @@
       //
       closeDetail(e){
         this.openDialog=e
+      },
+      //刷新
+      refresh(){
+        this.searchForm.BName = '';
+        this.searchForm.BDate = [];
+        this.searchForm.Operator = [];
+        this.searchForm.StopHour = '';
+        this.searchForm.OrgName = '';
+        this.page.currentPage = 1;
+        this.page.pageSize = 20;
+        this.loadData()
       }
     }
   }

@@ -1,6 +1,6 @@
 <template>
   <section>
-    <handle-btn title="审批中心在线工作平台" @refresh="loadData()" :auditBtn="true">
+    <handle-btn title="审批中心在线工作平台" @refresh="refresh()" :auditBtn="true">
       <div class="top" >
          <ul v-if="isApproval">
            <li @click="aprovalItem()">
@@ -646,9 +646,16 @@
       closeDetailDialog(){
         this.selection = []
       },
-      //删除事件
-      handleDelete(){
-
+      //刷新
+      refresh(){
+        this.searchForm.BName = '';
+        this.searchForm.BDate = [];
+        this.searchForm.Operator = [];
+        this.searchForm.StopHour = '';
+        this.searchForm.OrgName = '';
+        this.page.currentPage = 1;
+        this.page.pageSize = 20;
+        this.loadData()
       }
     }
   }
