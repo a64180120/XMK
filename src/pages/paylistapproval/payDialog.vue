@@ -9,7 +9,7 @@
       @close="closeDialog"
     >
       <div slot="title" class="dialog-title">
-        <p>查看</p>
+        <p>审批</p>
       </div>
       <approval-bill @dialogFlow="searchFlow"
                      @approvalRowClick="approvalRowClick"

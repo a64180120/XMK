@@ -2,8 +2,8 @@
   <section>
     <handle-btn title="审批中心在线工作平台" @refresh="loadData()" :auditBtn="true">
       <div class="top" >
-         <ul>
-           <li @click="aprovalItem()" v-if="isApproval">
+         <ul v-if="isApproval">
+           <li @click="aprovalItem()">
              <div>
                <img src="../../assets/images/sp.png">
              </div>
@@ -13,9 +13,17 @@
              <div>
                <img src="../../assets/images/sc.png">
              </div>
-             <span>生成支付单</span>
+             <span>审批并生成支付单</span>
            </li>
          </ul>
+        <ul v-else>
+          <li @click="creatPayList()">
+            <div>
+              <img src="../../assets/images/sc.png">
+            </div>
+            <span>生成支付单</span>
+          </li>
+        </ul>
       </div>
     </handle-btn>
     <div>
@@ -92,7 +100,7 @@
             </table>
           </div>
           <div v-if="isApproval" class="tableBody">
-            <table>
+            <table v-if="tableData.length !== 0">
               <colgroup>
                 <col width="5%">
                 <col width="10%">
@@ -106,10 +114,10 @@
               </colgroup>
               <tbody>
               <tr :class="{trActive:check[idx]}" v-for="(item,idx) in tableData"  :key="idx">
-                <td>
+                <td  @click.self="handleCheckBoxCellClick(item,idx)">
                   <el-checkbox v-model="check[idx]"  >{{idx+1}}</el-checkbox>
                 </td>
-                <td @click.stop="handleRowClick(item,idx)" class="apply-epart cell-click">
+                <td @click.stop="handleCellClick(item,idx)" class="apply-epart cell-click">
                   {{item.OrgName}}
                 </td>
                 <td>
@@ -154,6 +162,9 @@
               </tr>
               </tbody>
             </table>
+            <div v-else style="width: 100%;margin-top: 60px;text-align: center">
+              <span style="">暂无数据</span>
+            </div>
           </div>
           <!--已审批表格-->
           <div v-if="!isApproval" class="tableHead">
@@ -211,11 +222,11 @@
                 <col width="25%">
               </colgroup>
               <tbody>
-              <tr :class="{trActive:check[idx]}" v-for="(item,idx) in tableData"  :key="idx">
-                <td>
-                  <el-checkbox v-model="check[idx]"  >{{idx+1}}</el-checkbox>
+              <tr :class="{trActive:check[idx]}" v-for="(item,idx) in tableData"  :key="idx" >
+                <td @click.self="handleCheckBoxCellClick(item,idx)">
+                  <el-checkbox v-model="check[idx]"  @click="handleCheckBoxCellClick(item,idx)">{{idx+1}}</el-checkbox>
                 </td>
-                <td @click="handleRowClick(item,idx)" class="apply-epart cell-click">
+                <td @click="handleCellClick(item,idx)" class="apply-epart cell-click">
                   {{item.OrgName}}
                 </td>
                 <td>
@@ -365,12 +376,9 @@
     },
 
     mounted() {
-      console.log(this.isApproval)
       this.selection = []
       this.isApproval = eval(this.$route.query.approval)
       this.SplxPhid = this.$route.query.SplxPhid
-      console.log(this.isApproval)
-      console.log(this.SplxPhid)
       // this.testData()
       this.loadData()
       this.getOrgList()
@@ -406,6 +414,7 @@
     methods:{
       //拉取列表数据
       loadData(){
+
         let data = {
           Uid:this.UserId,
           OrgCode:this.OrgCodeNum == ''?this.OrgCodeNum:this.OrgCode,
@@ -422,72 +431,74 @@
         }
 
         let that = this
-        debugger
         if(eval(this.isApproval)){
-          this.getAxios('/GAppvalRecord/GetUnDoRecordList',data).then(success=>{
-            console.log(success.Data)
-            if (success && success.Status === "success") {
-              that.tableData = success.Data
-              that.page.total = success.Total
+          this.getAxios('/GAppvalRecord/GetUnDoRecordList',data).then(res=>{
+            if (res && res.Status === "success") {
+              that.tableData = res.Data
+              that.page.total = res.Total
               // this.page.total = 100
-              console.log(success)
-              for (let i in success.Data) {
+              for (let i in res.Data) {
                 that.check.push(false)
               }
             }else {
-              this.$msgBox.show(success.Msg)
+              this.$msgBox.show(res.Msg)
             }
+            this.check = this.check.map((item,index,array)=> false)
           }).catch(err=>{
             that.$msgBox.show("数据获取异常")
+            this.check = this.check.map((item,index,array)=> false)
           })
         }else {
-          this.getAxios('/GAppvalRecord/GetDoneRecordList',data).then(success=>{
-            console.log(success.Data)
-            if (success && success.Status === "success") {
-              that.tableData = success.Data
-              that.page.total = success.Total
+          this.getAxios('/GAppvalRecord/GetDoneRecordList',data).then(res=>{
+            if (res && res.Status === "success") {
+              that.tableData = res.Data
+              that.page.total = res.Total
               // this.page.total = 100
-              console.log(success)
-              for (let i in success.Data) {
+              for (let i in res.Data) {
                 that.check.push(false)
               }
             }else {
-              this.$msgBox.show(success.Msg)
+              this.$msgBox.show(res.Msg)
             }
+            this.check = this.check.map((item,index,array)=> false)
           }).catch(err=>{
             that.$msgBox.show("数据获取异常")
+            this.check = this.check.map((item,index,array)=> false)
           })
         }
       },
       //拉取组织树
       getOrgList(){
         this.getAxios('GQT/CorrespondenceSettingsApi/GetALLOrgTree').then(res=>{
-          console.log(res);
           this.orgtreeData=res.Record;
         }).catch(err=>{
-          console.log(err)
         })
       },
       //搜索框事件
       search(){
+        this.page.pageSize=20;
+        this.page.currentPage = 1;
         this.loadData()
       },
-      //单行选中事件
-      handleSelect(selection,row){
-        console.log(selection,row)
-      },
-      //全部选中事件
-      handleSelectAll(selection){
-        console.log(selection)
-      },
-      //单行点击事件
-      handleRowClick(row,idx){
-        console.log(row)
+      //当前单元格点击事件
+      handleCellClick(row,idx){
         // this.$refs.fundDetail.changeDialog()
         this.applyNum = row.RefbillPhid
         this.detailDialog = true
         this.selection = []
         this.selection[0] = row
+      },
+      //点击checkBox单元格事件
+      handleCheckBoxCellClick(row,idx){
+        for (let key in this.check){
+          if (idx === parseInt(key)){
+            if(this.check[key] === true){
+              this.$set(this.check,key,false)
+            }else {
+              this.$set(this.check,key,true)
+            }
+          }
+        }
       },
       //当前页显示多少条数据
       handleSizeChange(val){
@@ -498,10 +509,6 @@
       handleCurrentChange(val){
         this.page.currentPage = val
         this.loadData()
-      },
-      //打开查看审批流
-      openApproval(row,idx){
-        console.log(row,idx)
       },
       //打开审批弹框
       aprovalItem(){
@@ -525,6 +532,41 @@
             this.$refs.paylistDialog.isApproval = false
           }
           this.$refs.paylistDialog.changeDialog()
+        }
+      },
+      //生成审批完成的支付单
+      creatPayList(){
+        if (this.selection.length ===0 ){
+          this.$msgBox.show('请选择需要生成支付单的单据')
+        }else {
+          let data = {
+            RefbillPhidList:[]
+          }
+          debugger
+          for (let item of this.selection){
+            data.RefbillPhidList.push(item.RefbillPhid)
+          }
+          console.log(data)
+          let that= this
+          this.postAxios('/GAppvalRecord/PostAddPayMents',data).then(res=>{
+            if (res && res.Status =='success') {
+              this.$msgBox.show({
+                content:'生成支付单成功',
+                fn:function () {
+
+                }
+              })
+            }else {
+              this.$msgBox.error({
+                content:res.Msg,
+                fn:function () {
+
+                }
+              })
+            }
+          }).catch(err=>{
+            this.$msgBox.error('请求失败')
+          })
         }
       },
       //子组件审批流查看
@@ -589,6 +631,8 @@
       },
       //输入框值改变
       changeInput(e){
+        this.page.pageSize=20;
+        this.page.currentPage = 1;
         if(e ==='operator'){
           if(this.searchForm.StopHour !== ''){
             this.loadData()
@@ -624,7 +668,7 @@
   }
   .top ul li{
     float: left;
-    width: 80px;
+    width: 115px;
   }
   .top ul li:hover{
     cursor: pointer;

@@ -9,7 +9,7 @@
         @close="closeDialog"
       >
         <div slot="title" class="dialog-title">
-          <p>查看</p>
+          <p>审批</p>
         </div>
         <approval-bill @dialogFlow="searchFlow"
                        @approvalRowClick="approvalRowClick"
@@ -128,6 +128,7 @@
           this.openDialog = false;
           this.visible = false;
           this.backPersonnel = [];
+          this.textare = '';
           this.$refs.approval.handleValue = ''
         },
 
@@ -203,12 +204,13 @@
             RefbillPhid:this.rowData[0].RefbillPhid,
             OperaPhid:this.rowData[0].OperaPhid
           }
-          this.getAxios('/GAppvalPost/GetBackApprovalPost',data).then(success=>{
-            if (success && success.Status == 'success') {
-              this.backData = success.Data
+          this.getAxios('/GAppvalPost/GetBackApprovalPost',data).then(res=>{
+            if (res && res.Status == 'success') {
+              console.log(res)
+              this.backData = res.Data
               this.visible = true
             }else {
-              this.$msgBox.show(success.Msg)
+              this.$msgBox.show(res.Msg)
             }
           }).catch(err =>{
             this.$msgBox.show('请求出错')
