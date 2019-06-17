@@ -3,10 +3,12 @@
         <ul>
             <li>
                 <i class="logo"></i>
-                <span>审批人:</span>
+                <span v-if="index == '1'">发起人:</span>
+                <span v-else-if="index != '1' && info.OperaName != null">审批人:</span>
+                <span v-else>审批岗位:</span>
                 <em>{{index}}</em>
             </li>
-            <li>{{info.OperaName}}</li>
+            <li>{{info.OperaName?info.OperaName:info.PostName}}</li>
             <li>{{info.FDate}}</li>
 
             <li>意见: {{info.FOpinion}}</li>

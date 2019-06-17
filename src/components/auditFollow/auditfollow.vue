@@ -1,18 +1,64 @@
 <template>
-    <div v-show="visible" style="z-index: 3000;" class="auditfollow msFixed">
+    <div v-show="visible" style="z-index: 3000;overflow: auto" class="auditfollow msFixed">
         <p class="title">
             <span>{{title}}</span>
             <i @click="close"></i>
         </p>
-        <div class="content">
+      <!--流程-->
+        <div class="follow-main">
+          <div class="content">
             <ul>
-                <li></li>
-                <li class="msg" v-for="(item,index) of auditMsg" :key="index">
-                    <audit-msg :info="item" :index="index+1"></audit-msg>
-                </li>
-                <li></li>
+              <li></li>
+              <li class="msg" v-for="(item,index) of auditMsg" :key="index">
+                <audit-msg :info="item" :index="index+1"></audit-msg>
+              </li>
             </ul>
+          </div>
+          <div class="collapse-main">
+            <el-collapse v-model="activeName" accordion class="collapse">
+              <el-collapse-item>
+                <template slot="title">
+                  资金拨付流程
+                </template>
+                <div class="content">
+                  <ul>
+                    <li></li>
+                    <li class="msg" v-for="(item,index) of auditMsg" :key="index">
+                      <audit-msg :info="item" :index="index+1"></audit-msg>
+                    </li>
+                  </ul>
+                </div>
+              </el-collapse-item>
+              <el-collapse-item>
+                <template slot="title">
+                  支付单流程
+                </template>
+                <div class="content">
+                  <ul>
+                    <li></li>
+                    <li class="msg" v-for="(item,index) of auditMsg" :key="index">
+                      <audit-msg :info="item" :index="index+1"></audit-msg>
+                    </li>
+                  </ul>
+                </div>
+              </el-collapse-item>
+              <el-collapse-item>
+                <template slot="title">
+                  资金拨付
+                </template>
+                <div class="content">
+                  <ul>
+                    <li></li>
+                    <li class="msg" v-for="(item,index) of auditMsg" :key="index">
+                      <audit-msg :info="item" :index="index+1"></audit-msg>
+                    </li>
+                  </ul>
+                </div>
+              </el-collapse-item>
+            </el-collapse>
+          </div>
         </div>
+
     </div>
 </template>
 
@@ -48,7 +94,7 @@ export default {
     },
     data(){
         return {
-            
+          activeName:""
         }
     },
     methods:{
@@ -89,10 +135,14 @@ export default {
             background-size:100% 100%;
         }
     }
-    .content{
-        padding:50px 10px 10px 30px;
+    .follow-main{
+      height: 850px;
+      overflow: auto;
+      overflow-x: hidden;
+      .content{
+        padding:10px 0px 10px 0px;
         >ul{
-          position: absolute;
+          /*position: absolute;*/
           bottom: 60px;
           overflow: auto;
           top: 60px;
@@ -100,20 +150,22 @@ export default {
           padding-right: 30px;
           padding-left: 30px;
           margin-right: -27px;
-            >li{
-                border-left:1px solid $btnColor;
-                &:first-of-type{
-                    height:50px;
-                }
-                &:last-of-type{
-                    height:150px;
-                }
+          >li{
+            border-left:1px solid $btnColor;
+            &:first-of-type{
+              height:50px;
             }
-            .msg{
-                padding-bottom:40px;
+            &:last-of-type{
+              height:150px;
             }
+          }
+          .msg{
+            padding-bottom:40px;
+          }
         }
+      }
     }
+
 }
 </style>
 
