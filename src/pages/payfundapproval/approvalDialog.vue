@@ -59,13 +59,20 @@
             backData:[],//回退的审批人岗位集合
             backPost:[],//获取回退的审批人岗位
             isAgree:'', //保存是否同意审批
-            operatorID:[] //操作人员集合
+            operatorID:[], //操作人员集合
+            row:this.rowData[0]
 
           }
       },
       mounted(){
       },
       watch:{
+          rowData:{
+            handler(val){
+              console.log(val)
+            },
+            deep:true
+          }
       },
       methods:{
         //根据组织id，单据类型获取所有的审批流程
@@ -135,6 +142,9 @@
         //确认
         submit(){
           //同意数据 单条
+          debugger
+          console.log(this.isAgree)
+          console.log(this.rowData[0])
           let data = {
             PhId:this.rowData[0].PhId,//单据ID
             ProcPhid:this.rowData[0].ProcPhid,//审批流程id
@@ -181,7 +191,7 @@
         closeBack(){
           this.visible = false;
           this.textare = '';
-          this.$emit('refresh')
+          // this.$emit('refresh')
         },
         backAproval(val){
           console.log(val)

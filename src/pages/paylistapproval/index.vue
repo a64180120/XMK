@@ -102,7 +102,7 @@
               <tbody>
               <tr :class="{trActive:check[idx]}" v-for="(item,idx) in tableData"  :key="idx">
                 <td @click.self="handleCheckBoxCellClick(item,idx)">
-                  <el-checkbox v-model="check[idx]" >{{idx}}</el-checkbox>
+                  <el-checkbox v-model="check[idx]" >{{idx+1}}</el-checkbox>
                 </td>
                 <td @click="handleRowClick(item,idx)" class="apply-epart cell-click">
                   {{item.OrgName}}
@@ -211,7 +211,7 @@
               <tbody>
               <tr :class="{trActive:check[idx]}" v-for="(item,idx) in tableData"  :key="idx">
                 <td @click.self="handleCheckBoxCellClick(item,idx)">
-                  <el-checkbox v-model="check[idx]" >{{idx}}</el-checkbox>
+                  <el-checkbox v-model="check[idx]" >{{idx+1}}</el-checkbox>
                 </td>
                 <td @click="handleRowClick(item,idx)" class="apply-epart cell-click">
                   {{item.OrgName}}
@@ -234,7 +234,7 @@
                 </td>
                 <td>
                   <span class="cell-click" v-if="item.BStatus ==0 " @click.stop="openAuditfollow(item,idx)">未审批</span>
-                  <span class="cell-click" v-if="item.BStatus ==1 " @click.stop="openAuditfollow(item,idx)">待审批</span>
+                  <span class="cell-click" v-if="item.BStatus ==1 " @click.stop="openAuditfollow(item,idx)">审批中</span>
                   <span class="cell-click" v-if="item.BStatus ==2 " @click.stop="openAuditfollow(item,idx)">未通过</span>
                   <span class="cell-click" v-if="item.BStatus ==9 " @click.stop="openAuditfollow(item,idx)">审批通过</span>
                 </td>
@@ -303,8 +303,9 @@
           BDate:[],//申报时间段
           Operator:"",//停留时长的判断条件(1:等于,2:大于,3:小于)
           StopHour:'',//停留时长
-          OrgCodeNum:this.OrgCode,//组织编码
-          OrgName:''//组织名称
+          OrgCode:"",//组织编码
+          OrgName:'',//组织名称
+          OrgPhId:''
         },
         tableData:[],//模拟表格数据
         page:{
@@ -341,6 +342,7 @@
         OrgCode:state =>state.user.orgcode,
         UserId:state =>state.user.userid,
         Orgid:state =>state.user.orgid,
+        Year:state =>state.user.year
       })
     },
     mounted() {
@@ -377,12 +379,12 @@
     },
     methods:{
       //拉取列表数据
-      loadData(){
+      loadData(e){
         let data = {
           Uid:this.UserId,
-          OrgCode:this.OrgCodeNum == ''?this.OrgCodeNum:this.OrgCode,
-          Orgid:this.Orgid,
-          Year:'2019',
+          OrgCode:this.searchForm.OrgCode == ''?this.OrgCode:this.searchForm.OrgCode,
+          Orgid:this.searchForm.OrgPhId==''?this.Orgid:this.searchForm.OrgPhId,
+          Year:this.Year,
           PageIndex:this.page.currentPage,
           PageSize:this.page.pageSize,
           BType:this.BType,
@@ -527,11 +529,12 @@
       },
       //获取组织树
       getOrg(e){
+        console.log(e)
         this.searchForm.OrgName = e[0].OName
         this.searchForm.OrgCode = e[0].OCode
         console.log(this.searchForm)
-        this.OrgCodeNum =e.OrgCode
-        this.loadData()
+        this.searchForm.OrgPhId =e[0].PhId
+        this.loadData(e)
       },
       //子组件审批流查看
       childrenAuditfollow(item,idx){
@@ -544,6 +547,8 @@
       },
       //输入框值改变
       changeInput(e){
+        debugger
+        console.log(this.searchForm)
         this.page.pageSize=20;
         this.page.currentPage = 1;
         if(e ==='operator'){
