@@ -109,20 +109,20 @@ export default {
                     })
                 })
         },
-        submit(files){
-            console.log(files)
-            let formData = new FormData();
-            formData.append('RelPhid',0);
-            formData.append('BTable','gcw3_voucher_mst');
-            for(let file of files){
-                 formData.append('files',file.raw);
-            }
-            testUpload(formData).then(res=>{
-                console.log(res)
-            }).catch(err => {
-                console.log(err)
-            })
-        }
+        // submit(files){
+        //     console.log(files)
+        //     let formData = new FormData();
+        //     formData.append('RelPhid',0);
+        //     formData.append('BTable','gcw3_voucher_mst');
+        //     for(let file of files){
+        //          formData.append('files',file.raw);
+        //     }
+        //     testUpload(formData).then(res=>{
+        //         console.log(res)
+        //     }).catch(err => {
+        //         console.log(err)
+        //     })
+        // }
     },
     mounted(){
         
