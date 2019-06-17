@@ -158,16 +158,13 @@
       </el-row>
       <el-row :gutter="10">
         <div class="bottom">
-          <span >
+          <span>
             <template v-if="data.itemType == 'notApprove'">待送审</template>
             <template v-else-if="data.itemType == ''">审批中</template>
             <template v-else-if="data.itemType == 'approval'">待审批</template>
             <template v-else>审批通过</template>
           </span>
-          <span
-            class="dj"
-            @click="openDetailDialog()"
-          >点击查看关联申请单信息（申请编号：{{detail.Mst.RefbillCode}}）</span>
+          <span class="dj" @click="openDetailDialog()">点击查看关联申请单信息（申请编号：{{detail.Mst.RefbillCode}}）</span>
         </div>
       </el-row>
     </el-dialog>
@@ -204,7 +201,7 @@
       </div>
       <img-view v-if="imgDialog"></img-view>
     </el-dialog>
-<!--    <auditfollow :visible="showAuditfollow" @update:visible="closeAuditFollow"></auditfollow>-->
+    <!--    <auditfollow :visible="showAuditfollow" @update:visible="closeAuditFollow"></auditfollow>-->
     <!-- 审批弹框 -->
   </div>
 </template>
@@ -228,17 +225,17 @@ export default {
   props: {
     data: {
       type: Object,
-      default:function () {
+      default: function() {
         return {}
       }
     },
-    openDialog:{
+    openDialog: {
       type: Boolean,
-      default:false
+      default: false
     },
-    OrgTree:{
-      type:Array,
-      default:function () {
+    OrgTree: {
+      type: Array,
+      default: function() {
         let arr = new Array()
         return arr
       }
@@ -407,36 +404,38 @@ export default {
         },
         Dtls: []
       },
-      payDepart:'',//支付部门
-      payType:'',//支付类型
-      applyNum:''//单据编号
+      payDepart: '', //支付部门
+      payType: '', //支付类型
+      applyNum: '' //单据编号
     }
   },
-  computed:{
+  computed: {
     ...mapState({
-      Orglist:state =>state.user.orglist,
+      Orglist: state => state.user.orglist
     })
   },
-  mounted(){
+  mounted() {
     this.getData()
   },
   methods: {
     //获取银行信息
-    getBack(e){
+    getBack(e) {
       GetSysSetList({
         DicType: 'PayMethod'
-      }).then(res=>{
-        if (res ){
-          for (let key in res.Record) {
-            if (res.Record[key].TypeCode == e){
-              this.payType = res.Record[key].TypeName
+      })
+        .then(res => {
+          if (res) {
+            for (let key in res.Record) {
+              if (res.Record[key].PhId == e) {
+                this.payType = res.Record[key].TypeName
+              }
             }
           }
-        }
-        console.log(res)
-      }).catch(err =>{
-        this.$msgBox.error('拉取银行信息失败')
-      })
+          console.log(res)
+        })
+        .catch(err => {
+          this.$msgBox.error('拉取银行信息失败')
+        })
     },
     // 获取支付单详情
     getData() {
@@ -459,7 +458,7 @@ export default {
           res.Dtls.forEach(item => (item.choosed = false))
           this.detail.Dtls = res.Dtls
           this.account = res.Dtls[0].BankPhid
-          this.getAccountList({OrgPhid:this.data.OrgId, selectStr: ''})
+          this.getAccountList({ OrgPhid: this.data.OrgId, selectStr: '' })
           this.getOrgName(res.Mst.OrgCode)
           this.getBack(res.Mst.FPaymethod)
         })
@@ -494,7 +493,6 @@ export default {
             // this.account = this.detail.Mst.OrgPhid
             this.accountList = res.Record
           }
-
         })
         .catch(err => {
           this.$msgBox.error('获取银行档案列表失败!')
@@ -561,7 +559,7 @@ export default {
     },
     // 关闭支付单弹框
     payListClose(done) {
-      this.$emit('closeDetail',false)
+      this.$emit('closeDetail', false)
     },
     // dialog中的check事件
     selectOne($scope) {
@@ -585,45 +583,44 @@ export default {
       this.$forceUpdate()
     },
     //通过遍历找出orgName
-    getOrgName(e){
+    getOrgName(e) {
       let arr = this.toArray(this.OrgTree)
       for (let k in arr) {
-        if (e == arr[k].OCode)  {
-          this.payDepart =arr[k].OName
+        if (e == arr[k].OCode) {
+          this.payDepart = arr[k].OName
         }
       }
     },
-    toArray(nodes,parentId=''){
-     if(!nodes){
-       return []
-     }
-     let childKey = 'children'
+    toArray(nodes, parentId = '') {
+      if (!nodes) {
+        return []
+      }
+      let childKey = 'children'
       let r = []
-      if (nodes instanceof Array){
-        for (let item of nodes){
+      if (nodes instanceof Array) {
+        for (let item of nodes) {
           let node = []
-          for (let key in item){
-            if (key != childKey){
+          for (let key in item) {
+            if (key != childKey) {
               node[key] = item[key]
             }
           }
           node['parent'] = parentId
           r.push(node)
           if (item[childKey]) {
-            r =r.concat(this.toArray(item[childKey],item.id))
+            r = r.concat(this.toArray(item[childKey], item.id))
           }
         }
-      }else {
+      } else {
       }
       return r
     },
-    openDetailDialog(){
+    openDetailDialog() {
       this.fundDetailData.openDialog = true
       this.applyNum = this.detail.Mst.RefbillPhid
     }
   },
-  watch: {
-  },
+  watch: {},
   computed: {
     ...mapState({
       orgid: state => state.user.orgid,
