@@ -139,7 +139,7 @@
                       <td>{{xm.FDepartmentname}}</td>
                       <td>{{xm.BudgetdtlName}}</td>
                       <td style="text-align: right">{{xm.FAmount | NumFormat}}</td>
-                      <td >{{xm.FPayment}}</td>
+                      <td >{{xm.FRemarks}}</td>
 
                     </tr>
 
@@ -256,6 +256,7 @@
           let param={fPhId:this.applyNum};
           this.getAxios('GBK/PaymentMstApi/GetPaymentMst',param).then(res=>{
             this.record=res;
+            console.log(res);
           }).catch(err=>{
             console.log(err);
           })

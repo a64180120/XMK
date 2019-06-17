@@ -36,16 +36,16 @@
                 header-row-class-name="table-header"
                 ref="content"
               >
-                <el-table-column prop="OrgCode" width="80" align="center" label="流程编码"></el-table-column>
+                <el-table-column prop="FCode" width="80" align="center" label="流程编码"></el-table-column>
                 <el-table-column prop="FName" align="center" label="流程名称"></el-table-column>
-                <el-table-column width="60" align="center" label="查看">
+                <!--<el-table-column width="60" align="center" label="查看">
                   <template slot-scope="scope">
                     <i
                       class="el-icon-search icon-search"
                       @click="searchFlow(scope.row,scope.column.$index,scope.store)"
                     ></i>
                   </template>
-                </el-table-column>
+                </el-table-column>-->
               </el-table>
             </div>
           </div>
@@ -183,6 +183,7 @@ export default {
 
     //获取审批人
     getApprovalPerson:function(phid){
+      console.log(this.data)
       let param={PhId:phid};
       this.getAxios('GSP/GAppvalPost/GetFirstStepOperator',param).then(res=>{
         this.nextDataList=res.Data.Operators;
@@ -229,7 +230,6 @@ export default {
       this.param.OperaPhid=this.userid;
       this.param.OperatorCode=this.usercode;
       this.param.RefbillPhidList=this.data.data;
-      console.log(this.param);
       this.postAxios('GSP/GAppvalRecord/PostAddAppvalRecord',this.param).then(res=>{
         if (res.Status == 'error') {
           this.$msgBox.error(res.Msg)
