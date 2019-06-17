@@ -605,6 +605,16 @@ export default {
                 item.Mst.checked = false
               })
               return
+            } else if (
+              handleitem.every(item => {
+                return !item.Dtls.FNewCode
+              })
+            ) {
+              this.$msgBox.error('只能对未重新支付的单据进行处理。')
+              this.tableData.forEach(item => {
+                item.Mst.checked = false
+              })
+              return
             }
             break
           case 'approvalData':

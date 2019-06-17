@@ -23,7 +23,7 @@
             <accountAdd v-if="accountAddShow" @add-cancle="addCancle" :type="handleBtn" :info="info"></accountAdd>
         </el-dialog>
         <!-- <el-dialog  :visible.sync="upload">
-            <upload/>
+            <upload  @submit="submit"/>
         </el-dialog> -->
 
     </div>
@@ -36,6 +36,7 @@ import topHandle from '@/components/topNav/topHandle'
 import order from '@/components/bankorder'
 import {BankAccountDelete} from '@/api/bankaccount'
 import upload from '@/components/upload'
+import {testUpload} from '@/api/upload'
 export default {
     name:'bankaccount',
     data(){
@@ -107,7 +108,21 @@ export default {
                         this.$msgBox.show('删除数据失败!')
                     })
                 })
-        }
+        },
+        // submit(files){
+        //     console.log(files)
+        //     let formData = new FormData();
+        //     formData.append('RelPhid',0);
+        //     formData.append('BTable','gcw3_voucher_mst');
+        //     for(let file of files){
+        //          formData.append('files',file.raw);
+        //     }
+        //     testUpload(formData).then(res=>{
+        //         console.log(res)
+        //     }).catch(err => {
+        //         console.log(err)
+        //     })
+        // }
     },
     mounted(){
         

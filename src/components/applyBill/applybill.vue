@@ -5,9 +5,6 @@
         <el-col :span="24">
           <div class="top-btn">
             <slot name="btn-group">
-              <el-button class="btn" size="mini" style="padding: 0;" @click="creatApply"  :disabled="!(record.PaymentMst.FApproval==0&&approvalDataS.subData.length==0)">生成支付单</el-button>
-              <el-button class="btn" size="mini" @click="postApply" :disabled="!(record.PaymentMst.FApproval==0||record.PaymentMst.FApproval==2)">送审</el-button>
-              <el-button class="btn" size="mini" @click="deleteApply"  :disabled="!(record.PaymentMst.FApproval==0||record.PaymentMst.FApproval==2)">删除</el-button>
               <!--<el-button class="btn" size="mini" @click="checkApply">审批</el-button>
               <el-button class="btn" size="mini" @click="cancelApply">取消审批</el-button>-->
               <el-button class="btn" size="mini" >打印</el-button>
@@ -128,6 +125,7 @@
                     <col width="16%">
                   </colgroup>
                   <tbody>
+
                   <template v-for="(item) in record.PaymentXmDtl" v-if="record.PaymentXmDtl">
                     <tr v-for="(xm,idx) in item.PaymentDtls" v-if="item.PaymentDtls">
                       <td :rowspan="item.PaymentDtls.length" v-if="idx%3==0">
@@ -188,7 +186,58 @@
           type:Array,
           default:function () {
             return {}
+import ApprovalDialog from '../../pages/payfundapproval/approvalDialog'
+import goApproval from '../applyPro/goApproval.vue'
+import ImgView from '../imgView/imgView'
+export default {
+  name: 'applybill',
+  components: { ApprovalDialog, goApproval, ImgView },
+  props: {
+    applyNum: {
+      type: String,
+      default: ''
+    },
+    subData: {
+      type: Array,
+      default: function() {
+        return {}
+      }
+    }
+  },
+  data() {
+    return {
+      record: {
+        PaymentMst: {
+          FDepname: '',
+          FDate: '',
+          FAmountTotal: '',
+          FCode: '',
+          FOrgname: '',
+          FDescribe: ''
+        },
+        PaymentXmDtl: [
+          {
+            PaymentDtls: {
+              PhId: '',
+              BudgetdtlName: '',
+              FDepartmentname: '',
+              FAmount: '',
+              FPayment: ''
+            },
+            PaymentXm: {
+              XmProjcode: '',
+              XmProjname: ''
+            }
           }
+        ]
+      },
+      approvalType: { 0: '待送审', 1: '审批中', 2: '未通过', 9: '审批通过' },
+      //生成支付单
+      appDialog: {
+        title: '',
+        btnGroup: {
+          cancelName: '',
+          onfirmName: ''
         }
       },
       data(){
@@ -245,6 +294,7 @@
           }
         }
       },*/
+
       mounted(){
         this.getApply();
         this.approvalDataS.data=[this.applyNum];

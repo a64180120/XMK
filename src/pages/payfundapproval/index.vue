@@ -1,6 +1,6 @@
 <template>
   <section>
-    <handle-btn title="审批中心在线工作平台" @refresh="loadData()" :auditBtn="true">
+    <handle-btn title="审批中心在线工作平台" @refresh="refresh()" :auditBtn="true">
       <div class="top" >
          <ul v-if="isApproval">
            <li @click="aprovalItem()">
@@ -333,8 +333,9 @@
           BDate:[],//申报时间段
           Operator:"",//停留时长的判断条件(1:等于,2:大于,3:小于)
           StopHour:'',//停留时长
-          OrgCodeNum:this.OrgCode,//组织编码
-          OrgName:''//组织名称
+          OrgCode:"",//组织编码
+          OrgName:'',//组织名称
+          OrgPhId:''
         },
         checkedAll:false, //是否全选
         IsIndeterminate:false, //列表中是否有选中的值并且不是全选
@@ -351,7 +352,7 @@
         tableData:[],//模拟表格数据
         page:{
           currentPage:1,//当前页
-          pageSizes:[20,50,100], //每页显示多少条
+          pageSizes:[20,30,50,100], //每页显示多少条
           total:0,//总条数
           pageSize:20,//当前每页显示多少条
         },//分页
@@ -408,7 +409,9 @@
     computed:{
       ...mapState({
         OrgCode:state =>state.user.orgcode,
-        UserId:state =>state.user.userid
+        UserId:state =>state.user.userid,
+        Year:state =>state.user.year,
+        Orgid:state =>state.user.orgid,
       })
     },
     methods:{
@@ -417,8 +420,9 @@
 
         let data = {
           Uid:this.UserId,
-          OrgCode:this.OrgCodeNum == ''?this.OrgCodeNum:this.OrgCode,
-          Year:'2019',
+          OrgCode:this.searchForm.OrgCode == ''?this.OrgCode:this.searchForm.OrgCode,
+          Orgid:this.searchForm.OrgPhId==''?this.Orgid:this.searchForm.OrgPhId,
+          Year:this.Year,
           PageIndex:this.page.currentPage,
           PageSize:this.page.pageSize,
           BType:this.BType,
@@ -542,7 +546,6 @@
           let data = {
             RefbillPhidList:[]
           }
-          debugger
           for (let item of this.selection){
             data.RefbillPhidList.push(item.RefbillPhid)
           }
@@ -574,7 +577,6 @@
         this.visible = true
         let data = {
           RefbillPhid:this.selection[0].RefbillPhid,
-          ProcPhid:item.PhId,
           FBilltype:this.BType
         }
         this.getAuditfollow(data)
@@ -584,7 +586,6 @@
         this.visible = true
         let data = {
           RefbillPhid:item.RefbillPhid,
-          ProcPhid:item.ProcPhid,
           FBilltype:this.BType
         }
         this.getAuditfollow(data)
@@ -592,12 +593,13 @@
       //拉去审批流数据查看
       getAuditfollow(data){
         let that= this
-        this.getAxios("/GAppvalRecord/GetAppvalRecord",data).then(success =>{
-          console.log(success)
-          if (success && success.Status === "success") {
-            that.auditMsg = success.Data
+        this.getAxios("/GAppvalRecord/GetAppvalRecordList",data).then(res =>{
+          console.log(res)
+          if (res && res.Status === "success") {
+            that.auditMsg = res.Data
+            console.log(res.Data)
           }else {
-            that.$msgBox.show(success.Msg)
+            that.$msgBox.show(res.Msg)
           }
         }).catch(err =>{
           that.$msgBox.show("数据获取异常")
@@ -613,7 +615,7 @@
         this.searchForm.OrgName = e[0].OName
         this.searchForm.OrgCode = e[0].OCode
         console.log(this.searchForm)
-        this.OrgCodeNum =e.OrgCode
+        this.searchForm.OrgPhId =e[0].PhId
         this.loadData()
       },
       //打开组织树
@@ -645,11 +647,22 @@
       },
       // 关闭详情弹框事件
       closeDetailDialog(){
-        this.selection = []
+
       },
-      //删除事件
+      //删除
       handleDelete(){
 
+      },
+      //刷新
+      refresh(){
+        this.searchForm.BName = '';
+        this.searchForm.BDate = [];
+        this.searchForm.Operator = [];
+        this.searchForm.StopHour = '';
+        this.searchForm.OrgName = '';
+        this.page.currentPage = 1;
+        this.page.pageSize = 20;
+        this.loadData()
       }
     }
   }

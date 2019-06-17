@@ -1,6 +1,6 @@
 <template>
   <section>
-    <handle-btn title="审批中心在线工作平台" :auditBtn="true">
+    <handle-btn title="审批中心在线工作平台" :auditBtn="true" @refresh="refresh()">
       <div class="top" v-if="isApproval">
         <ul>
           <li @click="aprovalItem()">
@@ -102,7 +102,7 @@
               <tbody>
               <tr :class="{trActive:check[idx]}" v-for="(item,idx) in tableData"  :key="idx">
                 <td @click.self="handleCheckBoxCellClick(item,idx)">
-                  <el-checkbox v-model="check[idx]" >{{idx}}</el-checkbox>
+                  <el-checkbox v-model="check[idx]" >{{idx+1}}</el-checkbox>
                 </td>
                 <td @click="handleRowClick(item,idx)" class="apply-epart cell-click">
                   {{item.OrgName}}
@@ -211,7 +211,7 @@
               <tbody>
               <tr :class="{trActive:check[idx]}" v-for="(item,idx) in tableData"  :key="idx">
                 <td @click.self="handleCheckBoxCellClick(item,idx)">
-                  <el-checkbox v-model="check[idx]" >{{idx}}</el-checkbox>
+                  <el-checkbox v-model="check[idx]" >{{idx+1}}</el-checkbox>
                 </td>
                 <td @click="handleRowClick(item,idx)" class="apply-epart cell-click">
                   {{item.OrgName}}
@@ -234,7 +234,7 @@
                 </td>
                 <td>
                   <span class="cell-click" v-if="item.BStatus ==0 " @click.stop="openAuditfollow(item,idx)">未审批</span>
-                  <span class="cell-click" v-if="item.BStatus ==1 " @click.stop="openAuditfollow(item,idx)">待审批</span>
+                  <span class="cell-click" v-if="item.BStatus ==1 " @click.stop="openAuditfollow(item,idx)">审批中</span>
                   <span class="cell-click" v-if="item.BStatus ==2 " @click.stop="openAuditfollow(item,idx)">未通过</span>
                   <span class="cell-click" v-if="item.BStatus ==9 " @click.stop="openAuditfollow(item,idx)">审批通过</span>
                 </td>
@@ -303,8 +303,9 @@
           BDate:[],//申报时间段
           Operator:"",//停留时长的判断条件(1:等于,2:大于,3:小于)
           StopHour:'',//停留时长
-          OrgCodeNum:this.OrgCode,//组织编码
-          OrgName:''//组织名称
+          OrgCode:"",//组织编码
+          OrgName:'',//组织名称
+          OrgPhId:''
         },
         tableData:[],//模拟表格数据
         page:{
@@ -339,7 +340,9 @@
     computed:{
       ...mapState({
         OrgCode:state =>state.user.orgcode,
-        UserId:state =>state.user.userid
+        UserId:state =>state.user.userid,
+        Orgid:state =>state.user.orgid,
+        Year:state =>state.user.year
       })
     },
     mounted() {
@@ -376,11 +379,12 @@
     },
     methods:{
       //拉取列表数据
-      loadData(){
+      loadData(e){
         let data = {
           Uid:this.UserId,
-          OrgCode:this.OrgCodeNum == ''?this.OrgCodeNum:this.OrgCode,
-          Year:'2019',
+          OrgCode:this.searchForm.OrgCode == ''?this.OrgCode:this.searchForm.OrgCode,
+          Orgid:this.searchForm.OrgPhId==''?this.Orgid:this.searchForm.OrgPhId,
+          Year:this.Year,
           PageIndex:this.page.currentPage,
           PageSize:this.page.pageSize,
           BType:this.BType,
@@ -501,7 +505,6 @@
         this.visible = true;
         let data = {
           RefbillPhid:item.RefbillPhid,
-          ProcPhid:item.ProcPhid,
           FBilltype:this.BType
         }
         this.getAuditfollow(data)
@@ -509,7 +512,7 @@
       //拉去审批流数据查看
       getAuditfollow(data){
         let that= this
-        this.getAxios("/GAppvalRecord/GetAppvalRecord",data).then(success =>{
+        this.getAxios("/GAppvalRecord/GetAppvalRecordList",data).then(success =>{
           console.log(success)
           if (success && success.Status === "success") {
             that.auditMsg = success.Data
@@ -526,24 +529,26 @@
       },
       //获取组织树
       getOrg(e){
+        console.log(e)
         this.searchForm.OrgName = e[0].OName
         this.searchForm.OrgCode = e[0].OCode
         console.log(this.searchForm)
-        this.OrgCodeNum =e.OrgCode
-        this.loadData()
+        this.searchForm.OrgPhId =e[0].PhId
+        this.loadData(e)
       },
       //子组件审批流查看
       childrenAuditfollow(item,idx){
         this.visible = true
         let data = {
           RefbillPhid:this.selection[0].RefbillPhid,
-          ProcPhid:item.PhId,
           FBilltype:this.BType
         }
         this.getAuditfollow(data)
       },
       //输入框值改变
       changeInput(e){
+        debugger
+        console.log(this.searchForm)
         this.page.pageSize=20;
         this.page.currentPage = 1;
         if(e ==='operator'){
@@ -559,6 +564,17 @@
       //
       closeDetail(e){
         this.openDialog=e
+      },
+      //刷新
+      refresh(){
+        this.searchForm.BName = '';
+        this.searchForm.BDate = [];
+        this.searchForm.Operator = [];
+        this.searchForm.StopHour = '';
+        this.searchForm.OrgName = '';
+        this.page.currentPage = 1;
+        this.page.pageSize = 20;
+        this.loadData()
       }
     }
   }

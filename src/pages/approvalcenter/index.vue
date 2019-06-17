@@ -80,7 +80,8 @@
       computed:{
         ...mapState({
           OrgCode:state =>state.user.orgcode,
-          UserId:state =>state.user.userid
+          UserId:state =>state.user.userid,
+          Orgid:state =>state.user.orgid,
         })
       },
       methods:{
@@ -88,6 +89,7 @@
         getProcTypes(){
           let data = {
             Uid:this.UserId,
+            Orgid:this.Orgid,
             OrgCode:this.OrgCode,
             Year:"2019"
           }

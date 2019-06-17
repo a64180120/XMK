@@ -20,7 +20,10 @@
               </span>
             </li>
             <li>
-              <span>附单据 {{list}} 张</span>
+              <span>
+                附单据 {{fileCount}} 张
+                <i v-if="isApproval" class="el-icon-upload" @click="showUpload"></i>
+              </span>
             </li>
           </ul>
         </div>
@@ -99,7 +102,8 @@
  * 2、nextApprovaler，下一审批人列表数据
  * 3、backPersonnel，审批需要,送审时不需要。用于显示回退人员数据,
  * 4、isApproval，判断是否是送审，true送审 false审核 默认为false
- *
+ * 5、fileCount,附件数量
+ * 6、upload,显示上传附件弹框
  * v-model:绑定文本域内容
  */
 
@@ -135,11 +139,18 @@ export default {
     value: {
       type: String,
       default: ''
+    },
+    fileCount: {
+      type: Number,
+      default: 0
+    },
+    upload: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
     return {
-      list: 1,
       textare: this.value,
       openDialog: false,
       handleValue: '',
@@ -162,6 +173,9 @@ export default {
     }
   },
   methods: {
+    showUpload() {
+      this.$emit('update:upload', true)
+    },
     changeDialog() {
       this.openDialog = true
       this.subPeople = []

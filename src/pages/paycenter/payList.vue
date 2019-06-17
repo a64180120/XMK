@@ -88,7 +88,7 @@
                   </div>
                   <div
                     v-else
-                  >{{detail.Mst.FPaymethod.length==17?(FPaymethodList.find(item=>item.PhId == detail.Mst.FPaymethod)).TypeName:''}}</div>
+                  >{{detail.Mst.FPaymethod.length==15&&FPaymethodList.length>0?(FPaymethodList.find(item=>item.PhId == detail.Mst.FPaymethod)).TypeName:''}}</div>
                 </li>
               </ul>
             </div>
@@ -311,7 +311,11 @@
       <div slot="title" class="dialog-title">
         <span style="float: left;">查看申请</span>
       </div>
-      <apply-bill :applyNum="this.data.data[0].Mst.RefbillPhid.toString()" @showImg="showImg">
+      <apply-bill
+        :applyNum="this.data.data[0].Mst.RefbillPhid.toString()"
+        :subData="[]"
+        @showImg="showImg"
+      >
         <div slot="btn-group">
           <el-button class="btn" size="mini">打印</el-button>
         </div>
@@ -782,9 +786,7 @@ export default {
                 )
               })
             } else {
-              this.FPaymethodList = res.Record.filter(item => {
-                return item.PhId == this.data.data[0].Mst.FPaymethod
-              })
+              this.FPaymethodList = res.Record
             }
           }
         })
@@ -820,6 +822,14 @@ export default {
           this[type].data = this.data.data
           break
         case 'payErrorHandleData':
+          if (
+            this.detail.Dtls.some(item => {
+              return !!item.FNewCode
+            })
+          ) {
+            this.$msgBox.error('只能对未重新支付的单据进行处理。')
+            return
+          }
         case 'mergePayData':
           this[type].openDialog = true
           this[type].data = this.data.data
