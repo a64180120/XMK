@@ -34,7 +34,7 @@
             <template v-if="data.itemType =='approval'">
               <span class="btn btn-large" @click="save('approval')">审批</span>
             </template>
-            <span class="btn btn-large">打印</span>
+            <span class="btn btn-large" v-show="false">打印</span>
           </div>
         </el-col>
       </el-row>
@@ -317,7 +317,7 @@
         @showImg="showImg"
       >
         <div slot="btn-group">
-          <el-button class="btn" size="mini">打印</el-button>
+          <el-button v-show="false" class="btn" size="mini">打印</el-button>
         </div>
       </apply-bill>
     </el-dialog>

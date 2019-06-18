@@ -22,7 +22,11 @@
             <li>
               <span>
                 附单据 {{fileCount}} 张
-                <i v-if="isApproval" class="el-icon-upload" @click="showUpload"></i>
+                <i
+                  v-if="isApproval&&false"
+                  class="el-icon-upload"
+                  @click="showUpload"
+                ></i>
               </span>
             </li>
           </ul>
