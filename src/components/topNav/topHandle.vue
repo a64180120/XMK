@@ -25,19 +25,19 @@
                 </li>
                 <li  @click.stop="navPage('/fund')">
                   <div>
-                    <img src="@/assets/images/y1.png" alt>
+                    <img src="@/assets/images/zjbf.png" alt>
                   </div>
                   <span>资金拨付</span>
                 </li>
                 <li  @click.stop="navPage('/bankaccount')">
                   <div>
-                    <img src="@/assets/images/yk.png" alt>
+                    <img src="@/assets/images/yhda.png" alt>
                   </div>
                   <span>银行档案</span>
                 </li>
                 <li @click.stop="navPage('/setting')">
                   <div>
-                    <img src="@/assets/images/setting.svg" alt>
+                    <img src="@/assets/images/navsetting.png" alt>
                   </div>
                   <span>系统设置</span>
                 </li>
