@@ -97,9 +97,14 @@
                         {{mx.FDepartmentname}}
                       </td>
                       <td @click="showDetailPro(pindex,index)">{{mx.BudgetdtlName }}</td>
-                      <td class="right" >
+                      <td class="right" style="padding: 0 10px;">
                         <span class="num" v-if="!mx.checked" @click="$set(mx,'checked',true)">{{mx.FAmount  | NumFormat}}</span>
-                        <el-input-number v-if="mx.checked" size="small" :precision="2" :controls="false" style="width:auto;" class="numInput"  v-model="mx.FAmount " @blur="$set(mx,'checked',false)" @change="moneyChange"></el-input-number>
+                        <input v-if="mx.checked" style="width:100%;height: 100%;text-align: right;" class="numInput"
+                               v-model="mx.FAmount "
+                               @keydown="clearZero(pindex,index)"
+                               @keyup="clearNum(pindex,index)"
+                               @blur="moneyChange(pindex,index)">
+                        <!--<el-input-number v-if="mx.checked" size="small" :precision="2" :controls="false" style="width:auto;" class="numInput"  v-model="mx.FAmount " @blur="$set(mx,'checked',false)" @change="moneyChange"></el-input-number>-->
                       </td>
                       <td>
                         <input v-model="mx.FRemarks "/>
@@ -308,45 +313,6 @@
       })
     },
     components:{ApprovalDialog, Orgtree,goApproval,ImgView},
-    /*watch:{
-      isAdd(val){
-        if(!val){
-          this.getApply();
-        }else{
-          this.PaymentMst={
-            FYear: this.year,//（年度）
-              FName: '',//（申请单名）
-              FOrgphid: this.orgid,//（组织主键）
-              FOrgcode: this.orgcode,//（组织编码）
-              FOrgname: this.orgname,//（组织名）
-              FDepphid: "",//（部门主键）
-              FDepcode: '',//（部门编码）
-              FDepname: '',//（部门名称）
-              FAmountTotal: '',//（申请单金额）
-              FDate: '',//（申请单时间）2019-05-30
-              FApproval: '0',//（审批状态：0- 未审批 1-待审批 2- 未通过 9-审批通过）
-              IsPay: '0',//（支付状态：0- 否 1-待支付 9-支付完成）
-              FDescribe: '', //（申报说明）
-              FRemarks: '', //（备注）
-          };
-          this.PaymentXmDtl=[];
-        }
-      },
-      prodata:{
-        handler(val){
-          if(val){
-            this.PaymentMst.FDepphid= val.bm.PhId;//（部门主键）
-            this.PaymentMst.FDepcode= val.bm.OCode;//（部门编码）
-            this.PaymentMst.FDepname= val.bm.OName;//（部门名称）
-            this.approvalDataS.subData= val.subData;//审批流
-            for(var i in val.Mst){
-              val.Mst[i].checked=false;
-            }
-          }
-        },
-        deep:true,
-      },
-    },*/
     mounted(){
       this.approvalDataS.subData= this.prodata.subData;//审批流
       this.$nextTick(
@@ -377,6 +343,26 @@
       }
     },
     methods:{
+      clearZero:function(pindex,index){
+        let val=this.PaymentXmDtl[pindex].PaymentDtls[index].FAmount;
+        if(!val){
+          this.PaymentXmDtl[pindex].PaymentDtls[index].FAmount='';
+        }
+      },
+      /*清空为0的input框*/
+      clearNum:function(pindex,index){
+        let val=this.PaymentXmDtl[pindex].PaymentDtls[index].FAmount+'';
+        //obj.value = obj.value.replace(/[\u4e00-\u9fa5]/g,"");  //清除“汉字”和“.”以外的字符
+        val = val.replace(/[^\d.]/g,"");  //清除“数字”和“.”以外的字符
+        val = val.replace(/\.{2,}/g,"."); //只保留第一个. 清除多余的
+        val = val.replace(".","$#$").replace(/\./g,"").replace("$#$",".");
+        val = val.replace(/^(\-)*(\d+)\.(\d\d).*$/,'$1$2.$3');//只能输入两个小数
+        if(val.indexOf(".")< 0 && val !=""){//以上已经过滤，此处控制的是如果没有小数点，首位不能为类似于 01、02的金额
+          val= parseFloat(val);
+        }
+        this.PaymentXmDtl[pindex].PaymentDtls[index].FAmount=val;
+      },
+
       //申请单查看
       getApply:function(){
         console.log(this.applyNum+'这里添加数据查询方法');
@@ -556,7 +542,7 @@
         }
       },
       /*金额计算*/
-      moneyChange:function(){
+      moneyChange:function(pindex,index){
         let countAll=0;
         for(var i in this.PaymentXmDtl){
           let px=this.PaymentXmDtl[i];
@@ -566,9 +552,23 @@
             count+=pd.FAmount;
           }
           px.PaymentXm.FAmountTotal=count;
+          if(pindex==i&&count>px.money.surplus){
+            let dis=Math.floor(count*100-px.money.surplus*100)/100;//超出的可申请资金
+            count=px.money.surplus;
+            px.PaymentXm.FAmountTotal=count;
+
+            px.PaymentDtls[index].FAmount=Math.floor(px.PaymentDtls[index].FAmount*100-dis*100)/100;
+            this.$msgBox.show({
+              content: '您输入的金额已超出可使用金额，已自动为您修改为剩余最大可申请金额。',
+              fn:() => {
+                this.xmDisable()
+              }
+            })
+          }
           countAll+=count;
         }
         this.PaymentMst.FAmountTotal=countAll;
+        this.PaymentXmDtl[pindex].PaymentDtls[index].checked=false;
       },
       //送审
       postApply:function(){

@@ -35,50 +35,52 @@
           <i class="el-icon-d-arrow-right iicon" style="position:absolute;right:275px;top: .12rem;" @click.stop="unionStateScroll(true)"></i>
           <div class="scrollNav">
             <div>
-              <label>
-                <span>审批状态：</span>
-                <el-select size="small" v-model="searchData.approvalType">
-                  <el-option v-for="item in approvalList"
-                             :key="item.value"
-                             :label="item.label"
-                             :value="item.value">
-                  </el-option>
-                </el-select>
-              </label>
-              <label>
-                <span>支付状态：</span>
-                <el-select size="small" v-model="searchData.payType">
-                  <el-option v-for="item in payList"
-                             :key="item.value"
-                             :label="item.label"
-                             :value="item.value">
-                  </el-option>
-                </el-select>
-              </label>
-              <label>
-                <span>申请日期</span>
-                <el-date-picker
-                  size="small"
-                  v-model="searchData.date"
-                  type="daterange"
-                  range-separator="至"
-                  start-placeholder="开始日期"
-                  end-placeholder="结束日期">
-                </el-date-picker>
-              </label>
+              <ul>
+                <li>
+                  <span>审批状态：</span>
+                  <el-select size="small" v-model="searchData.approvalType">
+                    <el-option v-for="item in approvalList"
+                               :key="item.value"
+                               :label="item.label"
+                               :value="item.value">
+                    </el-option>
+                  </el-select>
+                </li>
+                <li>
+                  <span>支付状态：</span>
+                  <el-select size="small" v-model="searchData.payType">
+                    <el-option v-for="item in payList"
+                               :key="item.value"
+                               :label="item.label"
+                               :value="item.value">
+                    </el-option>
+                  </el-select>
+                </li>
+                <li>
+                  <span>申请日期</span>
+                  <el-date-picker
+                    size="small"
+                    v-model="searchData.date"
+                    type="daterange"
+                    range-separator="至"
+                    start-placeholder="开始日期"
+                    end-placeholder="结束日期">
+                  </el-date-picker>
+                </li>
+                <li>
+                  <span>申请金额</span>
+                  <el-input-number size="small" :precision="2" :controls="false" v-model="searchData.money.smoney" @change="moneyChange" style="width:auto"></el-input-number>
+                  <span>至</span>
+                  <el-input-number size="small" :precision="2" :controls="false" v-model="searchData.money.emoney" @change="moneyChange" style="width: auto"></el-input-number>
+                </li>
+              </ul>
 
-              <label>
-                <span>申请金额</span>
-                <el-input-number size="small" :precision="2" :controls="false" v-model="searchData.money.smoney" style="width:auto"></el-input-number>
-                <span>至</span>
-                <el-input-number size="small" :precision="2" :controls="false" v-model="searchData.money.emoney"style="width: auto"></el-input-number>
-              </label>
             </div>
 
 
           </div>
           <label class="searchArea" style="float: right">
-            <el-input size="small" placeholder="请输入内容" style="border-radius: 5px;width: 250px;overflow: hidden" v-model="searchData.searchValue">
+            <el-input size="small" placeholder="请输入申请单编号/名称" style="border-radius: 5px;width: 250px;overflow: hidden" v-model="searchData.searchValue">
               <el-button slot="append" size="small" style="background-color: #3294e8;color: #fff;border-top-left-radius: 0;border-bottom-left-radius: 0">搜索</el-button>
             </el-input>
           </label>
@@ -245,7 +247,7 @@
               <div>预算支出项目总数</div>
             </div>
             <div>
-              <p style="color:#f52c1d">
+              <p style="color:#f52c1d" :title="apartData.Amount | NumFormat">
                 <num :vv="apartData.Amount | NumFormat"></num>
                 <!--{{apartData.money}}--></p>
               <div>支出预算总额</div>
@@ -255,7 +257,7 @@
             <div style="border-bottom: 1px solid #ccc">
               <span>对下补助项目名称：</span>
               <!--部门选择-->
-              <el-select size="small" style="width: 100px" v-model="bzType" @change="getChartList">
+              <el-select size="small" style="width: 100px" :title="apartDataMst[bzType]" v-model="bzType" @change="getChartList">
                 <el-option v-for="item in apartData.Mst"
                            :key="item.PhId"
                            :label="item.FProjName"
@@ -380,6 +382,7 @@
             approvalData:{
             },
             apartData:{bm:{},Mst:[],Amount:'0',subData:[]},//选择部门后获取的项目信息
+            apartDataMst:{},//部门数组，通过phid绑值，用于显示title
             isAdd:true,//判断是修改（false）还是新增(true)
             auditMsg:[],//审批流程 数据
           }
@@ -406,6 +409,9 @@
           handler(val){
             if(val.bmType){
               this.pageSearch.pageIndex=1;
+              if(val.money.smoney>val.money.emoney){
+                this.searchData.emoney=this.searchData.smoney
+              }
               this.getData();
             }
           },
@@ -432,17 +438,16 @@
         },
         //滚动
         unionStateScroll(bool){
-
           var union=document.getElementsByClassName('scrollNav')[0];
           var unionStateCon=document.getElementsByClassName('scrollNav')[0].firstElementChild;
-          let eleChildren=unionStateCon.childNodes;
+          let unionStateConChild=unionStateCon.firstElementChild
+          let eleChildren=unionStateConChild.childNodes;
           let unionStateConWidth=0;
           let scrollWidth=200;
           for(var i in eleChildren ){
             if(eleChildren[i].nodeType==1){
               unionStateConWidth+=eleChildren[i].clientWidth+15;
             }
-
           }
           unionStateCon.style.width=unionStateConWidth+'px';
 
@@ -510,7 +515,7 @@
 
         //获取部门
         getDataC:function(){
-          let param={Unit:this.orgcode,UserNo:this.usercode||'9999'};
+          let param={orgid:this.orgid,uid:this.userid};
           this.searchData.bmType='';
           this.getAxios('GQT/CorrespondenceSettingsApi/GetDeptByUnit',param).then(res=>{
             this.bmList=res.Record;
@@ -534,6 +539,9 @@
           this.apartData.Amount=0;
           this.getAxios('GYS/BudgetMstApi/GetBudgetMstList',param).then(res=>{
             this.apartData.Mst=res.Mst;
+            for(var i in res.Mst){
+              this.apartDataMst[res.Mst[i].PhId]=res.Mst[i].FProjName;
+            }
             this.apartData.Amount=res.FAmount;
             this.bzType=res.Mst[0].PhId;
           }).catch(err=>{
@@ -568,8 +576,8 @@
             PayBz:this.searchData.payType,
             StartDate:this.searchData.date[0]||'',
             EndDate:this.searchData.date[1]||'',
-            MaxAmount:this.searchData.money.smoney==0?'':this.searchData.money.smoney,
-            MinAmount:this.searchData.money.emoney==0?'':this.searchData.money.emoney,
+            MinAmount:this.searchData.money.smoney==0?'':this.searchData.money.smoney,
+            MaxAmount:this.searchData.money.emoney==0?'':this.searchData.money.emoney,
             FOrgphid:this.orgid,
             FDepphid:this.apartData['bm'].PhId,
             FYear:this.year
@@ -675,6 +683,12 @@
               }else{
                 let phidList=[];
                 for(var i in delList){
+                  if(delList[i].FApproval!=0&&delList[i].FApproval!=2){
+                    this.$msgBox.show({
+                      content: '审批中及审批通过的单据不允许删除。'
+                    });
+                    return;
+                  }
                   phidList.push(delList[i].PhId);
                 }
                 let param={
@@ -747,6 +761,12 @@
                 return;
               }
               let data=[],zfList=this.getCheckedList(),mCount=0;
+              if(zfList.length==0){
+                this.$msgBox.show({
+                  content:'请选择要生成支付单的单据（可多选）。'
+                })
+                return;
+              }
               for(var i in zfList){
                 if(zfList[i].FApproval!=0){
                   this.$msgBox.show({
@@ -866,9 +886,16 @@
         changePagesize:function(val){
           this.pageSearch.pageSize=val;
           this.pageSearch.pageIndex=1;
+          this.getData();
         },
         changePageindex:function(val){
           this.pageSearch.pageIndex=val;
+          this.getData();
+        },
+        moneyChange:function(){
+          if(this.searchData.money.smoney>this.searchData.money.emoney){
+            this.searchData.money.emoney=this.searchData.money.smoney;
+          }
         }
       }
     }
