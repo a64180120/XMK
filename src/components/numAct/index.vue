@@ -60,6 +60,19 @@
                 tmpArr.push('0');
               }
               startArr = tmpArr.concat(startArr);
+              let temp=startArr.reverse();
+              console.log(temp);
+              temp.forEach((v,k)=>{
+                console.log(k);
+                if(k==2){
+                  temp[k]='.'
+                }
+                if(k>3&&(k-2)%4==0){
+                  if(v=='.'||v==','){}else{temp[k]=','}
+                }
+              })
+              console.log(temp)
+              startArr=temp.reverse();
               this.comDigitsScroll(startArr,endArr)
             }else{
               startArr = startArr.slice((startArr.length-endArr.length),startArr.length);
