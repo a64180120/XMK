@@ -495,7 +495,7 @@
       //打开审批弹框
       aprovalItem(){
         if (this.selection.length ===0) {
-          this.$msgBox.show('请选择需要审批的单据')
+          this.$msgBox.error('请选择需要审批的单据')
         }else {
           this.appDialog.title = '查看'
           this.appDialog.btnGroup.cancelName = '取消'
@@ -541,7 +541,7 @@
         this.searchForm.OrgName = e[0].OName
         this.searchForm.OrgCode = e[0].OCode
         console.log(this.searchForm)
-        this.searchForm.OrgPhId =e[0].PhId
+        F
         this.loadData(e)
       },
       //子组件审批流查看
@@ -571,6 +571,8 @@
       //
       closeDetail(e){
         this.openDialog=e
+        this.selection = [];
+        this.check = this.check.map((item,index,array)=> false)
       },
       //刷新
       refresh(){
