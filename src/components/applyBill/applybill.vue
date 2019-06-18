@@ -174,52 +174,6 @@
 </template>
 
 <script>
-<<<<<<< HEAD
-import ApprovalDialog from '../../pages/payfundapproval/approvalDialog'
-import goApproval from '../applyPro/goApproval.vue'
-import ImgView from '../imgView/imgView'
-export default {
-  name: 'applybill',
-  components: { ApprovalDialog, goApproval, ImgView },
-  props: {
-    applyNum: {
-      type: String,
-      default: ''
-    },
-    subData: {
-      type: Array,
-      default: function() {
-        return []
-      }
-    }
-  },
-  data() {
-    return {
-      record: {
-        PaymentMst: {
-          FDepname: '',
-          FDate: '',
-          FAmountTotal: '',
-          FCode: '',
-          FOrgname: '',
-          FDescribe: ''
-        },
-        PaymentXmDtl: [
-          {
-            PaymentDtls: {
-              PhId: '',
-              BudgetdtlName: '',
-              FDepartmentname: '',
-              FAmount: '',
-              FPayment: ''
-            },
-            PaymentXm: {
-              XmProjcode: '',
-              XmProjname: ''
-            }
-          }
-        ]
-=======
   import ApprovalDialog from "../../pages/payfundapproval/approvalDialog";
   import goApproval from '../applyPro/goApproval.vue';
   import ImgView from "../imgView/imgView";
@@ -230,7 +184,6 @@ export default {
       applyNum: {
         type: String,
         default: ''
->>>>>>> 263241179655dd465749051790faa00cb81bc774
       },
       subData:{
         type:Array,
