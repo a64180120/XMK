@@ -79,6 +79,8 @@
         :nextApprovaler="nextApprovaler"
         @dialogFlow="dialogFlow"
         @selectApprovaler="selectApprovaler"
+        :upload.sync="upload"
+        :fileCount="fileCount"
       ></approval-bill>
       <div class="approval-btn">
         <el-button
@@ -89,6 +91,9 @@
         <el-button size="small" type="primary" @click="submit">{{btnGroup.onfirmName}}</el-button>
       </div>
       <auditfollow :visible="showAuditfollow" @update:visible="closeAuditFollow()"></auditfollow>
+      <el-dialog append-to-body :visible.sync="upload">
+        <upload @submit="uploadFiles"/>
+      </el-dialog>
     </el-dialog>
   </section>
 </template>
@@ -102,10 +107,11 @@ import {
 } from '@/api/paycenter'
 import approvalBill from '../../components/approvalBill/approvalBill.vue'
 import { mapState } from 'vuex'
-
+import upload from '@/components/upload'
+import { testUpload } from '@/api/upload'
 export default {
   name: 'goApproval',
-  components: { auditfollow, approvalBill },
+  components: { auditfollow, approvalBill, upload },
   props: {
     data: {
       type: Object,
@@ -149,7 +155,10 @@ export default {
       ProcPhid: '',
       PostPhid: '',
       NextOperators: [],
-      mode: 0 //0普通模式1会签模式
+      mode: 0, //0普通模式1会签模式,
+      upload: false,
+      files: null,
+      fileCount: 0
     }
   },
   methods: {
@@ -254,6 +263,30 @@ export default {
         // 保存支付单，送审
         this.$parent.savePayList(this.$parent.detail, this.postAddAppvalRecord)
       }
+    },
+    // 上传附件
+    uploadFiles(files) {
+      console.log(files)
+      let formData = new FormData()
+      formData.append('RelPhid', 0)
+      formData.append('BTable', 'gcw3_voucher_mst')
+      for (let file of files) {
+        formData.append('files', file.raw)
+      }
+      testUpload(formData)
+        .then(res => {
+          console.log(res, formData)
+          // this.fileCount = files.length
+          if (res.Status == 'error') {
+            this.$msgBox.error(res.Msg)
+            return
+          }
+          this.fileCount = files.length
+        })
+        .catch(err => {
+          this.$msgBox.error('上传附件失败！')
+          console.log(err)
+        })
     }
   },
   mounted() {

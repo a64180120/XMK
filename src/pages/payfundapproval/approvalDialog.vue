@@ -54,18 +54,25 @@
             openDialog:false,
             handleValue:'',
             approvalFollow:[],
-            nextApprovaler:[],
+            nextApprovaler:[],//左边下一审批人信息，绑定表格
             backPersonnel:[],//回退审批人集合
             backData:[],//回退的审批人岗位集合
             backPost:[],//获取回退的审批人岗位
             isAgree:'', //保存是否同意审批
-            operatorID:[] //操作人员集合
+            operatorID:[], //操作人员集合
+            row:this.rowData[0]
 
           }
       },
       mounted(){
       },
       watch:{
+          rowData:{
+            handler(val){
+              console.log(val)
+            },
+            deep:true
+          }
       },
       methods:{
         //根据组织id，单据类型获取所有的审批流程
@@ -79,7 +86,6 @@
             if (res && res.Status === 'success'){
               this.$set(this.approvalFollow,0,res.Process);
               this.nextApprovaler = res.AppvalPost.Operators;
-              console.log(res)
             }else {
               let that = this
               this.$msgBox.show({
@@ -135,6 +141,8 @@
         //确认
         submit(){
           //同意数据 单条
+          console.log(this.isAgree)
+          console.log(this.rowData[0])
           let data = {
             PhId:this.rowData[0].PhId,//单据ID
             ProcPhid:this.rowData[0].ProcPhid,//审批流程id
@@ -181,13 +189,13 @@
         closeBack(){
           this.visible = false;
           this.textare = '';
-          this.$emit('refresh')
+          // this.$emit('refresh')
         },
         backAproval(val){
+          this.getAppvalProc()
           console.log(val)
           if (!val ){
             this.getBackApprovalPost()
-            // this.getGetOperators()
             this.isAgree = '2'
           } else {
             this.isAgree = '9'
@@ -221,6 +229,9 @@
           this.backPost = item
           for (let key in item.Operators){
             this.$set(this.backPersonnel,key,item.Operators[key])
+          }
+          for (let key in this.nextApprovaler) {
+            this.nextApprovaler.splice(key,1)
           }
         },
       }
