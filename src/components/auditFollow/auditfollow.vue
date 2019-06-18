@@ -14,49 +14,49 @@
               </li>
             </ul>
           </div>
-          <div class="collapse-main">
-            <el-collapse v-model="activeName" accordion class="collapse">
-              <el-collapse-item>
-                <template slot="title">
-                  资金拨付流程
-                </template>
-                <div class="content">
-                  <ul>
-                    <li></li>
-                    <li class="msg" v-for="(item,index) of auditMsg" :key="index">
-                      <audit-msg :info="item" :index="index+1"></audit-msg>
-                    </li>
-                  </ul>
-                </div>
-              </el-collapse-item>
-              <el-collapse-item>
-                <template slot="title">
-                  支付单流程
-                </template>
-                <div class="content">
-                  <ul>
-                    <li></li>
-                    <li class="msg" v-for="(item,index) of auditMsg" :key="index">
-                      <audit-msg :info="item" :index="index+1"></audit-msg>
-                    </li>
-                  </ul>
-                </div>
-              </el-collapse-item>
-              <el-collapse-item>
-                <template slot="title">
-                  资金拨付
-                </template>
-                <div class="content">
-                  <ul>
-                    <li></li>
-                    <li class="msg" v-for="(item,index) of auditMsg" :key="index">
-                      <audit-msg :info="item" :index="index+1"></audit-msg>
-                    </li>
-                  </ul>
-                </div>
-              </el-collapse-item>
-            </el-collapse>
-          </div>
+<!--          <div class="collapse-main">-->
+<!--            <el-collapse v-model="activeName" accordion class="collapse">-->
+<!--              <el-collapse-item>-->
+<!--                <template slot="title">-->
+<!--                  资金拨付流程-->
+<!--                </template>-->
+<!--                <div class="content">-->
+<!--                  <ul>-->
+<!--                    <li></li>-->
+<!--                    <li class="msg" v-for="(item,index) of auditMsg" :key="index">-->
+<!--                      <audit-msg :info="item" :index="index+1"></audit-msg>-->
+<!--                    </li>-->
+<!--                  </ul>-->
+<!--                </div>-->
+<!--              </el-collapse-item>-->
+<!--              <el-collapse-item>-->
+<!--                <template slot="title">-->
+<!--                  支付单流程-->
+<!--                </template>-->
+<!--                <div class="content">-->
+<!--                  <ul>-->
+<!--                    <li></li>-->
+<!--                    <li class="msg" v-for="(item,index) of auditMsg" :key="index">-->
+<!--                      <audit-msg :info="item" :index="index+1"></audit-msg>-->
+<!--                    </li>-->
+<!--                  </ul>-->
+<!--                </div>-->
+<!--              </el-collapse-item>-->
+<!--              <el-collapse-item>-->
+<!--                <template slot="title">-->
+<!--                  资金拨付-->
+<!--                </template>-->
+<!--                <div class="content">-->
+<!--                  <ul>-->
+<!--                    <li></li>-->
+<!--                    <li class="msg" v-for="(item,index) of auditMsg" :key="index">-->
+<!--                      <audit-msg :info="item" :index="index+1"></audit-msg>-->
+<!--                    </li>-->
+<!--                  </ul>-->
+<!--                </div>-->
+<!--              </el-collapse-item>-->
+<!--            </el-collapse>-->
+<!--          </div>-->
         </div>
 
     </div>

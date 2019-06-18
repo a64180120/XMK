@@ -210,7 +210,7 @@
             </table>
           </div>
           <div v-if="!isApproval" class="tableBody">
-            <table>
+            <table v-if="tableData.length !== 0">
               <colgroup>
                 <col width="5%">
                 <col width="10%">
@@ -255,6 +255,9 @@
               </tr>
               </tbody>
             </table>
+            <div v-else style="width: 100%;margin-top: 60px;text-align: center">
+              <span style="">暂无数据</span>
+            </div>
           </div>
         </div>
         <div class="pageArea">
@@ -278,7 +281,8 @@
             <div slot="btn-group" >
               <el-button v-if="isApproval" class="btn" size="mini" @click="aprovalItem">审批</el-button>
               <el-button  v-if="isApproval" class="btn" size="mini" style="width: 90px" @click="creatPayItem">生成支付单</el-button>
-              <el-button class="btn" size="mini">打印</el-button>
+
+              <!--              <el-button class="btn" size="mini">打印</el-button>-->
             </div>
           </applybill>
       </el-dialog>

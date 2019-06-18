@@ -223,7 +223,7 @@ export default {
     subData: {
       type: Array,
       default: function() {
-        return {}
+        return []
       }
     }
   },

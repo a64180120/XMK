@@ -183,7 +183,7 @@
         this.$emit('refresh')
       },
       backAproval(val){
-        console.log(val)
+        this.getAppvalProc()
         if (!val ){
           this.getBackApprovalPost()
           // this.getGetOperators()
@@ -219,6 +219,9 @@
         this.backPost = item
         for (let key in item.Operators){
           this.$set(this.backPersonnel,key,item.Operators[key])
+        }
+        for (let key in this.nextApprovaler) {
+          this.nextApprovaler.splice(key,1)
         }
       },
     }
