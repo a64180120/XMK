@@ -56,7 +56,7 @@ export default {
       interval: null,
       count: 0,
       status: 'success',
-      timeOut: 10000
+      timeOut: 3
     }
   },
   mounted() {},
