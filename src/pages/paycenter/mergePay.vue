@@ -333,6 +333,7 @@ export default {
     },
     // 请求-支付
     postSubmitPayments() {
+      // 获得银行服务状态
       getBankServiceState({})
         .then(res => {
           if (res.Status == 'error') {
@@ -374,7 +375,7 @@ export default {
         })
         .catch(err => {
           console.log(err)
-          this.$msgBox.error(err.Message || '支付失败！')
+          this.$msgBox.error(err.Message || '获得银行服务状态失败！')
         })
     },
     // 请求-设置支付口令
@@ -652,6 +653,12 @@ export default {
         height: 0.2rem;
       }
     }
+    input::-ms-clear {
+      display: none;
+    } /*删除文本框中的叉号*/
+    input::-ms-reveal {
+      display: none;
+    } /*删除密码框中的小眼睛*/
   }
 }
 </style>

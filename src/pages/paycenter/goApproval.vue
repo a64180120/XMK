@@ -10,66 +10,6 @@
       <div slot="title" class="dialog-title">
         <p>送审</p>
       </div>
-      <!-- <div class="content">
-        <div class="handle">
-          <div class="title">
-            <span>送审备注</span>
-            <span style="float:right;color:#333;">附单据 0 张</span>
-          </div>
-          <div class="textare">
-            <el-input type="textarea" v-model="content"></el-input>
-          </div>
-        </div>
-        <div class="sub-table">
-          审批流程
-          <div class="sub-approval">
-            <div class="title">
-              <span>送审流程</span>
-            </div>
-            <div class="table">
-              <el-table
-                class="table-content"
-                :data="subData"
-                :border="true"
-                highlight-current-row
-                @current-change="handleCurrentChange"
-                header-row-class-name="table-header"
-                ref="content"
-              >
-                <el-table-column prop="code" width="80" align="center" label="流程编码"></el-table-column>
-                <el-table-column prop="name" align="center" label="流程名称"></el-table-column>
-                <el-table-column width="60" align="center" label="查看">
-                  <template slot-scope="scope">
-                    <i
-                      class="el-icon-search icon-search"
-                      @click="searchFlow(scope.row,scope.column.$index,scope.store)"
-                    ></i>
-                  </template>
-                </el-table-column>
-              </el-table>
-            </div>
-          </div>
-          <div class="next-approval">
-            <div class="title">
-              <span>接收人</span>
-            </div>
-            <div class="table">
-              <el-table
-                class="table-next"
-                :data="nextData"
-                :border="true"
-                @select="handleSelect"
-                @select-all="handleSelectAll"
-                header-row-class-name="table-header"
-              >
-                <el-table-column type="selection" width="30"></el-table-column>
-                <el-table-column prop="code" align="center" label="操作员编码"></el-table-column>
-                <el-table-column prop="name" align="center" label="姓名"></el-table-column>
-              </el-table>
-            </div>
-          </div>
-        </div>
-      </div>-->
       <approval-bill
         ref="approvalbill"
         v-model="content"
@@ -108,7 +48,7 @@ import {
 import approvalBill from '../../components/approvalBill/approvalBill.vue'
 import { mapState } from 'vuex'
 import upload from '@/components/upload'
-import { testUpload ,PostUploadFile} from '@/api/upload'
+import { testUpload, PostUploadFile } from '@/api/upload'
 export default {
   name: 'goApproval',
   components: { auditfollow, approvalBill, upload },
