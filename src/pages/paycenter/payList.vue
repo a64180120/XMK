@@ -355,7 +355,12 @@
     ></go-approval>
     <!-- 银行档案 -->
     <bank-choose v-if="bankChooseData.openDialog" :data="bankChooseData" @getBank="getBank"></bank-choose>
-    <auditfollow :auditMsg="auditMsg" :visible="showAuditfollow" @update:visible="closeAuditFollow"></auditfollow>
+    <auditfollow
+      v-if="showAuditfollow"
+      :auditMsg="auditMsg"
+      :visible="showAuditfollow"
+      @update:visible="closeAuditFollow"
+    ></auditfollow>
   </div>
 </template>
 
@@ -365,8 +370,8 @@ import mergePay from './mergePay.vue'
 import payErrorHandle from './payErrorHandle.vue'
 import goApproval from './goApproval.vue'
 import bankChoose from './bankChoose'
-import auditfollow from '../../components/auditFollow/auditfollow'
-import ImgView from '../../components/imgView/imgView'
+import auditfollow from '@/components/auditFollow/auditfollow'
+import ImgView from '@/components/imgView/imgView'
 import { BankAccountList } from '@/api/bankaccount'
 import { GetSysSetList } from '@/api/systemSetting/dataSafe'
 import {

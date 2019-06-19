@@ -181,4 +181,7 @@ export default {
 //     height: 100%;
 //   }
 // }
+.el-dialog__wrapper.saasMsgCon {
+  animation: none !important;
+}
 </style>
