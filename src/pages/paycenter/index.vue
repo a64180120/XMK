@@ -226,22 +226,22 @@
 </template>
 
 <script>
-// import topHandle from '../../components/topNav/topHandle.vue'
-// import searchInput from '../../components/searchInput/searchInput'
-// import payList from './payList.vue'
-// import mergePay from './mergePay.vue'
-// import payErrorHandle from './payErrorHandle.vue'
-// import goApproval from './goApproval.vue'
+import topHandle from '../../components/topNav/topHandle.vue'
+import searchInput from '../../components/searchInput/searchInput'
+import payList from './payList.vue'
+import mergePay from './mergePay.vue'
+import payErrorHandle from './payErrorHandle.vue'
+import goApproval from './goApproval.vue'
 import { mapState } from 'vuex'
 export default {
   name: 'pay',
   components: {
-    //topHandle,
-    //payList,
-   // mergePay,
-    //payErrorHandle,
-    //goApproval,
-   // searchInput
+    topHandle,
+    payList,
+    mergePay,
+    payErrorHandle,
+    goApproval,
+    searchInput
   },
   provide() {
     return { refreshIndexData: this.getData }
@@ -362,74 +362,74 @@ export default {
   created() {},
   mounted() {
     this.getData()
-    // var vm = this
-    // let container = vm.$refs.selectsContainer, //滚动容器
-    //   tabs = document.querySelectorAll('.selects>div>.tab'),
-    //   contentWidth = 0, //所有tab总宽度
-    //   tabsWidth = [], //各个tab筛选条件宽度
-    //   left = document.querySelector('.selects>i.el-icon-d-arrow-left'),
-    //   right = document.querySelector('.selects>i.el-icon-d-arrow-right')
-    // tabs.forEach(item => {
-    //   contentWidth += item.offsetWidth
-    //   tabsWidth.push(item.offsetWidth)
-    // })
-    // function getComWidth(ele, cla) {
-    //   return parseInt(
-    //     (window.getComputedStyle
-    //       ? window.getComputedStyle(ele, cla || null)
-    //       : ele.currentStyle
-    //     ).width
-    //   )
-    // }
-    // function resize() {
-    //   let containerWidth = getComWidth(container)
-    //   if (containerWidth >= contentWidth) {
-    //     container.className = ''
-    //     container.style.transform = 'translateX(0)'
-    //   } else {
-    //     container.className = 'scroll'
-    //     if (contentWidth - getTrans() <= containerWidth) {
-    //       container.style.transform = `translateX(-${contentWidth -
-    //         containerWidth}px)`
-    //     }
-    //   }
-    // }
-    // function getTrans() {
-    //   return container.style.transform.match(/\d+/) == -1
-    //     ? 0
-    //     : container.style.transform.match(/\d+/)[0]
-    // }
-    // left.onclick = function() {
-    //   let trans = getTrans()
-    //   if (trans != 0) {
-    //     let containerWidth = getComWidth(container),
-    //       index = 0,
-    //       totalWidth = 0
-    //     for (let i of tabsWidth) {
-    //       if (totalWidth + i >= trans) {
-    //         container.style.transform = `translateX(-${totalWidth}px)`
-    //         break
-    //       }
-    //       totalWidth += i
-    //     }
-    //   }
-    // }
-    // right.onclick = function() {
-    //   let containerWidth = getComWidth(container),
-    //     index = 0,
-    //     totalWidth = 0
-    //   for (let i of tabsWidth) {
-    //     if (totalWidth - getTrans() + i > containerWidth) {
-    //       container.style.transform = `translateX(-${totalWidth +
-    //         i -
-    //         containerWidth}px)`
-    //       break
-    //     }
-    //     totalWidth += i
-    //   }
-    // }
-    // window.onresize = resize
-    // resize()
+    var vm = this
+    let container = vm.$refs.selectsContainer, //滚动容器
+      tabs = document.querySelectorAll('.selects>div>.tab'),
+      contentWidth = 0, //所有tab总宽度
+      tabsWidth = [], //各个tab筛选条件宽度
+      left = document.querySelector('.selects>i.el-icon-d-arrow-left'),
+      right = document.querySelector('.selects>i.el-icon-d-arrow-right')
+    tabs.forEach(item => {
+      contentWidth += item.offsetWidth
+      tabsWidth.push(item.offsetWidth)
+    })
+    function getComWidth(ele, cla) {
+      return parseInt(
+        (window.getComputedStyle
+          ? window.getComputedStyle(ele, cla || null)
+          : ele.currentStyle
+        ).width
+      )
+    }
+    function resize() {
+      let containerWidth = getComWidth(container)
+      if (containerWidth >= contentWidth) {
+        container.className = ''
+        container.style.transform = 'translateX(0)'
+      } else {
+        container.className = 'scroll'
+        if (contentWidth - getTrans() <= containerWidth) {
+          container.style.transform = `translateX(-${contentWidth -
+            containerWidth}px)`
+        }
+      }
+    }
+    function getTrans() {
+      return container.style.transform.match(/\d+/) == -1
+        ? 0
+        : container.style.transform.match(/\d+/)[0]
+    }
+    left.onclick = function() {
+      let trans = getTrans()
+      if (trans != 0) {
+        let containerWidth = getComWidth(container),
+          index = 0,
+          totalWidth = 0
+        for (let i of tabsWidth) {
+          if (totalWidth + i >= trans) {
+            container.style.transform = `translateX(-${totalWidth}px)`
+            break
+          }
+          totalWidth += i
+        }
+      }
+    }
+    right.onclick = function() {
+      let containerWidth = getComWidth(container),
+        index = 0,
+        totalWidth = 0
+      for (let i of tabsWidth) {
+        if (totalWidth - getTrans() + i > containerWidth) {
+          container.style.transform = `translateX(-${totalWidth +
+            i -
+            containerWidth}px)`
+          break
+        }
+        totalWidth += i
+      }
+    }
+    window.onresize = resize
+    resize()
   },
   methods: {
     selectItem(item) {
