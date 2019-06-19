@@ -17,22 +17,18 @@ const staticRoute = [
       {
         path: '',
         redirect: '/fund',//测试
-        component: () =>
-          import(/* webpackChunkName:'home'*/ '../pages/home/index'),
-        meta: { requireAuth: true, type: 'page', name: '首页' }
+        // component: () =>
+        //   import(/* webpackChunkName:'home'*/ '../pages/home/index'),
+        // meta: { requireAuth: true, type: 'page', name: '首页' }
       },
-      {
-        path: '/fund',
-        component: () =>
-          import(/* webpackChunkName:'fund'*/ '../pages/payfund/index'),
-        meta: { requireAuth: true, type: 'page', name: '资金拨付' }
-      },
+      
       {
         path: '/paycenter',
         component: () =>
           import(/* webpackChunkName:'paycenter'*/ '../pages/paycenter/index'),
         meta: { requireAuth: true, type: 'page', name: '支付中心' }
-      },{
+      },
+      {
         path: '/payfundapproval',
         component: () =>
           import(/* webpackChunkName:'payfundapproval'*/ '../pages/payfundapproval/index'),
@@ -53,7 +49,13 @@ const staticRoute = [
         component: () =>
           import(/* webpackChunkName:'bankaccount'*/ '../pages/bankaccount'),
         meta: { requireAuth: true, type: 'page', name: '银行账户档案' }
-      }
+      },
+      {
+        path: '/fund',
+        component: () =>
+          import(/* webpackChunkName:'payfund'*/ '../pages/payfund/index'),
+        meta: { requireAuth: true, type: 'page', name: '资金拨付' }
+      },
     ]
   },{
     path: '/setting',
