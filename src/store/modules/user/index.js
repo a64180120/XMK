@@ -23,6 +23,7 @@ const state = {
     bmname:'',
     year:'',//年份
     appinfo:{},//ajax登录信息
+    menubutton:{},//菜单按钮权限
 };
 
 //计算获取取新数据
@@ -60,7 +61,8 @@ const mutations = {
         state.username=data.User.UserName,
         state.orgid=data.Org.PhId,
         state.orgcode=data.Org.OCode,
-        state.orgname=data.Org.OName
+        state.orgname=data.Org.OName,
+        state.menubutton=data.MenuButton
     },
     //组织列表
     setOrglist(state,data){
