@@ -1,10 +1,15 @@
 <template>
     <div class="auditMsg">
+      <div  v-if="info.FBilltype ==='001'&& info.JudgeRefer === 1">
+      </div>
+      <div class="title" v-if="info.FBilltype ==='002'&& info.NgRecordVer === 1">
+        <span style="font-size: 0.18rem">收付款信息维护</span>
+      </div>
         <ul>
             <li>
                 <i class="logo"></i>
-                <span v-if="index == '1'">发起人:</span>
-                <span v-else-if="index != '1' && info.OperaName != null">审批人:</span>
+                <span v-if="info.JudgeRefer === 1">发起人:</span>
+                <span v-else-if="info.JudgeRefer !== 1 && info.OperaName != null">审批人:</span>
                 <span v-else>审批岗位:</span>
                 <em>{{index}}</em>
             </li>
@@ -40,7 +45,13 @@ export default {
         index:{
             type:Number,
             default:1
+        },
+      sign:{
+          type:Array,
+        default:function () {
+          return []
         }
+      }
     },
     data(){
        return {
@@ -66,6 +77,9 @@ export default {
     padding-left:20px;
     font-size:0.16rem;
     color:$btnColor;
+    >.title{
+      margin-bottom: 10px;
+    }
     >ul{
         >li{
             margin-bottom:5px;

@@ -1077,7 +1077,6 @@ export default {
   font-size: 0.16rem;
   .dialog-title {
     overflow: hidden;
-
     > span {
       width: 100%;
       text-align: left;
@@ -1325,23 +1324,6 @@ export default {
         border: 0;
       }
     }
-  }
-  .el-dialog {
-    display: inline-block;
-    margin: 0 !important;
-    vertical-align: middle;
-    &.payList {
-      min-height: 60%;
-    }
-    .el-dialog__body {
-      padding-top: 0px;
-    }
-  }
-  &.el-dialog__wrapper::after {
-    display: inline-block;
-    content: '';
-    vertical-align: middle;
-    height: 100%;
   }
   .apply-info {
     .el-input__inner {

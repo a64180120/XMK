@@ -640,23 +640,6 @@ export default {
       }
     }
   }
-  .el-dialog {
-    display: inline-block;
-    margin: 0 !important;
-    vertical-align: middle;
-    .el-dialog__body {
-      padding-top: 0px;
-      padding-bottom: 15px;
-    }
-  }
-  &.el-dialog__wrapper {
-    text-align: center;
-  }
-  &.el-dialog__wrapper::after {
-    display: inline-block;
-    content: '';
-    vertical-align: middle;
-    height: 100%;
-  }
+
 }
 </style>

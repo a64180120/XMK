@@ -521,7 +521,7 @@
       //打开审批弹框
       aprovalItem(){
         if (this.selection.length ===0 ){
-            this.$msgBox.show('请选择需要审批的单据')
+            this.$msgBox.error('请选择需要审批的单据')
         }else {
           this.appDialog.title = '查看'
           this.appDialog.btnGroup.cancelName = '取消'
@@ -532,7 +532,7 @@
       //生成支付单弹框
       creatPayItem(){
         if (this.selection.length ===0 ){
-          this.$msgBox.show('请选择需要生成支付单的单据')
+          this.$msgBox.error('请选择需要生成支付单的单据')
         }else{
           if (this.isApproval) {
             this.$refs.paylistDialog.isApproval = true
@@ -651,7 +651,8 @@
       },
       // 关闭详情弹框事件
       closeDetailDialog(){
-
+        this.selection = [];
+        this.check = this.check.map((item,index,array)=> false)
       },
       //删除
       handleDelete(){
@@ -753,6 +754,7 @@
   }
   .img-dialog>>>.el-dialog{
     height: 550px;
+    width: 780px;
   }
   .hidden{
     display: none;

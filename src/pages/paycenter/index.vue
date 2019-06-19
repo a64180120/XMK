@@ -399,7 +399,7 @@ export default {
         ? 0
         : container.style.transform.match(/\d+/)[0]
     }
-    left.onclick = () => {
+    left.onclick = function() {
       let trans = getTrans()
       if (trans != 0) {
         let containerWidth = getComWidth(container),
@@ -414,7 +414,7 @@ export default {
         }
       }
     }
-    right.onclick = () => {
+    right.onclick = function() {
       let containerWidth = getComWidth(container),
         index = 0,
         totalWidth = 0
@@ -606,8 +606,8 @@ export default {
               })
               return
             } else if (
-              handleitem.every(item => {
-                return !item.Dtls.FNewCode
+              handleitem.some(item => {
+                return item.Dtls.some(item => item.FNewCode)
               })
             ) {
               this.$msgBox.error('只能对未重新支付的单据进行处理。')
