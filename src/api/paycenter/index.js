@@ -63,6 +63,14 @@ export function postSubmitPayment(param) {
   return Vue.prototype.postAxios('GGK/GKPaymentMstApi/PostSubmitPayment', param)
 }
 
+//获得银行服务状态
+export function getBankServiceState(param) {
+  return Vue.prototype.getAxios(
+    'GGK/GKPaymentMstApi/GetBankServiceState',
+    param
+  )
+}
+
 // 支付多笔支付
 export function postSubmitPayments(param) {
   return Vue.prototype.postAxios(
