@@ -86,7 +86,7 @@
             </table>
           </div>
           <div v-if="isApproval" class="tableBody">
-            <table>
+            <table v-if="tableData.length !== 0">
               <colgroup>
                 <col width="5%">
                 <col width="15%">
@@ -149,6 +149,9 @@
               </tr>
               </tbody>
             </table>
+            <div v-else style="width: 100%;margin-top: 60px;text-align: center">
+              <span style="">暂无数据</span>
+            </div>
           </div>
           <!--已审批表格-->
           <div v-if="!isApproval" class="tableHead">
@@ -196,7 +199,7 @@
             </table>
           </div>
           <div v-if="!isApproval" class="tableBody">
-            <table>
+            <table v-if="tableData.length !== 0">
               <colgroup>
                 <col width="5%">
                 <col width="15%">
@@ -242,6 +245,9 @@
               </tr>
               </tbody>
             </table>
+            <div v-else style="width: 100%;margin-top: 60px;text-align: center">
+              <span style="">暂无数据</span>
+            </div>
           </div>
         </div>
         <div class="pageArea">
@@ -400,9 +406,11 @@
           this.getAxios('/GAppvalRecord/GetUnDoRecordList',data).then(success=>{
             console.log(success.Data)
             if (success && success.Status === "success") {
+
               that.tableData = success.Data
               that.page.total = success.Total
               // this.page.total = 100
+
               for (let i in success.Data) {
                 that.check.push(false)
               }
@@ -487,7 +495,7 @@
       //打开审批弹框
       aprovalItem(){
         if (this.selection.length ===0) {
-          this.$msgBox.show('请选择需要审批的单据')
+          this.$msgBox.error('请选择需要审批的单据')
         }else {
           this.appDialog.title = '查看'
           this.appDialog.btnGroup.cancelName = '取消'
@@ -533,7 +541,7 @@
         this.searchForm.OrgName = e[0].OName
         this.searchForm.OrgCode = e[0].OCode
         console.log(this.searchForm)
-        this.searchForm.OrgPhId =e[0].PhId
+        F
         this.loadData(e)
       },
       //子组件审批流查看
@@ -547,7 +555,6 @@
       },
       //输入框值改变
       changeInput(e){
-        debugger
         console.log(this.searchForm)
         this.page.pageSize=20;
         this.page.currentPage = 1;
@@ -564,6 +571,8 @@
       //
       closeDetail(e){
         this.openDialog=e
+        this.selection = [];
+        this.check = this.check.map((item,index,array)=> false)
       },
       //刷新
       refresh(){

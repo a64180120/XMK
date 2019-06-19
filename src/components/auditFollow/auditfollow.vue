@@ -10,53 +10,11 @@
             <ul>
               <li></li>
               <li class="msg" v-for="(item,index) of auditMsg" :key="index">
-                <audit-msg :info="item" :index="index+1"></audit-msg>
+                <audit-msg :info="item" :index="index+1" :sign="sign"></audit-msg>
               </li>
             </ul>
           </div>
-          <div class="collapse-main">
-            <el-collapse v-model="activeName" accordion class="collapse">
-              <el-collapse-item>
-                <template slot="title">
-                  资金拨付流程
-                </template>
-                <div class="content">
-                  <ul>
-                    <li></li>
-                    <li class="msg" v-for="(item,index) of auditMsg" :key="index">
-                      <audit-msg :info="item" :index="index+1"></audit-msg>
-                    </li>
-                  </ul>
-                </div>
-              </el-collapse-item>
-              <el-collapse-item>
-                <template slot="title">
-                  支付单流程
-                </template>
-                <div class="content">
-                  <ul>
-                    <li></li>
-                    <li class="msg" v-for="(item,index) of auditMsg" :key="index">
-                      <audit-msg :info="item" :index="index+1"></audit-msg>
-                    </li>
-                  </ul>
-                </div>
-              </el-collapse-item>
-              <el-collapse-item>
-                <template slot="title">
-                  资金拨付
-                </template>
-                <div class="content">
-                  <ul>
-                    <li></li>
-                    <li class="msg" v-for="(item,index) of auditMsg" :key="index">
-                      <audit-msg :info="item" :index="index+1"></audit-msg>
-                    </li>
-                  </ul>
-                </div>
-              </el-collapse-item>
-            </el-collapse>
-          </div>
+
         </div>
 
     </div>
@@ -94,9 +52,32 @@ export default {
     },
     data(){
         return {
-          activeName:""
+          activeName:"",
+          sign:[]
         }
     },
+  watch:{
+    auditMsg:{
+      handler(val){
+        this.sign=[]
+        console.log(val)
+        for (let key in val){
+          if (val[key].FBilltype =='001'){
+            this.sign.push(key)
+            break
+          }
+        }
+        for (let key in val){
+          if (val[key].FBilltype =='002'){
+            this.sign.push(key)
+            break
+          }
+        }
+        console.log(this.sign)
+      },
+      deep:true
+    }
+  },
     methods:{
         close(){
             this.$emit('update:visible',false);
