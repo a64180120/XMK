@@ -108,7 +108,7 @@ import {
 import approvalBill from '../../components/approvalBill/approvalBill.vue'
 import { mapState } from 'vuex'
 import upload from '@/components/upload'
-import { testUpload } from '@/api/upload'
+import { testUpload ,PostUploadFile} from '@/api/upload'
 export default {
   name: 'goApproval',
   components: { auditfollow, approvalBill, upload },
@@ -268,12 +268,12 @@ export default {
     uploadFiles(files) {
       console.log(files)
       let formData = new FormData()
-      formData.append('RelPhid', 0)
-      formData.append('BTable', 'gcw3_voucher_mst')
+      // formData.append('RelPhid', 0)
+      // formData.append('BTable', 'gcw3_voucher_mst')
       for (let file of files) {
         formData.append('files', file.raw)
       }
-      testUpload(formData)
+      PostUploadFile(formData)
         .then(res => {
           console.log(res, formData)
           // this.fileCount = files.length
@@ -485,9 +485,6 @@ export default {
 <style lang="scss">
 .goApproval {
   .el-dialog {
-    display: inline-block;
-    margin: 0 !important;
-    vertical-align: middle;
     .el-dialog__body {
       padding-top: 0px;
       section .content {
@@ -503,12 +500,6 @@ export default {
   }
   .el-table__body-wrapper.is-scrolling-none {
     max-height: 90px !important;
-  }
-  &.el-dialog__wrapper::after {
-    display: inline-block;
-    content: '';
-    vertical-align: middle;
-    height: 100%;
   }
 }
 </style>

@@ -291,22 +291,5 @@ export default {
       margin-bottom: 10px;
     }
   }
-  .el-dialog {
-    display: inline-block;
-    margin: 0 !important;
-    vertical-align: middle;
-    .el-dialog__body {
-      padding-top: 0px;
-    }
-  }
-  &.el-dialog__wrapper {
-    text-align: center;
-  }
-  &.el-dialog__wrapper::after {
-    display: inline-block;
-    content: '';
-    vertical-align: middle;
-    height: 100%;
-  }
 }
 </style>
