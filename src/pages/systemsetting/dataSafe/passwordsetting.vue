@@ -3,7 +3,7 @@
       <div class="dialogContainer passwordsetting" v-show="showSetting">
         <div class="title">
             <span>支付口令设置</span> 
-            <div @click="updatePsd" v-show="disabled">
+            <div v-if="menuButton.paypsd_edit" @click="updatePsd" v-show="disabled">
                 <img src="@/assets/images/bj.png" alt="">
                 <i>修改口令</i>
             </div> 
@@ -83,7 +83,7 @@
               <el-radio :label="0">启用</el-radio>
               <el-radio :label="1">停用</el-radio>
             </el-radio-group>
-            <div v-show="disabled" @click="updateEnable" class="fr btn" style="margin-top:10px">保存</div>
+            <div v-if="menuButton.paypsd_isactive" v-show="disabled" @click="updateEnable" class="fr btn" style="margin-top:10px">保存</div>
           </div>
           <div v-show="!disabled" class="btns">
             <span class="btn btn-cancel" @click="beforeClose()">取消</span>
@@ -95,6 +95,7 @@
 
 <script>
 import md5 from 'js-md5'
+import {mapState} from 'vuex'
 import {PostSavePayPsd,PostPayPsdIsactive,GetPayPsd} from '@/api/systemSetting/dataSafe'
 export default {
     name:'passwordsetting',
@@ -110,6 +111,11 @@ export default {
             radio:0,
             disabled:true, //不可编辑
         }
+    },
+    computed:{
+        ...mapState({
+            menuButton: state => state.user.menubutton
+        })
     },
     mounted(){
       this.getData();

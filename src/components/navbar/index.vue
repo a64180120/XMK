@@ -1,10 +1,23 @@
 <template>
     <div class="navbar">
         <ul>
+            <!-- <li @mouseenter="liActive(item,true)" @mouseleave="liActive(item,false)" :class="{choose:choosed==index}" class="navitem active" v-for="(item,index) of navlist" :key="index">
+                <div @click.stop="routerto(item.path)">
+                    <img v-show="!item.active&&choosed!=index" src="../../assets/images/1_03.png" alt="">
+                    <img v-show="choosed==index||item.active" src="../../assets/images/2_03.png" alt="">
+                    <span :title="item.name">{{item.name}}</span>    
+                </div>
+                <div class="subitemCon">
+                     <ul v-if="item.children" class="subitem">
+                        <li @click.stop="routerto(nav.path,index)" :title="nav.name" v-for="nav of item.children">{{nav.name}}</li>
+                    </ul>
+                </div> 
+            </li> -->
             <li @mouseenter="liActive(item,true)" @mouseleave="liActive(item,false)" :class="{choose:choosed==index}" class="navitem active" v-for="(item,index) of navlist" :key="index">
                 <div @click.stop="routerto(item.path)">
                     <img v-show="!item.active&&choosed!=index" src="../../assets/images/1_03.png" alt="">
                     <img v-show="choosed==index||item.active" src="../../assets/images/2_03.png" alt="">
+                    <div class="navIcon"></div>
                     <span :title="item.name">{{item.name}}</span>    
                 </div>
                 <div class="subitemCon">
@@ -22,8 +35,8 @@ export default {
     name:'navbar',
     data(){
         return{
-            navlist:    [{url:'../../assets/images/1_03.png',name:'审批流管理',children:[{name:'审批流程设置',path:'/setting/audit'},{name:'岗位人员设置',path:'/setting/post'}]},
-                    {url:'../../assets/images/1_14.png',name:'数据与安全维护',children:[{name:'数据字典',path:'/setting/dictionary'},{name:'支付口令设置',path:'/setting/paypassword'}]}
+            navlist:    [{url:'../../assets/images/1_03.png',name:'审批流管理',children:[{name:'审批流程设置',path:'/audit'},{name:'岗位人员设置',path:'/post'}]},
+                    {url:'../../assets/images/1_14.png',name:'数据与安全维护',children:[{name:'数据字典',path:'/dictionary'},{name:'支付口令设置',path:'/paypassword'}]}
             ],
             active:false,
             choosed:0
@@ -32,10 +45,9 @@ export default {
     methods:{
         routerto(url,index){
             if(url){
-                this.$router.push(url);
+                this.$router.push('/setting'+url);
                 this.choosed=index;
             }
-            
         },
         liActive(item,bool){
             this.$set(item,'active',bool);
@@ -119,6 +131,9 @@ $activeColor:#59abf1;
             background: $activeColor;
             color:#fff;
         }
+    }
+    .navIcon{
+        display: inline-block;
     }
 }
 </style>
