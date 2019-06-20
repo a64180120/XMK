@@ -48,21 +48,7 @@ export default {
   watch: {
     auditMsg: {
       handler(val) {
-        this.sign = []
         console.log(val)
-        for (let key in val) {
-          if (val[key].FBilltype == '001') {
-            this.sign.push(key)
-            break
-          }
-        }
-        for (let key in val) {
-          if (val[key].FBilltype == '002') {
-            this.sign.push(key)
-            break
-          }
-        }
-        console.log(this.sign)
       },
       deep: true
     }

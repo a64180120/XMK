@@ -430,7 +430,7 @@
           PageIndex:this.page.currentPage,
           PageSize:this.page.pageSize,
           BType:this.BType,
-          BName:this.searchForm.BName,
+          BName:this.searchForm.BName.trim(),
           Operator:this.searchForm.Operator,
           StopHour:this.searchForm.StopHour,
           BStartDate:this.searchForm.BDate === null  ? '':this.searchForm.BDate[0],
@@ -441,6 +441,7 @@
         let that = this
         if(eval(this.isApproval)){
           this.getAxios('/GAppvalRecord/GetUnDoRecordList',data).then(res=>{
+            console.log(res)
             if (res && res.Status === "success") {
               that.tableData = res.Data
               that.page.total = res.Total
