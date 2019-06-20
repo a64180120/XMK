@@ -1,24 +1,4 @@
 <template>
-<<<<<<< HEAD
-    <div v-if="visible" style="z-index: 3000;overflow: auto" class="auditfollow msFixed">
-        <p class="title">
-            <span>{{title}}</span>
-            <i @click="close"></i>
-        </p>
-      <!--流程-->
-        <div class="follow-main">
-          <div class="content">
-            <ul>
-              <li></li>
-              <li class="msg" v-for="(item,index) of auditMsg" :key="index">
-                <audit-msg :info="item" :index="index+1"></audit-msg>
-              </li>
-            </ul>
-          </div>
-
-        </div>
-
-=======
   <div v-show="visible" style="z-index: 3000;overflow: auto" class="auditfollow msFixed">
     <p class="title">
       <span>{{title}}</span>
@@ -34,7 +14,6 @@
           </li>
         </ul>
       </div>
->>>>>>> 3ff0ef02085d5cc2ddefacc0e5be951c8e31b296
     </div>
   </div>
 </template>

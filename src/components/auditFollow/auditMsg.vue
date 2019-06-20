@@ -52,20 +52,6 @@ import fDialog from '../attechment/dialog'
 import attechment from '../attechment/attechment'
 import ImgView from '../imgView/imgView'
 export default {
-<<<<<<< HEAD
-    name:'auditMsg',
-    props:{
-        info:{
-            type:Object,
-            default:{
-                time:''
-            }
-        },
-        index:{
-            type:Number,
-            default:1
-        },
-=======
   name: 'auditMsg',
   props: {
     info: {
@@ -73,7 +59,6 @@ export default {
       default: {
         time: ''
       }
->>>>>>> 3ff0ef02085d5cc2ddefacc0e5be951c8e31b296
     },
     index: {
       type: Number,
