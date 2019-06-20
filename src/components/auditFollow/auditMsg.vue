@@ -1,13 +1,9 @@
 <template>
   <div class="auditMsg">
-    <div v-if="info.FBilltype ==='001'&& info.JudgeRefer === 1"></div>
-    <div class="title" v-if="info.FBilltype ==='002'&& info.NgRecordVer === 1">
-      <span style="font-size: 0.18rem">收付款信息维护</span>
-    </div>
-    <ul>
+    <ul :class="[info.FApproval=='9'?'oxford-gray':(info.FApproval=='0'?'light-gray':(info.FApproval=='1'?'blue':'red'))]">
       <template v-if="!isApproval">
         <li>
-          <i class="logo"></i>
+          <i :class="[info.FApproval=='9'?'logo-sptg':(info.FApproval=='0'?'logo-wsp':(info.FApproval=='1'?'logo-spz':'logo-wtg'))]"></i>
           <span v-if="info.JudgeRefer === 1">发起人:</span>
           <span v-else-if="info.JudgeRefer !== 1 && info.OperaName != null">审批人:</span>
           <span v-else>审批岗位:</span>
@@ -125,6 +121,7 @@ export default {
           text-align: center;
           line-height: 30px;
           font-size: 0.18rem;
+          color:$btnColor ;
         }
       }
     }
@@ -133,9 +130,50 @@ export default {
       cursor: pointer;
     }
   }
+  >.blue{
+    >li{
+      color: #3294E8;
+    }
+  }
+  >.light-gray{
+    >li{
+      color: #adadad;
+    }
+  }
+  >.oxford-gray{
+    >li{
+      color:#6f6c6c
+    }
+  }
+  >.red{
+    >li{
+      color:#ec0c0c
+    }
+  }
 }
-.logo {
-  background: url(../../assets/images/1.png) no-repeat;
+.logo-sptg {
+  background: url(../../assets/images/spr3.png) no-repeat;
+  display: inline-block;
+  width: 25px;
+  height: 20px;
+  background-size: 100% 100%;
+}
+.logo-wsp {
+  background: url(../../assets/images/spr2.png) no-repeat;
+  display: inline-block;
+  width: 25px;
+  height: 20px;
+  background-size: 100% 100%;
+}
+.logo-spz {
+  background: url(../../assets/images/spr4.png) no-repeat;
+  display: inline-block;
+  width: 25px;
+  height: 20px;
+  background-size: 100% 100%;
+}
+.logo-wtg {
+  background: url(../../assets/images/spr1.png) no-repeat;
   display: inline-block;
   width: 25px;
   height: 20px;
