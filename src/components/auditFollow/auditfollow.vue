@@ -27,14 +27,6 @@ export default {
       type: String,
       default: '审批流查看'
     },
-<<<<<<< HEAD
-    data(){
-        return {
-          activeName:"",
-        }
-    },
-  watch:{
-=======
     visible: {
       //控制显示隐藏
       type: Boolean,
@@ -74,7 +66,6 @@ export default {
       },
       deep: true
     }
->>>>>>> 3ff0ef02085d5cc2ddefacc0e5be951c8e31b296
   },
   methods: {
     close() {
