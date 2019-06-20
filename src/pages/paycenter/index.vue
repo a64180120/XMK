@@ -369,10 +369,15 @@ export default {
       tabsWidth = [], //各个tab筛选条件宽度
       left = document.querySelector('.selects>i.el-icon-d-arrow-left'),
       right = document.querySelector('.selects>i.el-icon-d-arrow-right')
-    tabs.forEach(item => {
+    console.log(tabs)
+    // tabs.forEach(item => {
+    //   contentWidth += item.offsetWidth
+    //   tabsWidth.push(item.offsetWidth)
+    // })
+    for (let item of tabs) {
       contentWidth += item.offsetWidth
       tabsWidth.push(item.offsetWidth)
-    })
+    }
     function getComWidth(ele, cla) {
       return parseInt(
         (window.getComputedStyle
@@ -693,6 +698,9 @@ export default {
       userid: state => state.user.userid,
       year: state => state.user.year
     })
+  },
+  beforeDestroy() {
+    window.onresize = function() {}
   }
 }
 </script>
@@ -740,7 +748,7 @@ export default {
   }
 
   .container {
-    min-width: 1300px;
+    min-width: 1200px;
     .selects {
       text-align: left;
       line-height: 28px;

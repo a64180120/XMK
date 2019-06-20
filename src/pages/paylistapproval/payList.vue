@@ -158,7 +158,7 @@
       </el-row>
       <el-row :gutter="10">
         <div class="bottom">
-          <span>
+          <span @click="openFollow()">
             <template v-if="data.itemType == 'notApprove'">待送审</template>
             <template v-else-if="data.itemType == ''">审批中</template>
             <template v-else-if="data.itemType == 'approval'">待审批</template>
@@ -201,7 +201,7 @@
       </div>
       <img-view v-if="imgDialog"></img-view>
     </el-dialog>
-    <!--    <auditfollow :visible="showAuditfollow" @update:visible="closeAuditFollow"></auditfollow>-->
+        <auditfollow :visible.sync="visible" :auditMsg="auditMsg"></auditfollow>
     <!-- 审批弹框 -->
   </div>
 </template>
@@ -406,7 +406,9 @@ export default {
       },
       payDepart: '', //支付部门
       payType: '', //支付类型
-      applyNum: '' //单据编号
+      applyNum: '', //单据编号
+      auditMsg:[],
+      visible:false
     }
   },
   computed: {
@@ -618,6 +620,23 @@ export default {
     openDetailDialog() {
       this.fundDetailData.openDialog = true
       this.applyNum = this.detail.Mst.RefbillPhid
+    },
+    openFollow(){
+      this.visible = true
+      let data = {
+        RefbillPhid:this.data.RefbillPhid,
+        FBilltype:'002'
+      }
+      this.getAxios("/GAppvalRecord/GetAppvalRecordList",data).then(res =>{
+        console.log(res)
+        if (res && res.Status === "success") {
+          this.auditMsg = res.Data
+        }else {
+          this.$msgBox.show(res.Msg)
+        }
+      }).catch(err =>{
+        this.$msgBox.show("数据获取异常")
+      })
     }
   },
   watch: {},
@@ -927,4 +946,7 @@ export default {
 .payList-largeSelects.el-popper .el-select-dropdown__item {
   font-size: 0.14rem;
 }
+  .dj:hover{
+    cursor: pointer!important;
+  }
 </style>

@@ -1,9 +1,9 @@
 @import 'common/common';
 @import 'reset';
-.container{
+.container {
   position: absolute;
   top: 160px;
-  bottom: .3rem;
+  bottom: 0.3rem;
   left: 20px;
   right: 20px;
   overflow: hidden;
@@ -12,33 +12,33 @@
   overflow-scrolling: auto;
   min-height: 350px;
 }
-.container .btnArea{
+.container .btnArea {
   height: 40px;
   padding: 5px 0px;
   text-align: left;
   overflow: hidden;
 }
-.container .btnArea ul li{
+.container .btnArea ul li {
   margin-right: 15px;
   display: inline-block;
 }
-.container .btnArea .el-input{
+.container .btnArea .el-input {
   width: 150px;
 }
-.container .btnArea .searchArea{
+.container .btnArea .searchArea {
   position: relative;
   right: 0;
 }
-.container .btnArea .searchArea .el-input__inner{
+.container .btnArea .searchArea .el-input__inner {
   border-radius: 5px 0 0 5px;
 }
-.container .pageArea{
+.container .pageArea {
   position: absolute;
   bottom: 10px;
   right: 20px;
 }
 
-.container .formArea{
+.container .formArea {
   position: absolute;
   overflow: hidden;
   left: 1%;
@@ -46,49 +46,49 @@
   top: 8px;
   bottom: 50px;
 }
-.tableHead{
+.tableHead {
   margin-top: 10px;
 }
-table td{
+table td {
   min-width: 50px;
 }
-table .atype{
+table .atype {
   color: #3294e8;
   text-decoration: underline;
   cursor: pointer;
 }
-table .right{
+table .right {
   text-align: right;
 }
-table .left{
+table .left {
   text-align: left;
 }
-.tableHead table{
+.tableHead table {
   width: 100%;
-  border-collapse:separate;
-  border-spacing:0;
+  border-collapse: separate;
+  border-spacing: 0;
   background-color: $listHeader;
   padding: 0 1%;
-  font-size: .15rem;
+  font-size: 0.15rem;
   color: #333;
   table-layout: fixed;
 }
-.tableHead table td{
+.tableHead table td {
   border-left: 1px solid #fff;
-  height:48px;
-  padding:0 4px;
+  height: 48px;
+  padding: 0 4px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-
 }
-.tableHead table td:nth-of-type(1){
+.tableHead table td:nth-of-type(1) {
   border: 0;
 }
-.tableHead table .el-checkbox__label,.tableBody table .el-checkbox__label{
+.tableHead table .el-checkbox__label,
+.tableBody table .el-checkbox__label {
   position: absolute;
 }
-.tableBody{
+.tableBody {
   position: absolute;
   bottom: 0;
   left: 0;
@@ -96,42 +96,51 @@ table .left{
   top: 100px;
   overflow-y: scroll;
   overflow-x: hidden;
-
 }
-.tableBody table{
+.tableBody table {
   width: 100%;
-  border-collapse:separate;
-  border-spacing:0 12px;
-  padding:0 1%;
-  font-size: .14rem;
+  border-collapse: separate;
+  border-spacing: 0 12px;
+  padding: 0 1%;
+  font-size: 0.14rem;
   table-layout: fixed;
 }
-.tableBody table tr{
+.tableBody table tr {
   border-radius: 8px;
   padding: 10px 0;
   box-shadow: 0 3px 8px #cbcbcb;
   transition: all 0.2s linear;
 }
 .tableBody table tr.trActive,
-.tableBody table tr:hover{
+.tableBody table tr:hover {
   box-shadow: 0 0px 9px #409eff;
 }
-.tableBody table td:nth-of-type(1){
+.tableBody table td:nth-of-type(1) {
   border-left: 0;
   margin-left: 10px;
 }
-.tableBody table td{
+.tableBody table tr td {
   border-left: 1px solid #cbcbcb;
-  height:40px;
-  padding:0 4px;
+  height: 40px;
+  padding: 0 4px;
   white-space: normal;
   overflow: hidden;
+  background: #fff;
+  &:first-of-type {
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+  }
+  &:last-of-type {
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+  }
 }
-.tableHead .el-checkbox__label,.tableBody .el-checkbox__label{
+.tableHead .el-checkbox__label,
+.tableBody .el-checkbox__label {
   padding-left: 3px;
 }
 
-.cancelBtn{
+.cancelBtn {
   cursor: pointer;
   color: $btnColor;
   background: #fff;
@@ -140,38 +149,37 @@ table .left{
   border-radius: 3px;
   width: 120px;
 }
-.confirmBtn{
+.confirmBtn {
   color: #fff;
-  background-color: $btnColor!important;
+  background-color: $btnColor !important;
   height: 38px;
   border: 1px solid $btnColor;
   border-radius: 3px;
   width: 120px;
   cursor: pointer;
 }
-.confirmBtn:hover{
+.confirmBtn:hover {
   color: $btnColor;
-  background: #fff!important;
+  background: #fff !important;
 }
 
-.btnArea i{
+.btnArea i {
   vertical-align: middle;
   font-size: 0.2rem;
   color: #58a5e6;
-  opacity: .5;
-
+  opacity: 0.5;
 }
-.btnArea i:hover{
+.btnArea i:hover {
   opacity: 1;
   text-shadow: 0 0 3px #60bdff;
 }
-.scrollNav{
+.scrollNav {
   position: absolute;
   white-space: nowrap;
   left: 30px;
   right: 300px;
   overflow: hidden;
-  div{
+  div {
     width: auto;
     overflow: visible;
     white-space: nowrap;
