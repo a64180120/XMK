@@ -208,6 +208,7 @@
         })
       },
       backAproval(val){
+        this.getAppvalProc()
         if (!val){
           // this.visible = true
           this.getBackApprovalPost()
@@ -228,6 +229,9 @@
           this.$set(this.backPersonnel,key,item.Operators[key])
         }
         console.log(this.backPersonnel)
+        for (let key in this.nextApprovaler) {
+          this.nextApprovaler.splice(key,1)
+        }
       },
       //关闭弹框
       closeDialog(){

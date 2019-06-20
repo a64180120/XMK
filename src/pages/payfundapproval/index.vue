@@ -210,7 +210,7 @@
             </table>
           </div>
           <div v-if="!isApproval" class="tableBody">
-            <table>
+            <table v-if="tableData.length !== 0">
               <colgroup>
                 <col width="5%">
                 <col width="10%">
@@ -255,6 +255,9 @@
               </tr>
               </tbody>
             </table>
+            <div v-else style="width: 100%;margin-top: 60px;text-align: center">
+              <span style="">暂无数据</span>
+            </div>
           </div>
         </div>
         <div class="pageArea">
@@ -278,7 +281,8 @@
             <div slot="btn-group" >
               <el-button v-if="isApproval" class="btn" size="mini" @click="aprovalItem">审批</el-button>
               <el-button  v-if="isApproval" class="btn" size="mini" style="width: 90px" @click="creatPayItem">生成支付单</el-button>
-              <el-button class="btn" size="mini">打印</el-button>
+
+              <!--              <el-button class="btn" size="mini">打印</el-button>-->
             </div>
           </applybill>
       </el-dialog>
@@ -517,7 +521,7 @@
       //打开审批弹框
       aprovalItem(){
         if (this.selection.length ===0 ){
-            this.$msgBox.show('请选择需要审批的单据')
+            this.$msgBox.error('请选择需要审批的单据')
         }else {
           this.appDialog.title = '查看'
           this.appDialog.btnGroup.cancelName = '取消'
@@ -528,7 +532,7 @@
       //生成支付单弹框
       creatPayItem(){
         if (this.selection.length ===0 ){
-          this.$msgBox.show('请选择需要生成支付单的单据')
+          this.$msgBox.error('请选择需要生成支付单的单据')
         }else{
           if (this.isApproval) {
             this.$refs.paylistDialog.isApproval = true
@@ -647,7 +651,8 @@
       },
       // 关闭详情弹框事件
       closeDetailDialog(){
-
+        this.selection = [];
+        this.check = this.check.map((item,index,array)=> false)
       },
       //删除
       handleDelete(){
@@ -747,8 +752,9 @@
     /*height: 86%;*/
     height: 600px;
   }
-  .img-dialog>>>.el-dialog{
+  .img-dialog >>>.el-dialog{
     height: 550px;
+    width: 780px;
   }
   .hidden{
     display: none;

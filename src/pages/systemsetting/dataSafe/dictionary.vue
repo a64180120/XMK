@@ -2,7 +2,7 @@
     <div class="dictionary">
         <topHandle :title="'系统管理在线工作平台'">
             <div class="btnCon">
-                <div v-show="disabled" @click.stop="disabled=false" class="handle">
+                <div v-if="menuButton.datadic_edit" v-show="disabled" @click.stop="disabled=false" class="handle">
                     <div class="topIcon"><img src="@/assets/images/zj2.png" alt=""></div>
                     修改
                 </div>
@@ -95,6 +95,7 @@
 </template>
 
 <script>
+import {mapState} from 'vuex'
 import topHandle from '@/components/topNav/topHandle'
 import {GetSysSetList,dictionarySave} from '@/api/systemSetting/dataSafe'
 export default {
@@ -121,6 +122,11 @@ export default {
                     DicName: '支付方式',
                 }
         }
+    },
+    computed:{
+        ...mapState({
+            menuButton: state => state.user.menubutton
+        })
     },
     mounted(){
         this.getData();

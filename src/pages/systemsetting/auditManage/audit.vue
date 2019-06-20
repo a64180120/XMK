@@ -2,15 +2,15 @@
     <div class="auditLiuCheng">
         <topHandle :title="'系统管理在线工作平台'" @refresh="refresh">
             <div class="btnCon">
-                <div @click.stop="showAuditAdd('add')" class="handle">
+                <div v-if="menuButton.approvalflow_add" @click.stop="showAuditAdd('add')" class="handle">
                     <div class="topIcon"><img src="@/assets/images/xz.png" alt=""></div>
                     新增
                 </div>
-                <div @click.stop="showAuditAdd('update')" class="handle">
+                <div v-if="menuButton.approvalflow_edit" @click.stop="showAuditAdd('update')" class="handle">
                     <div class="topIcon"><img src="@/assets/images/zj2.png" alt=""></div>
                     修改
                 </div>
-                <div @click.stop="deleteAudit" class="handle">
+                <div v-if="menuButton.approvalflow_delete" @click.stop="deleteAudit" class="handle">
                     <div class="topIcon"><img src="@/assets/images/zj3.png" alt=""></div>
                     删除
                 </div>
@@ -74,13 +74,13 @@
                     </div>
                      <div class="typeHandle">
                        <div>
-                            <div @click.stop="showAuditTypeAdd('add')" class="typeAdd">
+                            <div v-if="menuButton.approvalflow_typeadd" @click.stop="showAuditTypeAdd('add')" class="typeAdd">
                                 <img src="@/assets/images/add.png" alt="">   <span>新增</span> 
                             </div>
-                            <div @click.stop="showAuditTypeAdd('update')" class="typeUpdate">
+                            <div v-if="menuButton.approvalflow_typeedit" @click.stop="showAuditTypeAdd('update')" class="typeUpdate">
                                 <img src="@/assets/images/update.png" alt="">   <span>修改</span> 
                             </div>
-                            <div @click.stop="deletetype" class="typeDelete">
+                            <div v-if="menuButton.approvalflow_typedelete" @click.stop="deletetype" class="typeDelete">
                                 <img src="@/assets/images/del.png" alt="">   <span>删除</span> 
                             </div>
                        </div>
@@ -200,6 +200,7 @@ import Orgtree from "@/components/orgtree/index"
 import fDialog from "@/components/attechment/dialog"
 import topHandle from '@/components/topNav/topHandle'
 import search from '@/components/searchInput/searchInput'
+import {mapState} from 'vuex'
 import {GetAllChildTree} from '@/api/systemSetting/post'
 import {PostAddProcType,GetProcTypes,PostUpdateProcType,PostDeleteProcType,GetProcList,GetAppvalPostList,PostDeleteProcs,PostUpdateProcOrganize} from '@/api/systemSetting/audit'
 export default {
@@ -243,8 +244,12 @@ export default {
             orglist:[],//组织下部门列表
         }
     },
+    computed:{
+        ...mapState({
+            menuButton: state => state.user.menubutton
+        })
+    },
     mounted(){
-        console.log('auditmounted',this.$store)
         this.getTypeData();
         this.getPosts();
         this.getorglist();

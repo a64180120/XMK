@@ -177,7 +177,8 @@ import {
   postPayPsd,
   postSavePayPsd,
   postJudgePayPsd,
-  postSubmitPayments
+  postSubmitPayments,
+  getBankServiceState
 } from '@/api/paycenter'
 import md5 from 'js-md5'
 import { mapState } from 'vuex'
@@ -332,36 +333,49 @@ export default {
     },
     // 请求-支付
     postSubmitPayments() {
-      var ids = this.data.data.map(item => {
-        return item.Mst.PhId
-      })
-      console.log(ids)
-      postSubmitPayments({
-        infoData: ids,
-        // id: this.data.data.Mst.PhId,
-        uid: this.userid,
-        orgid: this.orgid
-      })
+      // 获得银行服务状态
+      getBankServiceState({})
         .then(res => {
           if (res.Status == 'error') {
             this.$msgBox.error(res.Msg)
             console.log(res)
             return
           }
-          this.refreshIndexData()
-          this.$msgBox.show({
-            content: '支付操作成功！具体到账情况以银行处理时间为准。',
-            fn: () => {
-              this.showPassword = false
-              this.showMergePay = true
-              if (this.father) this.father.openDialog = false
-              this.data.openDialog = false
-            }
+          var ids = this.data.data.map(item => {
+            return item.Mst.PhId
           })
+          console.log(ids)
+          postSubmitPayments({
+            infoData: ids,
+            // id: this.data.data.Mst.PhId,
+            uid: this.userid,
+            orgid: this.orgid
+          })
+            .then(res => {
+              if (res.Status == 'error') {
+                this.$msgBox.error(res.Msg)
+                console.log(res)
+                return
+              }
+              this.refreshIndexData()
+              this.$msgBox.show({
+                content: '支付操作成功！具体到账情况以银行处理时间为准。',
+                fn: () => {
+                  this.showPassword = false
+                  this.showMergePay = true
+                  if (this.father) this.father.openDialog = false
+                  this.data.openDialog = false
+                }
+              })
+            })
+            .catch(err => {
+              console.log(err)
+              this.$msgBox.error(err.Message || '支付失败！')
+            })
         })
         .catch(err => {
           console.log(err)
-          this.$msgBox.error(err.Message || '支付失败！')
+          this.$msgBox.error(err.Message || '获得银行服务状态失败！')
         })
     },
     // 请求-设置支付口令
@@ -639,24 +653,12 @@ export default {
         height: 0.2rem;
       }
     }
-  }
-  .el-dialog {
-    display: inline-block;
-    margin: 0 !important;
-    vertical-align: middle;
-    .el-dialog__body {
-      padding-top: 0px;
-      padding-bottom: 15px;
-    }
-  }
-  &.el-dialog__wrapper {
-    text-align: center;
-  }
-  &.el-dialog__wrapper::after {
-    display: inline-block;
-    content: '';
-    vertical-align: middle;
-    height: 100%;
+    input::-ms-clear {
+      display: none;
+    } /*删除文本框中的叉号*/
+    input::-ms-reveal {
+      display: none;
+    } /*删除密码框中的小眼睛*/
   }
 }
 </style>

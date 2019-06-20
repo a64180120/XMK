@@ -63,6 +63,14 @@ export function postSubmitPayment(param) {
   return Vue.prototype.postAxios('GGK/GKPaymentMstApi/PostSubmitPayment', param)
 }
 
+//获得银行服务状态
+export function getBankServiceState(param) {
+  return Vue.prototype.getAxios(
+    'GGK/GKPaymentMstApi/GetBankServiceState',
+    param
+  )
+}
+
 // 支付多笔支付
 export function postSubmitPayments(param) {
   return Vue.prototype.postAxios(
@@ -116,9 +124,20 @@ export function getAppvalProc(param) {
 /*
 PhId：审批流程的phid
 */
-// 获取审批岗位
+// 根据审批流程id，获取第一个审批岗位的审批人
 export function GetFirstStepOperator(param) {
   return Vue.prototype.getAxios('GGK/GAppvalPost/GetFirstStepOperator', param)
+}
+
+/*
+PhId：审批流程的phid
+*/
+// 根据审批流程id，获取所有审批岗位
+export function GetAllPostsAndOpersByProc(param) {
+  return Vue.prototype.getAxios(
+    'GSP/GAppvalRecord/GetAllPostsAndOpersByProc',
+    param
+  )
 }
 
 /*

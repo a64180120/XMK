@@ -11,33 +11,33 @@
             <el-popover width="270" placement="bottom" :popper-class="'maxH'" trigger="click">
               
               <ul class="fastNav">
-                <li @click.stop="navPage('/approvalcenter')">
+                <li v-if="menuButton.approvalcenter" @click.stop="navPage('/approvalcenter')">
                   <div>
                     <img src="@/assets/images/zj6.png" alt>
                   </div>
                   <span>审批中心</span>
                 </li>
-                <li  @click.stop="navPage('/paycenter')">
+                <li v-if="menuButton.paycenter" @click.stop="navPage('/paycenter')">
                   <div>
                     <img src="@/assets/images/zfcg.png" alt>
                   </div>
                   <span>支付中心</span>
                 </li>
-                <li  @click.stop="navPage('/fund')">
+                <li v-if="menuButton.fund" @click.stop="navPage('/fund')">
                   <div>
-                    <img src="@/assets/images/y1.png" alt>
+                    <img src="@/assets/images/zjbf.png" alt>
                   </div>
                   <span>资金拨付</span>
                 </li>
-                <li  @click.stop="navPage('/bankaccount')">
+                <li v-if="menuButton.bankaccount" @click.stop="navPage('/bankaccount')">
                   <div>
-                    <img src="@/assets/images/yk.png" alt>
+                    <img src="@/assets/images/yhda.png" alt>
                   </div>
                   <span>银行档案</span>
                 </li>
-                <li @click.stop="navPage('/setting')">
+                <li  @click.stop="navPage('/setting')">
                   <div>
-                    <img src="@/assets/images/setting.svg" alt>
+                    <img src="@/assets/images/navsetting.png" alt>
                   </div>
                   <span>系统设置</span>
                 </li>
@@ -158,6 +158,7 @@
                   orgList: state=>state.user.orglist,
                   orgcode: state=>state.user.orgcode,
                   orgname: state=>state.user.orgname,
+                  menuButton: state => state.user.menubutton
             })
         },
         mounted(){   

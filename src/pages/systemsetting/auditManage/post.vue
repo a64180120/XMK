@@ -2,15 +2,15 @@
     <div class="post">  
         <topHandle :title="'系统管理在线工作平台'"  @refresh="refresh">
             <div class="btnCon">
-                <div @click.stop="showPostAdd('add')" class="handle">
+                <div v-if="postperson_add" @click.stop="showPostAdd('add')" class="handle">
                     <div class="topIcon"><img src="@/assets/images/xz.png" alt=""></div>
                     新增
                 </div>
-                <div @click.stop="showPostAdd('update')" class="handle">
+                <div v-if="postperson_edit" @click.stop="showPostAdd('update')" class="handle">
                     <div class="topIcon"><img src="@/assets/images/zj2.png" alt=""></div>
                     修改
                 </div>
-                <div @click.stop="deletepost" class="handle">
+                <div v-if="postperson_delete" @click.stop="deletepost" class="handle">
                     <div class="topIcon"><img src="@/assets/images/zj3.png" alt=""></div>
                     删除
                 </div>
@@ -157,6 +157,7 @@ import postAdd from '@/components/setting/postAdd'
 import search from '@/components/searchInput/searchInput'
 import topHandle from '@/components/topNav/topHandle'
 import Orgtree from "@/components/orgtree/index"
+import {mapState} from 'vuex'
 import {GetAppvalPostOpersList,PostDelete,GetAllChildTree} from '@/api/systemSetting/post'
 export default {
     name:'post',
@@ -182,6 +183,11 @@ export default {
             postinfo:0,//修改时传入的phid
             orgVisible:false,
         }
+    },
+     computed:{
+        ...mapState({
+            menuButton: state => state.user.menubutton
+        })
     },
     mounted(){
         this.getData();
