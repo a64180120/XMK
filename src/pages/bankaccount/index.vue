@@ -2,15 +2,15 @@
     <div class="bankaccount">
         <topHandle :title="'银行账户档案在线工作平台'" @refresh="refresh">
             <div class="btnCon">
-                <div @click.stop="showAccountAdd('add')" class="handle">
+                <div v-if="menuButton.bankaccount_add=='True'" @click.stop="showAccountAdd('add')" class="handle">
                     <div class="topIcon"><img src="@/assets/images/xz.png" alt=""></div>
                     新增
                 </div>
-                <div @click.stop="showAccountAdd('update')" class="handle">
+                <div v-if="menuButton.bankaccount_edit=='True'" @click.stop="showAccountAdd('update')" class="handle">
                     <div class="topIcon"><img src="@/assets/images/zj2.png" alt=""></div>
                     修改
                 </div>
-                <div @click.stop="deleteRow" class="handle">
+                <div v-if="menuButton.bankaccount_delete=='True'" @click.stop="deleteRow" class="handle">
                     <div class="topIcon"><img src="@/assets/images/zj3.png" alt=""></div>
                     删除
                 </div>
@@ -37,6 +37,7 @@ import order from '@/components/bankorder'
 import {BankAccountDelete} from '@/api/bankaccount'
 import upload from '@/components/upload'
 import {testUpload} from '@/api/upload'
+import {mapState} from 'vuex'
 export default {
     name:'bankaccount',
     data(){
@@ -47,6 +48,11 @@ export default {
             info:''
         }
     },
+    computed:{
+            ...mapState({
+                  menuButton: state => state.user.menubutton
+            })
+        },
     methods:{
         //刷新
         refresh(){
