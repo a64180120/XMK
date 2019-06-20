@@ -1,5 +1,5 @@
 <template>
-    <div v-show="visible" style="z-index: 3000;overflow: auto" class="auditfollow msFixed">
+    <div v-if="visible" style="z-index: 3000;overflow: auto" class="auditfollow msFixed">
         <p class="title">
             <span>{{title}}</span>
             <i @click="close"></i>
@@ -10,7 +10,7 @@
             <ul>
               <li></li>
               <li class="msg" v-for="(item,index) of auditMsg" :key="index">
-                <audit-msg :info="item" :index="index+1" :sign="sign"></audit-msg>
+                <audit-msg :info="item" :index="index+1"></audit-msg>
               </li>
             </ul>
           </div>
@@ -53,30 +53,9 @@ export default {
     data(){
         return {
           activeName:"",
-          sign:[]
         }
     },
   watch:{
-    auditMsg:{
-      handler(val){
-        this.sign=[]
-        console.log(val)
-        for (let key in val){
-          if (val[key].FBilltype =='001'){
-            this.sign.push(key)
-            break
-          }
-        }
-        for (let key in val){
-          if (val[key].FBilltype =='002'){
-            this.sign.push(key)
-            break
-          }
-        }
-        console.log(this.sign)
-      },
-      deep:true
-    }
   },
     methods:{
         close(){

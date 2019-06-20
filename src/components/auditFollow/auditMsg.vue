@@ -46,12 +46,6 @@ export default {
             type:Number,
             default:1
         },
-      sign:{
-          type:Array,
-        default:function () {
-          return []
-        }
-      }
     },
     data(){
        return {

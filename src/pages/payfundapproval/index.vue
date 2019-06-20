@@ -752,7 +752,7 @@
     /*height: 86%;*/
     height: 600px;
   }
-  .img-dialog>>>.el-dialog{
+  .img-dialog >>>.el-dialog{
     height: 550px;
     width: 780px;
   }
