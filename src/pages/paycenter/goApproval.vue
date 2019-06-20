@@ -30,7 +30,12 @@
         >{{btnGroup.cancelName}}</el-button>
         <el-button size="small" type="primary" @click="submit">{{btnGroup.onfirmName}}</el-button>
       </div>
-      <auditfollow :visible="showAuditfollow" @update:visible="closeAuditFollow()"></auditfollow>
+      <auditfollow
+        :isApproval="true"
+        :auditMsg="auditMsg"
+        :visible="showAuditfollow"
+        @update:visible="closeAuditFollow()"
+      ></auditfollow>
       <el-dialog append-to-body :visible.sync="upload">
         <upload @submit="uploadFiles"/>
       </el-dialog>
@@ -40,15 +45,16 @@
 
 <script>
 import auditfollow from '../../components/auditFollow/auditfollow'
+import approvalBill from '../../components/approvalBill/approvalBill.vue'
+import upload from '@/components/upload'
 import {
   getAppvalProc,
   postAddAppvalRecord,
-  GetFirstStepOperator
+  GetFirstStepOperator,
+  GetAllPostsAndOpersByProc
 } from '@/api/paycenter'
-import approvalBill from '../../components/approvalBill/approvalBill.vue'
-import { mapState } from 'vuex'
-import upload from '@/components/upload'
 import { testUpload, PostUploadFile } from '@/api/upload'
+import { mapState } from 'vuex'
 export default {
   name: 'goApproval',
   components: { auditfollow, approvalBill, upload },
@@ -98,7 +104,8 @@ export default {
       mode: 0, //0普通模式1会签模式,
       upload: false,
       files: null,
-      fileCount: 0
+      fileCount: 0,
+      auditMsg: []
     }
   },
   methods: {
@@ -135,7 +142,22 @@ export default {
       this.openDialog = true
     },
     //查看详细流程
-    dialogFlow(row, column, index, store) {
+    dialogFlow(row) {
+      console.log('row', row)
+      GetAllPostsAndOpersByProc({
+        ProcId: row.PhId
+      })
+        .then(res => {
+          if (res.Status == 'error') {
+            this.$msgBox.error(res.Msg)
+            return
+          }
+          this.auditMsg = res
+        })
+        .catch(err => {
+          console.log(err)
+          this.$msgBox.error('获取审批流程信息失败！')
+        })
       this.showAuditfollow = true
     },
     //取消

@@ -124,9 +124,20 @@ export function getAppvalProc(param) {
 /*
 PhId：审批流程的phid
 */
-// 获取审批岗位
+// 根据审批流程id，获取第一个审批岗位的审批人
 export function GetFirstStepOperator(param) {
   return Vue.prototype.getAxios('GGK/GAppvalPost/GetFirstStepOperator', param)
+}
+
+/*
+PhId：审批流程的phid
+*/
+// 根据审批流程id，获取所有审批岗位
+export function GetAllPostsAndOpersByProc(param) {
+  return Vue.prototype.getAxios(
+    'GSP/GAppvalRecord/GetAllPostsAndOpersByProc',
+    param
+  )
 }
 
 /*
