@@ -163,8 +163,9 @@ export default {
             }
             dictionarySave(data).then(res=>{
                 if(res.Status=='error'){
-                    this.$msgBox.show(res.Msg)
+                    this.$msgBox.error(res.Msg)
                 }else{
+                    this.$msgBox.show(res.Msg)
                     this.disabled=true;
                     this.getData();
                 }

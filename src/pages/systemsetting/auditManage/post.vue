@@ -2,15 +2,15 @@
     <div class="post">  
         <topHandle :title="'系统管理在线工作平台'"  @refresh="refresh">
             <div class="btnCon">
-                <div v-if="postperson_add=='True'" @click.stop="showPostAdd('add')" class="handle">
+                <div v-if="menuButton.postperson_add=='True'" @click.stop="showPostAdd('add')" class="handle">
                     <div class="topIcon"><img src="@/assets/images/xz.png" alt=""></div>
                     新增
                 </div>
-                <div v-if="postperson_edit=='True'" @click.stop="showPostAdd('update')" class="handle">
+                <div v-if="menuButton.postperson_edit=='True'" @click.stop="showPostAdd('update')" class="handle">
                     <div class="topIcon"><img src="@/assets/images/zj2.png" alt=""></div>
                     修改
                 </div>
-                <div v-if="postperson_delete=='True'" @click.stop="deletepost" class="handle">
+                <div v-if="menuButton.postperson_delete=='True'" @click.stop="deletepost" class="handle">
                     <div class="topIcon"><img src="@/assets/images/zj3.png" alt=""></div>
                     删除
                 </div>
