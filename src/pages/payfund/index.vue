@@ -683,25 +683,16 @@
               let upList=this.getCheckedList();
               if(upList.length==0){
                 this.$msgBox.show({
-                  content: '请选择要修改的数据。',
-                  fn: () => {
-                    console.log('test fn')
-                  }
+                  content: '请选择要修改的数据。'
                 })
               }else if(upList.length>1){
                 this.$msgBox.show({
-                  content: '一次只允许修改一条数据。',
-                  fn: () => {
-                    console.log('test fn')
-                  }
+                  content: '一次只允许修改一条数据。'
                 })
               }else{
                 if(upList[0].FApproval!=0&&upList[0].FApproval!=2){
                   this.$msgBox.show({
-                    content: '只允许修改待送审及未通过项目。',
-                    fn: () => {
-                      console.log('test fn')
-                    }
+                    content: '只允许修改待送审及未通过项目。'
                   })
                 }else{
                   this.applyNum=upList[0].PhId+'';
@@ -717,10 +708,7 @@
               let delList=this.getCheckedList();
               if(delList.length==0){
                 this.$msgBox.show({
-                  content: '请选择要删除的数据。',
-                  fn: () => {
-                    console.log('test fn')
-                  }
+                  content: '请选择要删除的数据。'
                 })
               }else{
                 let phidList=[];
@@ -739,19 +727,13 @@
                 this.postAxios('GBK/PaymentMstApi/PostDelete',param).then(res=>{
                   if(res.Status=='success'){
                     this.$msgBox.show({
-                      content: '删除成功。',
-                      fn: () => {
-                        console.log('test fn')
-                      }
+                      content: '删除成功。'
                     });
                     this.getData();
                     this.checkList=[];
                   }else{
                     this.$msgBox.show({
-                      content: '删除失败，请稍后重试。',
-                      fn: () => {
-                        console.log('test fn')
-                      }
+                      content: '删除失败，请稍后重试。'
                     })
                   }
 

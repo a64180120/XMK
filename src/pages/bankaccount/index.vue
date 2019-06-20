@@ -40,7 +40,7 @@ import {testUpload} from '@/api/upload'
 export default {
     name:'bankaccount',
     data(){
-        return{ 
+        return{
             upload:true,
             handleBtn:'',
             accountAddShow:false,
@@ -70,8 +70,8 @@ export default {
                  this.info.PersistentState=2;
             }else{
                 this.info={FLifecycle:'1',PersistentState:1};
-                this.info.OrgPhid=this.$refs.order.checkedOrg.PhId; 
-                this.info.OrgCode=this.$refs.order.checkedOrg.OCode; 
+                this.info.OrgPhid=this.$refs.order.checkedOrg.PhId;
+                this.info.OrgCode=this.$refs.order.checkedOrg.OCode;
                 this.info.OrgName=this.$refs.order.checkedOrg.OName;
             }
             this.accountAddShow=true;
@@ -82,7 +82,7 @@ export default {
             if(val){
                 this.refresh();
             }
-            
+
         },
         //删除行
         deleteRow(){
@@ -102,7 +102,7 @@ export default {
                     })
                     BankAccountDelete(data).then(res=>{
                         this.$msgBox.show(res.Msg);
-                        this.refresh();      
+                        this.refresh();
                     }).catch((err)=>{
                         console.log(err);
                         this.$msgBox.show('删除数据失败!')
@@ -112,11 +112,11 @@ export default {
         // submit(files){
         //     console.log(files)
         //     let formData = new FormData();
-        //     formData.append('RelPhid',0);
+        //     formData.append('infodata',{});
         //     formData.append('BTable','gcw3_voucher_mst');
         //     for(let file of files){
         //          formData.append('files',file.raw);
-        //     }
+      //     }
         //     testUpload(formData).then(res=>{
         //         console.log(res)
         //     }).catch(err => {
@@ -125,7 +125,7 @@ export default {
         // }
     },
     mounted(){
-        
+
     },
     components:{
         topHandle,
@@ -168,7 +168,5 @@ export default {
     }
  .bankaccount   .el-dialog__body {
      padding-top:0;
-   
-
 }
 </style>

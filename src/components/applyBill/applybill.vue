@@ -24,12 +24,12 @@
               <!--申请信息-->
               <div class="apply-info">
                 <span class="title">附件</span>
-                <!--<div class="appendix-item" v-for="(item,idx) in projectItem">
-                  <span class="title"><i class="el-icon-s-order"></i>{{item.projectName}}</span>
+                <div class="appendix-item" v-for="(item,idx) in record.PaymentXmDtl">
+                  <span class="title"><i class="el-icon-s-order"></i>{{item.PaymentXm.XmProjname}}</span>
                   <ul>
-                    <li  v-for="(folder,idx) in item.projectFolder" @click="clickFolder(folder)">{{folder}}</li>
+                    <li  v-for="(folder,idx) in item.QtAttachments" @click="clickFolder(folder)" :title="folder.BUrlpath.replace('/UpLoadFiles/BkPayment/','')">{{folder.BUrlpath.replace('/UpLoadFiles/BkPayment/','')}}</li>
                   </ul>
-                </div>-->
+                </div>
               </div>
             </div>
           </div>
@@ -203,16 +203,21 @@
             FOrgname:'',
             FDescribe:'',
           },
-          PaymentXmDtl:[{PaymentDtls:{
-              PhId:'',
-              BudgetdtlName:'',
-              FDepartmentname:'',
-              FAmount:'',
-              FPayment:''
-            },PaymentXm:{
-              XmProjcode:'',
-              XmProjname:''
-            }}],
+          PaymentXmDtl:[
+            {
+              PaymentDtls:{
+                PhId:'',
+                BudgetdtlName:'',
+                FDepartmentname:'',
+                FAmount:'',
+                FPayment:''
+              },
+              PaymentXm:{
+                XmProjcode:'',
+                XmProjname:''
+              }
+            }
+          ],
         },
         approvalType:{0:'待送审',1:'审批中',2:'未通过',9:'审批通过'},
         //生成支付单
@@ -441,6 +446,9 @@
               text-decoration: underline;
               color: #3294E8;
               text-align: left;
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
               margin-bottom: 5px;
               &:hover{
                 cursor: pointer;
