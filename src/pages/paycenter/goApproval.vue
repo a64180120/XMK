@@ -10,66 +10,6 @@
       <div slot="title" class="dialog-title">
         <p>送审</p>
       </div>
-      <!-- <div class="content">
-        <div class="handle">
-          <div class="title">
-            <span>送审备注</span>
-            <span style="float:right;color:#333;">附单据 0 张</span>
-          </div>
-          <div class="textare">
-            <el-input type="textarea" v-model="content"></el-input>
-          </div>
-        </div>
-        <div class="sub-table">
-          审批流程
-          <div class="sub-approval">
-            <div class="title">
-              <span>送审流程</span>
-            </div>
-            <div class="table">
-              <el-table
-                class="table-content"
-                :data="subData"
-                :border="true"
-                highlight-current-row
-                @current-change="handleCurrentChange"
-                header-row-class-name="table-header"
-                ref="content"
-              >
-                <el-table-column prop="code" width="80" align="center" label="流程编码"></el-table-column>
-                <el-table-column prop="name" align="center" label="流程名称"></el-table-column>
-                <el-table-column width="60" align="center" label="查看">
-                  <template slot-scope="scope">
-                    <i
-                      class="el-icon-search icon-search"
-                      @click="searchFlow(scope.row,scope.column.$index,scope.store)"
-                    ></i>
-                  </template>
-                </el-table-column>
-              </el-table>
-            </div>
-          </div>
-          <div class="next-approval">
-            <div class="title">
-              <span>接收人</span>
-            </div>
-            <div class="table">
-              <el-table
-                class="table-next"
-                :data="nextData"
-                :border="true"
-                @select="handleSelect"
-                @select-all="handleSelectAll"
-                header-row-class-name="table-header"
-              >
-                <el-table-column type="selection" width="30"></el-table-column>
-                <el-table-column prop="code" align="center" label="操作员编码"></el-table-column>
-                <el-table-column prop="name" align="center" label="姓名"></el-table-column>
-              </el-table>
-            </div>
-          </div>
-        </div>
-      </div>-->
       <approval-bill
         ref="approvalbill"
         v-model="content"
@@ -90,7 +30,12 @@
         >{{btnGroup.cancelName}}</el-button>
         <el-button size="small" type="primary" @click="submit">{{btnGroup.onfirmName}}</el-button>
       </div>
-      <auditfollow :visible="showAuditfollow" @update:visible="closeAuditFollow()"></auditfollow>
+      <auditfollow
+        :isApproval="true"
+        :auditMsg="auditMsg"
+        :visible="showAuditfollow"
+        @update:visible="closeAuditFollow()"
+      ></auditfollow>
       <el-dialog append-to-body :visible.sync="upload">
         <upload @submit="uploadFiles"/>
       </el-dialog>
@@ -100,15 +45,16 @@
 
 <script>
 import auditfollow from '../../components/auditFollow/auditfollow'
+import approvalBill from '../../components/approvalBill/approvalBill.vue'
+import upload from '@/components/upload'
 import {
   getAppvalProc,
   postAddAppvalRecord,
-  GetFirstStepOperator
+  GetFirstStepOperator,
+  GetAllPostsAndOpersByProc
 } from '@/api/paycenter'
-import approvalBill from '../../components/approvalBill/approvalBill.vue'
+import { testUpload, PostUploadFile } from '@/api/upload'
 import { mapState } from 'vuex'
-import upload from '@/components/upload'
-import { testUpload } from '@/api/upload'
 export default {
   name: 'goApproval',
   components: { auditfollow, approvalBill, upload },
@@ -158,7 +104,8 @@ export default {
       mode: 0, //0普通模式1会签模式,
       upload: false,
       files: null,
-      fileCount: 0
+      fileCount: 0,
+      auditMsg: []
     }
   },
   methods: {
@@ -195,7 +142,22 @@ export default {
       this.openDialog = true
     },
     //查看详细流程
-    dialogFlow(row, column, index, store) {
+    dialogFlow(row) {
+      console.log('row', row)
+      GetAllPostsAndOpersByProc({
+        ProcId: row.PhId
+      })
+        .then(res => {
+          if (res.Status == 'error') {
+            this.$msgBox.error(res.Msg)
+            return
+          }
+          this.auditMsg = res
+        })
+        .catch(err => {
+          console.log(err)
+          this.$msgBox.error('获取审批流程信息失败！')
+        })
       this.showAuditfollow = true
     },
     //取消
@@ -268,12 +230,12 @@ export default {
     uploadFiles(files) {
       console.log(files)
       let formData = new FormData()
-      formData.append('RelPhid', 0)
-      formData.append('BTable', 'gcw3_voucher_mst')
+      // formData.append('RelPhid', 0)
+      // formData.append('BTable', 'gcw3_voucher_mst')
       for (let file of files) {
         formData.append('files', file.raw)
       }
-      testUpload(formData)
+      PostUploadFile(formData)
         .then(res => {
           console.log(res, formData)
           // this.fileCount = files.length
@@ -485,9 +447,6 @@ export default {
 <style lang="scss">
 .goApproval {
   .el-dialog {
-    display: inline-block;
-    margin: 0 !important;
-    vertical-align: middle;
     .el-dialog__body {
       padding-top: 0px;
       section .content {
@@ -503,12 +462,6 @@ export default {
   }
   .el-table__body-wrapper.is-scrolling-none {
     max-height: 90px !important;
-  }
-  &.el-dialog__wrapper::after {
-    display: inline-block;
-    content: '';
-    vertical-align: middle;
-    height: 100%;
   }
 }
 </style>

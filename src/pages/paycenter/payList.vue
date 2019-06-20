@@ -355,7 +355,12 @@
     ></go-approval>
     <!-- 银行档案 -->
     <bank-choose v-if="bankChooseData.openDialog" :data="bankChooseData" @getBank="getBank"></bank-choose>
-    <auditfollow :auditMsg="auditMsg" :visible="showAuditfollow" @update:visible="closeAuditFollow"></auditfollow>
+    <auditfollow
+      v-if="showAuditfollow"
+      :auditMsg="auditMsg"
+      :visible="showAuditfollow"
+      @update:visible="closeAuditFollow"
+    ></auditfollow>
   </div>
 </template>
 
@@ -365,8 +370,8 @@ import mergePay from './mergePay.vue'
 import payErrorHandle from './payErrorHandle.vue'
 import goApproval from './goApproval.vue'
 import bankChoose from './bankChoose'
-import auditfollow from '../../components/auditFollow/auditfollow'
-import ImgView from '../../components/imgView/imgView'
+import auditfollow from '@/components/auditFollow/auditfollow'
+import ImgView from '@/components/imgView/imgView'
 import { BankAccountList } from '@/api/bankaccount'
 import { GetSysSetList } from '@/api/systemSetting/dataSafe'
 import {
@@ -602,7 +607,7 @@ export default {
       e.QtKmmc = this.kemuList.find(item => item.KMDM == e.QtKmdm).KMMC
     },
     // 获取支付单详情
-    getData(type) {
+    getData(type, getNewFCode) {
       getPayment({
         id: type ? this.oldDetail.Mst.PhId : this.detail.Mst.PhId,
         // id: 401190528000001,
@@ -613,6 +618,10 @@ export default {
         .then(res => {
           console.log('payList', res)
           if (res.Status == 'error') {
+            return
+          }
+          if (getNewFCode) {
+            getNewFCode(res)
             return
           }
           if (type) {
@@ -649,16 +658,18 @@ export default {
             this.$msgBox.error(res.Msg)
           } else {
             this.detail.Mst.PhId = res.KeyCodes[0]
-            this.oldDetail.Dtls.forEach(item => {
-              if (item.choosed) {
-                item.FNewCode = res.KeyCodes[0]
-              }
+            this.getData('', newData => {
+              this.oldDetail.Dtls.forEach(item => {
+                if (item.choosed) {
+                  item.FNewCode = newData.Mst.FCode
+                }
+              })
+              this.detail.Dtls.forEach(item => {
+                item.FNewCode = newData.Mst.FCode
+              })
+              console.log(this.oldDetail)
+              this.savePayList(this.oldDetail, postAddAppvalRecord)
             })
-            this.detail.Dtls.forEach(item => {
-              item.FNewCode = res.KeyCodes[0]
-            })
-            console.log(this.oldDetail)
-            this.savePayList(this.oldDetail, postAddAppvalRecord)
           }
         })
         .catch(err => {
@@ -1077,7 +1088,6 @@ export default {
   font-size: 0.16rem;
   .dialog-title {
     overflow: hidden;
-
     > span {
       width: 100%;
       text-align: left;
@@ -1325,23 +1335,6 @@ export default {
         border: 0;
       }
     }
-  }
-  .el-dialog {
-    display: inline-block;
-    margin: 0 !important;
-    vertical-align: middle;
-    &.payList {
-      min-height: 60%;
-    }
-    .el-dialog__body {
-      padding-top: 0px;
-    }
-  }
-  &.el-dialog__wrapper::after {
-    display: inline-block;
-    content: '';
-    vertical-align: middle;
-    height: 100%;
   }
   .apply-info {
     .el-input__inner {

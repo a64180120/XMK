@@ -23,6 +23,7 @@ function apiAxios(method, url, params, hastimeout) {
     OrgId: store.state.user.appinfo.OrgId,
     OrgName: '',
     OCode: '',
+    UserId: store.state.user.appinfo.UserId,
     UserKey:  '',
     UserName: '',
     TokenKey: '',

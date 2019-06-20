@@ -31,7 +31,7 @@
                 this.filelist=filelist
             },
             submit(){
-                this.$emit('submit',this.filelist);
+                return this.filelist;
             }
         }
     }

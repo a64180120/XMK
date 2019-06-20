@@ -369,10 +369,15 @@ export default {
       tabsWidth = [], //各个tab筛选条件宽度
       left = document.querySelector('.selects>i.el-icon-d-arrow-left'),
       right = document.querySelector('.selects>i.el-icon-d-arrow-right')
-    tabs.forEach(item => {
+    console.log(tabs)
+    // tabs.forEach(item => {
+    //   contentWidth += item.offsetWidth
+    //   tabsWidth.push(item.offsetWidth)
+    // })
+    for (let item of tabs) {
       contentWidth += item.offsetWidth
       tabsWidth.push(item.offsetWidth)
-    })
+    }
     function getComWidth(ele, cla) {
       return parseInt(
         (window.getComputedStyle
@@ -399,7 +404,7 @@ export default {
         ? 0
         : container.style.transform.match(/\d+/)[0]
     }
-    left.onclick = () => {
+    left.onclick = function() {
       let trans = getTrans()
       if (trans != 0) {
         let containerWidth = getComWidth(container),
@@ -414,7 +419,7 @@ export default {
         }
       }
     }
-    right.onclick = () => {
+    right.onclick = function() {
       let containerWidth = getComWidth(container),
         index = 0,
         totalWidth = 0
@@ -606,8 +611,8 @@ export default {
               })
               return
             } else if (
-              handleitem.every(item => {
-                return !item.Dtls.FNewCode
+              handleitem.some(item => {
+                return item.Dtls.some(item => item.FNewCode)
               })
             ) {
               this.$msgBox.error('只能对未重新支付的单据进行处理。')
@@ -693,6 +698,9 @@ export default {
       userid: state => state.user.userid,
       year: state => state.user.year
     })
+  },
+  beforeDestroy() {
+    window.onresize = function() {}
   }
 }
 </script>
@@ -740,7 +748,7 @@ export default {
   }
 
   .container {
-    min-width: 1300px;
+    min-width: 1200px;
     .selects {
       text-align: left;
       line-height: 28px;

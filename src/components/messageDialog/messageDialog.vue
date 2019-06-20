@@ -62,6 +62,7 @@ export default {
   mounted() {},
   methods: {
     close(done) {
+      console.log('close')
       this.openDialog = false
       this.fn()
       if (this.interval) {
@@ -71,6 +72,7 @@ export default {
       this.$destroy()
     },
     showMsgBox: function() {
+      console.log('show')
       this.count = this.timeOut
       this.openDialog = true
       this.status = 'success'
@@ -160,23 +162,26 @@ export default {
 </style>
 
 <style lang='scss'>
-.saasMsgCon {
-  .el-dialog {
-    display: inline-block;
-    margin: 0 !important;
-    vertical-align: middle;
-    .el-dialog__body {
-      padding: 20px;
-    }
-  }
-  &.el-dialog__wrapper {
-    text-align: center;
-  }
-  &.el-dialog__wrapper::after {
-    display: inline-block;
-    content: '';
-    vertical-align: middle;
-    height: 100%;
-  }
+// .saasMsgCon {
+//   .el-dialog {
+//     display: inline-block;
+//     margin: 0 !important;
+//     vertical-align: middle;
+//     .el-dialog__body {
+//       padding: 20px;
+//     }
+//   }
+//   &.el-dialog__wrapper {
+//     text-align: center;
+//   }
+//   &.el-dialog__wrapper::after {
+//     display: inline-block;
+//     content: '';
+//     vertical-align: middle;
+//     height: 100%;
+//   }
+// }
+.el-dialog__wrapper.saasMsgCon {
+  animation: none !important;
 }
 </style>

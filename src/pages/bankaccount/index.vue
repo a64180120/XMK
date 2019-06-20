@@ -14,6 +14,7 @@
                     <div class="topIcon"><img src="@/assets/images/zj3.png" alt=""></div>
                     删除
                 </div>
+                <div class="handle" @click.stop="submit">test</div>
             </div>
         </topHandle>
         <div class="container">
@@ -22,8 +23,8 @@
         <el-dialog :title="'银行账号'+(handleBtn=='add'?'新增':'修改')" :visible.sync="accountAddShow">
             <accountAdd v-if="accountAddShow" @add-cancle="addCancle" :type="handleBtn" :info="info"></accountAdd>
         </el-dialog>
-        <!-- <el-dialog  :visible.sync="upload">
-            <upload  @submit="submit"/>
+        <!-- <el-dialog   :visible.sync="upload">
+            <upload ref="upload" />
         </el-dialog> -->
 
     </div>
@@ -109,14 +110,38 @@ export default {
                     })
                 })
         },
-        // submit(files){
+        // submit(){
+        //     let files= this.$refs.upload.submit(files);
         //     console.log(files)
+        //     var info = {
+        //         FYear: '2019',//（年度）
+        //         FName: '小红子',//（申请单名）
+        //         FOrgphid: '488181024000002',//（组织主键）
+        //         FOrgcode: '101',//（组织编码）
+        //         FOrgname: '浙江省总本级',//（组织名）
+        //         FDepphid: "251181026000001",//（部门主键）
+        //         FDepcode: '100.03',//（部门编码）
+        //         FDepname: '办公室',//（部门名称）
+        //         FAmountTotal: '120',//（申请单金额）
+        //         FDate: '2019-05-30',//（申请单时间）
+        //         FApproval: '',//（审批状态：0- 未审批 1-待审批 2- 未通过 9-审批通过）
+        //         IsPay: '',//（支付状态：0- 否 1-待支付 9-支付完成）
+        //         FDescribe: '111', //（申报说明）
+        //         FRemarks: '', //（备注）
+        //     }
         //     let formData = new FormData();
-        //     formData.append('RelPhid',0);
-        //     formData.append('BTable','gcw3_voucher_mst');
+        //     let paymentMstAndXm={
+        //         PaymentMst: info,
+        //         PaymentXmDtl: {}
+        //     }
+            
+        //     formData.append('paymentMstAndXm',JSON.stringify(paymentMstAndXm));
+            
         //     for(let file of files){
         //          formData.append('files',file.raw);
+        //            console.log(file.raw)
         //     }
+        //     console.log(formData)
         //     testUpload(formData).then(res=>{
         //         console.log(res)
         //     }).catch(err => {

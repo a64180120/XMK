@@ -1,39 +1,58 @@
 <template>
-    <div class="auditMsg">
-      <div  v-if="info.FBilltype ==='001'&& info.JudgeRefer === 1">
-      </div>
-      <div class="title" v-if="info.FBilltype ==='002'&& info.NgRecordVer === 1">
-        <span style="font-size: 0.18rem">收付款信息维护</span>
-      </div>
-        <ul>
-            <li>
-                <i class="logo"></i>
-                <span v-if="info.JudgeRefer === 1">发起人:</span>
-                <span v-else-if="info.JudgeRefer !== 1 && info.OperaName != null">审批人:</span>
-                <span v-else>审批岗位:</span>
-                <em>{{index}}</em>
-            </li>
-            <li>{{info.OperaName?info.OperaName:info.PostName}}</li>
-            <li>{{info.FDate}}</li>
-
-            <li>意见: {{info.FOpinion}}</li>
-            <li >附件: <span @click.stop="showAttech" class="attenchment">{{info.RefbillPhid}}</span></li>
-        </ul>
-
-      <el-dialog class="dialog img-dialog" :visible.sync="dialogVisible" :append-to-body="true" :close-on-click-modal="false" width="40%">
-        <div slot="title" class="dialog-title">
-          <span style="float: left">查看附件</span>
-        </div>
-        <img-view v-if="dialogVisible"></img-view>
-      </el-dialog>
+  <div class="auditMsg">
+    <div v-if="info.FBilltype ==='001'&& info.JudgeRefer === 1"></div>
+    <div class="title" v-if="info.FBilltype ==='002'&& info.NgRecordVer === 1">
+      <span style="font-size: 0.18rem">收付款信息维护</span>
     </div>
+    <ul>
+      <template v-if="!isApproval">
+        <li>
+          <i class="logo"></i>
+          <span v-if="info.JudgeRefer === 1">发起人:</span>
+          <span v-else-if="info.JudgeRefer !== 1 && info.OperaName != null">审批人:</span>
+          <span v-else>审批岗位:</span>
+          <em>{{index}}</em>
+        </li>
+        <li>{{info.OperaName?info.OperaName:info.PostName}}</li>
+        <li>{{info.FDate}}</li>
+        <li>意见: {{info.FOpinion}}</li>
+        <li>
+          附件:
+          <span @click.stop="showAttech" class="attenchment">{{info.RefbillPhid}}</span>
+        </li>
+      </template>
+      <template v-else>
+        <li>
+          <i class="logo"></i>
+          <span>审批岗位:{{info.PostName}}</span>
+          <em>{{index}}</em>
+        </li>
+        <li>
+          <span>审批人:{{info.OperaName}}</span>
+        </li>
+      </template>
+    </ul>
+    <el-dialog
+      class="dialog img-dialog"
+      :visible.sync="dialogVisible"
+      :append-to-body="true"
+      :close-on-click-modal="false"
+      width="40%"
+    >
+      <div slot="title" class="dialog-title">
+        <span style="float: left">查看附件</span>
+      </div>
+      <img-view v-if="dialogVisible"></img-view>
+    </el-dialog>
+  </div>
 </template>
 
 <script>
-import fDialog from "../attechment/dialog"
-import attechment from "../attechment/attechment"
-import ImgView from "../imgView/imgView";
+import fDialog from '../attechment/dialog'
+import attechment from '../attechment/attechment'
+import ImgView from '../imgView/imgView'
 export default {
+<<<<<<< HEAD
     name:'auditMsg',
     props:{
         info:{
@@ -46,78 +65,105 @@ export default {
             type:Number,
             default:1
         },
+=======
+  name: 'auditMsg',
+  props: {
+    info: {
+      type: Object,
+      default: {
+        time: ''
+      }
+>>>>>>> 3ff0ef02085d5cc2ddefacc0e5be951c8e31b296
     },
-    data(){
-       return {
-           dialogVisible:false,
-       }
+    index: {
+      type: Number,
+      default: 1
     },
-    methods:{
-        showAttech(){
-            this.dialogVisible=true;
-        },
+    sign: {
+      type: Array,
+      default: function() {
+        return []
+      }
     },
-    components:{
-      ImgView,
-        fDialog,
-        attechment
+    isApproval: {
+      default: false,
+      type: Boolean
     }
+  },
+  data() {
+    return {
+      dialogVisible: false
+    }
+  },
+  methods: {
+    showAttech() {
+      this.dialogVisible = true
+    }
+  },
+  components: {
+    ImgView,
+    fDialog,
+    attechment
+  },
+  mounted() {
+    console.info('msg', this.$attrs, this.$listeners)
+  }
 }
 </script>
 
 <style lang="scss" scoped>
-.auditMsg{
-    text-align: left;
-    padding-left:20px;
-    font-size:0.16rem;
-    color:$btnColor;
-    >.title{
-      margin-bottom: 10px;
-    }
-    >ul{
-        >li{
-            margin-bottom:5px;
-            &:last-of-type{
-                margin:0;
-            }
-            &:first-of-type{
-                position:relative;
-                >em{
-                    position:absolute;
-                    width:30px;
-                    height:30px;
-                    top:0;
-                    left:-38px;
-                    border:2px solid $btnColor;
-                    border-radius: 50%;
-                    background: #fff;
-                    text-align: center;
-                    line-height: 30px;
-                    font-size:0.18rem;
-                }
-            }
+.auditMsg {
+  text-align: left;
+  padding-left: 20px;
+  font-size: 0.16rem;
+  color: $btnColor;
+  > .title {
+    margin-bottom: 10px;
+  }
+  > ul {
+    > li {
+      margin-bottom: 5px;
+      &:last-of-type {
+        margin: 0;
+      }
+      &:first-of-type {
+        position: relative;
+        > em {
+          position: absolute;
+          width: 30px;
+          height: 30px;
+          top: 0;
+          left: -38px;
+          border: 2px solid $btnColor;
+          border-radius: 50%;
+          background: #fff;
+          text-align: center;
+          line-height: 30px;
+          font-size: 0.18rem;
         }
-        .attenchment{
-            text-decoration: underline;
-            cursor: pointer;
-        }
+      }
     }
-}
-.logo{
-    background:url(../../assets/images/1.png) no-repeat;
-    display: inline-block;
-    width:25px;
-    height:20px;
-    background-size: 100% 100%;
-}
-.attenchBtn{
-    text-align: right;
-    padding:5px 20px ;
-    >span{
-        width:70px;
+    .attenchment {
+      text-decoration: underline;
+      cursor: pointer;
     }
+  }
 }
-.dialog-title span{
+.logo {
+  background: url(../../assets/images/1.png) no-repeat;
+  display: inline-block;
+  width: 25px;
+  height: 20px;
+  background-size: 100% 100%;
+}
+.attenchBtn {
+  text-align: right;
+  padding: 5px 20px;
+  > span {
+    width: 70px;
+  }
+}
+.dialog-title span {
   width: 100%;
   text-align: left;
   font-size: 0.16rem;
@@ -125,7 +171,7 @@ export default {
 }
 </style>
 <style scoped>
-  .img-dialog >>> .el-dialog__body{
-    height: 550px;
-  }
+.img-dialog >>> .el-dialog__body {
+  height: 550px;
+}
 </style>

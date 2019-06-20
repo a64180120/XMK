@@ -59,7 +59,7 @@
                 <template slot-scope="scope">
                   <i
                     class="el-icon-search icon-search"
-                    @click="searchFlow(scope.row,scope.column.$index,scope.store)"
+                    @click.stop="searchFlow(scope.row,scope.column.$index,scope.store)"
                   ></i>
                 </template>
               </el-table-column>
@@ -324,5 +324,6 @@ export default {
 .icon-search {
   font-size: 0.16rem;
   color: #0099ff;
+  cursor: pointer;
 }
 </style>
