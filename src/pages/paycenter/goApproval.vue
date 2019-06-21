@@ -37,7 +37,7 @@
         @update:visible="closeAuditFollow()"
       ></auditfollow>
       <el-dialog append-to-body :visible.sync="upload">
-        <upload @submit="uploadFiles"/>
+        <upload ref="upload"/>
       </el-dialog>
     </el-dialog>
   </section>
@@ -227,7 +227,8 @@ export default {
       }
     },
     // 上传附件
-    uploadFiles(files) {
+    uploadFiles() {
+      var files = this.$refs.upload.submit()
       console.log(files)
       let formData = new FormData()
       // formData.append('RelPhid', 0)
