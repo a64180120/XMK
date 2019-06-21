@@ -198,7 +198,4 @@ export default {
 }
 </style>
 <style scoped>
-.img-dialog >>> .el-dialog__body {
-  height: 550px;
-}
 </style>
