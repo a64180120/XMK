@@ -294,17 +294,14 @@
         <div slot="title" class="dialog-title">
           <span style="float: left">查看附件</span>
         </div>
-        <div class="btn-load">
-          <el-button class="btn">下载</el-button>
-        </div>
-        <img-view v-if="imgDialog"></img-view>
+        <img-view v-if="imgDialog" :images="imgList" ></img-view>
       </el-dialog>
       <!--审批弹框-->
       <approval-dialog ref="approvalDialog" :rowData="selection" @refresh="loadData" @dialogFlow="childrenAuditfollow" @subSuc="plSubSuc()"></approval-dialog>
       <!--生成支付单弹框-->
       <paylist-dialog ref="paylistDialog" :rowData="selection" @refresh="loadData" :isApproval="Approval" @dialogFlow="childrenAuditfollow" @subSuc="plSubSuc()"></paylist-dialog>
       <!--查看审批流程-->
-      <auditfollow :visible.sync="visible" :auditMsg="auditMsg"></auditfollow>
+      <auditfollow :visible.sync="visible" :auditMsg="auditMsg" @getImgList="getImgList"></auditfollow>
       <!--组织树-->
       <orgtree :data="orgtreeData" :checkedOrg="checkedOrg" :visible.sync="orgType" @confirm="getOrg"></orgtree>
     </div>
@@ -324,7 +321,8 @@
   import { selection} from "./selection";
   import ImgView from "../../components/imgView/imgView";
   import PaylistDialog from "./paylistDialog";
-  import {mapState} from 'vuex'
+  import {mapState} from 'vuex';
+  import { baseURL } from "@/utils/config.js";
 
   export default {
     name: "index",
@@ -379,7 +377,8 @@
         isApproval:true,
         applyNum:"",//当前查看申请单的编号
         SplxPhid:"",
-        Approval:Boolean
+        Approval:Boolean,
+        imgList:[]//图片列表
       }
     },
 
@@ -634,7 +633,7 @@
       //打开图片预览
       showImg(file){
         console.log(file)
-        this.imgDialog= true
+        // this.imgDialog= true
       },
       //生成支付单成功
       plSubSuc(){
@@ -673,6 +672,27 @@
         this.page.currentPage = 1;
         this.page.pageSize = 20;
         this.loadData()
+      },
+      //通过审批流获取图片列表
+      getImgList(imgList){
+        if (this.imgList.length !== 0){
+          for (let key in this.imgList){
+            this.imgList.splice(key,1)
+          }
+        }
+        this.imgDialog= false
+        let arr = []
+        if(imgList !== null){
+          this.imgDialog= true
+          for (let key in imgList){
+            let img ={
+              name:imgList[key].BUrlpath.replace('/UpLoadFiles/BkPayment/',''),
+              path:baseURL.replace('/api','')+imgList[key].BUrlpath
+            };
+            this.$set(this.imgList,key,img)
+          }
+        }
+        console.log(this.imgList)
       }
     }
   }

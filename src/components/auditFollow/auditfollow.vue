@@ -10,7 +10,7 @@
         <ul>
           <li></li>
           <li class="msg" v-for="(item,index) of auditMsg" :key="index">
-            <audit-msg v-bind="$attrs" v-on="$listeners" :info="item" :index="index+1" :sign="sign"></audit-msg>
+            <audit-msg v-bind="$attrs" v-on="$listeners" :info="item" :index="index+1" :sign="sign" @imgList="getImgList"></audit-msg>
           </li>
         </ul>
       </div>
@@ -56,6 +56,12 @@ export default {
   methods: {
     close() {
       this.$emit('update:visible', false)
+    },
+    getImgList(imgList){
+      console.log(22)
+
+
+      this.$emit('getImgList',imgList)
     }
   },
   components: {

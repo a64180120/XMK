@@ -264,10 +264,17 @@
       </div>
 
     </div>
+    <!--审批流附件预览-->
+    <el-dialog class="dialog img-dialog" :visible.sync="imgDialog" :close-on-click-modal="false" width="40%">
+      <div slot="title" class="dialog-title">
+        <span style="float: left">查看附件</span>
+      </div>
+      <img-view v-if="imgDialog" :images="imgList"></img-view>
+    </el-dialog>
     <!--审批-->
     <pay-dialog ref="payDialog" :rowData="selection" @refresh="loadData" @dialogFlow="childrenAuditfollow" @subSuc="plSubSuc()"></pay-dialog>
     <!--查看审批流程-->
-    <auditfollow :visible.sync="visible" :auditMsg="auditMsg" ></auditfollow>
+    <auditfollow :visible.sync="visible" :auditMsg="auditMsg" @getImgList="getImgList"></auditfollow>
     <!--组织树-->
     <orgtree :data="orgtreeData" :checkedOrg="checkedOrg" :visible.sync="orgType" @confirm="getOrg"></orgtree>
     <!--支付单查看-->
@@ -286,9 +293,11 @@
   import { selection} from "../payfundapproval/selection";
   import {mapState} from 'vuex'
   import PayDialog from "./payDialog";
+  import ImgView from "../../components/imgView/imgView";
+  import { baseURL } from "@/utils/config.js";
   export default {
     name: "index",
-    components: {PayDialog, Paylist, Orgtree, ApprovalDialog, Applybill, Auditfollow, SearchInput, HandleBtn},
+    components: {ImgView, PayDialog, Paylist, Orgtree, ApprovalDialog, Applybill, Auditfollow, SearchInput, HandleBtn},
     data(){
       return{
         payListVisible:false,
@@ -341,7 +350,9 @@
 
 
         //审批弹框
-        approvalDialog:false
+        approvalDialog:false,
+        imgList:[],//图片列表
+        imgDialog:false,//图片预览弹框
       }
     },
     computed:{
@@ -589,6 +600,29 @@
       },
       plSubSuc(){
 
+      },
+      //获取图片列表
+      getImgList(imgList){
+        console.log(111)
+        console.log(imgList)
+        if (this.imgList.length !== 0){
+          for (let key in this.imgList){
+            this.imgList.splice(key,1)
+          }
+        }
+        this.imgDialog= false
+        let arr = []
+        if(imgList !== null){
+          this.imgDialog= true
+          for (let key in imgList){
+            let img ={
+              name:imgList[key].BUrlpath.replace('/UpLoadFiles/BkPayment/',''),
+              path:baseURL.replace('/api','')+imgList[key].BUrlpath
+            };
+            this.$set(this.imgList,key,img)
+          }
+        }
+        console.log(this.imgList)
       }
     }
   }
@@ -607,7 +641,7 @@
   }
   .top ul li{
     float: left;
-    width: 80px;
+    width: 115px;
   }
   .top ul li:hover{
     cursor: pointer;
@@ -626,9 +660,13 @@
     float: right;
     margin-bottom: 0px;
   }
+  .cell-click{
+    color: #409EFF;
+    cursor: pointer;
+    text-decoration: underline;
+  }
   .img-icon{
     width: 30px;
-    cursor: pointer;
   }
   .blue{
     color: #00B8EE;
@@ -658,37 +696,40 @@
     font-size: 0.16rem;
     border-bottom: 1px solid #eaeaea;
   }
+  /*.dialog>>>.el-dialog{*/
+  /*  position: absolute;*/
+  /*  top: 50%;*/
+  /*  left: 50%;*/
+  /*  margin: 0 !important;*/
+  /*  transform: translate(-50%,-50%);*/
+  /*}*/
   .detail-dialog>>>.el-dialog{
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    margin: 0 !important;
-    transform: translate(-50%,-50%);
+    /*height: 86%;*/
     height: 600px;
+  }
+  .img-dialog >>>.el-dialog{
+    height: 550px;
+    width: 780px;
   }
   .hidden{
     display: none;
   }
+  .dialog-title span {
+    width: 100%;
+    text-align: left;
+    font-size: 0.16rem;
+    border-bottom: 1px solid #eaeaea;
+  }
+
   .select-input >>> .el-input--suffix{
     width: 75px!important;
   }
-  .cell-click{
-    color: #409EFF;
-    cursor: pointer;
-    text-decoration: underline;
+  .btn-load{
+    text-align: right;
   }
-
-  .dialog{}
-  .dialog >>> .el-dialog{
-    height: 435px;
-  }
-  .dialog >>> .el-dialog__header{
-    padding: 0;
-  }
-  .dialog >>> .el-dialog__body{
-    padding: 0 1%;
-  }
-  .dialog >>> .el-dialog__header .el-dialog__headerbtn{
-    top:15px;
+  .BDescribe{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 </style>

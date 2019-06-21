@@ -14,7 +14,10 @@
         <li>意见: {{info.FOpinion}}</li>
         <li>
           附件:
-          <span @click.stop="showAttech" class="attenchment">{{info.RefbillPhid}}</span>
+          <span @click.stop="showAttech" v-if="info.QtAttachments ===null" class="attenchment">无</span>
+          <span v-else v-for="(item,idx) in info.QtAttachments">
+            <span @click.stop="showAttech(info.QtAttachments)" class="attenchment">{{item.BName}}</span><span v-if="idx !==info.QtAttachments.length-1">、</span>
+          </span>
         </li>
       </template>
       <template v-else>
@@ -77,8 +80,9 @@ export default {
     }
   },
   methods: {
-    showAttech() {
-      this.dialogVisible = true
+    showAttech(val) {
+      // this.dialogVisible = true
+      this.$emit('imgList',this.info.QtAttachments)
     }
   },
   components: {
@@ -87,7 +91,7 @@ export default {
     attechment
   },
   mounted() {
-    console.info('msg', this.$attrs, this.$listeners)
+    // console.info('msg', this.$attrs, this.$listeners)
   }
 }
 </script>
