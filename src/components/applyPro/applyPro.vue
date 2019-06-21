@@ -41,12 +41,15 @@
                   <span>申报项目</span>
               </span>
               <span style="float: right">
-                <!--<span  @click="clickFolder(item)">附单据 {{item.projectFileNum}} 张</span>
-                <span class="el-icon-link"></span>-->
+                <span  @click="clickFolder(pindex,item)">附单据 {{item.QtAttachments?item.QtAttachments.length:0}} 张</span>
+                <span class="el-icon-link"></span>
                 <span style="margin-left: 20px" @click="delPro(pindex)"><i class="el-icon-close"></i></span>
               </span>
 
             </div>
+
+
+            <!---->
             <div>
               <div style="margin: 0 20px;">
                 <span>项目名称：</span>
@@ -73,6 +76,10 @@
                 <span>预算总额 （{{item.money.sum | NumFormat}}元）- 实际已使用 （{{item.money.use | NumFormat}}元） - 冻结 （{{item.money.frozen | NumFormat}}元） = </span><span style="color: red;">本次可申请 （{{item.money.surplus | NumFormat}}元）</span>
               </div>
             </div>
+
+
+
+
             <div style="margin-top: 10px">
               <table style="margin:0 20px;width: auto;">
                 <colgroup>
@@ -98,7 +105,7 @@
                       </td>
                       <td @click="showDetailPro(pindex,index)">{{mx.BudgetdtlName }}</td>
                       <td class="right" style="padding: 0 10px;">
-                        <span class="num" v-if="!mx.checked" @click="$set(mx,'checked',true)">{{mx.FAmount  | NumFormat}}</span>
+                        <span class="num" v-if="!mx.checked" @click="changeInp(pindex,index)">{{mx.FAmount  | NumFormat}}</span>
                         <input v-if="mx.checked" style="width:100%;height: 100%;text-align: right;" class="numInput"
                                v-model="mx.FAmount "
                                @keydown="clearZero(pindex,index)"
@@ -202,6 +209,10 @@
       </div>
       <img-view v-if="dialogVisible"></img-view>
     </el-dialog>
+    <!--附件上传-->
+    <el-dialog :visible.sync="uploadVis" :append-to-body="true" title="附件上传">
+      <file-up v-if="uploadVis" :ind="choosedIndexAndPro" @succe="loadFile"></file-up>
+    </el-dialog>
   </section>
 
   <!--内层弹框-->
@@ -213,6 +224,7 @@
   import ImgView from "../imgView/imgView";
   import {mapState} from 'vuex'
   import ApprovalDialog from "../../pages/payfundapproval/approvalDialog";
+  import fileUp from "./fileUp"
   export default {
     name: "applypro",
     props:{
@@ -227,6 +239,8 @@
     },
     data(){
       return {
+        uploadVis:false,//文件上传弹窗
+
         msgType: false,//删除弹窗
         delSOD: true,//是否删除成功
         delmsgType: false,//点击删除后的提示弹窗
@@ -267,7 +281,7 @@
           FDepphid: "",//（部门主键）
           FDepcode: '',//（部门编码）
           FDepname: '',//（部门名称）
-          FAmountTotal: '',//（申请单金额）
+          FAmountTotal: 0,//（申请单金额）
           FDate: '',//（申请单时间）2019-05-30
           FApproval: '',//（审批状态：0- 未审批 1-待审批 2- 未通过 9-审批通过）
           IsPay: '',//（支付状态：0- 否 1-待支付 9-支付完成）
@@ -280,7 +294,7 @@
               XmMstPhid: '',//（项目主表主键）
               XmProjcode: '', //（项目编码）
               XmProjname: '', //（项目名称）
-              FAmountTotal: '', //（项目金额）
+              FAmountTotal: 0, //（项目金额）
               FRemarks: '', //（备注）
             },
             PaymentDtls:[
@@ -290,17 +304,19 @@
                 BudgetdtlName: '', //（预算明细名称）
                 FDepartmentcode: '', //（补助单位/部门）
                 FDepartmentname: '', //（补助单位名称）
-                FAmount: '', //（项目明细申请金额）
+                FAmount: 0, //（项目明细申请金额）
                 FRemarks: '', //（备注）
                 QtKmdm: '', //（预算项目编码）
                 QtKmmc: '' , //（预算项目名称）
                 FPayment:'', //(支付状态：0-待支付 1-支付异常  9-支付成功)
                 FPaymentdate:'' //（支付日期）
               }
-            ]
+            ],
+            QtAttachments:[]
           }
         ],
-        xmCheckList:[false]
+        xmCheckList:[false],
+        choosedIndexAndPro:{index:0,pro:{}},
 
       }
     },
@@ -312,8 +328,9 @@
         year:state => state.user.year,//年份
       })
     },
-    components:{ApprovalDialog, Orgtree,goApproval,ImgView},
+    components:{ApprovalDialog, Orgtree,goApproval,ImgView,fileUp},
     mounted(){
+      console.log(this.prodata);
       this.approvalDataS.subData= this.prodata.subData;//审批流
       this.$nextTick(
         this.getOrgList()
@@ -343,6 +360,14 @@
       }
     },
     methods:{
+      changeInp:function(pindex,index){
+        if(!this.PaymentXmDtl[pindex].PaymentXm.XmMstPhid){
+          this.$msgBox.error('请先选择项目');
+          return;
+        }
+        //this.PaymentXmDtl[pindex].PaymentDtls[index]['checked']=true;
+        this.$set(this.PaymentXmDtl[pindex].PaymentDtls[index],'checked',true);
+      },
       clearZero:function(pindex,index){
         let val=this.PaymentXmDtl[pindex].PaymentDtls[index].FAmount;
         if(!val){
@@ -369,6 +394,7 @@
         let param={fPhId:this.applyNum};
 
         this.getAxios('GBK/PaymentMstApi/GetPaymentMst',param).then(res=>{
+          console.log(this.applyNum+'这里添加数据查询方法');
           console.log(res);
           this.PaymentMst=res.PaymentMst;
           this.PaymentXmDtl=res.PaymentXmDtl;
@@ -389,6 +415,50 @@
 
       //保存0，保存并送审1，区别：是否调用送审组件
       save:function(type){
+
+        this.PaymentMst.FDate=new Date();
+        for(var m in this.PaymentXmDtl){
+          for(var p in this.PaymentXmDtl[m].PaymentDtls){
+            // QtKmdm: '', //（预算项目编码）QtKmmc: '' , //（预算项目名称） XmProjcode: '', //（项目编码）XmProjname: '', //（项目名称）
+            this.PaymentXmDtl[m].PaymentDtls[p].XmMstPhid=this.PaymentXmDtl[m].PaymentXm.XmMstPhid;/*
+            this.PaymentXmDtl[i].PaymentDtls[j].QtKmdm=this.PaymentXmDtl[i].PaymentXm.XmProjcode;
+            this.PaymentXmDtl[i].PaymentDtls[j].QtKmmc=this.PaymentXmDtl[i].PaymentXm.XmProjname;*/
+          }
+        }
+        debugger
+        for(var i in this.PaymentMst){
+          if(i=='FName'&&!this.PaymentMst[i]){
+            this.$msgBox.error('请填写申请单名称');
+            return;
+          }
+        }
+        for( var j in this.PaymentXmDtl){
+          let pdl=this.PaymentXmDtl[j];
+          for( var k in pdl.PaymentXm){
+            /*XmMstPhid: '',//（项目主表主键）
+                XmProjcode: '', //（项目编码）
+                XmProjname: '', //（项目名称）*/
+            if(k=='XmMstPhid'&&!pdl.PaymentXm[k]){
+              this.$msgBox.error('第'+(Number(j)+1)+'条申报项目未选择项目，请检查');
+              return;
+            }
+          }
+          for(var l in pdl.PaymentDtls){
+            let pdls=pdl.PaymentDtls[l];
+            for(var n in pdls){
+              /*FDepartmentname BudgetdtlName*/
+              if(n=='FDepartmentname'&&!pdls[n]){
+                this.$msgBox.error('第'+(Number(j)+1)+'条申报项目,第'+(Number(l)+1)+'条明细未选择部门，请检查');
+                return;
+              }
+              if(n=='BudgetdtlName'&&!pdls[n]){
+                this.$msgBox.error('第'+(Number(j)+1)+'条申报项目,第'+(Number(l)+1)+'条明细未选择项目，请检查');
+                return;
+              }
+            }
+          }
+        };
+
         if(this.PaymentXmDtl.length==0){
           this.$msgBox.show({
             content: '请至少创建一个项目。'
@@ -396,22 +466,58 @@
           return;
         }
 
-        this.PaymentMst.FDate=new Date();
-
-        for(var i in this.PaymentXmDtl){
-          for(var j in this.PaymentXmDtl[i].PaymentDtls){
-           // QtKmdm: '', //（预算项目编码）QtKmmc: '' , //（预算项目名称） XmProjcode: '', //（项目编码）XmProjname: '', //（项目名称）
-            this.PaymentXmDtl[i].PaymentDtls[j].XmMstPhid=this.PaymentXmDtl[i].PaymentXm.XmMstPhid;/*
-            this.PaymentXmDtl[i].PaymentDtls[j].QtKmdm=this.PaymentXmDtl[i].PaymentXm.XmProjcode;
-            this.PaymentXmDtl[i].PaymentDtls[j].QtKmmc=this.PaymentXmDtl[i].PaymentXm.XmProjname;*/
+        /*
+        PaymentMst:{
+          FYear: '',//（年度）
+            FName: '',//（申请单名）
+            FOrgphid: '',//（组织主键）
+            FOrgcode: '',//（组织编码）
+            FOrgname: '',//（组织名）
+            FDepphid: "",//（部门主键）
+            FDepcode: '',//（部门编码）
+            FDepname: '',//（部门名称）
+            FAmountTotal: '',//（申请单金额）
+            FDate: '',//（申请单时间）2019-05-30
+            FApproval: '',//（审批状态：0- 未审批 1-待审批 2- 未通过 9-审批通过）
+            IsPay: '',//（支付状态：0- 否 1-待支付 9-支付完成）
+            FDescribe: '', //（申报说明）
+            FRemarks: '', //（备注）
+        },
+        PaymentXmDtl:[
+          {
+            PaymentXm:{
+              XmMstPhid: '',//（项目主表主键）
+              XmProjcode: '', //（项目编码）
+              XmProjname: '', //（项目名称）
+              FAmountTotal: '', //（项目金额）
+              FRemarks: '', //（备注）
+            },
+            PaymentDtls:[
+              {
+                XmMstPhid: '', //（预算项目主表主键）
+                BudgetdtlPhid: '', //（预算明细主键）
+                BudgetdtlName: '', //（预算明细名称）
+                FDepartmentcode: '', //（补助单位/部门）
+                FDepartmentname: '', //（补助单位名称）
+                FAmount: '', //（项目明细申请金额）
+                FRemarks: '', //（备注）
+                QtKmdm: '', //（预算项目编码）
+                QtKmmc: '' , //（预算项目名称）
+                FPayment:'', //(支付状态：0-待支付 1-支付异常  9-支付成功)
+                FPaymentdate:'' //（支付日期）
+              }
+            ]
           }
-        }
+        ],
+        * */
+
         var data = {
           infoData: {
             PaymentMst: this.PaymentMst,
             PaymentXmDtl: this.PaymentXmDtl
           },
         };
+        console.log(data);
         var   url='GBK/PaymentMstApi/PostAdd';
         if(!this.isAdd){
           url='GBK/PaymentMstApi/PostUpdate';
@@ -470,14 +576,15 @@
               BudgetdtlName: '', //（预算明细名称）
               FDepartmentcode: '', //（补助单位/部门）
               FDepartmentname: '', //（补助单位名称）
-              FAmount: '', //（项目明细申请金额）
+              FAmount: 0, //（项目明细申请金额）
               FRemarks: '', //（备注）
               QtKmdm: '', //（预算项目编码）
               QtKmmc: '' , //（预算项目名称）
               FPayment:'', //(支付状态：0-待支付 1-支付异常  9-支付成功)
               FPaymentdate:'' //（支付日期）
             }
-          ]
+          ],
+          QtAttachments:[]
         }
         this.PaymentXmDtl.push(obj);
         this.xmCheckList.push(false);
@@ -668,6 +775,10 @@
       },
       //弹出明细项目，f表示项目下标，s,表示项目对应pdlist下标
       showDetailPro(f,s){
+        if(!this.PaymentXmDtl[f].PaymentXm.XmMstPhid){
+          this.$msgBox.error('请先选择项目');
+          return;
+        }
         this.orgDetailType=true;
 
         this.getProDetail(f);
@@ -675,9 +786,13 @@
         this.choosedPro=[f,s];
       },
       //查看附件
-      clickFolder(file){
+      clickFolder(index,item){
         //this.$emit('showImg',file)
-        this.dialogVisible=true;
+        this.choosedIndexAndPro={
+          index:index,
+          pro:item
+        }
+        this.uploadVis=true;
       },
       //选择主项目
       changePro:function(index){
@@ -731,6 +846,15 @@
           this.approvalDataS.openDialog=false;
           this.$emit('delete',{flag:true,type:'applyproType'})
         }
+      },
+      //获取返回的上传文件列表
+      loadFile(val){
+        console.log('========wwwwwwwww============');
+        console.log(val);
+        //this.PaymentXmDtl[this.choosedIndexAndPro.index].QtAttachments=val;
+        this.PaymentXmDtl[this.choosedIndexAndPro.index].QtAttachments=val;
+        this.$forceUpdate( this.PaymentXmDtl );
+        this.uploadVis=false;
       }
     }
   }

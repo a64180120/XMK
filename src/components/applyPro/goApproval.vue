@@ -38,14 +38,17 @@
               >
                 <el-table-column prop="FCode" width="80" align="center" label="流程编码"></el-table-column>
                 <el-table-column prop="FName" align="center" label="流程名称"></el-table-column>
-                <!--<el-table-column width="60" align="center" label="查看">
+                <el-table-column width="60" align="center" label="查看">
                   <template slot-scope="scope">
-                    <i
-                      class="el-icon-search icon-search"
-                      @click="searchFlow(scope.row,scope.column.$index,scope.store)"
-                    ></i>
+                    <span style="display: inline-block;width: 100%;height: 100%;cursor: pointer" @click="searchFlow(scope.row,scope.column.$index,scope.store)">
+                      <i
+                        class="el-icon-search icon-search"
+
+                      ></i>
+                    </span>
+
                   </template>
-                </el-table-column>-->
+                </el-table-column>
               </el-table>
             </div>
           </div>
@@ -79,7 +82,12 @@
         >{{btnGroup.cancelName}}</el-button>
         <el-button size="small" type="primary" @click="submit">{{btnGroup.onfirmName}}</el-button>
       </div>
-      <auditfollow :visible="showAuditfollow" @update:visible="closeAuditFollow()"></auditfollow>
+      <auditfollow
+        :isApproval="true"
+        :auditMsg="auditMsg"
+        :visible="showAuditfollow"
+        @update:visible="closeAuditFollow()"
+      ></auditfollow>
     </el-dialog>
   </section>
 </template>
@@ -141,7 +149,8 @@ export default {
         FOpinion: '', //（备注）
         OperaPhid:this.userid,//(当前人的phid)
         OperatorCode :this.usercode//(当前人code)
-      }
+      },
+      auditMsg:[],//审批流数据存放
     }
   },
   computed: {
@@ -195,6 +204,16 @@ export default {
     },
     //查看详细流程
     searchFlow(row, column, index, store) {
+      console.log(row, column, index, store);
+      let param={
+        ProcId:row.PhId
+      };
+      this.getAxios('GSP/GAppvalRecord/GetAllPostsAndOpersByProc',param).then(res=>{
+        console.log(res);
+        this.auditMsg=res;
+      }).then(err=>{
+        console.log(err);
+      })
       this.showAuditfollow = true;
     },
     //表格单选

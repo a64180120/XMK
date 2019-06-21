@@ -2,19 +2,31 @@
   <div class="payIndex">
     <top-handle @refresh="getData" title="支付中心在线工作平台">
       <div class="navs">
-        <div class="nav" @click="payNav('payListData')">
+        <div
+          v-if="menubutton.paycenter_maintain=='True'"
+          class="nav"
+          @click="payNav('payListData')"
+        >
           <img src="../../assets/images/sfk.png" alt>
           <div>收付款信息维护</div>
         </div>
-        <div class="nav" @click="payNav('mergePayData')">
+        <div
+          v-if="menubutton.paycenter_mergepay=='True'"
+          class="nav"
+          @click="payNav('mergePayData')"
+        >
           <img src="../../assets/images/hb.png" alt>
           <div>合并支付</div>
         </div>
-        <div class="nav" @click="payNav('payErrorHandleData')">
+        <div
+          v-if="menubutton.paycenter_catch=='True'"
+          class="nav"
+          @click="payNav('payErrorHandleData')"
+        >
           <img src="../../assets/images/yc.png" alt>
           <div>异常处理</div>
         </div>
-        <div class="nav" @click="payNav('approvalData')">
+        <div v-if="menubutton.paycenter_check=='True'" class="nav" @click="payNav('approvalData')">
           <img src="../../assets/images/ss.png" alt>
           <div>送审</div>
         </div>
@@ -696,7 +708,8 @@ export default {
     ...mapState({
       orgid: state => state.user.orgid,
       userid: state => state.user.userid,
-      year: state => state.user.year
+      year: state => state.user.year,
+      menubutton: state => state.user.menubutton
     })
   },
   beforeDestroy() {

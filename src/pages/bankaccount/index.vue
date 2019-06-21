@@ -2,15 +2,15 @@
     <div class="bankaccount">
         <topHandle :title="'银行账户档案在线工作平台'" @refresh="refresh">
             <div class="btnCon">
-                <div v-if="menuButton.bankaccount_add" @click.stop="showAccountAdd('add')" class="handle">
+                <div v-if="menuButton.bankaccount_add=='True'" @click.stop="showAccountAdd('add')" class="handle">
                     <div class="topIcon"><img src="@/assets/images/xz.png" alt=""></div>
                     新增
                 </div>
-                <div v-if="menuButton.bankaccount_edit" @click.stop="showAccountAdd('update')" class="handle">
+                <div v-if="menuButton.bankaccount_edit=='True'" @click.stop="showAccountAdd('update')" class="handle">
                     <div class="topIcon"><img src="@/assets/images/zj2.png" alt=""></div>
                     修改
                 </div>
-                <div v-if="menuButton.bankaccount_delete" @click.stop="deleteRow" class="handle">
+                <div v-if="menuButton.bankaccount_delete=='True'" @click.stop="deleteRow" class="handle">
                     <div class="topIcon"><img src="@/assets/images/zj3.png" alt=""></div>
                     删除
                 </div>
@@ -22,8 +22,8 @@
         <el-dialog :title="'银行账号'+(handleBtn=='add'?'新增':'修改')" :visible.sync="accountAddShow">
             <accountAdd v-if="accountAddShow" @add-cancle="addCancle" :type="handleBtn" :info="info"></accountAdd>
         </el-dialog>
-        <!-- <el-dialog   :visible.sync="upload">
-            <upload ref="upload" />
+        <!-- <el-dialog  :visible.sync="upload">
+            <upload  @submit="submit"/>
         </el-dialog> -->
 
     </div>
@@ -41,7 +41,7 @@ import {mapState} from 'vuex'
 export default {
     name:'bankaccount',
     data(){
-        return{ 
+        return{
             upload:true,
             handleBtn:'',
             accountAddShow:false,
@@ -49,10 +49,10 @@ export default {
         }
     },
     computed:{
-        ...mapState({
-            menuButton: state => state.user.menubutton
-        })
-    },
+            ...mapState({
+                  menuButton: state => state.user.menubutton
+            })
+        },
     methods:{
         //刷新
         refresh(){
@@ -76,8 +76,8 @@ export default {
                  this.info.PersistentState=2;
             }else{
                 this.info={FLifecycle:'1',PersistentState:1};
-                this.info.OrgPhid=this.$refs.order.checkedOrg.PhId; 
-                this.info.OrgCode=this.$refs.order.checkedOrg.OCode; 
+                this.info.OrgPhid=this.$refs.order.checkedOrg.PhId;
+                this.info.OrgCode=this.$refs.order.checkedOrg.OCode;
                 this.info.OrgName=this.$refs.order.checkedOrg.OName;
             }
             this.accountAddShow=true;
@@ -88,7 +88,7 @@ export default {
             if(val){
                 this.refresh();
             }
-            
+
         },
         //删除行
         deleteRow(){
@@ -108,7 +108,7 @@ export default {
                     })
                     BankAccountDelete(data).then(res=>{
                         this.$msgBox.show(res.Msg);
-                        this.refresh();      
+                        this.refresh();
                     }).catch((err)=>{
                         console.log(err);
                         this.$msgBox.show('删除数据失败!')
@@ -117,36 +117,14 @@ export default {
         },
         // submit(){
         //     let files= this.$refs.upload.submit();
+        // submit(files){
         //     console.log(files)
-        //     var info = {
-        //         FYear: '2019',//（年度）
-        //         FName: '小红子',//（申请单名）
-        //         FOrgphid: '488181024000002',//（组织主键）
-        //         FOrgcode: '101',//（组织编码）
-        //         FOrgname: '浙江省总本级',//（组织名）
-        //         FDepphid: "251181026000001",//（部门主键）
-        //         FDepcode: '100.03',//（部门编码）
-        //         FDepname: '办公室',//（部门名称）
-        //         FAmountTotal: '120',//（申请单金额）
-        //         FDate: '2019-05-30',//（申请单时间）
-        //         FApproval: '',//（审批状态：0- 未审批 1-待审批 2- 未通过 9-审批通过）
-        //         IsPay: '',//（支付状态：0- 否 1-待支付 9-支付完成）
-        //         FDescribe: '111', //（申报说明）
-        //         FRemarks: '', //（备注）
-        //     }
         //     let formData = new FormData();
-        //     let paymentMstAndXm={
-        //         PaymentMst: info,
-        //         PaymentXmDtl: {}
-        //     }
-            
-        //     formData.append('paymentMstAndXm',JSON.stringify(paymentMstAndXm));
-            
+        //     formData.append('infodata',{});
+        //     formData.append('BTable','gcw3_voucher_mst');
         //     for(let file of files){
         //          formData.append('files',file.raw);
-        //            console.log(file.raw)
-        //     }
-        //     console.log(formData)
+      //     }
         //     testUpload(formData).then(res=>{
         //         console.log(res)
         //     }).catch(err => {
@@ -155,7 +133,7 @@ export default {
         // }
     },
     mounted(){
-        
+
     },
     components:{
         topHandle,
@@ -198,7 +176,5 @@ export default {
     }
  .bankaccount   .el-dialog__body {
      padding-top:0;
-   
-
 }
 </style>
