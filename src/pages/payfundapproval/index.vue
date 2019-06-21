@@ -279,7 +279,7 @@
         <div slot="title" class="dialog-title">
           <span style="float: left">查看申请</span>
         </div>
-          <applybill @showImg="showImg" :applyNum="applyNum"
+          <applybill v-if="detailDialog" @showImg="showImg" :applyNum="applyNum"
                      @delete="handleDelete">
             <div slot="btn-group" >
               <el-button v-if="isApproval" class="btn" size="mini" @click="aprovalItem">审批</el-button>
@@ -646,6 +646,7 @@
       // 关闭详情弹框事件
       closeDetailDialog(){
         this.selection = [];
+
         this.check = this.check.map((item,index,array)=> false)
       },
       //删除
