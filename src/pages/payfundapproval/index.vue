@@ -289,16 +289,6 @@
             </div>
           </applybill>
       </el-dialog>
-      <!--图片预览-->
-      <el-dialog class="dialog img-dialog" :visible.sync="imgDialog" :close-on-click-modal="false" width="40%">
-        <div slot="title" class="dialog-title">
-          <span style="float: left">查看附件</span>
-        </div>
-        <div class="btn-load">
-          <el-button class="btn">下载</el-button>
-        </div>
-        <img-view v-if="imgDialog"></img-view>
-      </el-dialog>
       <!--审批弹框-->
       <approval-dialog ref="approvalDialog" :rowData="selection" @refresh="loadData" @dialogFlow="childrenAuditfollow" @subSuc="plSubSuc()"></approval-dialog>
       <!--生成支付单弹框-->
@@ -324,7 +314,7 @@
   import { selection} from "./selection";
   import ImgView from "../../components/imgView/imgView";
   import PaylistDialog from "./paylistDialog";
-  import {mapState} from 'vuex'
+  import {mapState} from 'vuex';
 
   export default {
     name: "index",
@@ -372,14 +362,13 @@
           }
         },
         detailDialog:false,//打开详情弹框
-        imgDialog:false,//图片预览弹框
         openInnerDialog:false,//打开详情内层弹框
 
         //判断显示为已审批页面还是未审批页面
         isApproval:true,
         applyNum:"",//当前查看申请单的编号
         SplxPhid:"",
-        Approval:Boolean
+        Approval:Boolean,
       }
     },
 
@@ -633,8 +622,8 @@
       },
       //打开图片预览
       showImg(file){
-        console.log(file)
-        this.imgDialog= true
+        // console.log(file)
+        // // this.imgDialog= true
       },
       //生成支付单成功
       plSubSuc(){
@@ -673,7 +662,7 @@
         this.page.currentPage = 1;
         this.page.pageSize = 20;
         this.loadData()
-      }
+      },
     }
   }
 </script>

@@ -54,38 +54,6 @@ export default {
           {
             path: require('@/assets/test.jpg'),
             name: 'name'
-          },
-          {
-            path: require('@/assets/images/sp.png'),
-            name: 'name'
-          },
-          {
-            path: require('@/assets/images/sptg.png'),
-            name: 'name'
-          },
-          {
-            path: require('@/assets/test.jpg'),
-            name: 'name'
-          },
-          {
-            path: require('@/assets/test.jpg'),
-            name: 'name'
-          },
-          {
-            path: require('@/assets/test.jpg'),
-            name: 'name'
-          },
-          {
-            path: require('@/assets/test.jpg'),
-            name: 'name'
-          },
-          {
-            path: require('@/assets/test.jpg'),
-            name: 'name'
-          },
-          {
-            path: require('@/assets/test.jpg'),
-            name: 'name'
           }
         ]
       }
@@ -103,6 +71,11 @@ export default {
       nowMoveLength: 0, //当前移动距离
       maskShow: false, //遮罩层是否隐藏
       isPlay: false
+    }
+  },
+  watch:{
+    images(val){
+      this.nowImg = val[0].path
     }
   },
   mounted() {
@@ -126,7 +99,6 @@ export default {
       }
       if (Math.abs(this.nowMoveLength) < this.maxMoveLength) {
         this.nowMoveLength = this.nowMoveLength - 114
-        console.log(this.nowMoveLength)
       }
     },
     //列表获取当前点击的图片
@@ -163,7 +135,6 @@ export default {
 
 .img-view {
   width: 100%;
-  height: 405px;
   position: relative;
   > .img-body {
     width: 100%;
