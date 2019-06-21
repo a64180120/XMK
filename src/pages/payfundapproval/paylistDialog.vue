@@ -16,14 +16,24 @@
         @dialogFlow="searchFlow"
         @isArgeen="backAproval"
         @selectApprovaler="selectApprovaler"
+        @uploadFn="openUpload"
         :backPersonnel="backPersonnel"
         ref="approval"
         v-model="textare"
+        :file-count="fileCount"
       ></approval-bill>
       <div class="approval-btn">
         <el-button size="small" type="primary" @click="cancel()">取消</el-button>
         <el-button size="small" :disabled="disabled" type="primary" @click="submit()">生成支付单</el-button>
       </div>
+      <el-dialog
+        :visible.sync="uploadDialog"
+        width="25%"
+        :close-on-click-modal="false"
+        class=""
+        :append-to-body="true">
+        <upload @submit="submitFn"></upload>
+      </el-dialog>
     </el-dialog>
     <back-approval v-if="visible" :visible.sync="visible" :auditMsg="backData" @getBackPeople="getBackPeople" @closeBack="closeBack"></back-approval>
   </section>
@@ -32,9 +42,10 @@
 <script>
   import ApprovalBill from "../../components/approvalBill/approvalBill";
   import BackApproval from "../../components/backApproval/backApproval";
+  import Upload from "../../components/upload/index";
   export default {
     name: "paylistDialog",
-    components: {BackApproval, ApprovalBill},
+    components: {Upload, BackApproval, ApprovalBill},
     props:{
       rowData:{
         type:Array,
@@ -49,6 +60,7 @@
     },
     data(){
       return{
+        uploadDialog:false,
         visible:false,
         textare:'',
         openDialog:false,
@@ -61,7 +73,9 @@
         backData:[],//回退的审批人岗位集合
         operatorID:[], //操作人员集合,
         isApproval:Boolean,
-        disabled:false
+        disabled:false,
+        fileList:[],//文件列表
+        fileCount:0
       }
     },
     methods:{
@@ -112,6 +126,7 @@
         this.openDialog = false;
         this.visible = false;
         this.backPersonnel = [];
+        this.fileCount = 0;
         this.$refs.approval.handleValue = ''
       },
       //审批通过
@@ -125,6 +140,7 @@
         //     that.$emit('subSuc')
         //   }
         // })
+        let formData = new FormData();
 
         //同意数据 单条
         let data = {
@@ -137,22 +153,34 @@
           NextOperators:"",//下一岗位审批人id的集合
           FOpinion:this.textare //审批备注
         }
+        formData.append('PhId',this.rowData[0].PhId);
+        formData.append('ProcPhid',this.rowData[0].ProcPhid);
+        formData.append('PostPhid',this.rowData[0].PostPhid);
+        formData.append('RefbillPhid',this.rowData[0].RefbillPhid);
+        formData.append('FBilltype','001');
+        formData.append('FApproval',this.isAgree);
+        formData.append('FOpinion',this.textare);
         if (this.isAgree === '9') {
-          data.NextOperators = this.operatorID
+          formData.append('NextOperators',JSON.stringify(this.operatorID));
         }else if(this.isAgree === '2'){
           let arr =[]
           for (let key in this.backPersonnel){
             arr[key] = this.backPersonnel[key].OperatorPhid
           }
-          data.NextOperators = arr
-          data.BackPostPhid = this.backPost.PhId
+          formData.append('NextOperators',JSON.stringify(arr));
+          formData.append('BackPostPhid',this.backPost.PhId);
         }
-        console.log(1231321)
+        if(this.fileList.length !==0){
+          for(let file of this.fileList){
+            formData.append('files',file.raw);
+          }
+        }
         if (this.isApproval){
-          this.postAxios('/GAppvalRecord/PostApprovalRecord',data).then(res=>{
+          this.formAxios('GSP/GAppvalRecord/PostApprovalRecordList',formData).then(res=>{
             if (res.Status == 'success'&&res) {
               let that= this
               this.visible = false
+              this.fileCount = 0
               this.$msgBox.show({
                 content:'审批成功',
                 fn:function () {
@@ -165,9 +193,11 @@
               this.creatPayList()
             }else {
               this.$msgBox.show(res.Msg)
+              this.fileCount = 0
             }
           }).catch(err=>{
             this.$msgBox.show('请求出错')
+            this.fileCount = 0
           })
         } else {
         }
@@ -238,6 +268,7 @@
         this.openDialog = false
         this.visible = false
         this.textare = ''
+        this.fileCount = 0
       },
       //查看详细流程
       searchFlow(row){
@@ -262,6 +293,15 @@
           this.$msgBox.show('请求出错')
         })
       },
+      openUpload(e){
+        this.uploadDialog = true
+      },
+      //点击添加到附件列表
+      submitFn(e){
+        this.fileList = e
+        this.fileCount = e.length
+        this.uploadDialog = false
+      }
     }
   }
 </script>

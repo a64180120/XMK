@@ -3,12 +3,14 @@
     <handle-btn title="审批中心在线工作平台" @refresh="refresh()" :auditBtn="true">
       <div class="top" >
          <ul v-if="isApproval">
-           <li @click="aprovalItem()">
+           <!--v-if="MenuButton.approvalcenter_approval"-->
+           <li @click="aprovalItem()" >
              <div>
                <img src="../../assets/images/sp.png">
              </div>
              <span>审批</span>
            </li>
+           <!--v-if="MenuButton.approvalcenter_approvalpay"-->
            <li @click="creatPayItem()">
              <div>
                <img src="../../assets/images/sc.png">
@@ -17,6 +19,7 @@
            </li>
          </ul>
         <ul v-else>
+          <!-- v-if="MenuButton.approvalcenter_approvalpay"-->
           <li @click="creatPayList()">
             <div>
               <img src="../../assets/images/sc.png">
@@ -100,7 +103,7 @@
             </table>
           </div>
           <div v-if="isApproval" class="tableBody">
-            <table v-if="tableData.length !== 0">
+            <table>
               <colgroup>
                 <col width="5%">
                 <col width="10%">
@@ -160,11 +163,11 @@
                   </p>
                 </td>
               </tr>
+              <tr v-if="tableData.length === 0" :class="{trActive:check[idx]}">
+                <td colspan="10">未查询到数据</td>
+              </tr>
               </tbody>
             </table>
-            <div v-else style="width: 100%;margin-top: 60px;text-align: center">
-              <span style="">暂无数据</span>
-            </div>
           </div>
           <!--已审批表格-->
           <div v-if="!isApproval" class="tableHead">
@@ -210,7 +213,7 @@
             </table>
           </div>
           <div v-if="!isApproval" class="tableBody">
-            <table v-if="tableData.length !== 0">
+            <table>
               <colgroup>
                 <col width="5%">
                 <col width="10%">
@@ -253,11 +256,11 @@
                   </p>
                 </td>
               </tr>
+              <tr v-if="tableData.length === 0" :class="{trActive:check[idx]}">
+                <td colspan="10">未查询到数据</td>
+              </tr>
               </tbody>
             </table>
-            <div v-else style="width: 100%;margin-top: 60px;text-align: center">
-              <span style="">暂无数据</span>
-            </div>
           </div>
         </div>
         <div class="pageArea">
@@ -416,6 +419,7 @@
         UserId:state =>state.user.userid,
         Year:state =>state.user.year,
         Orgid:state =>state.user.orgid,
+        MenuButton:state =>state.user.menubutton
       })
     },
     methods:{

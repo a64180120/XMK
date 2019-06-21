@@ -2,7 +2,7 @@
     <div class="dictionary">
         <topHandle :title="'系统管理在线工作平台'">
             <div class="btnCon">
-                <div v-if="menuButton.datadic_edit" v-show="disabled" @click.stop="disabled=false" class="handle">
+                <div v-if="menuButton.datadic_edit=='True'" v-show="disabled" @click.stop="disabled=false" class="handle">
                     <div class="topIcon"><img src="@/assets/images/zj2.png" alt=""></div>
                     修改
                 </div>
@@ -163,8 +163,9 @@ export default {
             }
             dictionarySave(data).then(res=>{
                 if(res.Status=='error'){
-                    this.$msgBox.show(res.Msg)
+                    this.$msgBox.error(res.Msg)
                 }else{
+                    this.$msgBox.show(res.Msg)
                     this.disabled=true;
                     this.getData();
                 }

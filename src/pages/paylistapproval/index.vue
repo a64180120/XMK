@@ -3,6 +3,7 @@
     <handle-btn title="审批中心在线工作平台" :auditBtn="true" @refresh="refresh()">
       <div class="top" v-if="isApproval">
         <ul>
+          <!--v-if="MenuButton.approvalcenter_approval"-->
           <li @click="aprovalItem()">
             <div>
               <img src="../../assets/images/sp.png">
@@ -86,7 +87,7 @@
             </table>
           </div>
           <div v-if="isApproval" class="tableBody">
-            <table v-if="tableData.length !== 0">
+            <table>
               <colgroup>
                 <col width="5%">
                 <col width="15%">
@@ -147,11 +148,11 @@
                 </td>
                 <td></td>
               </tr>
+              <tr v-if="tableData.length === 0" :class="{trActive:check[idx]}">
+                <td colspan="10">未查询到数据</td>
+              </tr>
               </tbody>
             </table>
-            <div v-else style="width: 100%;margin-top: 60px;text-align: center">
-              <span style="">暂无数据</span>
-            </div>
           </div>
           <!--已审批表格-->
           <div v-if="!isApproval" class="tableHead">
@@ -199,7 +200,7 @@
             </table>
           </div>
           <div v-if="!isApproval" class="tableBody">
-            <table v-if="tableData.length !== 0">
+            <table>
               <colgroup>
                 <col width="5%">
                 <col width="15%">
@@ -243,11 +244,11 @@
                 </td>
                 <td></td>
               </tr>
+              <tr v-if="tableData.length === 0" :class="{trActive:check[idx]}">
+                <td colspan="10">未查询到数据</td>
+              </tr>
               </tbody>
             </table>
-            <div v-else style="width: 100%;margin-top: 60px;text-align: center">
-              <span style="">暂无数据</span>
-            </div>
           </div>
         </div>
         <div class="pageArea">
@@ -348,7 +349,8 @@
         OrgCode:state =>state.user.orgcode,
         UserId:state =>state.user.userid,
         Orgid:state =>state.user.orgid,
-        Year:state =>state.user.year
+        Year:state =>state.user.year,
+        MenuButton:state =>state.user.menubutton
       })
     },
     mounted() {

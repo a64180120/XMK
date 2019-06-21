@@ -20,18 +20,18 @@
             style="float:left;font-size:0.16rem;line-height:28px;"
           >支付单号：{{detail.Mst.FCode}}</span>
           <div class="top-btn">
-            <template v-if="data.itemType == 'error'">
+            <template v-if="data.itemType == 'error'&&menubutton.paycenter_catch=='True'">
               <span class="btn btn-large" @click="save('payErrorHandleData')">异常处理</span>
               <span class="btn btn-large" @click="save('new')">重新支付</span>
             </template>
-            <template v-if="data.itemType == 'notApprove'">
+            <template v-if="data.itemType == 'notApprove'&&menubutton.paycenter_maintain=='True'">
               <span class="btn btn-large" @click="save('')">保存</span>
               <span class="btn btn-large" style="padding:0" @click="save('approvalData')">保存并送审</span>
             </template>
-            <template v-if="data.itemType =='pay'">
+            <template v-if="data.itemType =='pay'&&menubutton.paycenter_mergepay=='True'">
               <span class="btn btn-large" @click="save('mergePayData')">支付</span>
             </template>
-            <template v-if="data.itemType =='approval'">
+            <template v-if="data.itemType =='approval'&&menubutton.paycenter_check=='True'">
               <span class="btn btn-large" @click="save('approval')">审批</span>
             </template>
             <span class="btn btn-large" v-show="false">打印</span>
@@ -131,7 +131,7 @@
                 @header-click="headerClick"
               >
                 <!-- 序号列 -->
-                <el-table-column type="index" width="80" header-align="center" align="center">
+                <el-table-column width="80" header-align="center" align="center">
                   <template slot="header" slot-scope="scope">
                     <el-checkbox
                       @click.stop.native="check"
@@ -828,6 +828,9 @@ export default {
           ) {
             this.$msgBox.error('请先完善数据信息')
             return
+          } else if (this.detail.Dtls.some(item => item.FRecAcnt.length < 19)) {
+            this.$msgBox.error('收款账户长度错误！')
+            return
           }
           this[type].openDialog = true
           this[type].data = this.data.data
@@ -1074,6 +1077,7 @@ export default {
       return orgListJson.slice(nameIndex, nameEndIndex)
     },
     ...mapState({
+      menubutton: state => state.user.menubutton,
       orgid: state => state.user.orgid,
       userid: state => state.user.userid,
       year: state => state.user.year,
