@@ -23,8 +23,8 @@
               <span>
                 附单据 {{fileCount}} 张
                 <i
-                  v-if="isApproval&&false"
-                  class="el-icon-upload"
+                  v-if="!isApproval"
+                  class="el-icon-paperclip show-upload"
                   @click="showUpload"
                 ></i>
               </span>
@@ -178,7 +178,7 @@ export default {
   },
   methods: {
     showUpload() {
-      this.$emit('update:upload', true)
+      this.$emit('uploadFn', true)
     },
     changeDialog() {
       this.openDialog = true
@@ -326,4 +326,7 @@ export default {
   color: #0099ff;
   cursor: pointer;
 }
+  .show-upload{
+    font-size: 0.24rem;
+  }
 </style>

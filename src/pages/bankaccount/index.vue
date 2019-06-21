@@ -116,7 +116,7 @@ export default {
                 })
         },
         // submit(){
-        //     let files= this.$refs.upload.submit(files);
+        //     let files= this.$refs.upload.submit();
         //     console.log(files)
         //     var info = {
         //         FYear: '2019',//（年度）
