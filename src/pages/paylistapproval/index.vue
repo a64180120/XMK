@@ -394,7 +394,7 @@
           PageIndex:this.page.currentPage,
           PageSize:this.page.pageSize,
           BType:this.BType,
-          BName:this.searchForm.BName,
+          BName:this.searchForm.BName.trim(),
           Operator:this.searchForm.Operator,
           StopHour:this.searchForm.StopHour,
           BStartDate:this.searchForm.BDate === null  ? '':this.searchForm.BDate[0],
@@ -421,18 +421,18 @@
             that.$msgBox.error("数据获取异常")
           })
         }else {
-          this.getAxios('/GAppvalRecord/GetDoneRecordList',data).then(success=>{
-            console.log(success.Data)
-            if (success && success.Status === "success") {
-              that.tableData = success.Data
-              that.page.total = success.Total
+          this.getAxios('/GAppvalRecord/GetDoneRecordList',data).then(res=>{
+            console.log(res.Data)
+            if (res && res.Status === "success") {
+              that.tableData = res.Data
+              that.page.total = res.Total
               // this.page.total = 100
-              console.log(success)
-              for (let i in success.Data) {
+              console.log(res)
+              for (let i in res.Data) {
                 that.check.push(false)
               }
             }else {
-              this.$msgBox.show(success.Msg)
+              this.$msgBox.show(res.Msg)
             }
           }).catch(err=>{
             that.$msgBox.error("数据获取异常")
@@ -584,6 +584,9 @@
         this.page.currentPage = 1;
         this.page.pageSize = 20;
         this.loadData()
+      },
+      plSubSuc(){
+
       }
     }
   }

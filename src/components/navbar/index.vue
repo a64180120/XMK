@@ -15,9 +15,9 @@
             </li> -->
             <li @mouseenter="liActive(item,true)" @mouseleave="liActive(item,false)" :class="{choose:choosed==index}" class="navitem active" v-for="(item,index) of navlist" :key="index">
                 <div @click.stop="routerto(item.path)">
-                    <img v-show="!item.active&&choosed!=index" src="../../assets/images/1_03.png" alt="">
-                    <img v-show="choosed==index||item.active" src="../../assets/images/2_03.png" alt="">
-                    <div class="navIcon"></div>
+                    <!-- <img v-show="!item.active&&choosed!=index" src="../../assets/images/1_03.png" alt="">
+                    <img v-show="choosed==index||item.active" src="../../assets/images/2_03.png" alt=""> -->
+                    <div  :class="item.icon+' navIcon'"></div>
                     <span :title="item.name">{{item.name}}</span>    
                 </div>
                 <div class="subitemCon">
@@ -35,8 +35,8 @@ export default {
     name:'navbar',
     data(){
         return{
-            navlist:    [{url:'../../assets/images/1_03.png',name:'审批流管理',children:[{name:'审批流程设置',path:'/audit'},{name:'岗位人员设置',path:'/post'}]},
-                    {url:'../../assets/images/1_14.png',name:'数据与安全维护',children:[{name:'数据字典',path:'/dictionary'},{name:'支付口令设置',path:'/paypassword'}]}
+            navlist:    [{icon:'navaudit',name:'审批流管理',children:[{name:'审批流程设置',path:'/audit'},{name:'岗位人员设置',path:'/post'}]},
+                    {icon:'navdata',name:'数据与安全维护',children:[{name:'数据字典',path:'/dictionary'},{name:'支付口令设置',path:'/paypassword'}]}
             ],
             active:false,
             choosed:0
@@ -82,11 +82,20 @@ $activeColor:#59abf1;
     }
     >ul{
         .navitem{
+
             height:40px;
             line-height: 40px;
             position:relative;
             cursor: pointer;
             color:$btnColor;
+            >div{
+               
+              
+               >span{
+                    line-height: 30px;
+               }
+
+            }
             img{
                 vertical-align: middle;
                 position: relative;
@@ -126,14 +135,46 @@ $activeColor:#59abf1;
         }
         .active{
             overflow: inherit;
+            &:hover{
+                .navaudit{
+                    background:url("../../assets/images/2_12.png");
+                    background-size:cover;      
+                }
+                .navdata{
+                    background:url("../../assets/images/2_14.png");
+                    background-size:cover;
+                }
+            }
         }
         .choose{
             background: $activeColor;
             color:#fff;
+            .navaudit{
+                background:url("../../assets/images/2_12.png");
+                background-size:cover;      
+            }
+            .navdata{
+                background:url("../../assets/images/2_14.png");
+                background-size:cover;
+            }
         }
     }
     .navIcon{
         display: inline-block;
+        width:30px;
+        height:30px;
+        vertical-align: middle;
+        
+    }
+    .navaudit{
+        background:url("../../assets/images/1_12.png");
+        background-size:cover;
+        
+    }
+    .navdata{
+        background:url("../../assets/images/1_14.png");
+        background-size:cover;
+    
     }
 }
 </style>

@@ -69,9 +69,21 @@
                 </li>
                 <li>
                   <span>申请金额</span>
-                  <el-input-number size="small" :precision="2" :controls="false" v-model="searchData.money.smoney" @change="moneyChange" style="width:auto"></el-input-number>
+                  <input style="width:auto;height: 32px;" class="el-input__inner"
+                                   :precision="2"
+                                   :controls="false"
+                                   v-model="money.smoney"
+                                   @keydown="clearZero(0)"
+                                    @keyup="clearNum(0)"
+                                   @blur="moneyChange" />
                   <span>至</span>
-                  <el-input-number size="small" :precision="2" :controls="false" v-model="searchData.money.emoney" @change="moneyChange" style="width: auto"></el-input-number>
+                  <input style="width:auto;height: 32px;" class="el-input__inner"
+                         :precision="2"
+                         :controls="false"
+                         v-model="money.emoney"
+                         @keydown="clearZero(1)"
+                         @keyup="clearNum(1)"
+                         @blur="moneyChange"/>
                 </li>
               </ul>
 
@@ -128,9 +140,9 @@
                   </li>
                   <li class="smallinput">
                     <span>申请金额</span>
-                    <el-input size="small" v-model="searchData.money.smoney"></el-input>
+                    <el-input size="small" v-model="money.smoney"></el-input>
                     <span>至</span>
-                    <el-input size="small" v-model="searchData.money.emoney"></el-input>
+                    <el-input size="small" v-model="money.emoney"></el-input>
                   </li>
                   <li style="text-align: center;margin:15px 0 0 0 ">
                     <button class="cancelBtn">重置</button>
@@ -339,6 +351,10 @@
               pageIndex:1,
               pageSize:20
             },
+            money:{
+              smoney:'',
+              emoney:''
+            },
             searchData:{
               approvalType:'',
               payType:'',
@@ -346,10 +362,7 @@
 
               searchValue:'',
               date:[],
-              money:{
-                smoney:'',
-                emoney:''
-              }
+
             },
             approvalList:[{value:'',label:'全部'},{value:0,label:'待送审'},{value:1,label:'审批中'},{value:2,label:'审批未通过'},{value:9,label:'审批通过'}],
             payList:[{value:'',label:'全部'},{value:0,label:'待支付'},{value:1,label:'支付异常'},{value:9,label:'支付成功'}],
@@ -409,9 +422,6 @@
           handler(val){
             if(val.bmType){
               this.pageSearch.pageIndex=1;
-              if(val.money.smoney>val.money.emoney){
-                this.searchData.emoney=this.searchData.smoney
-              }
               this.getData();
             }
           },
@@ -431,6 +441,38 @@
         })
       },
       methods:{
+        clearZero:function(type){
+          console.log(this.money.smoney)
+
+         if(type==0){
+           if(this.money.smoney=='.'){
+             this.money.smoney='0.';
+           }
+           if(!this.money.smoney||this.money.smoney=='0.00'){
+             this.money.smoney='';
+           }
+
+         }else{
+           if(this.money.emoney=='.'){
+             this.money.emoney='0.';
+           }
+           if(!this.money.emoney||this.money.emoney=='0.00'){
+             this.money.emoney='';
+           }
+         }
+        },
+        clearNum:function(type){
+            let val=this.money[type==0?'smoney':'emoney']+'';
+            //obj.value = obj.value.replace(/[\u4e00-\u9fa5]/g,"");  //清除“汉字”和“.”以外的字符
+            val = val.replace(/[^\d.]/g,"");  //清除“数字”和“.”以外的字符
+            val = val.replace(/\.{2,}/g,"."); //只保留第一个. 清除多余的
+            val = val.replace(".","$#$").replace(/\./g,"").replace("$#$",".");
+            val = val.replace(/^(\-)*(\d+)\.(\d\d).*$/,'$1$2.$3');//只能输入两个小数
+            if(val.indexOf(".")< 0 && val !=""){//以上已经过滤，此处控制的是如果没有小数点，首位不能为类似于 01、02的金额
+              val= parseFloat(val);
+            }
+            this.money[type==0?'smoney':'emoney']=val;
+        },
           //td选中事件
         changeCheck(val){
           this.checkList[val]=!this.checkList[val];
@@ -576,8 +618,8 @@
             PayBz:this.searchData.payType,
             StartDate:this.searchData.date[0]||'',
             EndDate:this.searchData.date[1]||'',
-            MinAmount:this.searchData.money.smoney==0?'':this.searchData.money.smoney,
-            MaxAmount:this.searchData.money.emoney==0?'':this.searchData.money.emoney,
+            MinAmount:this.money.smoney==0?'':this.money.smoney,
+            MaxAmount:this.money.emoney==0?'':this.money.emoney,
             FOrgphid:this.orgid,
             FDepphid:this.apartData['bm'].PhId,
             FYear:this.year
@@ -641,25 +683,16 @@
               let upList=this.getCheckedList();
               if(upList.length==0){
                 this.$msgBox.show({
-                  content: '请选择要修改的数据。',
-                  fn: () => {
-                    console.log('test fn')
-                  }
+                  content: '请选择要修改的数据。'
                 })
               }else if(upList.length>1){
                 this.$msgBox.show({
-                  content: '一次只允许修改一条数据。',
-                  fn: () => {
-                    console.log('test fn')
-                  }
+                  content: '一次只允许修改一条数据。'
                 })
               }else{
                 if(upList[0].FApproval!=0&&upList[0].FApproval!=2){
                   this.$msgBox.show({
-                    content: '只允许修改待送审及未通过项目。',
-                    fn: () => {
-                      console.log('test fn')
-                    }
+                    content: '只允许修改待送审及未通过项目。'
                   })
                 }else{
                   this.applyNum=upList[0].PhId+'';
@@ -675,10 +708,7 @@
               let delList=this.getCheckedList();
               if(delList.length==0){
                 this.$msgBox.show({
-                  content: '请选择要删除的数据。',
-                  fn: () => {
-                    console.log('test fn')
-                  }
+                  content: '请选择要删除的数据。'
                 })
               }else{
                 let phidList=[];
@@ -697,19 +727,13 @@
                 this.postAxios('GBK/PaymentMstApi/PostDelete',param).then(res=>{
                   if(res.Status=='success'){
                     this.$msgBox.show({
-                      content: '删除成功。',
-                      fn: () => {
-                        console.log('test fn')
-                      }
+                      content: '删除成功。'
                     });
                     this.getData();
                     this.checkList=[];
                   }else{
                     this.$msgBox.show({
-                      content: '删除失败，请稍后重试。',
-                      fn: () => {
-                        console.log('test fn')
-                      }
+                      content: '删除失败，请稍后重试。'
                     })
                   }
 
@@ -893,9 +917,16 @@
           this.getData();
         },
         moneyChange:function(){
-          if(this.searchData.money.smoney>this.searchData.money.emoney){
-            this.searchData.money.emoney=this.searchData.money.smoney;
+          if(this.money.smoney&&this.money.smoney.toString().lastIndexOf('.')==this.money.smoney.length-1){
+            this.money.smoney.length=this.money.smoney.length-1
           }
+          if(this.money.emoney&&this.money.emoney.toString().lastIndexOf('.')==this.money.emoney.length-1){
+            this.money.emoney.length=this.money.emoney.length-1
+          }
+          if(this.money.smoney>this.money.emoney){
+            this.money.emoney=this.money.smoney;
+          }
+          this.getData();
         }
       }
     }

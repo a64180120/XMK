@@ -3,7 +3,7 @@
       <div class="dialogContainer passwordsetting" v-show="showSetting">
         <div class="title">
             <span>支付口令设置</span> 
-            <div v-if="menuButton.paypsd_edit" @click="updatePsd" v-show="disabled">
+            <div v-if="menuButton.paypsd_edit=='True'" @click="updatePsd" v-show="disabled">
                 <img src="@/assets/images/bj.png" alt="">
                 <i>修改口令</i>
             </div> 
@@ -83,7 +83,7 @@
               <el-radio :label="0">启用</el-radio>
               <el-radio :label="1">停用</el-radio>
             </el-radio-group>
-            <div v-if="menuButton.paypsd_isactive" v-show="disabled" @click="updateEnable" class="fr btn" style="margin-top:10px">保存</div>
+            <div v-if="menuButton.paypsd_isactive=='True'" v-show="disabled" @click="updateEnable" class="fr btn" style="margin-top:10px">保存</div>
           </div>
           <div v-show="!disabled" class="btns">
             <span class="btn btn-cancel" @click="beforeClose()">取消</span>
