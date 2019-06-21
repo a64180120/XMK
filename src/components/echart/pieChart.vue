@@ -10,25 +10,7 @@
       data(){
           return {
             target:'',
-           /* chart:[
-              {
-                value:255,
-                name:'视频广告'
-              },
-              {
-                value:275,
-                name:'联盟广告'
-              },
-              {
-                value:275,
-                name:'邮件营销'
-              },
-              {
-                value:275,
-                name:'直接访问'
-              },
-            ],
-            title:['视频广告','联盟广告','邮件营销','直接访问']*/
+            dw:'元'
           }
       },
       props: {
@@ -48,7 +30,26 @@
       watch:{
         chart(val){
           if(val){
-
+            console.log(val)
+            let maxNum=0;
+            for(var i in val){
+              if(val[i].value>maxNum){
+                maxNum=val[i].value
+              }
+            }
+            if(maxNum>=10000&&maxNum<100000000){
+              this.dw='万元';
+              for(var j in val){
+                val[j].value=(val[j].value/10000).toFixed(2)
+              }
+            }else if(maxNum>=100000000){
+              this.dw='亿元';
+              for(var k in val){
+                val[k].value=(val[k].value/100000000).toFixed(2)
+              }
+            }else{
+              this.dw='元';
+            }
             this.draw();
           }
         },
@@ -68,7 +69,17 @@
         },
           draw(){
             let option={
-              tooltip:{},
+              title: {
+                text:'单位: '+this.dw,
+                textStyle:{
+                  fontSize:13,
+                  color:'red'
+                }
+              },
+              tooltip:{
+                trigger:'item',
+                formatter:"{b}"
+              },
               legend:{
                 data:this.title,
                 bottom:20
@@ -77,14 +88,29 @@
               series:[
                 {
                   type:'pie',
-                  radius:'50%',
-                  center:'center',
+                  radius:'55%',
+                  selectedMode:'single',
+                  selectedOffset:10,
+                  center:['50%','50%'],
+                  clockwise:'true',
                   label:{
-                    normal:{
-                       formatter:'{c}',
-                      position:'inside'
+                    formatter: ['{c|{c}}','{d}%'].join('\n'),
+                    position:'outside',
+                    rich: {
+                      c: {
+                        color:'red',
+                        lineHeight:20,
+                        fontSize:20
+                      },
                     }
 
+                  },
+                  labelLine:{
+                    normal:{
+                      length:10,
+                      length2:5,
+                      smooth:false,
+                    }
                   },
                   data:this.chart
                 }
