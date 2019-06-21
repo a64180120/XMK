@@ -14,7 +14,7 @@
         <div class="handle">
           <div class="title">
             <span>送审备注</span>
-            <span style="float:right;color:#333;">附单据 0 张</span>
+            <span style="float:right;color:#333;" @click="openUpload">附单据 {{fileCount}} 张</span>
           </div>
           <div class="textare">
             <el-input type="textarea" v-model="param.FOpinion"></el-input>
@@ -89,6 +89,14 @@
         @update:visible="closeAuditFollow()"
       ></auditfollow>
     </el-dialog>
+    <el-dialog
+      :visible.sync="uploadDialog"
+      width="25%"
+      :close-on-click-modal="false"
+      class=""
+      :append-to-body="true">
+      <upload @submit="submitFn"></upload>
+    </el-dialog>
   </section>
 </template>
 
@@ -96,10 +104,11 @@
 import auditfollow from '../../components/auditFollow/auditfollow'
 import { getAppvalProc, postAddAppvalRecord } from '@/api/paycenter'
 import {mapState} from 'vuex'
+import Upload from "../../components/upload/index";
 
 export default {
   name: 'goApproval',
-  components: { auditfollow,mapState },
+  components: { auditfollow,mapState,Upload },
   props: {
     data: {
       type: Object,
@@ -131,6 +140,7 @@ export default {
   },
   data() {
     return {
+      uploadDialog:false,
       showAuditfollow: false,
       openDialog: false,
       handleValue: '',
@@ -151,6 +161,8 @@ export default {
         OperatorCode :this.usercode//(当前人code)
       },
       auditMsg:[],//审批流数据存放
+      fileList:[],//送审附件存放
+      fileCount:0,//附件数量
     }
   },
   computed: {
@@ -245,11 +257,26 @@ export default {
           this.param.NextOperators.push(nextOperatorsList[i].PhId)
         }
       }
-      this.param.FSendDate=new Date();
+
       this.param.OperaPhid=this.userid;
       this.param.OperatorCode=this.usercode;
       this.param.RefbillPhidList=this.data.data;
-      this.postAxios('GSP/GAppvalRecord/PostAddAppvalRecord',this.param).then(res=>{
+      let formData = new FormData()
+
+      for (let i in this.param) {
+        console.log(i, this.param[i])
+        if(i=='RefbillPhidList'||i=='NextOperators'){
+          formData.append(i + '', JSON.stringify(this.param[i]))
+        }else{
+          formData.append(i + '', this.param[i])
+        }
+
+
+      }
+      for (let file of this.fileList) {
+        formData.append('files', file.raw)
+      }
+      this.formAxios('GSP/GAppvalRecord/PostAddAppvalRecords',formData).then(res=>{
         if (res.Status == 'error') {
           this.$msgBox.error(res.Msg)
           return
@@ -278,6 +305,16 @@ export default {
       }).catch(err=>{
         console.log(err)
       })
+    },
+    openUpload(e){
+      this.uploadDialog = true
+    },
+    //点击添加到附件列表
+    submitFn(e){
+      console.log(e);
+      this.fileList = e
+      this.fileCount = e.length
+      this.uploadDialog = false
     }
   },
   /*created() {
