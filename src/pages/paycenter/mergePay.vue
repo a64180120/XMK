@@ -336,20 +336,22 @@ export default {
       // 获得银行服务状态
       getBankServiceState({})
         .then(res => {
-          if (res.Status == 'error') {
-            this.$msgBox.error(res.Msg)
-            console.log(res)
-            return
-          }
-          var ids = this.data.data.map(item => {
-            return item.Mst.PhId
-          })
-          console.log(ids)
+          // if (res.Status == 'error') {
+          //   this.$msgBox.error(res.Msg)
+          //   console.log(res)
+          //   return
+          // }
+          // var ids = this.data.data.map(item => {
+          //   return item.Mst.PhId
+          // })
+          // console.log(ids)
+          var ids = this.data.data[0].Mst.PhId
           postSubmitPayments({
-            infoData: ids,
-            // id: this.data.data.Mst.PhId,
+            // infoData: ids,
+            id: ids,
             uid: this.userid,
-            orgid: this.orgid
+            orgid: this.orgid,
+            ryear: this.year
           })
             .then(res => {
               if (res.Status == 'error') {
@@ -378,8 +380,6 @@ export default {
           this.$msgBox.error(err.Message || '获得银行服务状态失败！')
         })
     },
-    // 请求-设置支付口令
-    postSavePayPsd() {},
     // 请求-判断口令正确-正确直接发起支付
     postJudgePayPsd(suc) {
       postJudgePayPsd({
@@ -430,7 +430,8 @@ export default {
       orgid: state => state.user.orgid,
       username: state => state.user.username,
       orgcode: state => state.user.orgcode,
-      usercode: state => state.user.usercode
+      usercode: state => state.user.usercode,
+      year: state => state.user.year
     })
   },
   watch: {
