@@ -336,19 +336,19 @@ export default {
       // 获得银行服务状态
       getBankServiceState({})
         .then(res => {
-          // if (res.Status == 'error') {
-          //   this.$msgBox.error(res.Msg)
-          //   console.log(res)
-          //   return
-          // }
-          // var ids = this.data.data.map(item => {
-          //   return item.Mst.PhId
-          // })
+          if (res.Status == 'error') {
+            this.$msgBox.error(res.Msg)
+            console.log(res)
+            return
+          }
+          var ids = this.data.data.map(item => {
+            return item.Mst.PhId
+          })
           // console.log(ids)
-          var ids = this.data.data[0].Mst.PhId
+          // var ids = this.data.data[0].Mst.PhId
           postSubmitPayments({
-            // infoData: ids,
-            id: ids,
+            infoData: ids,
+            // id: ids,
             uid: this.userid,
             orgid: this.orgid,
             ryear: this.year

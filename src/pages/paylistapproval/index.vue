@@ -264,17 +264,10 @@
       </div>
 
     </div>
-    <!--审批流附件预览-->
-    <el-dialog class="dialog img-dialog" :visible.sync="imgDialog" :close-on-click-modal="false" width="40%">
-      <div slot="title" class="dialog-title">
-        <span style="float: left">查看附件</span>
-      </div>
-      <img-view v-if="imgDialog" :images="imgList"></img-view>
-    </el-dialog>
     <!--审批-->
     <pay-dialog ref="payDialog" :rowData="selection" @refresh="loadData" @dialogFlow="childrenAuditfollow" @subSuc="plSubSuc()"></pay-dialog>
     <!--查看审批流程-->
-    <auditfollow :visible.sync="visible" :auditMsg="auditMsg" @getImgList="getImgList"></auditfollow>
+    <auditfollow :visible.sync="visible" :auditMsg="auditMsg"></auditfollow>
     <!--组织树-->
     <orgtree :data="orgtreeData" :checkedOrg="checkedOrg" :visible.sync="orgType" @confirm="getOrg"></orgtree>
     <!--支付单查看-->
@@ -294,7 +287,6 @@
   import {mapState} from 'vuex'
   import PayDialog from "./payDialog";
   import ImgView from "../../components/imgView/imgView";
-  import { baseURL } from "@/utils/config.js";
   export default {
     name: "index",
     components: {ImgView, PayDialog, Paylist, Orgtree, ApprovalDialog, Applybill, Auditfollow, SearchInput, HandleBtn},
@@ -351,8 +343,6 @@
 
         //审批弹框
         approvalDialog:false,
-        imgList:[],//图片列表
-        imgDialog:false,//图片预览弹框
       }
     },
     computed:{

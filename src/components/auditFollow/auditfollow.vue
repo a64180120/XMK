@@ -15,11 +15,24 @@
         </ul>
       </div>
     </div>
+    <el-dialog
+      class="dialog img-dialog"
+      :visible.sync="imgDialog"
+      :append-to-body="true"
+      :close-on-click-modal="false"
+      width="40%">
+      <div slot="title" class="dialog-title">
+        <span style="float: left">查看附件</span>
+      </div>
+      <img-view v-if="imgDialog" :images="imgList"></img-view>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import auditMsg from './auditMsg'
+import ImgView from "../imgView/imgView";
+import { baseURL } from "@/utils/config.js";
 export default {
   name: 'auditfollow',
   props: {
@@ -42,7 +55,9 @@ export default {
   data() {
     return {
       activeName: '',
-      sign: []
+      sign: [],
+      imgList:[],//图片列表
+      imgDialog:false,//图片预览弹框
     }
   },
   watch: {
@@ -57,14 +72,30 @@ export default {
     close() {
       this.$emit('update:visible', false)
     },
+    //通过审批流获取图片列表
     getImgList(imgList){
-      console.log(22)
-
-
-      this.$emit('getImgList',imgList)
+      if (this.imgList.length !== 0){
+        for (let key in this.imgList){
+          this.imgList.splice(key,1)
+        }
+      }
+      this.imgDialog= false
+      let arr = []
+      if(imgList !== null){
+        this.imgDialog= true
+        for (let key in imgList){
+          let img ={
+            name:imgList[key].BUrlpath.replace('/UpLoadFiles/BkPayment/',''),
+            path:baseURL.replace('/api','')+imgList[key].BUrlpath
+          };
+          this.$set(this.imgList,key,img)
+        }
+      }
+      console.log(this.imgList)
     }
   },
   components: {
+    ImgView,
     auditMsg
   }
 }
@@ -127,6 +158,12 @@ export default {
       }
     }
   }
+}
+.dialog-title span {
+  width: 100%;
+  text-align: left;
+  font-size: 0.16rem;
+  border-bottom: 1px solid #eaeaea;
 }
 </style>
 
