@@ -58,11 +58,6 @@ export function getBudgetAccountsList(param) {
   )
 }
 
-// 支付单单笔支付
-export function postSubmitPayment(param) {
-  return Vue.prototype.postAxios('GGK/GKPaymentMstApi/PostSubmitPayment', param)
-}
-
 //获得银行服务状态
 export function getBankServiceState(param) {
   return Vue.prototype.getAxios(
@@ -71,13 +66,18 @@ export function getBankServiceState(param) {
   )
 }
 
-// 支付多笔支付
+// 支付单单笔支付
 export function postSubmitPayments(param) {
-  return Vue.prototype.postAxios(
-    'GGK/GKPaymentMstApi/PostSubmitPayments',
-    param
-  )
+  return Vue.prototype.postAxios('GGK/GKPaymentMstApi/PostSubmitPayment', param)
 }
+
+// 支付多笔支付
+// export function postSubmitPayments(param) {
+//   return Vue.prototype.postAxios(
+//     'GGK/GKPaymentMstApi/PostSubmitPayments',
+//     param
+//   )
+// }
 
 /*
 TypeCode: 操作员id,
@@ -163,5 +163,8 @@ FOpinion: 'FFFF', （备注）
 */
 // 送审
 export function postAddAppvalRecord(param) {
-  return Vue.prototype.postAxios('GSP/GAppvalRecord/PostAddAppvalRecord', param)
+  return Vue.prototype.formAxios(
+    'GSP/GAppvalRecord/PostAddAppvalRecords',
+    param
+  )
 }

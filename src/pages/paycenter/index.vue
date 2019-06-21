@@ -661,6 +661,18 @@ export default {
                 item.Mst.checked = false
               })
               return
+            } else if (
+              handleitem.some(item => {
+                return item.Dtls.some(subitem => {
+                  return subitem.FRecAcnt.length < 19
+                })
+              })
+            ) {
+              this.$msgBox.error('收款账户长度错误！')
+              this.tableData.forEach(item => {
+                item.Mst.checked = false
+              })
+              return
             }
             break
         }

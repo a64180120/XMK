@@ -247,9 +247,9 @@
           <!--部门选择-->
           <el-select size="small" style="width: 250px;" v-model="searchData.bmType" @change="changeApart">
             <el-option v-for="item in bmList"
-                       :key="item.OCode"
+                       :key="item.PhId"
                        :label="item.OName"
-                       :value="item.OCode">
+                       :value="item.PhId">
             </el-option>
           </el-select>
           <!--预算显示区域-->
@@ -262,7 +262,7 @@
               <p style="color:#f52c1d" :title="apartData.Amount | NumFormat">
                 <num :vv="apartData.Amount | NumFormat"></num>
                 <!--{{apartData.money}}--></p>
-              <div>支出预算总额</div>
+              <div>支出预算总额(元)</div>
             </div>
           </el-card>
           <el-card>
@@ -561,7 +561,7 @@
           this.searchData.bmType='';
           this.getAxios('GQT/CorrespondenceSettingsApi/GetDeptByUnit',param).then(res=>{
             this.bmList=res.Record;
-            this.searchData.bmType=res.Record[0].OCode;
+            this.searchData.bmType=res.Record[0].PhId;
             this.apartData['bm']=this.bmList[0];
             this.$store.commit('user/setBm',this.bmList[0]);
             this.getAppvalProc();
@@ -572,20 +572,28 @@
         },
         //获取部门对应的项目及项目总额
         getAllProByBm:function(){
+
           let param={
-            FYear: this.year,  //年度
-            FDeclarationUnit: this.orgcode, //组织代码
-            FBudgetDept: this.searchData.bmType //部门代码
+            Year: this.year,  //年度
+            UnitId: this.orgid, //组织代码
+            DeptId: this.searchData.bmType //部门代码
           };
+          /*alert(param.Year)*/
           this.apartData.Mst=[];
           this.apartData.Amount=0;
+          this.bzType='';
+          this.chartData.chart=[{name:'可申请',value:0},{name:'冻结',value:0},{name:'已使用',value:0}];
           this.getAxios('GYS/BudgetMstApi/GetBudgetMstList',param).then(res=>{
             this.apartData.Mst=res.Mst;
-            for(var i in res.Mst){
-              this.apartDataMst[res.Mst[i].PhId]=res.Mst[i].FProjName;
+            if(res.Mst.length>0){
+              for(var i in res.Mst){
+                this.apartDataMst[res.Mst[i].PhId]=res.Mst[i].FProjName;
+              }
+              this.apartData.Amount=res.FAmount;
+              this.bzType=res.Mst[0].PhId;
+              this.getChartList(res.Mst[0].PhId);
             }
-            this.apartData.Amount=res.FAmount;
-            this.bzType=res.Mst[0].PhId;
+
           }).catch(err=>{
             console.log(err);
           })
@@ -674,6 +682,10 @@
 
           switch (val) {
             case 'add':
+              if(this.apartData.Mst.length==0){
+                this.$msgBox.error('当前部门无预算支出项目，无法发起资金拨付申请。')
+                return;
+              }
               this.isAdd=true;
               this.$forceUpdate(this.isAdd);
               this.applyproTitle='新增申请';
@@ -896,7 +908,7 @@
         },
         changeApart:function(val){
          for(var i in this.bmList){
-            if(this.searchData.bmType==this.bmList[i].OCode){
+            if(this.searchData.bmType==this.bmList[i].PhId){
               this.apartData.bm=this.bmList[i];
               this.$store.commit('user/setBm',this.bmList[i]);
 

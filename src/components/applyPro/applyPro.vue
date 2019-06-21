@@ -425,7 +425,6 @@
             this.PaymentXmDtl[i].PaymentDtls[j].QtKmmc=this.PaymentXmDtl[i].PaymentXm.XmProjname;*/
           }
         }
-        debugger
         for(var i in this.PaymentMst){
           if(i=='FName'&&!this.PaymentMst[i]){
             this.$msgBox.error('请填写申请单名称');

@@ -22,11 +22,7 @@
             <li>
               <span>
                 附单据 {{fileCount}} 张
-                <i
-                  v-if="!isApproval"
-                  class="el-icon-paperclip show-upload"
-                  @click="showUpload"
-                ></i>
+                <i class="el-icon-paperclip show-upload" @click="showUpload"></i>
               </span>
             </li>
           </ul>
@@ -326,7 +322,7 @@ export default {
   color: #0099ff;
   cursor: pointer;
 }
-  .show-upload{
-    font-size: 0.24rem;
-  }
+.show-upload {
+  font-size: 0.24rem;
+}
 </style>

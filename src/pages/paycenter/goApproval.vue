@@ -21,6 +21,7 @@
         @selectApprovaler="selectApprovaler"
         :upload.sync="upload"
         :fileCount="fileCount"
+        @uploadFn="upload = true"
       ></approval-bill>
       <div class="approval-btn">
         <el-button
@@ -36,8 +37,8 @@
         :visible="showAuditfollow"
         @update:visible="closeAuditFollow()"
       ></auditfollow>
-      <el-dialog append-to-body :visible.sync="upload">
-        <upload ref="upload"/>
+      <el-dialog width="25%" append-to-body :visible.sync="upload">
+        <upload ref="upload" @submit="uploadClose"/>
       </el-dialog>
     </el-dialog>
   </section>
@@ -105,7 +106,8 @@ export default {
       upload: false,
       files: null,
       fileCount: 0,
-      auditMsg: []
+      auditMsg: [],
+      files: []
     }
   },
   methods: {
@@ -165,24 +167,39 @@ export default {
       this.openDialog = false
     },
     // 送审请求
-    postAddAppvalRecord() {
-      postAddAppvalRecord({
-        RefbillPhidList: this.data.data.map(item => {
-          return item.Mst.PhId
-        }),
+    postAddAppvalRecord(PhId) {
+      let formData = new FormData()
+      let data = {
+        RefbillPhidList: PhId
+          ? JSON.stringify([PhId + ''])
+          : JSON.stringify(
+              this.data.data.map(item => {
+                return item.Mst.PhId + ''
+              })
+            ),
         FBilltype: this.bType,
         ProcPhid: this.ProcPhid,
         PostPhid: this.PostPhid,
-        NextOperators: this.nextApprovaler.map(item => {
-          return item.PhId
-        }),
-        FSeq: '',
+        NextOperators: JSON.stringify(
+          this.nextApprovaler.map(item => {
+            return item.PhId
+          })
+        ),
+        FSeq: 0,
         FSendDate: '',
         FApproval: '1',
         FOpinion: this.content,
         OperaPhid: this.userid,
         OperatorCode: this.usercode
-      })
+      }
+      for (let i in data) {
+        formData.append(i + '', data[i])
+      }
+      for (let file of this.files) {
+        formData.append('files', file.raw)
+      }
+      console.log(formData)
+      postAddAppvalRecord(formData)
         .then(res => {
           if (res.Status == 'error') {
             this.$msgBox.error(res.Msg)
@@ -220,36 +237,20 @@ export default {
         this.postAddAppvalRecord()
       } else if (this.$parent.reSetting) {
         // 生成新的支付单，送审
-        this.$parent.postAddPayList(this.postAddAppvalRecord)
+        this.$parent.postAddPayList(
+          this.postAddAppvalRecord(this.$parent.detail.Mst.PhId)
+        )
       } else {
         // 保存支付单，送审
         this.$parent.savePayList(this.$parent.detail, this.postAddAppvalRecord)
       }
     },
     // 上传附件
-    uploadFiles() {
-      var files = this.$refs.upload.submit()
+    uploadClose(files) {
       console.log(files)
-      let formData = new FormData()
-      // formData.append('RelPhid', 0)
-      // formData.append('BTable', 'gcw3_voucher_mst')
-      for (let file of files) {
-        formData.append('files', file.raw)
-      }
-      PostUploadFile(formData)
-        .then(res => {
-          console.log(res, formData)
-          // this.fileCount = files.length
-          if (res.Status == 'error') {
-            this.$msgBox.error(res.Msg)
-            return
-          }
-          this.fileCount = files.length
-        })
-        .catch(err => {
-          this.$msgBox.error('上传附件失败！')
-          console.log(err)
-        })
+      this.upload = false
+      this.fileCount = files.length
+      this.files = files
     }
   },
   mounted() {
