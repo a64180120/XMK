@@ -155,7 +155,7 @@
                   <span v-else>{{item.BDescribe}}</span>
                 </td>
               </tr>
-              <tr v-if="tableData.length === 0" :class="{trActive:check[idx]}">
+              <tr v-if="tableData.length === 0" :class="{trActive:check[0]}">
                 <td colspan="10">未查询到数据</td>
               </tr>
               </tbody>
@@ -258,7 +258,7 @@
                   <span v-else>{{item.BDescribe}}</span>
                 </td>
               </tr>
-              <tr v-if="tableData.length === 0" :class="{trActive:check[idx]}">
+              <tr v-if="tableData.length === 0" :class="{trActive:check[0]}">
                 <td colspan="10">未查询到数据</td>
               </tr>
               </tbody>
@@ -740,6 +740,5 @@
 <style>
   .pay-fund-approval_tooltip{
     max-width: 300px;
-    min-width: 200px;
   }
 </style>
