@@ -2,19 +2,19 @@
   <div class="payIndex">
     <top-handle @refresh="getData" title="支付中心在线工作平台">
       <div class="navs">
-        <div class="nav" @click="payNav('payListData')">
+        <div class="nav handle" @click="payNav('payListData')">
           <img src="../../assets/images/sfk.png" alt>
           <div>收付款信息维护</div>
         </div>
-        <div class="nav" @click="payNav('mergePayData')">
+        <div class="nav handle" @click="payNav('mergePayData')">
           <img src="../../assets/images/hb.png" alt>
           <div>合并支付</div>
         </div>
-        <div class="nav" @click="payNav('payErrorHandleData')">
+        <div class="nav handle" @click="payNav('payErrorHandleData')">
           <img src="../../assets/images/yc.png" alt>
           <div>异常处理</div>
         </div>
-        <div class="nav" @click="payNav('approvalData')">
+        <div class="nav handle" @click="payNav('approvalData')">
           <img src="../../assets/images/ss.png" alt>
           <div>送审</div>
         </div>
@@ -713,7 +713,7 @@ export default {
     height: 60px;
     > .nav {
       display: inline-block;
-      color: #676767;
+      
       cursor: pointer;
       &:not(:last-child) {
         margin-right: 10px;
