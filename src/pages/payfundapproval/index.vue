@@ -158,7 +158,7 @@
                   </div>
                 </td>
                 <td  style="text-align: left">
-                  <el-tooltip v-if="item.BDescribe.length>=20" effect="dark" :content="item.BDescribe" placement="bottom-end" popper-class="pay-fund-approval_tooltip">
+                  <el-tooltip v-if="item.BDescribe.length>20" effect="dark" :content="item.BDescribe" placement="bottom-end" popper-class="pay-fund-approval_tooltip">
                     <p class="BDescribe">
                       {{item.BDescribe}}
                     </p>
@@ -166,7 +166,7 @@
                   <span v-else>{{item.BDescribe}}</span>
                 </td>
               </tr>
-              <tr v-if="tableData.length === 0" :class="{trActive:check[idx]}">
+              <tr v-if="tableData.length === 0" :class="{trActive:check[0]}">
                 <td colspan="10">未查询到数据</td>
               </tr>
               </tbody>
@@ -262,7 +262,7 @@
                   <span v-else>{{item.BDescribe}}</span>
                 </td>
               </tr>
-              <tr v-if="tableData.length === 0" :class="{trActive:check[idx]}">
+              <tr v-if="tableData.length === 0" :class="{trActive:check[0]}">
                 <td colspan="10">未查询到数据</td>
               </tr>
               </tbody>
@@ -443,6 +443,7 @@
             console.log(res)
             if (res && res.Status === "success") {
               that.tableData = res.Data
+              console.log(that.tableData)
               that.page.total = res.Total
               // this.page.total = 100
               for (let i in res.Data) {

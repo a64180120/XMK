@@ -86,7 +86,10 @@
               console.log(val)
             },
             deep:true
-          }
+          },
+        textare(ac){
+            console.log('key:',ac)
+        }
       },
       methods:{
         //根据组织id，单据类型获取所有的审批流程
