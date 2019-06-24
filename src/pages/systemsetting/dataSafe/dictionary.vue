@@ -142,7 +142,10 @@ export default {
                 }else{
                     this.typeInfoList=res.Record;
                     if(res.Record.length>0){
-                        this.Value=res.Record[0].Value;
+                        if(res.Record[0].DicType=="DxbzCode"){
+                             this.Value=res.Record[0].Value;
+                        }
+                       
                     }
                     
                     this.typeInfoList.map(info => info.PersistentState=2)
@@ -152,6 +155,7 @@ export default {
             })
         },
         update(){
+
             if(this.typeInfoList.length>0){
                 this.typeInfoList[0].Value=this.Value;
             }

@@ -208,21 +208,21 @@
   height: 150px;
   left: 0;
   right: 0;
-  color: #676767;
+  color: #fff;
   background: #fff;
 }
 .handleBtn {
   width: 100%;
   height: 110px;
   overflow: hidden;
-  background: url(../../assets/images/bj.gif);
+  background: url(../../assets/images/bjs.png);
   box-shadow: 0px 1px 5px #959595;
 
   > p {
     width: 100%;
     text-align: center;
     font-weight: 600;
-    color: #676767;
+    color: #fff;
     font-size: 0.3rem;
   }
   .btnContainer {
@@ -360,6 +360,7 @@
 
 .orgInfo .el-input--suffix .el-input__inner {
   height: 30px;
+	line-height: 30px;
 }
 .orgInfo .el-input__icon {
   line-height: 30px;

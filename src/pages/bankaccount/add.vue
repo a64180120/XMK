@@ -17,7 +17,7 @@
             <li>
                 <div>银行账号:</div>
                 <div>
-                    <el-input v-model="info.FAccount" placeholder="请输入银行账号(必填)"></el-input>
+                    <el-input v-model="info.FAccount" minlength="19" placeholder="请输入银行账号(必填)"></el-input>
                 </div>
             </li>
             <li>
@@ -29,7 +29,7 @@
             <li>
                 <div>银行行号:</div>
                 <div>
-                    <el-input v-model="info.FBankcode" placeholder="请输入银行行号(必填)"></el-input>
+                    <el-input v-model="info.FBankcode" minlength="3" placeholder="请输入银行行号(必填)"></el-input>
                 </div>
             </li>
             <li>
@@ -111,7 +111,15 @@ export default {
         },
         update(){
           if(!(this.info.OrgName&&this.info.FBankname&&this.info.FAccount&&this.info.FOpenAccount&&this.info.FBankcode&&this.info.FCity)){
-            this.$msgBox.show('请完善必填信息!');
+            this.$msgBox.error('请完善必填信息!');
+            return;
+          }
+          if(this.info.FAccount.length<19){
+              this.$msgBox.error('银行账户要大于19位!');
+            return;
+          }
+          if(this.info.FBankcode.length<3){
+              this.$msgBox.error('银行行号要大于3位!');
             return;
           }
             let data={

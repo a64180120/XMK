@@ -16,8 +16,9 @@
             <span>送审备注</span>
             <span style="float:right;color:#333;" @click="openUpload">附单据 {{fileCount}} 张</span>
           </div>
-          <div class="textare">
-            <el-input type="textarea" v-model="param.FOpinion"></el-input>
+          <div class="textare" style="height: 135px">
+            <el-input type="textarea" maxlength="150" style="height: 100%" resize="none" v-model="param.FOpinion"></el-input>
+            <div style="position: relative;right: -225px;top: -20px;font-size: 10px;"><span style="color: red">{{len}}</span><span>/150</span></div>
           </div>
         </div>
         <div class="sub-table">
@@ -163,6 +164,7 @@ export default {
       auditMsg:[],//审批流数据存放
       fileList:[],//送审附件存放
       fileCount:0,//附件数量
+      len:0
     }
   },
   computed: {
@@ -317,6 +319,11 @@ export default {
       this.uploadDialog = false
     }
   },
+  watch: {
+    'param.FOpinion':function(val){
+      this.len=val.length
+    }
+  }
   /*created() {
     this.getAppvalProc();
   },*/
@@ -345,8 +352,9 @@ export default {
 }
 .content {
   width: 100%;
-  height: 228px;
-  overflow: auto;
+  height: 300px;
+  overflow-y: auto;
+  overflow-x: hidden;
   > .handle {
     margin-bottom: 10px;
     > .title {
@@ -460,6 +468,9 @@ export default {
 .dialog >>> .el-dialog__body {
   padding: 0 1%;
 }
+.dialog >>> .el-textarea__inner{
+  height: 100%;
+}
 .dialog >>> .el-dialog__header .el-dialog__headerbtn {
   top: 15px;
 }
@@ -491,7 +502,8 @@ export default {
     margin: 0 !important;
     vertical-align: middle;
     .el-dialog__body {
-      padding-top: 0px;
+      background: white;
+      padding-bottom: 15px;
     }
     .el-table__body tr.current-row > td {
       background-color: $primaryColor;
@@ -507,4 +519,5 @@ export default {
     height: 100%;
   }
 }
+
 </style>
