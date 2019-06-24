@@ -123,9 +123,10 @@ table .left {
   border-left: 1px solid #cbcbcb;
   height: 40px;
   padding: 0 4px;
-  white-space: normal;
+  white-space: nowrap;
   overflow: hidden;
   background: #fff;
+  text-overflow: ellipsis;
   &:first-of-type {
     border-top-left-radius: 8px;
     border-bottom-left-radius: 8px;

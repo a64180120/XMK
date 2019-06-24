@@ -29,6 +29,9 @@
         </div>
         <div class="textare">
           <el-input type="textarea" v-model="textare"></el-input>
+          <div style="text-align: right">
+            <span style="font-size: 0.10rem">{{wordNum}}/50</span>
+          </div>
         </div>
       </div>
       <div style="clear:both"></div>
@@ -154,15 +157,33 @@ export default {
       textare: this.value,
       openDialog: false,
       handleValue: '',
-      subPeople: []
+      subPeople: [],
+      wordNum:0,
+      remember:''
     }
   },
   watch: {
     value(newValue) {
-      this.textare = newValue
+      console.log('value:',newValue)
+      if (this.wordNum <50){
+        this.textare = newValue
+      }
+
     },
     textare(newValue) {
-      this.$emit('input', newValue)
+      console.log('textare:',newValue)
+      if (this.wordNum <50 ){
+        for (let i = 0;i<newValue.length;i++){
+          this.wordNum = i +1
+        }
+        this.$emit('input', newValue)
+        this.remember = newValue
+      }else {
+        for (let i = 0;i<newValue.length;i++){
+          this.wordNum = i +1
+        }
+       this.textare = newValue.slice(0,50)
+      }
     },
     handleValue(val) {
       if (val === '2') {

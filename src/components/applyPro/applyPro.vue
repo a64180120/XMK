@@ -41,9 +41,9 @@
                   <span>申报项目</span>
               </span>
               <span style="float: right">
-                <span  @click="clickFolder(pindex,item)">附单据 {{item.QtAttachments?item.QtAttachments.length:0}} 张</span>
+                <span style="cursor: pointer"  @click="clickFolder(pindex,item)">附单据 {{item.QtAttachments?item.QtAttachments.length:0}} 张</span>
                 <span class="el-icon-link"></span>
-                <span style="margin-left: 20px" @click="delPro(pindex)"><i class="el-icon-close"></i></span>
+                <span style="margin-left: 20px;cursor: pointer" @click="delPro(pindex)"><i class="el-icon-close"></i></span>
               </span>
 
             </div>
