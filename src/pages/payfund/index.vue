@@ -157,8 +157,8 @@
         <div class="tableHead">
           <table>
             <colgroup>
-              <col width="5%">
-              <col width="15%">
+              <col width="7%">
+              <col width="13%">
               <col width="15%">
               <col width="15%">
               <col width="15%">
@@ -168,7 +168,7 @@
             </colgroup>
             <thead>
               <tr>
-                <td title="序号" style="text-align: left;padding-left: .2rem">
+                <td title="序号" style="text-align: right;padding-right: .5rem">
                   <el-checkbox v-model="checked">序号</el-checkbox>
                 </td>
                 <td title="申请单编号">
@@ -199,8 +199,8 @@
         <div class="tableBody">
           <table>
             <colgroup>
-              <col width="5%">
-              <col width="15%">
+              <col width="7%">
+              <col width="13%">
               <col width="15%">
               <col width="15%">
               <col width="15%">
@@ -210,7 +210,7 @@
             </colgroup>
             <tbody>
             <tr :class="{trActive:checkList[index]}" v-for="(item,index) in dataList.data">
-              <td style="text-align: left;padding-left: .2rem" @click.self="changeCheck(index)">
+              <td style="text-align: right;padding-right: .5rem" @click.self="changeCheck(index)">
                 <el-checkbox v-model="checkList[index]">{{index+1}}</el-checkbox>
               </td>
               <td @click="showApply(item.PhId)" class="atype">
@@ -231,7 +231,7 @@
               <td>
                 {{payTypeList[item.IsPay]}}
               </td>
-              <td>
+              <td class="left">
                 {{item.FDescribe}}
               </td>
             </tr>
