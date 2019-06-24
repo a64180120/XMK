@@ -12,7 +12,7 @@
         </li>
         <li>{{info.OperaName?info.OperaName:info.PostName}}</li>
         <li>{{info.JudgeRefer === 1?info.FSendDate:info.FDate}}</li>
-        <li v-if="info.JudgeRefer !== 2">意见: {{info.FOpinion}}</li>
+        <li v-if="info.JudgeRefer !== 2">意见：{{info.FOpinion}}</li>
         <li v-if="info.JudgeRefer !== 2">
           附件:
           <span @click.stop="showAttech" v-if="info.QtAttachments ===null" class="attenchment">无</span>

@@ -152,15 +152,18 @@
                     <el-tooltip v-else-if="item.BStatus == 2" class="" effect="dark" :content="'已经停留'+item.StopHour +'小时'" placement="bottom-start">
                       <img  src="../../assets/images/sj1.png" class="img-icon">
                     </el-tooltip>
-                    <el-tooltip v-else-if="item.BStatus == 10" class="" effect="dark" :content="'已经停留'+item.StopHour +'小时'" placement="bottom-start">
+                    <el-tooltip v-else-if="item.BStatus == 9" class="" effect="dark" :content="'已经停留'+item.StopHour +'小时'" placement="bottom-start">
                       <img  src="../../assets/images/sj1.png" class="img-icon">
                     </el-tooltip>
                   </div>
                 </td>
-                <td>
-                  <p class="BDescribe">
-                    {{item.BDescribe}}
-                  </p>
+                <td  style="text-align: left">
+                  <el-tooltip v-if="item.BDescribe.length>=20" effect="dark" :content="item.BDescribe" placement="bottom-end" popper-class="pay-fund-approval_tooltip">
+                    <p class="BDescribe">
+                      {{item.BDescribe}}
+                    </p>
+                  </el-tooltip>
+                  <span v-else>{{item.BDescribe}}</span>
                 </td>
               </tr>
               <tr v-if="tableData.length === 0" :class="{trActive:check[idx]}">
@@ -250,10 +253,13 @@
                   <span class="cell-click" v-if="item.BStatus ==2 " @click.stop="openAuditfollow(item,idx)">未通过</span>
                   <span class="cell-click" v-if="item.BStatus ==9 " @click.stop="openAuditfollow(item,idx)">审批通过</span>
                 </td>
-                <td>
-                  <p class="BDescribe">
-                    {{item.BDescribe}}
-                  </p>
+                <td  style="text-align: left">
+                  <el-tooltip v-if="item.BDescribe.length>=20" effect="dark" :content="item.BDescribe" placement="bottom-end" popper-class="pay-fund-approval_tooltip">
+                    <p class="BDescribe">
+                      {{item.BDescribe}}
+                    </p>
+                  </el-tooltip>
+                  <span v-else>{{item.BDescribe}}</span>
                 </td>
               </tr>
               <tr v-if="tableData.length === 0" :class="{trActive:check[idx]}">
@@ -768,8 +774,15 @@
     text-align: right;
   }
   .BDescribe{
+    max-width: 400px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+  }
+</style>
+<style>
+  .pay-fund-approval_tooltip{
+    max-width: 300px;
+    min-width: 200px;
   }
 </style>
