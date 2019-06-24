@@ -145,6 +145,7 @@
           this.visible = false;
           this.backPersonnel = [];
           this.fileCount = 0;
+          this.textare = '';
           this.$refs.approval.handleValue = ''
         },
         //关闭弹框
@@ -160,6 +161,7 @@
         submit(){
           //同意数据 单条
           let formData = new FormData();
+          console.log(this.textare)
           let data = {
             PhId:this.rowData[0].PhId,//单据ID
             ProcPhid:this.rowData[0].ProcPhid,//审批流程id
@@ -187,7 +189,6 @@
             formData.append('NextOperators',JSON.stringify(arr));
             formData.append('BackPostPhid',this.backPost.PhId);
           }
-          debugger
           if(this.fileList.length !==0){
             for(let file of this.fileList){
               formData.append('files',file.raw);
@@ -197,6 +198,7 @@
             if (res.Status == 'success'&&res) {
               this.fileCount = 0
               let that= this
+              that.textare = ''
               this.visible = false
               this.$msgBox.show({
                 content:'审批成功',
@@ -204,11 +206,11 @@
                   that.openDialog = false;
                   that.$emit('subSuc');
                   that.$refs.approval.handleValue = '';
-                  this.textare = ''
                   that.$emit('refresh')
                 }
               })
             }else {
+              this.textare = ''
               this.fileCount = 0
               this.$msgBox.show(res.Msg)
             }
