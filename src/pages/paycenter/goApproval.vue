@@ -403,7 +403,8 @@ export default {
   }
 }
 .approval-btn {
-  margin-top: 5px;
+  margin-top: 10px;
+  margin-bottom: 10px;
   text-align: right;
   > .el-button {
     padding: 4px 15px;
@@ -414,7 +415,6 @@ export default {
 <style scoped>
 .dialog >>> .el-dialog {
   margin: 0 !important;
-  height: 310px;
 }
 .dialog >>> .el-dialog__header {
   padding: 0;
@@ -453,6 +453,10 @@ export default {
       padding-top: 0px;
       section .content {
         height: auto;
+      }
+      .title,
+      .radio {
+        font-size: 16px;
       }
     }
     .el-table__body tr.current-row > td {
