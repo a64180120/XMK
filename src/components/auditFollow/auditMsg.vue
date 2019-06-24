@@ -5,16 +5,23 @@
         <li>
           <i :class="[info.FApproval=='9'?'logo-sptg':(info.FApproval=='0'?'logo-wsp':(info.FApproval=='1'?'logo-spz':'logo-wtg'))]"></i>
           <span v-if="info.JudgeRefer === 1">发起人:</span>
-          <span v-else-if="info.JudgeRefer !== 1 && info.OperaName != null">审批人:</span>
+          <span v-else-if="info.JudgeRefer === 0 && info.OperaName != null">审批人:</span>
+          <span v-else-if="info.JudgeRefer === 2 && info.OperaName != null">支付人:</span>
           <span v-else>审批岗位:</span>
           <em>{{index}}</em>
         </li>
         <li>{{info.OperaName?info.OperaName:info.PostName}}</li>
-        <li>{{info.FDate}}</li>
-        <li>意见: {{info.FOpinion}}</li>
-        <li>
+        <li>{{info.JudgeRefer === 1?info.FSendDate:info.FDate}}</li>
+        <li v-if="info.JudgeRefer !== 2">意见：{{info.FOpinion}}</li>
+        <li v-if="info.JudgeRefer !== 2">
           附件:
-          <span @click.stop="showAttech" class="attenchment">{{info.RefbillPhid}}</span>
+          <span @click.stop="showAttech" v-if="info.QtAttachments ===null" class="attenchment">无</span>
+          <span v-else v-for="(item,idx) in info.QtAttachments">
+            <span @click.stop="showAttech(info.QtAttachments)" class="attenchment">{{item.BName}}</span><span v-if="idx !==info.QtAttachments.length-1">、</span>
+          </span>
+        </li>
+        <li v-if="info.JudgeRefer === 2">
+          <span>支付状态：{{info.isPay===0?'待支付':(info.isPay===1?'支付完成':'支付异常')}}</span>
         </li>
       </template>
       <template v-else>
@@ -77,8 +84,9 @@ export default {
     }
   },
   methods: {
-    showAttech() {
-      this.dialogVisible = true
+    showAttech(val) {
+      // this.dialogVisible = true
+      this.$emit('imgList',this.info.QtAttachments)
     }
   },
   components: {
@@ -87,7 +95,7 @@ export default {
     attechment
   },
   mounted() {
-    console.info('msg', this.$attrs, this.$listeners)
+    // console.info('msg', this.$attrs, this.$listeners)
   }
 }
 </script>
@@ -194,7 +202,4 @@ export default {
 }
 </style>
 <style scoped>
-.img-dialog >>> .el-dialog__body {
-  height: 550px;
-}
 </style>

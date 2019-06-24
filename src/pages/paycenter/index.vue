@@ -2,19 +2,31 @@
   <div class="payIndex">
     <top-handle @refresh="getData" title="支付中心在线工作平台">
       <div class="navs">
-        <div class="nav handle" @click="payNav('payListData')">
+        <div
+          v-if="menubutton.paycenter_maintain=='True'"
+          class="nav handle"
+          @click="payNav('payListData')"
+        >
           <img src="../../assets/images/sfk.png" alt>
           <div>收付款信息维护</div>
         </div>
-        <div class="nav handle" @click="payNav('mergePayData')">
+        <div
+          v-if="menubutton.paycenter_mergepay=='True'"
+          class="nav handle"
+          @click="payNav('mergePayData')"
+        >
           <img src="../../assets/images/hb.png" alt>
           <div>合并支付</div>
         </div>
-        <div class="nav handle" @click="payNav('payErrorHandleData')">
+        <div
+          v-if="menubutton.paycenter_catch=='True'"
+          class="nav handle"
+          @click="payNav('payErrorHandleData')"
+        >
           <img src="../../assets/images/yc.png" alt>
           <div>异常处理</div>
         </div>
-        <div class="nav handle" @click="payNav('approvalData')">
+        <div v-if="menubutton.paycenter_check=='True'" class="nav handle" @click="payNav('approvalData')">
           <img src="../../assets/images/ss.png" alt>
           <div>送审</div>
         </div>
@@ -602,10 +614,10 @@ export default {
           case 'payErrorHandleData':
             if (
               !handleitem.every(item => {
-                return item.Mst.FState == 2
+                return item.Mst.FState == 2 || item.Mst.FState == 3
               })
             ) {
-              this.$msgBox.error('只能对支付异常的单据进行处理。')
+              this.$msgBox.error('只能对支付异常和支付中的单据进行处理。')
               this.tableData.forEach(item => {
                 item.Mst.checked = false
               })
@@ -645,6 +657,18 @@ export default {
               })
             ) {
               this.$msgBox.error('请先完善数据信息')
+              this.tableData.forEach(item => {
+                item.Mst.checked = false
+              })
+              return
+            } else if (
+              handleitem.some(item => {
+                return item.Dtls.some(subitem => {
+                  return subitem.FRecAcnt.length < 19
+                })
+              })
+            ) {
+              this.$msgBox.error('收款账户长度错误！')
               this.tableData.forEach(item => {
                 item.Mst.checked = false
               })
@@ -696,7 +720,8 @@ export default {
     ...mapState({
       orgid: state => state.user.orgid,
       userid: state => state.user.userid,
-      year: state => state.user.year
+      year: state => state.user.year,
+      menubutton: state => state.user.menubutton
     })
   },
   beforeDestroy() {

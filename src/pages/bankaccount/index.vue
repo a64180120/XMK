@@ -115,6 +115,8 @@ export default {
                     })
                 })
         },
+        // submit(){
+        //     let files= this.$refs.upload.submit();
         // submit(files){
         //     console.log(files)
         //     let formData = new FormData();

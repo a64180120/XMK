@@ -166,7 +166,7 @@
       <!--<div class="btn-load">
         <el-button class="btn">下载</el-button>
       </div>-->
-      <img-view v-if="dialogVisible"></img-view>
+      <img-view v-if="dialogVisible" :images="imgList"></img-view>
     </el-dialog>
   </section>
 
@@ -177,6 +177,7 @@
   import ApprovalDialog from "../../pages/payfundapproval/approvalDialog";
   import goApproval from '../applyPro/goApproval.vue';
   import ImgView from "../imgView/imgView";
+  import { baseURL } from "@/utils/config.js";
   export default {
     name: "applybill",
     components: {ApprovalDialog,goApproval,ImgView},
@@ -238,6 +239,7 @@
         },
         timeF:'',
         dialogVisible:false,//附件查看弹窗
+        imgList:[],//附件数组
       }
     },
     /*watch:{
@@ -263,6 +265,18 @@
         let param={fPhId:this.applyNum};
         this.getAxios('GBK/PaymentMstApi/GetPaymentMst',param).then(res=>{
           this.record=res;
+          this.imgList=[];
+          for(var i in res.PaymentXmDtl){
+            let pxd=res.PaymentXmDtl[i];
+            for(var j in pxd.QtAttachments){
+              let img= {
+                path: baseURL.replace('/api','')+pxd.QtAttachments[j].BUrlpath,
+                name: pxd.QtAttachments[j].BUrlpath.replace('/UpLoadFiles/BkPayment/','')
+              }
+              this.imgList.push(img);
+            }
+          }
+          console.log(this.imgList);
           console.log(res);
         }).catch(err=>{
           console.log(err);

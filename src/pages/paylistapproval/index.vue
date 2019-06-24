@@ -3,6 +3,7 @@
     <handle-btn title="审批中心在线工作平台" :auditBtn="true" @refresh="refresh()">
       <div class="top" v-if="isApproval">
         <ul>
+          <!--v-if="MenuButton.approvalcenter_approval"-->
           <li @click="aprovalItem()">
             <div>
               <img src="../../assets/images/sp.png">
@@ -86,7 +87,7 @@
             </table>
           </div>
           <div v-if="isApproval" class="tableBody">
-            <table v-if="tableData.length !== 0">
+            <table>
               <colgroup>
                 <col width="5%">
                 <col width="15%">
@@ -145,13 +146,20 @@
                     </el-tooltip>
                   </div>
                 </td>
-                <td></td>
+                <td style="text-align: left">
+                  <el-tooltip v-if="item.BDescribe.length>=20" effect="dark" :content="item.BDescribe" placement="bottom-end" popper-class="pay-fund-approval_tooltip">
+                    <p class="BDescribe">
+                      {{item.BDescribe}}
+                    </p>
+                  </el-tooltip>
+                  <span v-else>{{item.BDescribe}}</span>
+                </td>
+              </tr>
+              <tr v-if="tableData.length === 0" :class="{trActive:check[idx]}">
+                <td colspan="10">未查询到数据</td>
               </tr>
               </tbody>
             </table>
-            <div v-else style="width: 100%;margin-top: 60px;text-align: center">
-              <span style="">暂无数据</span>
-            </div>
           </div>
           <!--已审批表格-->
           <div v-if="!isApproval" class="tableHead">
@@ -199,7 +207,7 @@
             </table>
           </div>
           <div v-if="!isApproval" class="tableBody">
-            <table v-if="tableData.length !== 0">
+            <table>
               <colgroup>
                 <col width="5%">
                 <col width="15%">
@@ -241,13 +249,20 @@
                   <span class="cell-click" v-if="item.BStatus ==2 " @click.stop="openAuditfollow(item,idx)">未通过</span>
                   <span class="cell-click" v-if="item.BStatus ==9 " @click.stop="openAuditfollow(item,idx)">审批通过</span>
                 </td>
-                <td></td>
+                <td style="text-align: left">
+                  <el-tooltip v-if="item.BDescribe.length>=20" effect="dark" :content="item.BDescribe" placement="bottom-end" popper-class="pay-fund-approval_tooltip">
+                  <p class="BDescribe">
+                    {{item.BDescribe}}
+                  </p>
+                </el-tooltip>
+                  <span v-else>{{item.BDescribe}}</span>
+                </td>
+              </tr>
+              <tr v-if="tableData.length === 0" :class="{trActive:check[idx]}">
+                <td colspan="10">未查询到数据</td>
               </tr>
               </tbody>
             </table>
-            <div v-else style="width: 100%;margin-top: 60px;text-align: center">
-              <span style="">暂无数据</span>
-            </div>
           </div>
         </div>
         <div class="pageArea">
@@ -266,7 +281,7 @@
     <!--审批-->
     <pay-dialog ref="payDialog" :rowData="selection" @refresh="loadData" @dialogFlow="childrenAuditfollow" @subSuc="plSubSuc()"></pay-dialog>
     <!--查看审批流程-->
-    <auditfollow :visible.sync="visible" :auditMsg="auditMsg" ></auditfollow>
+    <auditfollow :visible.sync="visible" :auditMsg="auditMsg"></auditfollow>
     <!--组织树-->
     <orgtree :data="orgtreeData" :checkedOrg="checkedOrg" :visible.sync="orgType" @confirm="getOrg"></orgtree>
     <!--支付单查看-->
@@ -285,9 +300,10 @@
   import { selection} from "../payfundapproval/selection";
   import {mapState} from 'vuex'
   import PayDialog from "./payDialog";
+  import ImgView from "../../components/imgView/imgView";
   export default {
     name: "index",
-    components: {PayDialog, Paylist, Orgtree, ApprovalDialog, Applybill, Auditfollow, SearchInput, HandleBtn},
+    components: {ImgView, PayDialog, Paylist, Orgtree, ApprovalDialog, Applybill, Auditfollow, SearchInput, HandleBtn},
     data(){
       return{
         payListVisible:false,
@@ -340,7 +356,7 @@
 
 
         //审批弹框
-        approvalDialog:false
+        approvalDialog:false,
       }
     },
     computed:{
@@ -348,7 +364,8 @@
         OrgCode:state =>state.user.orgcode,
         UserId:state =>state.user.userid,
         Orgid:state =>state.user.orgid,
-        Year:state =>state.user.year
+        Year:state =>state.user.year,
+        MenuButton:state =>state.user.menubutton
       })
     },
     mounted() {
@@ -587,6 +604,29 @@
       },
       plSubSuc(){
 
+      },
+      //获取图片列表
+      getImgList(imgList){
+        console.log(111)
+        console.log(imgList)
+        if (this.imgList.length !== 0){
+          for (let key in this.imgList){
+            this.imgList.splice(key,1)
+          }
+        }
+        this.imgDialog= false
+        let arr = []
+        if(imgList !== null){
+          this.imgDialog= true
+          for (let key in imgList){
+            let img ={
+              name:imgList[key].BUrlpath.replace('/UpLoadFiles/BkPayment/',''),
+              path:baseURL.replace('/api','')+imgList[key].BUrlpath
+            };
+            this.$set(this.imgList,key,img)
+          }
+        }
+        console.log(this.imgList)
       }
     }
   }
@@ -605,7 +645,7 @@
   }
   .top ul li{
     float: left;
-    width: 80px;
+    width: 115px;
   }
   .top ul li:hover{
     cursor: pointer;
@@ -624,9 +664,13 @@
     float: right;
     margin-bottom: 0px;
   }
+  .cell-click{
+    color: #409EFF;
+    cursor: pointer;
+    text-decoration: underline;
+  }
   .img-icon{
     width: 30px;
-    cursor: pointer;
   }
   .blue{
     color: #00B8EE;
@@ -656,37 +700,46 @@
     font-size: 0.16rem;
     border-bottom: 1px solid #eaeaea;
   }
+  /*.dialog>>>.el-dialog{*/
+  /*  position: absolute;*/
+  /*  top: 50%;*/
+  /*  left: 50%;*/
+  /*  margin: 0 !important;*/
+  /*  transform: translate(-50%,-50%);*/
+  /*}*/
   .detail-dialog>>>.el-dialog{
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    margin: 0 !important;
-    transform: translate(-50%,-50%);
+    /*height: 86%;*/
     height: 600px;
+  }
+  .img-dialog >>>.el-dialog{
+    height: 550px;
+    width: 780px;
   }
   .hidden{
     display: none;
   }
+  .dialog-title span {
+    width: 100%;
+    text-align: left;
+    font-size: 0.16rem;
+    border-bottom: 1px solid #eaeaea;
+  }
+
   .select-input >>> .el-input--suffix{
     width: 75px!important;
   }
-  .cell-click{
-    color: #409EFF;
-    cursor: pointer;
-    text-decoration: underline;
+  .btn-load{
+    text-align: right;
   }
-
-  .dialog{}
-  .dialog >>> .el-dialog{
-    height: 435px;
+  .BDescribe{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
-  .dialog >>> .el-dialog__header{
-    padding: 0;
-  }
-  .dialog >>> .el-dialog__body{
-    padding: 0 1%;
-  }
-  .dialog >>> .el-dialog__header .el-dialog__headerbtn{
-    top:15px;
+</style>
+<style>
+  .pay-fund-approval_tooltip{
+    max-width: 300px;
+    min-width: 200px;
   }
 </style>

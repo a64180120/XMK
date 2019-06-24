@@ -3,12 +3,14 @@
     <handle-btn title="审批中心在线工作平台" @refresh="refresh()" :auditBtn="true">
       <div class="top" >
          <ul v-if="isApproval">
-           <li @click="aprovalItem()">
+           <!--v-if="MenuButton.approvalcenter_approval"-->
+           <li @click="aprovalItem()" >
              <div>
                <img src="../../assets/images/sp.png">
              </div>
              <span>审批</span>
            </li>
+           <!--v-if="MenuButton.approvalcenter_approvalpay"-->
            <li @click="creatPayItem()">
              <div>
                <img src="../../assets/images/sc.png">
@@ -17,6 +19,7 @@
            </li>
          </ul>
         <ul v-else>
+          <!-- v-if="MenuButton.approvalcenter_approvalpay"-->
           <li @click="creatPayList()">
             <div>
               <img src="../../assets/images/sc.png">
@@ -100,7 +103,7 @@
             </table>
           </div>
           <div v-if="isApproval" class="tableBody">
-            <table v-if="tableData.length !== 0">
+            <table>
               <colgroup>
                 <col width="5%">
                 <col width="10%">
@@ -149,22 +152,25 @@
                     <el-tooltip v-else-if="item.BStatus == 2" class="" effect="dark" :content="'已经停留'+item.StopHour +'小时'" placement="bottom-start">
                       <img  src="../../assets/images/sj1.png" class="img-icon">
                     </el-tooltip>
-                    <el-tooltip v-else-if="item.BStatus == 10" class="" effect="dark" :content="'已经停留'+item.StopHour +'小时'" placement="bottom-start">
+                    <el-tooltip v-else-if="item.BStatus == 9" class="" effect="dark" :content="'已经停留'+item.StopHour +'小时'" placement="bottom-start">
                       <img  src="../../assets/images/sj1.png" class="img-icon">
                     </el-tooltip>
                   </div>
                 </td>
-                <td>
-                  <p class="BDescribe">
-                    {{item.BDescribe}}
-                  </p>
+                <td  style="text-align: left">
+                  <el-tooltip v-if="item.BDescribe.length>=20" effect="dark" :content="item.BDescribe" placement="bottom-end" popper-class="pay-fund-approval_tooltip">
+                    <p class="BDescribe">
+                      {{item.BDescribe}}
+                    </p>
+                  </el-tooltip>
+                  <span v-else>{{item.BDescribe}}</span>
                 </td>
+              </tr>
+              <tr v-if="tableData.length === 0" :class="{trActive:check[idx]}">
+                <td colspan="10">未查询到数据</td>
               </tr>
               </tbody>
             </table>
-            <div v-else style="width: 100%;margin-top: 60px;text-align: center">
-              <span style="">暂无数据</span>
-            </div>
           </div>
           <!--已审批表格-->
           <div v-if="!isApproval" class="tableHead">
@@ -210,7 +216,7 @@
             </table>
           </div>
           <div v-if="!isApproval" class="tableBody">
-            <table v-if="tableData.length !== 0">
+            <table>
               <colgroup>
                 <col width="5%">
                 <col width="10%">
@@ -247,17 +253,20 @@
                   <span class="cell-click" v-if="item.BStatus ==2 " @click.stop="openAuditfollow(item,idx)">未通过</span>
                   <span class="cell-click" v-if="item.BStatus ==9 " @click.stop="openAuditfollow(item,idx)">审批通过</span>
                 </td>
-                <td>
-                  <p class="BDescribe">
-                    {{item.BDescribe}}
-                  </p>
+                <td  style="text-align: left">
+                  <el-tooltip v-if="item.BDescribe.length>=20" effect="dark" :content="item.BDescribe" placement="bottom-end" popper-class="pay-fund-approval_tooltip">
+                    <p class="BDescribe">
+                      {{item.BDescribe}}
+                    </p>
+                  </el-tooltip>
+                  <span v-else>{{item.BDescribe}}</span>
                 </td>
+              </tr>
+              <tr v-if="tableData.length === 0" :class="{trActive:check[idx]}">
+                <td colspan="10">未查询到数据</td>
               </tr>
               </tbody>
             </table>
-            <div v-else style="width: 100%;margin-top: 60px;text-align: center">
-              <span style="">暂无数据</span>
-            </div>
           </div>
         </div>
         <div class="pageArea">
@@ -276,7 +285,7 @@
         <div slot="title" class="dialog-title">
           <span style="float: left">查看申请</span>
         </div>
-          <applybill @showImg="showImg" :applyNum="applyNum"
+          <applybill v-if="detailDialog" @showImg="showImg" :applyNum="applyNum"
                      @delete="handleDelete">
             <div slot="btn-group" >
               <el-button v-if="isApproval" class="btn" size="mini" @click="aprovalItem">审批</el-button>
@@ -285,16 +294,6 @@
               <!--              <el-button class="btn" size="mini">打印</el-button>-->
             </div>
           </applybill>
-      </el-dialog>
-      <!--图片预览-->
-      <el-dialog class="dialog img-dialog" :visible.sync="imgDialog" :close-on-click-modal="false" width="40%">
-        <div slot="title" class="dialog-title">
-          <span style="float: left">查看附件</span>
-        </div>
-        <div class="btn-load">
-          <el-button class="btn">下载</el-button>
-        </div>
-        <img-view v-if="imgDialog"></img-view>
       </el-dialog>
       <!--审批弹框-->
       <approval-dialog ref="approvalDialog" :rowData="selection" @refresh="loadData" @dialogFlow="childrenAuditfollow" @subSuc="plSubSuc()"></approval-dialog>
@@ -321,7 +320,7 @@
   import { selection} from "./selection";
   import ImgView from "../../components/imgView/imgView";
   import PaylistDialog from "./paylistDialog";
-  import {mapState} from 'vuex'
+  import {mapState} from 'vuex';
 
   export default {
     name: "index",
@@ -369,14 +368,13 @@
           }
         },
         detailDialog:false,//打开详情弹框
-        imgDialog:false,//图片预览弹框
         openInnerDialog:false,//打开详情内层弹框
 
         //判断显示为已审批页面还是未审批页面
         isApproval:true,
         applyNum:"",//当前查看申请单的编号
         SplxPhid:"",
-        Approval:Boolean
+        Approval:Boolean,
       }
     },
 
@@ -416,6 +414,7 @@
         UserId:state =>state.user.userid,
         Year:state =>state.user.year,
         Orgid:state =>state.user.orgid,
+        MenuButton:state =>state.user.menubutton
       })
     },
     methods:{
@@ -629,8 +628,8 @@
       },
       //打开图片预览
       showImg(file){
-        console.log(file)
-        this.imgDialog= true
+        // console.log(file)
+        // // this.imgDialog= true
       },
       //生成支付单成功
       plSubSuc(){
@@ -653,6 +652,7 @@
       // 关闭详情弹框事件
       closeDetailDialog(){
         this.selection = [];
+
         this.check = this.check.map((item,index,array)=> false)
       },
       //删除
@@ -669,7 +669,7 @@
         this.page.currentPage = 1;
         this.page.pageSize = 20;
         this.loadData()
-      }
+      },
     }
   }
 </script>
@@ -774,8 +774,15 @@
     text-align: right;
   }
   .BDescribe{
+    max-width: 400px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+  }
+</style>
+<style>
+  .pay-fund-approval_tooltip{
+    max-width: 300px;
+    min-width: 200px;
   }
 </style>

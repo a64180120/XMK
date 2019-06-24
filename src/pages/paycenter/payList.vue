@@ -20,20 +20,25 @@
             style="float:left;font-size:0.16rem;line-height:28px;"
           >支付单号：{{detail.Mst.FCode}}</span>
           <div class="top-btn">
-            <template v-if="data.itemType == 'error'">
+            <template v-if="detail.Mst.FState == 2&&menubutton.paycenter_catch=='True'">
               <span class="btn btn-large" @click="save('payErrorHandleData')">异常处理</span>
               <span class="btn btn-large" @click="save('new')">重新支付</span>
             </template>
-            <template v-if="data.itemType == 'notApprove'">
+            <template
+              v-if="detail.Mst.FState == 3&&detail.Mst.FApproval == 9&&menubutton.paycenter_mergepay=='True'"
+            >
+              <span class="btn btn-large" @click="save('payErrorHandleData')">异常处理</span>
+            </template>
+            <template v-if="detail.Mst.FApproval == 0&&menubutton.paycenter_maintain=='True'">
               <span class="btn btn-large" @click="save('')">保存</span>
               <span class="btn btn-large" style="padding:0" @click="save('approvalData')">保存并送审</span>
             </template>
-            <template v-if="data.itemType =='pay'">
+            <template
+              v-if="detail.Mst.FState == 0&&detail.Mst.FApproval == 9&&menubutton.paycenter_mergepay=='True'"
+            >
               <span class="btn btn-large" @click="save('mergePayData')">支付</span>
             </template>
-            <template v-if="data.itemType =='approval'">
-              <span class="btn btn-large" @click="save('approval')">审批</span>
-            </template>
+
             <span class="btn btn-large" v-show="false">打印</span>
           </div>
         </el-col>
@@ -131,7 +136,7 @@
                 @header-click="headerClick"
               >
                 <!-- 序号列 -->
-                <el-table-column type="index" width="80" header-align="center" align="center">
+                <el-table-column width="80" header-align="center" align="center">
                   <template slot="header" slot-scope="scope">
                     <el-checkbox
                       @click.stop.native="check"
@@ -279,18 +284,21 @@
       <el-row :gutter="10">
         <div class="bottom">
           <span v-if="!reSetting" @click="getAuditfollow">
-            <template v-if="data.itemType == 'notApprove'">待送审</template>
+            <!-- <template v-if="data.itemType == 'notApprove'">待送审</template>
             <template v-else-if="data.itemType == ''">审批中</template>
             <template v-else-if="data.itemType == 'approval'">待审批</template>
-            <template v-else>审批通过</template>
+            <template v-else>审批通过</template>-->
+            {{detail.Mst.FApproval!=undefined?FApprovalList.find(item=>item.value==detail.Mst.FApproval).label:''}}
           </span>
           <span
             v-if="(data.itemType != 'approval')&&!reSetting"
             :class="{success:data.itemType=='success'}"
           >
-            <template v-if="data.itemType == 'error'">支付异常</template>
+            <!-- <template v-if="data.itemType == 'error'">支付异常</template>
             <template v-else-if="data.itemType=='success'">支付成功</template>
-            <template v-else>待支付</template>
+            <template v-else-if="data.itemType=='payying'">支付中</template>
+            <template v-else>待支付</template>-->
+            {{detail.Mst.FState!=undefined?FStateList.find(item=>item.value==detail.Mst.FState).label:''}}
           </span>
           <span
             class="dj"
@@ -519,6 +527,24 @@ export default {
           value: 3
         }
       ],
+      FApprovalList: [
+        {
+          label: '待送审',
+          value: 0
+        },
+        {
+          label: '审批中',
+          value: 1
+        },
+        {
+          label: '未通过',
+          value: 2
+        },
+        {
+          label: '审批通过',
+          value: 9
+        }
+      ],
       FPaymethodList: [],
       bankType: '',
       kemuList: [],
@@ -596,14 +622,12 @@ export default {
     },
     // 付款账号修改后立即赋值给子表
     accountChange(phid) {
-      console.log(phid)
       this.detail.Dtls.forEach(item => {
         item.BankPhid = phid
       })
     },
     // 预算科目选择
     kumuChange(e) {
-      console.log(e)
       e.QtKmmc = this.kemuList.find(item => item.KMDM == e.QtKmdm).KMMC
     },
     // 获取支付单详情
@@ -616,7 +640,6 @@ export default {
         ryear: this.year || '2019' //年度
       })
         .then(res => {
-          console.log('payList', res)
           if (res.Status == 'error') {
             return
           }
@@ -667,7 +690,6 @@ export default {
               this.detail.Dtls.forEach(item => {
                 item.FNewCode = newData.Mst.FCode
               })
-              console.log(this.oldDetail)
               this.savePayList(this.oldDetail, postAddAppvalRecord)
             })
           }
@@ -761,7 +783,6 @@ export default {
     },
     // 获取到新的银行信息
     getBank(data) {
-      console.log(data)
       if (this.bankChooseData.data.choosed) {
         this.detail.Dtls.forEach(item => {
           if (item.choosed) {
@@ -802,7 +823,7 @@ export default {
           }
         })
         .catch(err => {
-          console.log(err)
+          console.log('获取支付列表信息失败! ' + err)
           this.$msgBox.error('获取支付列表信息失败!')
         })
     },
@@ -828,6 +849,9 @@ export default {
           ) {
             this.$msgBox.error('请先完善数据信息')
             return
+          } else if (this.detail.Dtls.some(item => item.FRecAcnt.length < 19)) {
+            this.$msgBox.error('收款账户长度错误！')
+            return
           }
           this[type].openDialog = true
           this[type].data = this.data.data
@@ -847,7 +871,6 @@ export default {
           break
         case 'new':
           let errorArr = this.detail.Dtls.filter(item => item.choosed)
-          console.log(errorArr)
           if (errorArr.length == 0) {
             this.$msgBox.error('请至少选择一条数据！')
             return
@@ -901,7 +924,6 @@ export default {
                 OldDtlPhid: item.PhId
               })
             })
-          console.log(Mst, Dtls, errorArr)
           this.oldDetail = this.detail
           this.detail = { Mst, Dtls }
           this.allSelected = false
@@ -924,12 +946,9 @@ export default {
       }
     },
     selectFSamebankBlur(visible) {
-      console.log(123)
       if (this.bankType !== '' && !visible) {
-        console.log(this.bankType)
         this.detail.Dtls.forEach(item => {
           if (item.choosed) {
-            console.log(item)
             item.FSamebank = this.bankType
           }
         })
@@ -938,22 +957,19 @@ export default {
     // checkBox所在框选中
     check(e) {},
     headerClick(column, event) {
-      console.log(column)
       if (column.type == 'index') {
         this.allSelected = !this.allSelected
         this.selectAll(this.allSelected)
       }
     },
     rowClick(row, column, event) {
-      console.log(column)
-      if (column.type == 'index') {
+      if (column && column.type == 'index') {
         row.choosed = !row.choosed
         this.selectOne({ row })
       }
     },
     //打开图片预览
     showImg(file) {
-      console.log(file)
       this.imgDialog = true
     },
     // 表格合并方法
@@ -1002,7 +1018,6 @@ export default {
     // 关闭支付单弹框
     payListClose(done) {
       if (this.reSetting) {
-        console.log('setting')
         this.reSetting = false
         this.data.itemType = 'error'
         this.detail = this.oldDetail
@@ -1041,11 +1056,8 @@ export default {
     'data.openDialog'(newVal) {
       if (newVal) {
         this.allSelected = false
-        console.log(this.detail, this.data.data[0].Mst)
         this.detail.Mst.PhId = this.data.data[0].Mst.PhId
-        // this.$forceUpdate()
         this.getData()
-        // debugger
         this.getAccountList({
           OrgPhid: this.data.data[0].Mst.OrgPhid,
           selectStr: ''
@@ -1074,6 +1086,7 @@ export default {
       return orgListJson.slice(nameIndex, nameEndIndex)
     },
     ...mapState({
+      menubutton: state => state.user.menubutton,
       orgid: state => state.user.orgid,
       userid: state => state.user.userid,
       year: state => state.user.year,
