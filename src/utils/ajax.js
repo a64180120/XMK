@@ -85,7 +85,9 @@ function apiAxios(method, url, params, hastimeout) {
   // 请求超时时间
   if (!hastimeout) {
     httpDefault.timeout = 10000
-  }
+  }else{
+		httpDefault.timeout=hastimeout
+	}
   if(httpDefault.method === 'FORM'){
     httpDefault.method = 'post'
     httpDefault.headers.Accept = "application/json;"

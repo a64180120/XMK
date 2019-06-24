@@ -9,65 +9,217 @@
         name: "pieChart",
       data(){
           return {
-            target:'',
-            dw:'元'
+            delay:false,//定时器延迟
+            currentIndex:-1,//开始循环参数
+            chart:'',//定时器
+            chart2: {
+              target: null,
+              option: {
+                title: {
+                  text:'单位: 元',
+                  textStyle:{
+                    fontSize:13,
+                    color:'red'
+                  }
+                },
+                tooltip:{
+                  trigger:'item',
+                  formatter:"{b}"
+                },
+                legend:{
+                  data:this.opinion,
+                  bottom:20
+                },
+
+                series:[
+                  {
+                    type:'pie',
+                    radius:['60%','76%'],
+                    selectedMode:'single',
+                    selectedOffset:10,
+                    center:['50%','50%'],
+                    clockwise:'true',
+                    avoidLabelOverlap:false,
+                    label:{
+                      formatter: ['{b| {b}}','{c|{c}元}','{d| {d}%}'].join('\n'),
+                      show:false,
+                      position:'center',
+                      rich: {
+                        b:{
+                          color:'#5f5b61',
+                          lineHeight:20,
+                          fontSize:18
+                        },
+                        c: {
+                          color:'red',
+                          lineHeight:20,
+                          fontSize:20
+                        },
+                        d: {
+                          color:'#3d99f6',
+                          lineHeight:20,
+                          fontSize:14
+                        }
+                      },
+                      emphasis: {
+                        show: true,
+                      }
+                    },
+                    labelLine:{
+                      normal:{
+                        show:false,
+                        length:10,
+                        length2:5,
+                        smooth:false,
+                      }
+                    },
+                    data:this.opinionData
+                  }
+                ]
+              }
+            }
           }
       },
       props: {
-        chart:{
-          type:Array,
+        // 扇形区域名称
+        opinion: {
+          type: Array,
           default(){
-            return {}
+            return []
           }
         },
-        title:{
-          type:Array,
+        // 扇形区域数据
+        opinionData: {
+          type: Array,
           default(){
-            return {}
+            return []
           }
         },
+        //d单位
+        dw: {
+          type: String,
+          default() {
+            return '元'
+          },
+        }
       },
       watch:{
-        chart(val){
+        opinionData(val){
           if(val){
-            console.log(val)
-            let maxNum=0;
-            for(var i in val){
-              if(val[i].value>maxNum){
-                maxNum=val[i].value
-              }
+            this.draw()
+            var vm=this;
+            if(vm.chart){
+              vm.stopInfinite();
             }
-            if(maxNum>=10000&&maxNum<100000000){
-              this.dw='万元';
-              for(var j in val){
-                val[j].value=(val[j].value/10000).toFixed(2)
-              }
-            }else if(maxNum>=100000000){
-              this.dw='亿元';
-              for(var k in val){
-                val[k].value=(val[k].value/100000000).toFixed(2)
-              }
-            }else{
-              this.dw='元';
-            }
-            this.draw();
+            vm.chart=setInterval(vm.infinite,1300);
           }
-        },
+        }
       },
       mounted() {
-          this.chartsInit();
+        this.$nextTick(() => {
+          this.draw()
+        })
       },
       methods:{
-        // 初始化图表
         chartsInit(){
-          // 创建图表对象
-          if(!this.chart.target){
-            this.target = echarts.init(document.getElementById('piechart'), 'westeros')
-          }
-          // 绘制默认图表
-          this.draw()
+          //debugger
+          var vm=this;
+
+          // window.addEventListener("resize", () => { vm.chart2.target.resize();});
+          this.chart2.target.on('mouseover',function(params){
+            //隐藏tooltip
+            vm.chart2.target.dispatchAction({
+              type: 'hideTip',
+              seriesIndex: 0,
+              dataIndex: vm.currentIndex
+            });
+            // 取消之前高亮的图形
+            vm.chart2.target.dispatchAction({
+              type: 'downplay',
+              seriesIndex: 0,
+              dataIndex: vm.currentIndex
+            });
+            clearInterval(vm.chart);
+            vm.delay=true;
+            vm.chart=null;
+            //显示tooltip
+            vm.chart2.target.dispatchAction({
+              type: 'showTip',
+              seriesIndex: 0,
+              dataIndex: vm.currentIndex
+            });
+            // 高亮当前图形
+            vm.chart2.target.dispatchAction({
+              type: 'highlight',
+              seriesIndex: 0,
+              dataIndex: params.dataIndex
+            });
+
+          })
+          this.chart2.target.on('mouseout',function(params){
+            vm.delay=false;
+            vm.currentIndex=params.dataIndex;
+            setTimeout(vm.delayInfinite,1500)
+          })
+
         },
-          draw(){
+        //停止循环
+        stopInfinite(){
+          var vm=this;
+          clearInterval(vm.chart);
+          vm.delay=true;
+          vm.chart=null;
+          // 取消之前高亮的图形
+          vm.chart2.target.dispatchAction({
+            type: 'downplay',
+            seriesIndex: 0,
+            dataIndex: vm.currentIndex
+          });
+          // 控制悬浮的tooltip显示
+          vm.chart2.target.dispatchAction({
+            type: 'hideTip',
+            seriesIndex: 0,
+            dataIndex: vm.currentIndex
+          });
+        },
+        //延时触发循环
+        delayInfinite(){
+          var vm = this;
+          if(!vm.delay&&!vm.chart){
+            vm.chart=setInterval(vm.infinite,1300);
+          }
+        },
+        //高亮状态循环
+        infinite() {
+          var vm = this;
+          var dataLen = vm.chart2.option.series[0].data.length;
+          // 取消之前高亮的图形
+          vm.chart2.target.dispatchAction({
+            type: 'downplay',
+            seriesIndex: 0,
+            dataIndex: vm.currentIndex
+          });
+          vm.currentIndex = (vm.currentIndex + 1) % dataLen;
+          // 高亮当前图形
+          vm.chart2.target.dispatchAction({
+            type: 'highlight',
+            seriesIndex: 0,
+            dataIndex: vm.currentIndex
+          });
+          // 显示 tooltip
+          vm.chart2.target.dispatchAction({
+            type: 'showTip',
+            seriesIndex: 0,
+            dataIndex: vm.currentIndex
+          });
+        },
+
+        draw(){
+          var vm=this;
+          // 创建图表对象
+          if(!this.chart2.target){
+            this.chart2.target = echarts.init(document.getElementById('piechart'), 'westeros')
+          }
             let option={
               title: {
                 text:'单位: '+this.dw,
@@ -81,45 +233,62 @@
                 formatter:"{b}"
               },
               legend:{
-                data:this.title,
+                data:this.opinion,
                 bottom:20
               },
 
               series:[
                 {
                   type:'pie',
-                  radius:'55%',
+                  radius:['60%','76%'],
                   selectedMode:'single',
                   selectedOffset:10,
                   center:['50%','50%'],
                   clockwise:'true',
+                  avoidLabelOverlap:false,
                   label:{
-                    formatter: ['{c|{c}}','{d}%'].join('\n'),
-                    position:'outside',
+                    formatter: ['{b| {b}}','{c|{c}'+this.dw+'}','{d| {d}%}'].join('\n'),
+                    show:false,
+                    position:'center',
                     rich: {
+                      b:{
+                        color:'#5f5b61',
+                        lineHeight:20,
+                        fontSize:18
+                      },
                       c: {
                         color:'red',
                         lineHeight:20,
                         fontSize:20
                       },
+                      d: {
+                        color:'#3d99f6',
+                        lineHeight:20,
+                        fontSize:14
+                      }
+                    },
+                    emphasis: {
+                      show: true,
                     }
-
                   },
                   labelLine:{
                     normal:{
+                      show:false,
                       length:10,
                       length2:5,
                       smooth:false,
                     }
                   },
-                  data:this.chart
+                  data:this.opinionData
                 }
               ]
             };
-            if(!this.chart.target){
-              this.target = echarts.init(document.getElementById('piechart'), 'westeros')
-            }
-            this.target.setOption(option)
+          // 绘制默认图表
+          console.log(this.chart2.option);
+          console.log(option);
+          //this.chart2.option=option;
+          this.chart2.target.setOption(option);
+          this.chartsInit();
           }
       }
     }

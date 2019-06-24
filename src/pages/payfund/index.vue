@@ -243,7 +243,7 @@
         </div>
       </div>
       <div class="rightPanel">
-        <div style="">
+        <div style="width: 278px;overflow-y: scroll;padding-right: 11px;height: 100%;">
           <!--部门选择-->
           <el-select size="small" style="width: 250px;" v-model="searchData.bmType" @change="changeApart">
             <el-option v-for="item in bmList"
@@ -255,14 +255,13 @@
           <!--预算显示区域-->
           <el-card>
             <div>
-              <p style="color: #3294e8;">{{apartData.Mst.length}}</p>
+              <p style="color: #3294e8;font-size: .4rem">{{apartData.Mst.length}}</p>
               <div>预算支出项目总数</div>
             </div>
             <div>
-              <p style="color:#f52c1d" :title="apartData.Amount | NumFormat">
-                <num :vv="apartData.Amount | NumFormat"></num>
+              <p :title="apartData.Amount | NumFormat">
+                <num :vv="Number(apartData.Amount)"></num>
                 <!--{{apartData.money}}--></p>
-              <div>支出预算总额(元)</div>
             </div>
           </el-card>
           <el-card>
@@ -279,7 +278,10 @@
             </div>
             <div>
               <!--echartArea-->
-              <pie-chart :chart="chartData.chart" :title="chartData.title"></pie-chart>
+              <pie-chart
+                         :dw="chartData.dw"
+                         :opinion="chartData.title"
+                         :opinionData="chartData.chart"></pie-chart>
             </div>
           </el-card>
         </div>
@@ -374,6 +376,7 @@
             chartData:{
               chart:[{name:'可申请',value:13210},{name:'冻结',value:1200},{name:'已使用',value:2301}],
               title:['可申请','冻结','已使用'],
+              dw:'元'
             },//图表数据
             applyType:false,//是否显示查看申请弹窗
             applyNum:'',//当前查看申请单的编号
@@ -545,6 +548,28 @@
           let param={xmPhid:val};
           this.getAxios('GBK/PaymentMstApi/GetAmountOfMoney',param).then(res=>{
             this.chartData.chart=[{name:'可申请',value:res.sum},{name:'冻结',value:res.frozen},{name:'已使用',value:res.use}];
+            let maxNum=0;
+            for(var i in  this.chartData.chart){
+              if( this.chartData.chart[i].value>maxNum){
+                maxNum= this.chartData.chart[i].value
+              }
+            }
+            if(maxNum>=10000&&maxNum<100000000){
+              this.chartData.dw='万元';
+              for(var j in  this.chartData.chart){
+                this.chartData.chart[j].value=( this.chartData.chart[j].value/10000).toFixed(2)
+              }
+            }else if(maxNum>=100000000){
+              this.chartData.dw='亿元';
+              for(var k in  this.chartData.chart){
+                this.chartData.chart[k].value=( this.chartData.chart[k].value/100000000).toFixed(2)
+              }
+            }else{
+              this.chartData.dw='元';
+            }
+
+
+
           }).catch(err=>{
             console.log(err);
           })
@@ -957,11 +982,10 @@
   box-shadow: 0 0 7px #ccc;
   padding: 10px;
   background-color: #58a5e6;
-  overflow-y: auto;
+  overflow: hidden;
   font-size: 0.12rem;
 }
   .rightPanel p{
-    font-size: .4rem;
     margin-top: 10px;
     text-shadow: 1px 2px 1px #5302026e;
   }
