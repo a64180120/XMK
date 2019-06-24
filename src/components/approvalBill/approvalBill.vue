@@ -30,7 +30,7 @@
         <div class="textare">
           <el-input type="textarea" v-model="textare"></el-input>
           <div style="text-align: right">
-            <span style="font-size: 0.10rem">{{wordNum}}/50</span>
+            <span style="font-size: 0.10rem">{{wordNum}}/100</span>
           </div>
         </div>
       </div>
@@ -165,14 +165,14 @@ export default {
   watch: {
     value(newValue) {
       console.log('value:',newValue)
-      if (this.wordNum <50){
+      if (this.wordNum <100){
         this.textare = newValue
       }
 
     },
     textare(newValue) {
       console.log('textare:',newValue)
-      if (this.wordNum <50 ){
+      if (newValue !==null && newValue.length <100 ){
         for (let i = 0;i<newValue.length;i++){
           this.wordNum = i +1
         }
@@ -182,7 +182,7 @@ export default {
         for (let i = 0;i<newValue.length;i++){
           this.wordNum = i +1
         }
-       this.textare = newValue.slice(0,50)
+       this.textare = newValue.slice(0,100)
       }
     },
     handleValue(val) {

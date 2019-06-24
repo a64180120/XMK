@@ -45,7 +45,7 @@
           if(this.ind.pro.QtAttachments){
             for(var i=0; i<this.ind.pro.QtAttachments.length ; i++){
               let file={
-                name:this.ind.pro.QtAttachments[i].BUrlpath.replace('/UpLoadFiles/BkPayment/',''),
+                name:this.ind.pro.QtAttachments[i].BName,
                 url:this.ind.pro.QtAttachments[i].BUrlpath
               }
               this.filelist.push(file)

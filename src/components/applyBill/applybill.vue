@@ -27,7 +27,7 @@
                 <div class="appendix-item" v-for="(item,idx) in record.PaymentXmDtl">
                   <span class="title"><i class="el-icon-s-order"></i>{{item.PaymentXm.XmProjname}}</span>
                   <ul>
-                    <li  v-for="(folder,idx) in item.QtAttachments" @click="clickFolder(folder)" :title="folder.BUrlpath.replace('/UpLoadFiles/BkPayment/','')">{{folder.BUrlpath.replace('/UpLoadFiles/BkPayment/','')}}</li>
+                    <li  v-for="(folder,idx) in item.QtAttachments" v-if="folder.BUrlpath" @click="clickFolder(folder)" :title="folder.BName">{{folder.BName}}</li>
                   </ul>
                 </div>
               </div>
@@ -271,7 +271,7 @@
             for(var j in pxd.QtAttachments){
               let img= {
                 path: baseURL.replace('/api','')+pxd.QtAttachments[j].BUrlpath,
-                name: pxd.QtAttachments[j].BUrlpath.replace('/UpLoadFiles/BkPayment/','')
+                name: pxd.QtAttachments[j].BName
               }
               this.imgList.push(img);
             }

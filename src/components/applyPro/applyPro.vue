@@ -464,52 +464,6 @@
           });
           return;
         }
-
-        /*
-        PaymentMst:{
-          FYear: '',//（年度）
-            FName: '',//（申请单名）
-            FOrgphid: '',//（组织主键）
-            FOrgcode: '',//（组织编码）
-            FOrgname: '',//（组织名）
-            FDepphid: "",//（部门主键）
-            FDepcode: '',//（部门编码）
-            FDepname: '',//（部门名称）
-            FAmountTotal: '',//（申请单金额）
-            FDate: '',//（申请单时间）2019-05-30
-            FApproval: '',//（审批状态：0- 未审批 1-待审批 2- 未通过 9-审批通过）
-            IsPay: '',//（支付状态：0- 否 1-待支付 9-支付完成）
-            FDescribe: '', //（申报说明）
-            FRemarks: '', //（备注）
-        },
-        PaymentXmDtl:[
-          {
-            PaymentXm:{
-              XmMstPhid: '',//（项目主表主键）
-              XmProjcode: '', //（项目编码）
-              XmProjname: '', //（项目名称）
-              FAmountTotal: '', //（项目金额）
-              FRemarks: '', //（备注）
-            },
-            PaymentDtls:[
-              {
-                XmMstPhid: '', //（预算项目主表主键）
-                BudgetdtlPhid: '', //（预算明细主键）
-                BudgetdtlName: '', //（预算明细名称）
-                FDepartmentcode: '', //（补助单位/部门）
-                FDepartmentname: '', //（补助单位名称）
-                FAmount: '', //（项目明细申请金额）
-                FRemarks: '', //（备注）
-                QtKmdm: '', //（预算项目编码）
-                QtKmmc: '' , //（预算项目名称）
-                FPayment:'', //(支付状态：0-待支付 1-支付异常  9-支付成功)
-                FPaymentdate:'' //（支付日期）
-              }
-            ]
-          }
-        ],
-        * */
-
         var data = {
           infoData: {
             PaymentMst: this.PaymentMst,
@@ -655,7 +609,7 @@
           let count=0;
           for(var j in px.PaymentDtls){
             let pd=px.PaymentDtls[j];
-            count+=pd.FAmount;
+            count=(count*100+Number(pd.FAmount)*100).toFixed(0)/100;
           }
           px.PaymentXm.FAmountTotal=count;
           if(pindex==i&&count>px.money.surplus){
