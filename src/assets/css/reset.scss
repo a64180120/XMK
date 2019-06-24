@@ -168,6 +168,7 @@ $dangerColor: #ff0000; //红色警告颜色
 $loadColor: #1f6cfc; //蓝色进行中颜色
 $alertColor: #ff9900; //提示颜色
 $waitColor: #67971a;
+$whiteColor:#fff;//白色
 
 .msFixed {
   position: fixed;
@@ -223,4 +224,8 @@ $waitColor: #67971a;
 }
 .dangerText {
   color: $dangerColor;
+}
+.btnContainer .handle{
+  margin-left:20px;
+  color:$whiteColor
 }

@@ -60,7 +60,7 @@
                 </ul>
             </div>
         </div>
-        <div class="pageArea">
+        <!-- <div class="pageArea">
             <el-pagination
                 @size-change="handleSizeChange"
                 @current-change="handleCurrentChange"
@@ -71,7 +71,7 @@
                 :total="total"
             >
             </el-pagination>
-        </div>
+        </div> -->
         
     </div>
 </template>
@@ -179,8 +179,8 @@ export default {
         getData(){
             let data={
                 OrgCode:this.org.OCode,
-                PageIndex:this.pageIndex-1,
-                PageSize:this.pageSize,
+//                 PageIndex:this.pageIndex-1,
+//                 PageSize:this.pageSize,
                 queryStr:this.searchInfo
             }
             getUserByOrg(data).then(res => {
@@ -191,7 +191,7 @@ export default {
                     this.allChecked(false);
                     this.checked=false;
                     this.userList=res.Record;
-                    this.total=res.totalRows;
+                    // this.total=res.totalRows;
                     this.userList.map(user => {
                         for(let u of this.info){
                             if(u.OperatorPhid==user.DefStr6){

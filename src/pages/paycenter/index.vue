@@ -4,7 +4,7 @@
       <div class="navs">
         <div
           v-if="menubutton.paycenter_maintain=='True'"
-          class="nav"
+          class="nav handle"
           @click="payNav('payListData')"
         >
           <img src="../../assets/images/sfk.png" alt>
@@ -12,7 +12,7 @@
         </div>
         <div
           v-if="menubutton.paycenter_mergepay=='True'"
-          class="nav"
+          class="nav handle"
           @click="payNav('mergePayData')"
         >
           <img src="../../assets/images/hb.png" alt>
@@ -20,13 +20,13 @@
         </div>
         <div
           v-if="menubutton.paycenter_catch=='True'"
-          class="nav"
+          class="nav handle"
           @click="payNav('payErrorHandleData')"
         >
           <img src="../../assets/images/yc.png" alt>
           <div>异常处理</div>
         </div>
-        <div v-if="menubutton.paycenter_check=='True'" class="nav" @click="payNav('approvalData')">
+        <div v-if="menubutton.paycenter_check=='True'" class="nav handle" @click="payNav('approvalData')">
           <img src="../../assets/images/ss.png" alt>
           <div>送审</div>
         </div>
@@ -614,10 +614,10 @@ export default {
           case 'payErrorHandleData':
             if (
               !handleitem.every(item => {
-                return item.Mst.FState == 2
+                return item.Mst.FState == 2 || item.Mst.FState == 3
               })
             ) {
-              this.$msgBox.error('只能对支付异常的单据进行处理。')
+              this.$msgBox.error('只能对支付异常和支付中的单据进行处理。')
               this.tableData.forEach(item => {
                 item.Mst.checked = false
               })
@@ -738,7 +738,7 @@ export default {
     height: 60px;
     > .nav {
       display: inline-block;
-      color: #676767;
+      
       cursor: pointer;
       &:not(:last-child) {
         margin-right: 10px;
