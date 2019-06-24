@@ -26,7 +26,11 @@
           <img src="../../assets/images/yc.png" alt>
           <div>异常处理</div>
         </div>
-        <div v-if="menubutton.paycenter_check=='True'" class="nav handle" @click="payNav('approvalData')">
+        <div
+          v-if="menubutton.paycenter_check=='True'"
+          class="nav handle"
+          @click="payNav('approvalData')"
+        >
           <img src="../../assets/images/ss.png" alt>
           <div>送审</div>
         </div>
@@ -661,18 +665,6 @@ export default {
                 item.Mst.checked = false
               })
               return
-            } else if (
-              handleitem.some(item => {
-                return item.Dtls.some(subitem => {
-                  return subitem.FRecAcnt.length < 19
-                })
-              })
-            ) {
-              this.$msgBox.error('收款账户长度错误！')
-              this.tableData.forEach(item => {
-                item.Mst.checked = false
-              })
-              return
             }
             break
         }
@@ -734,11 +726,10 @@ export default {
   color: #333;
   font-size: 0.16rem;
   .navs {
-    padding-top: 7px;
     height: 60px;
     > .nav {
       display: inline-block;
-      
+
       cursor: pointer;
       &:not(:last-child) {
         margin-right: 10px;

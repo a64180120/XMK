@@ -48,6 +48,7 @@ export default {
             UserId:this.$store.state.user.userid
           };     
           organizeTree(data).then(res=>{
+						console.log(res.Record)
               if(res.Status=='error'){
                   this.$msgBox.show(res.Msg);
               }else{

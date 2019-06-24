@@ -270,6 +270,7 @@
   height: 50px;
   padding: 10px 23px;
   font-size: 0.16rem;
+	color:#666;
   .count {
     float: left;
     img {
@@ -314,6 +315,7 @@
       }
     }
     .orgName {
+			
       cursor: pointer;
       max-width: 400px;
       overflow: hidden;

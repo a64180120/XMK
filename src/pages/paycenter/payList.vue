@@ -849,9 +849,6 @@ export default {
           ) {
             this.$msgBox.error('请先完善数据信息')
             return
-          } else if (this.detail.Dtls.some(item => item.FRecAcnt.length < 19)) {
-            this.$msgBox.error('收款账户长度错误！')
-            return
           }
           this[type].openDialog = true
           this[type].data = this.data.data
