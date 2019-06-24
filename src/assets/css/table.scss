@@ -129,6 +129,7 @@ table .left {
   &:first-of-type {
     border-top-left-radius: 8px;
     border-bottom-left-radius: 8px;
+    cursor: pointer;
   }
   &:last-of-type {
     border-top-right-radius: 8px;

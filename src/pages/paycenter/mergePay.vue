@@ -333,6 +333,23 @@ export default {
     },
     // 请求-支付
     postSubmitPayments() {
+      function success(res) {
+        if (res.Status == 'error') {
+          this.$msgBox.error(res.Msg)
+          console.log(res)
+          return
+        }
+        this.refreshIndexData()
+        this.$msgBox.show({
+          content: '支付操作成功！具体到账情况以银行处理时间为准。',
+          fn: () => {
+            this.showPassword = false
+            this.showMergePay = true
+            if (this.father) this.father.openDialog = false
+            this.data.openDialog = false
+          }
+        })
+      }
       // 获得银行服务状态
       getBankServiceState({})
         .then(res => {
@@ -341,39 +358,38 @@ export default {
             console.log(res)
             return
           }
-          var ids = this.data.data.map(item => {
-            return item.Mst.PhId
-          })
-          // console.log(ids)
-          // var ids = this.data.data[0].Mst.PhId
-          postSubmitPayments({
-            infoData: ids,
-            // id: ids,
-            uid: this.userid,
-            orgid: this.orgid,
-            ryear: this.year
-          })
-            .then(res => {
-              if (res.Status == 'error') {
-                this.$msgBox.error(res.Msg)
-                console.log(res)
-                return
-              }
-              this.refreshIndexData()
-              this.$msgBox.show({
-                content: '支付操作成功！具体到账情况以银行处理时间为准。',
-                fn: () => {
-                  this.showPassword = false
-                  this.showMergePay = true
-                  if (this.father) this.father.openDialog = false
-                  this.data.openDialog = false
-                }
+          if (this.$parent.bankChooseData) {
+            postSubmitPayment({
+              id: this.data.data[0].Mst.PhId,
+              uid: this.userid,
+              orgid: this.orgid,
+              ryear: this.year
+            })
+              .then(res => {
+                success(res)
               })
+              .catch(err => {
+                console.log(err)
+                this.$msgBox.error(err.Message || '支付失败！')
+              })
+          } else {
+            var ids = this.data.data.map(item => {
+              return item.Mst.PhId
             })
-            .catch(err => {
-              console.log(err)
-              this.$msgBox.error(err.Message || '支付失败！')
+            postSubmitPayments({
+              infoData: ids,
+              uid: this.userid,
+              orgid: this.orgid,
+              ryear: this.year
             })
+              .then(res => {
+                success(res)
+              })
+              .catch(err => {
+                console.log(err)
+                this.$msgBox.error(err.Message || '支付失败！')
+              })
+          }
         })
         .catch(err => {
           console.log(err)
@@ -391,7 +407,6 @@ export default {
             this.$msgBox.error(res.Msg)
             return
           }
-          console.log(res)
           if (!res) {
             this.$msgBox.error('支付口令错误，请重新输入！')
             this.password = ''
@@ -433,10 +448,6 @@ export default {
       usercode: state => state.user.usercode,
       year: state => state.user.year
     })
-  },
-  watch: {
-    // 隐藏后关闭弹框
-    'data.openDialog'(newVal) {}
   }
 }
 </script>

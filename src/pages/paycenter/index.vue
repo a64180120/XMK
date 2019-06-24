@@ -614,10 +614,10 @@ export default {
           case 'payErrorHandleData':
             if (
               !handleitem.every(item => {
-                return item.Mst.FState == 2
+                return item.Mst.FState == 2 || item.Mst.FState == 3
               })
             ) {
-              this.$msgBox.error('只能对支付异常的单据进行处理。')
+              this.$msgBox.error('只能对支付异常和支付中的单据进行处理。')
               this.tableData.forEach(item => {
                 item.Mst.checked = false
               })
