@@ -230,7 +230,8 @@
               },
               tooltip:{
                 trigger:'item',
-                formatter:"{b}"
+                formatter:"{b}",
+                show:false
               },
               legend:{
                 data:this.opinion,

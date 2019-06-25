@@ -17,7 +17,7 @@
           附件:
           <span @click.stop="showAttech" v-if="info.QtAttachments ===null" class="attenchment">无</span>
           <span v-else v-for="(item,idx) in info.QtAttachments">
-            <span @click.stop="showAttech(info.QtAttachments)" class="attenchment">{{item.BName}}</span><span v-if="idx !==info.QtAttachments.length-1">、</span>
+            <span @click.stop="showAttech(info.QtAttachments)" class="attenchment" style="word-break: break-word">{{item.BName}}</span><span v-if="idx !==info.QtAttachments.length-1">、</span>
           </span>
         </li>
         <li v-if="info.JudgeRefer === 2">
@@ -111,7 +111,9 @@ export default {
   }
   > ul {
     > li {
+      max-width: 240px;
       margin-bottom: 5px;
+      word-break: break-word;
       &:last-of-type {
         margin: 0;
       }

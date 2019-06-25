@@ -166,4 +166,8 @@ export default {
   border-bottom: 1px solid #eaeaea;
 }
 </style>
-
+<style scoped>
+  .img-dialog >>> .el-dialog{
+    width: 780px!important;
+  }
+</style>
