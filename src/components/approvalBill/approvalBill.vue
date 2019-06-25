@@ -184,6 +184,9 @@ export default {
         }
        this.textare = newValue.slice(0,100)
       }
+      if (newValue ===''){
+        this.wordNum = 0
+      }
     },
     handleValue(val) {
       if (val === '2') {

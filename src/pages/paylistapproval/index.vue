@@ -44,15 +44,16 @@
             <table>
               <colgroup>
                 <col width="5%">
-                <col width="15%">
+                <col width="10%">
                 <col width="8%">
                 <col width="8%">
                 <col width="8%">
                 <col width="8%">
-                <col width="12%">
+                <col width="10%">
+                <col width="10%">
                 <col width="8%">
                 <col v-if="isApproval" width="5%">
-                <col width="23%">
+                <col width="20%">
               </colgroup>
               <thead>
               <tr>
@@ -78,6 +79,9 @@
                   申请日期
                 </td>
                 <td>
+                  支付单名称
+                </td>
+                <td>
                   审批状态
                 </td>
                 <td v-if="isApproval">停留时长</td>
@@ -90,15 +94,16 @@
             <table>
               <colgroup>
                 <col width="5%">
-                <col width="15%">
+                <col width="10%">
                 <col width="8%">
                 <col width="8%">
                 <col width="8%">
                 <col width="8%">
-                <col width="12%">
+                <col width="10%">
+                <col width="10%">
                 <col width="8%">
                 <col width="5%">
-                <col width="23%">
+                <col width="20%">
               </colgroup>
               <tbody>
               <tr :class="{trActive:check[idx]}" v-for="(item,idx) in tableData"  :key="idx">
@@ -123,6 +128,9 @@
                 </td>
                 <td>
                   {{item.BDate}}
+                </td>
+                <td>
+                  {{item.BName}}
                 </td>
                 <td>
                   <span class="cell-click" v-if="item.BStatus ==0 " @click.stop="openAuditfollow(item,idx)">未审批</span>
@@ -166,14 +174,15 @@
             <table>
               <colgroup>
                 <col width="5%">
-                <col width="15%">
+                <col width="10%">
                 <col width="8%">
                 <col width="8%">
                 <col width="8%">
                 <col width="8%">
-                <col width="12%">
+                <col width="10%">
+                <col width="10%">
                 <col width="8%">
-                <col width="28%">
+                <col width="25%">
               </colgroup>
               <thead>
               <tr>
@@ -199,6 +208,9 @@
                   申请日期
                 </td>
                 <td>
+                  支付单名称
+                </td>
+                <td>
                   申请状态
                 </td>
                 <td>申报说明</td>
@@ -210,14 +222,15 @@
             <table>
               <colgroup>
                 <col width="5%">
-                <col width="15%">
+                <col width="10%">
                 <col width="8%">
                 <col width="8%">
                 <col width="8%">
                 <col width="8%">
-                <col width="12%">
+                <col width="10%">
+                <col width="10%">
                 <col width="8%">
-                <col width="28%">
+                <col width="25%">
               </colgroup>
               <tbody>
               <tr :class="{trActive:check[idx]}" v-for="(item,idx) in tableData"  :key="idx">
@@ -242,6 +255,9 @@
                 </td>
                 <td>
                   {{item.BDate}}
+                </td>
+                <td>
+                  {{item.BName}}
                 </td>
                 <td>
                   <span class="cell-click" v-if="item.BStatus ==0 " @click.stop="openAuditfollow(item,idx)">未审批</span>
