@@ -232,7 +232,10 @@
                 {{payTypeList[item.IsPay]}}
               </td>
               <td class="left">
-                {{item.FDescribe}}
+                <el-tooltip :content="item.FDescribe">
+                  <p>{{item.FDescribe}}</p>
+                </el-tooltip>
+
               </td>
             </tr>
             <tr v-if="dataList.data.length==0">
