@@ -296,7 +296,7 @@ export default {
         })
         .catch(err => {
           console.log(err)
-          this.$msgBox.error(err.message)
+          this.$msgBox.error(err.message || '获取支付口令状态失败！')
         })
     },
     beforeClose(done) {
