@@ -29,6 +29,7 @@
                   </div>
                   <el-input type="textarea" placeholder="100字以内" resize="none" maxlength="100" v-model="PaymentMst.FDescribe"></el-input>
                 </el-card>
+                <div style="position: relative;font-size: 10px;top: -30px;height: 0;width: 50px;left: 188px;"><span style="color: red">{{len}}</span><span>/100</span></div>
               </div>
             </div>
           </div>
@@ -239,6 +240,7 @@
     },
     data(){
       return {
+        len:0,//输入长度
         uploadVis:false,//文件上传弹窗
 
         msgType: false,//删除弹窗
@@ -313,7 +315,8 @@
               }
             ],
             QtAttachments:[]
-          }
+          },
+
         ],
         xmCheckList:[false],
         choosedIndexAndPro:{index:0,pro:{}},
@@ -327,6 +330,11 @@
         orgname:state => state.user.orgname,//名称
         year:state => state.user.year,//年份
       })
+    },
+    watch:{
+      'PaymentMst.FDescribe':function(val){
+        this.len=val.length;
+      }
     },
     components:{ApprovalDialog, Orgtree,goApproval,ImgView,fileUp},
     mounted(){
@@ -759,6 +767,19 @@
             this.getProMoney(index,this.prodata.Mst[i].PhId);
           }
         }
+        this.PaymentXmDtl[index].PaymentDtls=[{
+          XmMstPhid: '', //（预算项目主表主键）
+          BudgetdtlPhid: '', //（预算明细主键）
+          BudgetdtlName: '', //（预算明细名称）
+          FDepartmentcode: '', //（补助单位/部门）
+          FDepartmentname: '', //（补助单位名称）
+          FAmount: 0, //（项目明细申请金额）
+          FRemarks: '', //（备注）
+          QtKmdm: '', //（预算项目编码）
+          QtKmmc: '' , //（预算项目名称）
+          FPayment:'', //(支付状态：0-待支付 1-支付异常  9-支付成功)
+          FPaymentdate:'' //（支付日期）
+        }]
         this.xmDisable();
       },
       //禁用项目选择
