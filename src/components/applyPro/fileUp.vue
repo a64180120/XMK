@@ -50,7 +50,7 @@
               }
               this.filelist.push(file)
             }
-            this.returnList=this.filelist;
+            this.returnList=this.ind.pro.QtAttachments;
           }
       },
       methods:{

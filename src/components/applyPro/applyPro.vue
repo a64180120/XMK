@@ -29,6 +29,7 @@
                   </div>
                   <el-input type="textarea" placeholder="100字以内" resize="none" maxlength="100" v-model="PaymentMst.FDescribe"></el-input>
                 </el-card>
+                <div style="position: relative;font-size: 10px;top: -30px;height: 0;width: 50px;left: 188px;"><span style="color: red">{{len}}</span><span>/100</span></div>
               </div>
             </div>
           </div>
@@ -72,8 +73,8 @@
 
               </div>
               <!--frozen: 0 sum: 660000 surplus: 660000 use: 0-->
-              <div style="height: 40px;line-height: 40px;background-color: #d7d7d7;padding:0 10px;margin-top: 10px;" v-if="item.money">
-                <span>预算总额 （{{item.money.sum | NumFormat}}元）- 实际已使用 （{{item.money.use | NumFormat}}元） - 冻结 （{{item.money.frozen | NumFormat}}元） = </span><span style="color: red;">本次可申请 （{{item.money.surplus | NumFormat}}元）</span>
+              <div style="height: 40px;line-height: 40px;background-color: #d7d7d7;padding:0 10px;margin-top: 10px;">
+                <span>预算总额 （{{item.PaymentXm.Sum | NumFormat}}元）- 实际已使用 （{{item.PaymentXm.Use | NumFormat}}元） - 冻结 （{{item.PaymentXm.Frozen | NumFormat}}元） = </span><span style="color: red;">本次可申请 （{{item.PaymentXm.Surplus | NumFormat}}元）</span>
               </div>
             </div>
 
@@ -239,6 +240,7 @@
     },
     data(){
       return {
+        len:0,//输入长度
         uploadVis:false,//文件上传弹窗
 
         msgType: false,//删除弹窗
@@ -246,13 +248,6 @@
         delmsgType: false,//点击删除后的提示弹窗
         msg: '',//删除提示消息
         time: 3,//倒计时
-        data: {
-          applyBillName:'',
-          applyDepart: '浙江省总工会本级办公室',
-          applyDate: new Date().getDate(),
-          applyAmount: '100000',
-          applyText:''
-        },
 
         orgType:false,//是否显示组织弹窗
 
@@ -273,6 +268,7 @@
 
         /*项目新增数据*/
         PaymentMst:{
+          PhId:0,
           FYear: '',//（年度）
           FName: '',//（申请单名）
           FOrgphid: '',//（组织主键）
@@ -295,6 +291,10 @@
               XmProjcode: '', //（项目编码）
               XmProjname: '', //（项目名称）
               FAmountTotal: 0, //（项目金额）
+              Frozen:0,//冻结金额
+              Use:0,//已使用金额
+              Surplus:0,//剩余金额
+              Sum:0,//合计
               FRemarks: '', //（备注）
             },
             PaymentDtls:[
@@ -313,7 +313,8 @@
               }
             ],
             QtAttachments:[]
-          }
+          },
+
         ],
         xmCheckList:[false],
         choosedIndexAndPro:{index:0,pro:{}},
@@ -327,6 +328,11 @@
         orgname:state => state.user.orgname,//名称
         year:state => state.user.year,//年份
       })
+    },
+    watch:{
+      'PaymentMst.FDescribe':function(val){
+        this.len=val.length;
+      }
     },
     components:{ApprovalDialog, Orgtree,goApproval,ImgView,fileUp},
     mounted(){
@@ -398,6 +404,7 @@
           console.log(res);
           this.PaymentMst=res.PaymentMst;
           this.PaymentXmDtl=res.PaymentXmDtl;
+          this.xmDisable();
         }).catch(err=>{
           console.log(err);
         })
@@ -520,6 +527,10 @@
             XmProjcode : '', //（项目编码）
             XmProjname : '', //（项目名称）
             FAmountTotal : '', //（项目金额）
+            Frozen:0,//冻结金额
+            Use:0,//已使用金额
+            Surplus:0,//剩余金额
+            Sum:0,//合计
             FRemarks : '', //（备注）
           },
           PaymentDtls:[
@@ -612,9 +623,9 @@
             count=(count*100+Number(pd.FAmount)*100).toFixed(0)/100;
           }
           px.PaymentXm.FAmountTotal=count;
-          if(pindex==i&&count>px.money.surplus){
-            let dis=Math.floor(count*100-px.money.surplus*100)/100;//超出的可申请资金
-            count=px.money.surplus;
+          if(pindex==i&&count>px.PaymentXm.Surplus){
+            let dis=Math.floor(count*100-px.PaymentXm.Surplus*100)/100;//超出的可申请资金
+            count=px.PaymentXm.Surplus;
             px.PaymentXm.FAmountTotal=count;
 
             px.PaymentDtls[index].FAmount=Math.floor(px.PaymentDtls[index].FAmount*100-dis*100)/100;
@@ -759,6 +770,19 @@
             this.getProMoney(index,this.prodata.Mst[i].PhId);
           }
         }
+        this.PaymentXmDtl[index].PaymentDtls=[{
+          XmMstPhid: '', //（预算项目主表主键）
+          BudgetdtlPhid: '', //（预算明细主键）
+          BudgetdtlName: '', //（预算明细名称）
+          FDepartmentcode: '', //（补助单位/部门）
+          FDepartmentname: '', //（补助单位名称）
+          FAmount: 0, //（项目明细申请金额）
+          FRemarks: '', //（备注）
+          QtKmdm: '', //（预算项目编码）
+          QtKmmc: '' , //（预算项目名称）
+          FPayment:'', //(支付状态：0-待支付 1-支付异常  9-支付成功)
+          FPaymentdate:'' //（支付日期）
+        }]
         this.xmDisable();
       },
       //禁用项目选择
@@ -774,9 +798,16 @@
       },
       //获取项目总额，已冻结，剩余金额
       getProMoney:function(index,phid){
-        let param={xmPhid:phid};
+        let param={xmPhid:phid,phid:this.PaymentMst.PhId};
         this.getAxios('GBK/PaymentMstApi/GetAmountOfMoney',param).then(res=>{
-          this.PaymentXmDtl[index]['money']=res;
+          this.PaymentXmDtl[index].PaymentXm['Frozen']=res.Frozen;
+          this.PaymentXmDtl[index].PaymentXm['Use']=res.Use;
+          this.PaymentXmDtl[index].PaymentXm['Surplus']=res.Surplus;
+          this.PaymentXmDtl[index].PaymentXm['Sum']=res.Sum;
+          /*Frozen:0,//冻结金额
+            Use:0,//已使用金额
+            Surplus:0,//剩余金额
+            Sum:0,//合计*/
           this.$forceUpdate(this.PaymentXmDtl)
         }).catch(err=>{
           console.log(err);
@@ -802,8 +833,6 @@
       },
       //获取返回的上传文件列表
       loadFile(val){
-        console.log('========wwwwwwwww============');
-        console.log(val);
         //this.PaymentXmDtl[this.choosedIndexAndPro.index].QtAttachments=val;
         this.PaymentXmDtl[this.choosedIndexAndPro.index].QtAttachments=val;
         this.$forceUpdate( this.PaymentXmDtl );

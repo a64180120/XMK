@@ -39,7 +39,7 @@
                 <el-input size="mini" v-model="searchForm.OrgName" @focus="openOrg()" @change="changeInput()" style="width: 120px" placeholder="全部"></el-input>
               </el-form-item>
               <el-form-item label="停留时长" class="top-form-left">
-                <el-input size="mini" v-model="searchForm.StopHour" style="width: 200px" placeholder="请输入停留时长" @change="changeInput()">
+                <el-input size="mini" v-model="searchForm.StopHour" style="vertical-align:middle !important; width: 200px" placeholder="请输入停留时长" @change="changeInput()">
                   <el-select v-model="searchForm.Operator" slot="prepend" placeholder="类型" class="select-input" style="width: 75px" @change="changeInput('operator')">
                     <el-option label="等于" value="1"></el-option>
                     <el-option label="大于" value="2"></el-option>
@@ -120,10 +120,10 @@
                 <td  @click.self="handleCheckBoxCellClick(item,idx)">
                   <el-checkbox v-model="check[idx]"  >{{idx+1}}</el-checkbox>
                 </td>
-                <td @click.stop="handleCellClick(item,idx)" class="apply-epart cell-click">
+                <td>
                   {{item.OrgName}}
                 </td>
-                <td>
+                <td @click.stop="handleCellClick(item,idx)" class="apply-epart cell-click">
                   {{item.BNum}}
                 </td>
                 <td>
@@ -232,11 +232,11 @@
                 <td @click.self="handleCheckBoxCellClick(item,idx)">
                   <el-checkbox v-model="check[idx]"  @click="handleCheckBoxCellClick(item,idx)">{{idx+1}}</el-checkbox>
                 </td>
-                <td @click="handleCellClick(item,idx)" class="apply-epart cell-click">
+                <td>
                   {{item.OrgName}}
                 </td>
-                <td>
-                  {{item.OrgCode}}
+                <td @click="handleCellClick(item,idx)" class="apply-epart cell-click">
+                  {{item.BNum}}
                 </td>
                 <td>
                   {{item.BName}}

@@ -2,7 +2,7 @@
   <section>
     <el-dialog
       :visible.sync="data.openDialog"
-      width="540px"
+      width="620px"
       :close-on-click-modal="false"
       class="dialog goApproval"
       append-to-body
@@ -16,9 +16,9 @@
             <span>送审备注</span>
             <span style="float:right;color:#333;" @click="openUpload">附单据 {{fileCount}} 张</span>
           </div>
-          <div class="textare" style="height: 135px">
+          <div class="textare" style="height: 100px">
             <el-input type="textarea" maxlength="150" style="height: 100%" resize="none" v-model="param.FOpinion"></el-input>
-            <div style="position: relative;right: -225px;top: -20px;font-size: 10px;"><span style="color: red">{{len}}</span><span>/150</span></div>
+            <div style="position: relative;right: -275px;top: -20px;font-size: 10px;"><span style="color: red">{{len}}</span><span>/150</span></div>
           </div>
         </div>
         <div class="sub-table">
@@ -352,8 +352,7 @@ export default {
 }
 .content {
   width: 100%;
-  height: 300px;
-  overflow-y: auto;
+  height: auto;
   overflow-x: hidden;
   > .handle {
     margin-bottom: 10px;

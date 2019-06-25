@@ -28,9 +28,9 @@
           </ul>
         </div>
         <div class="textare">
-          <el-input type="textarea" v-model="textare"></el-input>
-          <div style="text-align: right">
-            <span style="font-size: 0.10rem">{{wordNum}}/100</span>
+          <el-input type="textarea" v-model="textare" class="text-input"></el-input>
+          <div class="word-num">
+            <span class="word-size"><span style="color: #ec0f0f;">{{wordNum}}</span>/100</span>
           </div>
         </div>
       </div>
@@ -164,14 +164,12 @@ export default {
   },
   watch: {
     value(newValue) {
-      console.log('value:',newValue)
       if (this.wordNum <100){
         this.textare = newValue
       }
 
     },
     textare(newValue) {
-      console.log('textare:',newValue)
       if (newValue !==null && newValue.length <100 ){
         for (let i = 0;i<newValue.length;i++){
           this.wordNum = i +1
@@ -183,6 +181,9 @@ export default {
           this.wordNum = i +1
         }
        this.textare = newValue.slice(0,100)
+      }
+      if (newValue ===''){
+        this.wordNum = 0
       }
     },
     handleValue(val) {
@@ -297,10 +298,27 @@ export default {
     color: #3294e8;
   }
 }
+.textare{
+  >.text-input{
+    height: 100px
+  }
+  >.word-num{
+    position: relative;
+    text-align: right;
+
+    >.word-size{
+      position: absolute;
+      bottom: 0;
+      right: 10px;
+      font-size: 0.10rem
+    }
+  }
+}
 </style>
 <style scoped>
-.dialog {
-}
+  .text-input>>>.el-textarea__inner{
+      height: 100px;
+  }
 .dialog >>> .el-dialog {
   position: absolute;
   top: 50%;
