@@ -370,6 +370,10 @@
   }
   .dialog >>> .el-dialog__body{
     padding: 0 1%;
+    min-width: 620px;
+  }
+  .dialog >>>.el-dialog{
+    min-width: 620px;
   }
   .dialog >>> .el-dialog__header .el-dialog__headerbtn{
     top:15px;

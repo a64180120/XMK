@@ -28,9 +28,9 @@
           </ul>
         </div>
         <div class="textare">
-          <el-input type="textarea" v-model="textare"></el-input>
-          <div style="text-align: right">
-            <span style="font-size: 0.10rem">{{wordNum}}/100</span>
+          <el-input type="textarea" v-model="textare" class="text-input"></el-input>
+          <div class="word-num">
+            <span class="word-size"><span style="color: #ec0f0f;">{{wordNum}}</span>/100</span>
           </div>
         </div>
       </div>
@@ -300,10 +300,26 @@ export default {
     color: #3294e8;
   }
 }
+.textare{
+  position: relative;
+  >.text-input{
+    height: 100px
+  }
+  >.word-num{
+    text-align: right;
+    position: absolute;
+    bottom: 0;
+    right: 10px;
+    >.word-size{
+      font-size: 0.10rem
+    }
+  }
+}
 </style>
 <style scoped>
-.dialog {
-}
+  .text-input>>>.el-textarea__inner{
+      height: 100px;
+  }
 .dialog >>> .el-dialog {
   position: absolute;
   top: 50%;

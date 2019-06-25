@@ -4,7 +4,7 @@
         :visible.sync="openDialog"
         width="37.5%"
         :close-on-click-modal="false"
-        class="dialog"
+        class="dialog approval-dialog"
         :append-to-body="true"
         @close="closeDialog"
       >
@@ -382,6 +382,10 @@
   }
   .dialog >>> .el-dialog__body{
     padding: 0 1%;
+    min-width: 620px;
+  }
+  .dialog >>>.el-dialog{
+    min-width: 620px;
   }
   .dialog >>> .el-dialog__header .el-dialog__headerbtn{
     top:15px;
