@@ -548,9 +548,9 @@
         },
         //q切换右侧项目是进行并状态数据切换
         getChartList:function(val){
-          let param={xmPhid:val};
+          let param={xmPhid:val,PhId:0};
           this.getAxios('GBK/PaymentMstApi/GetAmountOfMoney',param).then(res=>{
-            this.chartData.chart=[{name:'可申请',value:res.sum},{name:'冻结',value:res.frozen},{name:'已使用',value:res.use}];
+            this.chartData.chart=[{name:'可申请',value:res.Sum},{name:'冻结',value:res.Frozen},{name:'已使用',value:res.Use}];
             let maxNum=0;
             for(var i in  this.chartData.chart){
               if( this.chartData.chart[i].value>maxNum){

@@ -33,7 +33,7 @@
             </li>
             <li class="auditInfo clear">
                 <div>启用组织</div>
-                <div style="position:relative" @click.stop="orgVisible=true"  :class="{fontRed:checkContent.org}">
+                <div style="position:relative" @click.stop="orgtreeShow"  :class="{fontRed:checkContent.org}">
                     <orgtree :visible.sync="orgVisible"  @confirm="getOrg" :data="orglist" :checked-org="orgSelected"></orgtree>
                     <el-input   readonly   placeholder="请选择组织(必填)"></el-input>
                     <div class="orgInfoCon">
@@ -111,7 +111,7 @@
             <span @click.stop="submit(type)" :class="{grey:selected!='3'}">保存</span>
             <span @click.stop="$emit('add-cancle')">取消</span>
         </p>
-        <xmMessage :visible.sync="message.visible" :message="message.msg"></xmMessage>
+        
     </div>
 </template>
 
@@ -360,9 +360,10 @@ export default {
                     this.add(data);
                 }else{
                     let orgids=[],data={};
-                    for(let org of this.info.org){
+                    for(let org of this.auditinfo.Organizes){
                         orgids.push(org.OrgId?org.OrgId:org.PhId);
                     }
+
                     data.ApprovalTypeId=splx.PhId;
                     data.BillType=splx.Value;
                     data.ProcCode=this.info.FCode;
@@ -441,8 +442,17 @@ export default {
                 
             }
         },
+        //组织树显示
+        orgtreeShow(){
+            this.orgSelected=[];
+            this.info.org.map(org => {
+                this.orgSelected.push(org.OCode?org.OCode:org.OrgCode);
+            })
+            this.orgVisible=true;
+        },
         //组织选择
         getOrg(val){
+            console.log(val)
             this.info.org=val;
         },
         //岗位顺序新增

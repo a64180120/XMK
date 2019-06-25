@@ -510,8 +510,11 @@ export default {
                 })
                  this.orgSelected=arr;//需要code的列表
             }
+            this.checked=false;
+            this.allChecked()
+            this.choose(val)
             this.orgInfo=val;
-             this.orgVisible=true;
+            this.orgVisible=true;
         },
         //获取组织下部门
         getorglist(){

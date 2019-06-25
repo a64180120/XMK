@@ -8,7 +8,7 @@
       <div class="btnContainer">
         <ul class="rightBtn">
           <li >
-            <el-popover width="270" placement="bottom" :popper-class="'maxH'" trigger="click">
+            <el-popover width="270" placement="bottom"  trigger="click">
               
               <ul class="fastNav">
                 <li v-if="menuButton.approvalcenter=='True'" @click.stop="navPage('/approvalcenter')">
@@ -45,7 +45,7 @@
               
               <div  slot="reference" class=" navIcon">
                 <div>
-                  <img src="@/assets/images/nav.svg" alt>
+                  <img style="margin:4px 0;height:24px" src="@/assets/images/nav.svg" alt>
                 </div>
                 <span>导航</span>
               </div>
@@ -53,7 +53,7 @@
           </li>
           <li @click.stop="refresh">
             <div>
-              <img src="@/assets/images/sx.png" alt>
+              <img  src="@/assets/images/sx.png" alt>
             </div>
             <span>刷新</span>
           </li>
@@ -179,7 +179,10 @@
             }
           },
           orgChange(val){ //组织改变
-            //this.org=val;
+            if(val.WeChatId=='false'){
+              this.$msgBox.error('当前组织没有操作权限,请联系管理员!')
+              return;
+            }
             this.$store.commit('user/setOrganize',val);
             
             let p = document.querySelector('.handleBtnCon .orgName');
@@ -368,9 +371,12 @@
   line-height: 30px;
 }
 .maxH {
-  max-height: 90%;
-  overflow-y: auto;
-  overflow-x: hidden;
+  height: 70%;
+  
 }
+.maxH .el-tree{
+    overflow-y: auto;
+    height:100%;
+  }
 </style>
 
