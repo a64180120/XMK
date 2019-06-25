@@ -73,8 +73,8 @@
 
               </div>
               <!--frozen: 0 sum: 660000 surplus: 660000 use: 0-->
-              <div style="height: 40px;line-height: 40px;background-color: #d7d7d7;padding:0 10px;margin-top: 10px;" v-if="item.money">
-                <span>预算总额 （{{item.money.sum | NumFormat}}元）- 实际已使用 （{{item.money.use | NumFormat}}元） - 冻结 （{{item.money.frozen | NumFormat}}元） = </span><span style="color: red;">本次可申请 （{{item.money.surplus | NumFormat}}元）</span>
+              <div style="height: 40px;line-height: 40px;background-color: #d7d7d7;padding:0 10px;margin-top: 10px;">
+                <span>预算总额 （{{item.PaymentXm.Sum | NumFormat}}元）- 实际已使用 （{{item.PaymentXm.Use | NumFormat}}元） - 冻结 （{{item.PaymentXm.Frozen | NumFormat}}元） = </span><span style="color: red;">本次可申请 （{{item.PaymentXm.Surplus | NumFormat}}元）</span>
               </div>
             </div>
 
@@ -248,13 +248,6 @@
         delmsgType: false,//点击删除后的提示弹窗
         msg: '',//删除提示消息
         time: 3,//倒计时
-        data: {
-          applyBillName:'',
-          applyDepart: '浙江省总工会本级办公室',
-          applyDate: new Date().getDate(),
-          applyAmount: '100000',
-          applyText:''
-        },
 
         orgType:false,//是否显示组织弹窗
 
@@ -275,6 +268,7 @@
 
         /*项目新增数据*/
         PaymentMst:{
+          PhId:0,
           FYear: '',//（年度）
           FName: '',//（申请单名）
           FOrgphid: '',//（组织主键）
@@ -297,6 +291,10 @@
               XmProjcode: '', //（项目编码）
               XmProjname: '', //（项目名称）
               FAmountTotal: 0, //（项目金额）
+              Frozen:0,//冻结金额
+              Use:0,//已使用金额
+              Surplus:0,//剩余金额
+              Sum:0,//合计
               FRemarks: '', //（备注）
             },
             PaymentDtls:[
@@ -406,6 +404,7 @@
           console.log(res);
           this.PaymentMst=res.PaymentMst;
           this.PaymentXmDtl=res.PaymentXmDtl;
+          this.xmDisable();
         }).catch(err=>{
           console.log(err);
         })
@@ -528,6 +527,10 @@
             XmProjcode : '', //（项目编码）
             XmProjname : '', //（项目名称）
             FAmountTotal : '', //（项目金额）
+            Frozen:0,//冻结金额
+            Use:0,//已使用金额
+            Surplus:0,//剩余金额
+            Sum:0,//合计
             FRemarks : '', //（备注）
           },
           PaymentDtls:[
@@ -620,9 +623,9 @@
             count=(count*100+Number(pd.FAmount)*100).toFixed(0)/100;
           }
           px.PaymentXm.FAmountTotal=count;
-          if(pindex==i&&count>px.money.surplus){
-            let dis=Math.floor(count*100-px.money.surplus*100)/100;//超出的可申请资金
-            count=px.money.surplus;
+          if(pindex==i&&count>px.PaymentXm.Surplus){
+            let dis=Math.floor(count*100-px.PaymentXm.Surplus*100)/100;//超出的可申请资金
+            count=px.PaymentXm.Surplus;
             px.PaymentXm.FAmountTotal=count;
 
             px.PaymentDtls[index].FAmount=Math.floor(px.PaymentDtls[index].FAmount*100-dis*100)/100;
@@ -795,9 +798,16 @@
       },
       //获取项目总额，已冻结，剩余金额
       getProMoney:function(index,phid){
-        let param={xmPhid:phid};
+        let param={xmPhid:phid,phid:this.PaymentMst.PhId};
         this.getAxios('GBK/PaymentMstApi/GetAmountOfMoney',param).then(res=>{
-          this.PaymentXmDtl[index]['money']=res;
+          this.PaymentXmDtl[index].PaymentXm['Frozen']=res.Frozen;
+          this.PaymentXmDtl[index].PaymentXm['Use']=res.Use;
+          this.PaymentXmDtl[index].PaymentXm['Surplus']=res.Surplus;
+          this.PaymentXmDtl[index].PaymentXm['Sum']=res.Sum;
+          /*Frozen:0,//冻结金额
+            Use:0,//已使用金额
+            Surplus:0,//剩余金额
+            Sum:0,//合计*/
           this.$forceUpdate(this.PaymentXmDtl)
         }).catch(err=>{
           console.log(err);
@@ -823,8 +833,6 @@
       },
       //获取返回的上传文件列表
       loadFile(val){
-        console.log('========wwwwwwwww============');
-        console.log(val);
         //this.PaymentXmDtl[this.choosedIndexAndPro.index].QtAttachments=val;
         this.PaymentXmDtl[this.choosedIndexAndPro.index].QtAttachments=val;
         this.$forceUpdate( this.PaymentXmDtl );
