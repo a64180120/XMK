@@ -37,7 +37,7 @@
                 </div>
             </div>
             <div class="rightBtn">
-                <search :placeholder="'操作员编码/姓名'"  v-model="searchInfo"/>
+                <search :placeholder="'操作员编码/姓名'" @btnClick="getData"  v-model="searchInfo"/>
             </div>
         </div>
         <div class="listCon">
