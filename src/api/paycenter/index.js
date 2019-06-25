@@ -67,17 +67,17 @@ export function getBankServiceState(param) {
 }
 
 // 支付单单笔支付
-export function postSubmitPayments(param) {
+export function postSubmitPayment(param) {
   return Vue.prototype.postAxios('GGK/GKPaymentMstApi/PostSubmitPayment', param)
 }
 
 // 支付多笔支付
-// export function postSubmitPayments(param) {
-//   return Vue.prototype.postAxios(
-//     'GGK/GKPaymentMstApi/PostSubmitPayments',
-//     param
-//   )
-// }
+export function postSubmitPayments(param) {
+  return Vue.prototype.postAxios(
+    'GGK/GKPaymentMstApi/PostSubmitPayments',
+    param
+  )
+}
 
 /*
 TypeCode: 操作员id,
@@ -167,4 +167,84 @@ export function postAddAppvalRecord(param) {
     'GSP/GAppvalRecord/PostAddAppvalRecords',
     param
   )
+}
+
+// 检查用户是否启用支付加密狗
+export function PostPayUsbKeyIsActive(param) {
+  return Vue.prototype.formAxios('GQT/QTSysSetApi/PostPayUsbKeyIsActive', param)
+}
+
+// 读取加密狗
+import md5 from 'js-md5'
+export function SearchUSB() {
+  var seedCode,
+    retuCode,
+    usbType,
+    icCardNo,
+    strMsg = '',
+    Status = 'error'
+  if (navigator.userAgent.indexOf('Trident') == -1) {
+    strMsg = '请使用IE浏览器或者360浏览器兼容模式进行支付！'
+    return { Msg: strMsg, Status: Status }
+  }
+  //document.all("AF").run("LForm","1","");
+  usbType = 0 //document.all["hd_HardWareType"].value;	//得到硬件加密方式
+  if (usbType == '0') {
+    seedCode = 13858029
+    try {
+      retuCode = document.all('USBVal').init(seedCode) //chrome不支持init方法
+    } catch (e) {
+      retuCode = -1
+    }
+    switch (retuCode) {
+      case 1:
+        strMsg = '加密锁驱动程序未安装'
+        break
+      case 2:
+        strMsg = '加密锁I/O错误'
+        break
+      case 3:
+        strMsg = '未插有加密锁'
+      case 4:
+        strMsg = '插有多把加密锁'
+        break
+      case -1:
+        strMsg = '加密锁读取失败'
+        break
+    }
+  } else {
+    icCardNo = document.all('USBVal').jl(3)
+    if (icCardNo == '0') {
+      strMsg = document.all('USBVal').getlasterror()
+    }
+  }
+  // retucode获取失败，strMsg保存错误信息
+  if (strMsg) {
+    return { Msg: strMsg, Status: Status }
+  }
+  // 获取userId并加密
+  try {
+    //document.all["hd_IsExistUSB"].value = strMsg;
+    // document.all["hd_IsExistUSB"].setAttribute("value", strMsg);
+    var userId = document.all('USBVal').getuid()
+    //document.all["hd_UserID"].value = userId;
+    //document.all["hd_UserID"].setAttribute("value", userId);
+    var secCode
+    //var secCode = document.all("USBVal").getcode();
+    //document.all["TB_SecCode"].value = secCode;
+    //document.all["TB_SecCode"].setAttribute("value",secCode);
+    secCode = document.all('USBVal').getcode() //secCode好像没用
+    var md5ID = md5(userId)
+    Status = 'Success'
+    return { Status: Status, id: md5ID }
+    console.log(userId + ', ' + secCode + ', Md5LockId=' + md5ID)
+  } catch (e) {
+    // secCode = 'error'
+    return { Status: Status, Msg: e }
+    console.log(secCode + e)
+  }
+  //if (secCode != "error") {
+  //    document.all["TB_SecCode"].value = secCode;
+  //    document.all["TB_SecCode"].setAttribute("value", secCode);
+  //}
 }
