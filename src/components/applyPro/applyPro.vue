@@ -82,13 +82,14 @@
 
 
             <div style="margin-top: 10px">
-              <table style="margin:0 20px;width: auto;">
+              <table style="margin:0 0 0 20px;width: auto;">
                 <colgroup>
                   <col width="10%">
                   <col width="25%">
                   <col width="25%">
                   <col width="20%">
                   <col width="20%">
+                  <col width="20px">
                 </colgroup>
                 <thead>
                   <td>序号</td>
@@ -96,9 +97,9 @@
                   <td>明细项目名称</td>
                   <td>申请金额（元）</td>
                   <td>备注</td>
+                  <td class="iconTd"></td>
                 </thead>
                 <tbody>
-
                   <tr v-for="(mx,index) in item.PaymentDtls">
                       <td>{{index+1}}</td>
                       <td @click="showOrg(pindex,index)">
@@ -615,7 +616,7 @@
       delDtl:function(pindex,index){
         this.PaymentXmDtl[pindex].PaymentDtls.splice(index,1)
         if(this.PaymentXmDtl[pindex].PaymentDtls.length==0){
-          this.addDtl(0)
+          this.addDtl(pindex,0)
         }
       },
       /*金额计算*/
@@ -841,7 +842,9 @@
 <style scoped lang="scss">
   .iconTd{
     border: none;
-    position: absolute;
+    position: relative;
+    min-width: 20px;
+    padding: 0 2px;
   }
   .iconTd i{
     width: 15px;
@@ -853,15 +856,17 @@
     margin: auto;
     text-align: center;
     display: none;
+    cursor: pointer;
   }
   .iconTd .el-icon-minus{
     background-color: red;
   }
   .iconTd .el-icon-plus{
     background-color: #67971a;
+    margin-top: 3px;
   }
   tr:hover i{
-    display: inline-block;
+    display: block;
   }
   .dialog-title {
     > span {
