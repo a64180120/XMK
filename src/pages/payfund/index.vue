@@ -229,7 +229,8 @@
                 {{spTypeList[item.FApproval]}}
               </td>
               <td>
-                {{payTypeList[item.IsPay]}}
+
+                {{item.FApproval!=9?'-':payTypeList[item.IsPay]}}
               </td>
               <td class="left">
                 <el-tooltip :content="item.FDescribe" popper-class="tooltipCla" placement="bottom-start">
