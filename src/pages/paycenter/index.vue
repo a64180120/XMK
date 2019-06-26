@@ -6,6 +6,7 @@
           v-if="menubutton.paycenter_maintain=='True'"
           class="nav handle"
           @click="payNav('payListData')"
+          style="margin-left:0;"
         >
           <img src="../../assets/images/sfk.png" alt>
           <div>收付款信息维护</div>
@@ -121,7 +122,9 @@
               <col width="5%">
               <col width="13%">
               <col width="13%">
-              <col width="10%">
+              <col width="13%">
+              <col width="13%">
+              <col width="13%">
               <col width="13%">
               <col width="13%">
               <col width="10%">
@@ -130,7 +133,7 @@
             </colgroup>
             <thead>
               <tr>
-                <td :class="{trActive:checkAll}" title="序号">
+                <td :class="{trActive:checkAll}" title="序号" @click.self="selectAll">
                   <el-checkbox v-model="checkAll" @change="handleCheckAll">序号</el-checkbox>
                 </td>
                 <td
@@ -148,7 +151,9 @@
               <col width="5%">
               <col width="13%">
               <col width="13%">
-              <col width="10%">
+              <col width="13%">
+              <col width="13%">
+              <col width="13%">
               <col width="13%">
               <col width="13%">
               <col width="10%">
@@ -168,13 +173,25 @@
                   <span @click.stop="payNav('payListData',item)" class="atype">{{item.Mst.FCode}}</span>
                 </td>
                 <td>
-                  <div>{{item.Mst.FAmountTotal | NumFormat}}</div>
+                  <div style="text-align:right;">{{item.Mst.FAmountTotal | NumFormat}}</div>
+                </td>
+                <td>
+                  <div style="text-align:right;">
+                    <template v-if="item.Mst.FState==1">{{item.Mst.FAmountTotal | NumFormat}}</template>
+                    <template
+                      v-else-if="item.Mst.FState==2"
+                    >{{item.Dtls.reduce((prev,cur)=>{return cur.FState==1?cur.FAmount*100+prev:0+prev},0)/100 | NumFormat}}</template>
+                    <template v-else>{{0 | NumFormat}}</template>
+                  </div>
                 </td>
                 <td>
                   <div>{{typeList.find(i=>item.Mst.FBilltype == i.value).label}}</div>
                 </td>
                 <td>
                   <div>{{item.Mst.RefbillCode}}</div>
+                </td>
+                <td>
+                  <div>{{item.Mst.RefbillName}}</div>
                 </td>
                 <td>
                   <div>{{item.Mst.NgInsertDt.replace('T',' ')}}</div>
@@ -194,7 +211,7 @@
                   <div v-else>————</div>
                 </td>
                 <td>
-                  <div>{{item.Mst.FDate?item.Mst.FDate.replace('T',' '):"————"}}</div>
+                  <div>{{item.Mst.FSubmitdate?item.Mst.FSubmitdate.replace('T',' '):"————"}}</div>
                 </td>
               </tr>
             </thead>
@@ -351,13 +368,19 @@ export default {
           width: 200
         },
         {
-          label: '支付金额'
+          label: '应付金额'
+        },
+        {
+          label: '实付金额'
         },
         {
           label: '单据类型'
         },
         {
           label: '申请单编号'
+        },
+        {
+          label: '申请单名称'
         },
         {
           label: '申报日期'
@@ -533,6 +556,12 @@ export default {
     handleCheckAll(val) {
       this.tableData.forEach(item => {
         item.Mst.checked = val
+      })
+    },
+    selectAll() {
+      var tf = !this.checkAll
+      this.tableData.forEach(item => {
+        item.Mst.checked = tf
       })
     },
     handleCheckOne(item) {
@@ -729,7 +758,6 @@ export default {
     height: 60px;
     > .nav {
       display: inline-block;
-
       cursor: pointer;
       &:not(:last-child) {
         margin-right: 10px;
@@ -737,19 +765,6 @@ export default {
       > img {
         width: 30px;
       }
-      // &::before {
-      //   content: '';
-      //   display: block;
-      //   width: 100%;
-      //   height: 27px;
-      //   background-image: url(../../assets/images/zj6.png);
-      //   background-repeat: no-repeat;
-      //   background-size: contain;
-      //   background-position: center 0;
-      // }
-      // &:first-child::before {
-      //   background-image: url(../../assets/images/3_03.png);
-      // }
     }
   }
   .tableBody table {
@@ -762,7 +777,6 @@ export default {
     border-spacing: 0;
     padding: 0 15px;
   }
-
   .container {
     min-width: 1200px;
     .selects {

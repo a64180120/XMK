@@ -235,11 +235,9 @@ export default {
       if (this.$parent.reSetting == undefined) {
         // 直接送审
         this.postAddAppvalRecord()
-      } else if (this.$parent.reSetting) {
+      } else if (this.$parent.reSetting && !this.$parent.detail.Mst.PhId) {
         // 生成新的支付单，送审
-        this.$parent.postAddPayList(
-          this.postAddAppvalRecord(this.$parent.detail.Mst.PhId)
-        )
+        this.$parent.postAddPayList(this.postAddAppvalRecord)
       } else {
         // 保存支付单，送审
         this.$parent.savePayList(this.$parent.detail, this.postAddAppvalRecord)
