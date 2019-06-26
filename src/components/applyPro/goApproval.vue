@@ -17,8 +17,8 @@
             <span style="float:right;color:#333;" @click="openUpload">附单据 {{fileCount}} 张</span>
           </div>
           <div class="textare" style="height: 100px">
-            <el-input type="textarea" maxlength="150" style="height: 100%" resize="none" v-model="param.FOpinion"></el-input>
-            <div style="position: relative;right: -275px;top: -20px;font-size: 10px;"><span style="color: red">{{len}}</span><span>/150</span></div>
+            <el-input type="textarea" maxlength="100" style="height: 100%" resize="none" v-model="param.FOpinion"></el-input>
+            <div style="position: relative;right: -275px;top: -20px;font-size: 10px;"><span style="color: red">{{len}}</span><span>/100</span></div>
           </div>
         </div>
         <div class="sub-table">

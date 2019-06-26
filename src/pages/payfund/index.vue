@@ -569,6 +569,9 @@
               }
             }else{
               this.chartData.dw='元';
+              for(var k in  this.chartData.chart){
+                this.chartData.chart[k].value=( this.chartData.chart[k].value ).toFixed(2)
+              }
             }
 
 

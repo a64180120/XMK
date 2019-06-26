@@ -285,8 +285,6 @@
               ]
             };
           // 绘制默认图表
-          console.log(this.chart2.option);
-          console.log(option);
           //this.chart2.option=option;
           this.chart2.target.setOption(option);
           this.chartsInit();

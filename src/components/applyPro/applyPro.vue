@@ -115,7 +115,7 @@
                         <!--<el-input-number v-if="mx.checked" size="small" :precision="2" :controls="false" style="width:auto;" class="numInput"  v-model="mx.FAmount " @blur="$set(mx,'checked',false)" @change="moneyChange"></el-input-number>-->
                       </td>
                       <td>
-                        <input v-model="mx.FRemarks "/>
+                        <input v-model="mx.FRemarks " maxlength="100" placeholder="最多100字"/>
                       </td>
                     <td class="iconTd">
                       <i class="el-icon-minus" @click="delDtl(pindex,index)"></i>
