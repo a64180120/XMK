@@ -164,14 +164,12 @@ export default {
   },
   watch: {
     value(newValue) {
-      console.log('value:',newValue)
       if (this.wordNum <100){
         this.textare = newValue
       }
 
     },
     textare(newValue) {
-      console.log('textare:',newValue)
       if (newValue !==null && newValue.length <100 ){
         for (let i = 0;i<newValue.length;i++){
           this.wordNum = i +1
@@ -301,16 +299,17 @@ export default {
   }
 }
 .textare{
-  position: relative;
   >.text-input{
     height: 100px
   }
   >.word-num{
+    position: relative;
     text-align: right;
-    position: absolute;
-    bottom: 0;
-    right: 10px;
+
     >.word-size{
+      position: absolute;
+      bottom: 0;
+      right: 10px;
       font-size: 0.10rem
     }
   }

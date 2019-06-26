@@ -120,10 +120,10 @@
                 <td  @click.self="handleCheckBoxCellClick(item,idx)">
                   <el-checkbox v-model="check[idx]"  >{{idx+1}}</el-checkbox>
                 </td>
-                <td @click.stop="handleCellClick(item,idx)" class="apply-epart cell-click">
+                <td>
                   {{item.OrgName}}
                 </td>
-                <td>
+                <td @click.stop="handleCellClick(item,idx)" class="apply-epart cell-click">
                   {{item.BNum}}
                 </td>
                 <td>
@@ -232,11 +232,11 @@
                 <td @click.self="handleCheckBoxCellClick(item,idx)">
                   <el-checkbox v-model="check[idx]"  @click="handleCheckBoxCellClick(item,idx)">{{idx+1}}</el-checkbox>
                 </td>
-                <td @click="handleCellClick(item,idx)" class="apply-epart cell-click">
+                <td>
                   {{item.OrgName}}
                 </td>
-                <td>
-                  {{item.OrgCode}}
+                <td @click="handleCellClick(item,idx)" class="apply-epart cell-click">
+                  {{item.BNum}}
                 </td>
                 <td>
                   {{item.BName}}

@@ -738,7 +738,7 @@ export default {
             }
             this.refreshIndexData()
             if (postAddAppvalRecord) {
-              postAddAppvalRecord()
+              postAddAppvalRecord(this.detail.Mst.PhId)
             } else {
               this.$msgBox.show('保存成功')
             }
