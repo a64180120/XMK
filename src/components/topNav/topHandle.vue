@@ -57,12 +57,12 @@
             </div>
             <span>刷新</span>
           </li>
-          <li @click.stop="goHome">
+          <!-- <li @click.stop="goHome">
             <div>
               <img src="@/assets/images/g-1.png" alt>
             </div>
             <span>主目录</span>
-          </li>
+          </li> -->
         </ul>
         <slot></slot>
       </div>

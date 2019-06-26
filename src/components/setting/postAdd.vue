@@ -166,6 +166,14 @@ export default {
             this.info.OrgPhid=this.$store.state.user.orgid;
             this.info.OrgCode=this.$store.state.user.orgcode;
             let info2=[];
+            if(!this.info.FCode || !this.info.FName){
+                this.$msgBox.show('请完善必填信息!')
+                return;
+            }
+            if(this.userList.length==0){
+                this.$msgBox.show('请至少选择一位审批人!')
+                return;
+            }
             this.userList.map((list,n)=> {
                 info2.push({
                     OperatorPhid: list.DefStr6,  //（操作员主键）
