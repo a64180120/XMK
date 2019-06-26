@@ -365,12 +365,7 @@
     ></go-approval>
     <!-- 银行档案 -->
     <bank-choose v-if="bankChooseData.openDialog" :data="bankChooseData" @getBank="getBank"></bank-choose>
-    <auditfollow
-      v-if="showAuditfollow"
-      :auditMsg="auditMsg"
-      :visible="showAuditfollow"
-      @update:visible="closeAuditFollow"
-    ></auditfollow>
+    <auditfollow :auditMsg="auditMsg" :visible="showAuditfollow" @update:visible="closeAuditFollow"></auditfollow>
   </div>
 </template>
 
