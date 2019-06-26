@@ -110,11 +110,19 @@
                 <td @click.self="handleCheckBoxCellClick(item,idx)">
                   <el-checkbox v-model="check[idx]" >{{idx+1}}</el-checkbox>
                 </td>
-                <td @click="handleRowClick(item,idx)" class="apply-epart cell-click">
-                  {{item.OrgName}}
-                </td>
                 <td>
-                  {{item.PayNum}}
+                  <el-tooltip  effect="dark" :content="item.OrgName" placement="bottom" popper-class="pay-fund-approval_tooltip">
+                    <p class="BDescribe">
+                      {{item.OrgName}}
+                    </p>
+                  </el-tooltip>
+                </td>
+                <td @click="handleRowClick(item,idx)" class="apply-epart cell-click">
+                  <el-tooltip  effect="dark" :content="item.PayNum" placement="bottom" popper-class="pay-fund-approval_tooltip">
+                    <p class="BDescribe">
+                      {{item.PayNum}}
+                    </p>
+                  </el-tooltip>
                 </td>
                 <td style="text-align: right">
                   {{item.PayAccount | NumFormat}}
@@ -124,13 +132,25 @@
                   <span v-if="item.BBilltype == '002'">支付单</span>
                 </td>
                 <td>
-                  {{item.BNum}}
+                  <el-tooltip  effect="dark" :content="item.BNum" placement="bottom" popper-class="pay-fund-approval_tooltip">
+                    <p class="BDescribe">
+                      {{item.BNum}}
+                    </p>
+                  </el-tooltip>
                 </td>
                 <td>
-                  {{item.BDate}}
+                  <el-tooltip  effect="dark" :content="item.BDate" placement="bottom" popper-class="pay-fund-approval_tooltip">
+                    <p class="BDescribe">
+                      {{item.BDate}}
+                    </p>
+                  </el-tooltip>
                 </td>
                 <td>
-                  {{item.BName}}
+                  <el-tooltip  effect="dark" :content="item.BName" placement="bottom" popper-class="pay-fund-approval_tooltip">
+                    <p class="BDescribe">
+                      {{item.BName}}
+                    </p>
+                  </el-tooltip>
                 </td>
                 <td>
                   <span class="cell-click" v-if="item.BStatus ==0 " @click.stop="openAuditfollow(item,idx)">未审批</span>
@@ -155,12 +175,11 @@
                   </div>
                 </td>
                 <td style="text-align: left">
-                  <el-tooltip v-if="item.BDescribe != null && item.BDescribe.length>=20" effect="dark" :content="item.BDescribe" placement="bottom-end" popper-class="pay-fund-approval_tooltip">
+                  <el-tooltip  effect="dark" :content="item.BDescribe" placement="bottom-start" popper-class="pay-fund-approval_tooltip">
                     <p class="BDescribe">
                       {{item.BDescribe}}
                     </p>
                   </el-tooltip>
-                  <span v-else>{{item.BDescribe}}</span>
                 </td>
               </tr>
               <tr v-if="tableData.length === 0" :class="{trActive:check[0]}">
@@ -237,11 +256,19 @@
                 <td @click.self="handleCheckBoxCellClick(item,idx)">
                   <el-checkbox v-model="check[idx]" >{{idx+1}}</el-checkbox>
                 </td>
-                <td @click="handleRowClick(item,idx)" class="apply-epart cell-click">
-                  {{item.OrgName}}
+                <td >
+                  <el-tooltip  effect="dark" :content="item.OrgName" placement="bottom" popper-class="pay-fund-approval_tooltip">
+                    <p class="BDescribe">
+                      {{item.OrgName}}
+                    </p>
+                  </el-tooltip>
                 </td>
-                <td>
-                  {{item.PayNum}}
+                <td @click="handleRowClick(item,idx)" class="apply-epart cell-click">
+                  <el-tooltip  effect="dark" :content="item.PayNum" placement="bottom" popper-class="pay-fund-approval_tooltip">
+                    <p class="BDescribe">
+                      {{item.PayNum}}
+                    </p>
+                  </el-tooltip>
                 </td>
                 <td style="text-align: right">
                   {{item.PayAccount | NumFormat}}
@@ -251,13 +278,25 @@
                   <span v-if="item.BBilltype == '002'">支付单</span>
                 </td>
                 <td>
-                  {{item.BNum}}
+                  <el-tooltip  effect="dark" :content="item.BNum" placement="bottom" popper-class="pay-fund-approval_tooltip">
+                    <p class="BDescribe">
+                      {{item.BNum}}
+                    </p>
+                  </el-tooltip>
                 </td>
                 <td>
-                  {{item.BDate}}
+                  <el-tooltip  effect="dark" :content="item.BDate" placement="bottom" popper-class="pay-fund-approval_tooltip">
+                    <p class="BDescribe">
+                      {{item.BDate}}
+                    </p>
+                  </el-tooltip>
                 </td>
                 <td>
-                  {{item.BName}}
+                  <el-tooltip  effect="dark" :content="item.BName" placement="bottom" popper-class="pay-fund-approval_tooltip">
+                    <p class="BDescribe">
+                      {{item.BName}}
+                    </p>
+                  </el-tooltip>
                 </td>
                 <td>
                   <span class="cell-click" v-if="item.BStatus ==0 " @click.stop="openAuditfollow(item,idx)">未审批</span>
@@ -266,12 +305,11 @@
                   <span class="cell-click" v-if="item.BStatus ==9 " @click.stop="openAuditfollow(item,idx)">审批通过</span>
                 </td>
                 <td style="text-align: left">
-                  <el-tooltip v-if="item.BDescribe != null && item.BDescribe.length>=20" effect="dark" :content="item.BDescribe" placement="bottom-end" popper-class="pay-fund-approval_tooltip">
-                  <p class="BDescribe">
-                    {{item.BDescribe}}
-                  </p>
-                </el-tooltip>
-                  <span v-else>{{item.BDescribe}}</span>
+                  <el-tooltip  effect="dark" :content="item.BDescribe" placement="bottom-start" popper-class="pay-fund-approval_tooltip">
+                    <p class="BDescribe">
+                      {{item.BDescribe}}
+                    </p>
+                  </el-tooltip>
                 </td>
               </tr>
               <tr v-if="tableData.length === 0" :class="{trActive:check[0]}">

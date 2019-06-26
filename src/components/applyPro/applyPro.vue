@@ -107,7 +107,7 @@
                       <td @click="showDetailPro(pindex,index)">{{mx.BudgetdtlName }}</td>
                       <td class="right" style="padding: 0 10px;">
                         <span class="num" v-if="!mx.checked" @click="changeInp(pindex,index)">{{mx.FAmount  | NumFormat}}</span>
-                        <input v-if="mx.checked" style="width:100%;height: 100%;text-align: right;" class="numInput"
+                        <input :id="pindex+'-'+index" v-if="mx.checked" :autofocus="mx.checked"  style="width:100%;height: 100%;text-align: right;" class="numInput"
                                v-model="mx.FAmount "
                                @keydown="clearZero(pindex,index)"
                                @keyup="clearNum(pindex,index)"
@@ -115,7 +115,11 @@
                         <!--<el-input-number v-if="mx.checked" size="small" :precision="2" :controls="false" style="width:auto;" class="numInput"  v-model="mx.FAmount " @blur="$set(mx,'checked',false)" @change="moneyChange"></el-input-number>-->
                       </td>
                       <td>
-                        <input v-model="mx.FRemarks "/>
+                        <el-tooltip :disabled="mx.FRemarks.length<15"  :content="mx.FRemarks" popper-class="tooltipCla" placement="bottom-start">
+                          <p style="width: 300px;">{{mx.FRemarks}}</p>
+                          <p><input v-model="mx.FRemarks " maxlength="100" placeholder="最多100字"/></p>
+                        </el-tooltip>
+
                       </td>
                     <td class="iconTd">
                       <i class="el-icon-minus" @click="delDtl(pindex,index)"></i>
@@ -177,11 +181,9 @@
                :visible.sync="orgDetailType" :append-to-body="true">
         <el-radio-group v-model="choosedProject">
             <el-radio v-for="item in prodataList" v-if="prodataList.length>0"
-                      :key="item.PhId"
-                      :label="item.FName"
-                      :value="item.PhId"
+                      :label="item"
                       style="width: 100%;margin: 10px;"
-            ></el-radio>
+            >{{item.FName}}</el-radio>
         </el-radio-group>
       <span slot="footer"  style="text-align: center">
           <button class="cancelBtn"  @click="orgDetailType=false">取消</button>
@@ -211,7 +213,7 @@
       <img-view v-if="dialogVisible"></img-view>
     </el-dialog>
     <!--附件上传-->
-    <el-dialog :visible.sync="uploadVis" :append-to-body="true" title="附件上传">
+    <el-dialog :visible.sync="uploadVis" :append-to-body="true" width="410px" title="附件上传">
       <file-up v-if="uploadVis" :ind="choosedIndexAndPro" @succe="loadFile"></file-up>
     </el-dialog>
   </section>
@@ -332,7 +334,7 @@
     watch:{
       'PaymentMst.FDescribe':function(val){
         this.len=val.length;
-      }
+      },
     },
     components:{ApprovalDialog, Orgtree,goApproval,ImgView,fileUp},
     mounted(){
@@ -373,6 +375,10 @@
         }
         //this.PaymentXmDtl[pindex].PaymentDtls[index]['checked']=true;
         this.$set(this.PaymentXmDtl[pindex].PaymentDtls[index],'checked',true);
+        this.$nextTick(()=>{
+          document.getElementById(pindex+'-'+index).focus();
+        })
+
       },
       clearZero:function(pindex,index){
         let val=this.PaymentXmDtl[pindex].PaymentDtls[index].FAmount;
@@ -720,21 +726,11 @@
       },
       confirmProDetail:function(){
         this.orgDetailType=false;
-        if(this.prodataList.length>0){
-          for(var i in this.prodataList){
-            if(this.choosedProject==this.prodataList[i].FName){
-              // BudgetdtlPhid: '484190514000010', //（预算明细主键）
-              // BudgetdtlName: 'mx1', //（预算明细名称）
-              //QtKmdm: '', //（预算项目编码）
-              //QtKmmc: '' , //（预算项目名称）
-              this.PaymentXmDtl[this.choosedPro[0]].PaymentDtls[this.choosedPro[1]].BudgetdtlPhid=this.prodataList[i].PhId;
-              this.PaymentXmDtl[this.choosedPro[0]].PaymentDtls[this.choosedPro[1]].BudgetdtlName=this.prodataList[i].FName;
-              this.PaymentXmDtl[this.choosedPro[0]].PaymentDtls[this.choosedPro[1]].QtKmdm=this.prodataList[i].FBudgetAccounts;
-              this.PaymentXmDtl[this.choosedPro[0]].PaymentDtls[this.choosedPro[1]].QtKmmc=this.prodataList[i].FBudgetAccounts_EXName;
-            }
-          }
-        }
-
+        this.PaymentXmDtl[this.choosedPro[0]].PaymentDtls[this.choosedPro[1]].BudgetdtlPhid=this.choosedProject.PhId;
+        this.PaymentXmDtl[this.choosedPro[0]].PaymentDtls[this.choosedPro[1]].BudgetdtlName=this.choosedProject.FName;
+        this.PaymentXmDtl[this.choosedPro[0]].PaymentDtls[this.choosedPro[1]].QtKmdm=this.choosedProject.FBudgetAccounts;
+        this.PaymentXmDtl[this.choosedPro[0]].PaymentDtls[this.choosedPro[1]].QtKmmc=this.choosedProject.FBudgetAccounts_EXName;
+        this.choosedProject={};
        // this.PaymentXmDtl[this.choosedPro[0]].PaymentDtls[this.choosedPro[1]].pdName=this.prodataList[this.choosedProject];
       },
       //弹出明细项目，f表示项目下标，s,表示项目对应pdlist下标
@@ -1078,11 +1074,17 @@ table{
   table td input{
     border: none;
     width: 100%;
+    text-align: left;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 </style>
 <style>
   #delDialog .el-dialog__footer{
     text-align: center;
+  }
+  .el-upload-list__item{
+    text-align: left;
   }
   .payText .el-card__header{
     background-color: #3294e8;

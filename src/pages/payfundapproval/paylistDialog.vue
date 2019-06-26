@@ -28,7 +28,7 @@
       </div>
       <el-dialog
         :visible.sync="uploadDialog"
-        width="25%"
+        width="410px"
         :close-on-click-modal="false"
         class=""
         :append-to-body="true">
