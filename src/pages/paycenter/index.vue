@@ -133,7 +133,7 @@
             </colgroup>
             <thead>
               <tr>
-                <td :class="{trActive:checkAll}" title="序号">
+                <td :class="{trActive:checkAll}" title="序号" @click.self="selectAll">
                   <el-checkbox v-model="checkAll" @change="handleCheckAll">序号</el-checkbox>
                 </td>
                 <td
@@ -556,6 +556,12 @@ export default {
     handleCheckAll(val) {
       this.tableData.forEach(item => {
         item.Mst.checked = val
+      })
+    },
+    selectAll() {
+      var tf = !this.checkAll
+      this.tableData.forEach(item => {
+        item.Mst.checked = tf
       })
     },
     handleCheckOne(item) {
