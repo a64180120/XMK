@@ -3,20 +3,21 @@
     <el-upload
       ref='upload'
       class="upload-demo"
-
+      drag
       :on-preview="handlePreview"
       :on-remove="handleRemove"
       :file-list="filelist"
       :before-upload="beforeUp"
       :on-change="progress"
-
       action="fileUp"
       :http-request="loadFile"
       multiple>
-      <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
-      <el-button size="small" type="success" @click="$emit('succe',returnList)">完成</el-button>
-      <div class="el-upload__tip" slot="tip"> <!--<span @click="submit" class=" btn" slot="tip">点击上传</span>-->&nbsp;&nbsp;文件大小不超过500kb </div>
+      <i class="el-icon-upload"></i>
+      <div class="el-upload__text">将文件拖到此处，或<em>点击选择</em></div>
+      <div class="el-upload__tip" slot="tip"> <span @click="$emit('succe',returnList)" class=" btn" slot="tip" style="width: 120px">添加到上传列表</span></div>
 
+      <!--<el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+      <el-button size="small" type="success" @click="$emit('succe',returnList)">完成</el-button>-->
     </el-upload>
   </div>
 </template>

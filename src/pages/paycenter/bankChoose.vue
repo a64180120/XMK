@@ -56,14 +56,6 @@ export default {
       } else {
         data = data[0]
       }
-      if (data.FAccount.length < 19) {
-        this.$msgBox.error('银行账号不能小于19位！')
-        return
-      }
-      if (data.FBankcode.length < 3) {
-        this.$msgBox.error('银行行号不能小于3位！')
-        return
-      }
       this.data.openDialog = false
       this.$emit('getBank', data)
     }

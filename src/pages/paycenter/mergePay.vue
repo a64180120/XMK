@@ -167,25 +167,31 @@
           </div>
         </div>
       </div>
+      <usb-key v-show="false"></usb-key>
     </el-dialog>
   </div>
 </template>
 
 <script>
 import {
-  postSubmitPayment,
   postPayPsd,
   postSavePayPsd,
   postJudgePayPsd,
+  postSubmitPayment,
   postSubmitPayments,
-  getBankServiceState
+  getBankServiceState,
+  PostPayUsbKeyIsActive,
+  SearchUSB
 } from '@/api/paycenter'
 import md5 from 'js-md5'
+import usbKey from './usbKey.vue'
 import { mapState } from 'vuex'
 
 export default {
   name: 'mergePay',
-  components: {},
+  components: {
+    usbKey
+  },
   props: {
     data: {
       type: Object,
@@ -221,6 +227,9 @@ export default {
     this.data.data.forEach(item => {
       this.gridData = [...this.gridData, ...item.Dtls]
     })
+  },
+  mounted() {
+    console.log(SearchUSB().Msg, SearchUSB().Status)
   },
   methods: {
     // 提交口令设置
@@ -333,32 +342,18 @@ export default {
     },
     // 请求-支付
     postSubmitPayments() {
-      function success(res) {
-        if (res.Status == 'error') {
-          this.$msgBox.error(res.Msg)
-          console.log(res)
-          return
-        }
-        this.refreshIndexData()
-        this.$msgBox.show({
-          content: '支付操作成功！具体到账情况以银行处理时间为准。',
-          fn: () => {
-            this.showPassword = false
-            this.showMergePay = true
-            if (this.father) this.father.openDialog = false
-            this.data.openDialog = false
-          }
-        })
-      }
+      var vm = this
+      console.log(vm)
+      function success(res) {}
       // 获得银行服务状态
       getBankServiceState({})
         .then(res => {
-          if (res.Status == 'error') {
-            this.$msgBox.error(res.Msg)
-            console.log(res)
-            return
-          }
-          if (this.$parent.bankChooseData) {
+          // if (res.Status == 'error') {
+          //   this.$msgBox.error(res.Msg)
+          //   console.log(res)
+          //   return
+          // }
+          if (vm.father) {
             postSubmitPayment({
               id: this.data.data[0].Mst.PhId,
               uid: this.userid,
@@ -366,7 +361,26 @@ export default {
               ryear: this.year
             })
               .then(res => {
-                success(res)
+                if (res.Status == 'error') {
+                  vm.$msgBox.error(res.Msg)
+                  vm.showPassword = false
+                  vm.showMergePay = true
+                  if (vm.father) vm.father.openDialog = false
+                  vm.data.openDialog = false
+                  console.log(res)
+                  return
+                }
+                vm.refreshIndexData()
+                vm.$msgBox.show({
+                  content:
+                    res.Msg || '支付操作成功！具体到账情况以银行处理时间为准。',
+                  fn: () => {
+                    vm.showPassword = false
+                    vm.showMergePay = true
+                    if (vm.father) vm.father.openDialog = false
+                    vm.data.openDialog = false
+                  }
+                })
               })
               .catch(err => {
                 console.log(err)
@@ -383,7 +397,26 @@ export default {
               ryear: this.year
             })
               .then(res => {
-                success(res)
+                if (res.Status == 'error') {
+                  vm.$msgBox.error(res.Msg)
+                  vm.showPassword = false
+                  vm.showMergePay = true
+                  if (vm.father) vm.father.openDialog = false
+                  vm.data.openDialog = false
+                  console.log(res)
+                  return
+                }
+                vm.refreshIndexData()
+                vm.$msgBox.show({
+                  content:
+                    res.Msg || '支付操作成功！具体到账情况以银行处理时间为准。',
+                  fn: () => {
+                    vm.showPassword = false
+                    vm.showMergePay = true
+                    if (vm.father) vm.father.openDialog = false
+                    vm.data.openDialog = false
+                  }
+                })
               })
               .catch(err => {
                 console.log(err)
@@ -397,7 +430,7 @@ export default {
         })
     },
     // 请求-判断口令正确-正确直接发起支付
-    postJudgePayPsd(suc) {
+    postJudgePayPsd() {
       postJudgePayPsd({
         TypeCode: this.usercode,
         Value: md5(this.password)
@@ -423,6 +456,23 @@ export default {
     clearNoNum(event) {
       var obj = event.target
       obj.value = obj.value.replace(/[^\d]/g, '') //清除“数字”以外的字符
+    },
+    // 检测加密狗状态
+    PostPayUsbKeyIsActive() {
+      PostPayUsbKeyIsActive({
+        uid: '521180820000002',
+        orgid: '547181121000001'
+      })
+        .then(res => {
+          if (res.Status == 'error') {
+            this.$msgBox.error(res.Msg)
+            return
+          }
+          console.log(res)
+        })
+        .catch(err => {
+          console.log(err)
+        })
     }
   },
   computed: {

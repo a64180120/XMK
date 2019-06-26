@@ -118,7 +118,7 @@
               cur=(cur/100000000).toFixed(2)
             }else{
               this.dw='元';
-              cur=(cur).toFixed(2)
+              cur=Math.floor(cur).toFixed(2)
             }
 
 
