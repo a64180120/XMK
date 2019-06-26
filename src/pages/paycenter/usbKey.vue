@@ -2,7 +2,7 @@
   <div class="usbKey">
     <table
       id="Table5"
-      style="z-index: 101; left: 8px; width: 100%; position: absolute;top: 610px"
+      style="opacity:0;width:1px;height:1px"
       cellspacing="1"
       cellpadding="1"
       border="0"
@@ -30,13 +30,13 @@
             <param name="MainProductID" value="G6">
             <param name="URL_Shortcut" value>
             <param name="inifile" value="Modules.ini">
-            <font color="#000000" face="宋体" size="3">
+            <!-- <font color="#000000" face="宋体" size="0">
               无法下载、运行新中大客户端控件！
-              <br>请在 "Internet选项"
+              请在 "Internet选项"
               中降低安全级别，使得ActiveX控件允许被下载，然后重新刷新本页
-              <br>或者点
+              或者点
               <a :href="UsbKeyUrl+'custom2/Resource/UsbKeyEnvSetup.exe'">客户端安装程序</a>，下载,运行该程序即可.
-            </font>
+            </font>-->
           </object>
           <object
             id="USBVal"
@@ -58,8 +58,6 @@
 </template>
 
 <script>
-import md5 from 'js-md5'
-
 export default {
   name: 'usbKey',
   data() {

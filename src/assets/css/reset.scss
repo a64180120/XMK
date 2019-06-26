@@ -168,7 +168,7 @@ $dangerColor: #ff0000; //红色警告颜色
 $loadColor: #1f6cfc; //蓝色进行中颜色
 $alertColor: #ff9900; //提示颜色
 $waitColor: #67971a;
-$whiteColor:#fff;//白色
+$whiteColor: #fff; //白色
 
 .msFixed {
   position: fixed;
@@ -213,6 +213,7 @@ $whiteColor:#fff;//白色
     display: inline-block !important;
     vertical-align: middle;
     margin-top: 0 !important;
+    margin-bottom: 0 !important;
   }
   &:after {
     display: inline-block;
@@ -225,7 +226,7 @@ $whiteColor:#fff;//白色
 .dangerText {
   color: $dangerColor;
 }
-.btnContainer .handle{
-  margin-left:20px;
-  color:$whiteColor
+.btnContainer .handle {
+  margin-left: 20px;
+  color: $whiteColor;
 }

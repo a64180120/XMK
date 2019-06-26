@@ -171,7 +171,7 @@ export function postAddAppvalRecord(param) {
 
 // 检查用户是否启用支付加密狗
 export function PostPayUsbKeyIsActive(param) {
-  return Vue.prototype.formAxios('GQT/QTSysSetApi/PostPayUsbKeyIsActive', param)
+  return Vue.prototype.postAxios('GQT/QTSysSetApi/PostPayUsbKeyIsActive', param)
 }
 
 // 读取加密狗
@@ -234,6 +234,7 @@ export function SearchUSB() {
     //document.all["TB_SecCode"].value = secCode;
     //document.all["TB_SecCode"].setAttribute("value",secCode);
     secCode = document.all('USBVal').getcode() //secCode好像没用
+    console.log(userId)
     var md5ID = md5(userId)
     Status = 'Success'
     return { Status: Status, id: md5ID }
