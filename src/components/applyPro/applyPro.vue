@@ -20,8 +20,20 @@
               <!--申请信息-->
               <div class="apply-info">
                 <ul>
-                  <li><span>申报部门：</span><span>{{PaymentMst.FOrgname&&PaymentMst.FDepname?PaymentMst.FOrgname+'-'+PaymentMst.FDepname:''}}</span></li>
-                  <li><span>金额合计：</span><span>{{PaymentMst.FAmountTotal | NumFormat}}</span></li>
+                  <li><span>申报部门：</span>
+                    <span>
+                      <el-tooltip :content="PaymentMst.FOrgname&&PaymentMst.FDepname?PaymentMst.FOrgname+'-'+PaymentMst.FDepname:''" popper-class="tooltipCla" placement="bottom-start">
+                          <p>{{PaymentMst.FOrgname&&PaymentMst.FDepname?PaymentMst.FOrgname+'-'+PaymentMst.FDepname:''}}</p>
+                        </el-tooltip>
+                    </span>
+                  </li>
+                  <li><span>金额合计：</span>
+                    <span>
+                        <el-tooltip :content="PaymentMst.FAmountTotal | NumFormat" popper-class="tooltipCla" placement="bottom-start">
+                          <p>{{PaymentMst.FAmountTotal | NumFormat}}</p>
+                        </el-tooltip>
+                    </span>
+                  </li>
                 </ul>
                 <el-card class="payText">
                   <div slot="header">
@@ -910,7 +922,8 @@
       box-shadow: 0px 2px 10px #888888;
       margin-top: 20px;
       margin-right: -15px;
-      overflow: auto;
+      overflow-y: auto;
+      overflow-x: hidden;
 
       > .apply-info {
         padding: 8px;
