@@ -115,7 +115,11 @@
                         <!--<el-input-number v-if="mx.checked" size="small" :precision="2" :controls="false" style="width:auto;" class="numInput"  v-model="mx.FAmount " @blur="$set(mx,'checked',false)" @change="moneyChange"></el-input-number>-->
                       </td>
                       <td>
-                        <input v-model="mx.FRemarks " maxlength="100" placeholder="最多100字"/>
+                        <el-tooltip :disabled="mx.FRemarks.length<15"  :content="mx.FRemarks">
+                          <p style="width: 300px;">{{mx.FRemarks}}</p>
+                          <p><input v-model="mx.FRemarks " maxlength="100" placeholder="最多100字"/></p>
+                        </el-tooltip>
+
                       </td>
                     <td class="iconTd">
                       <i class="el-icon-minus" @click="delDtl(pindex,index)"></i>
@@ -718,7 +722,6 @@
       },
       confirmProDetail:function(){
         this.orgDetailType=false;
-       debugger
         this.PaymentXmDtl[this.choosedPro[0]].PaymentDtls[this.choosedPro[1]].BudgetdtlPhid=this.choosedProject.PhId;
         this.PaymentXmDtl[this.choosedPro[0]].PaymentDtls[this.choosedPro[1]].BudgetdtlName=this.choosedProject.FName;
         this.PaymentXmDtl[this.choosedPro[0]].PaymentDtls[this.choosedPro[1]].QtKmdm=this.choosedProject.FBudgetAccounts;
@@ -1067,6 +1070,9 @@ table{
   table td input{
     border: none;
     width: 100%;
+    text-align: left;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 </style>
 <style>

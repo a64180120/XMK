@@ -318,6 +318,7 @@
     <!--项目新增修改-->
     <el-dialog v-if="applyproType" class="applydialog" :title="applyproTitle"
                :visible.sync="applyproType"
+               :close-on-click-modal="false"
                >
        <applypro :applyNum="applyNum" :prodata="apartData" :isAdd="isAdd"  @delete="handleDelete"></applypro>
     </el-dialog>
