@@ -29,7 +29,7 @@
         </div>
         <el-dialog
           :visible.sync="uploadDialog"
-          width="25%"
+          width="410px"
           :close-on-click-modal="false"
           class=""
           :append-to-body="true">
@@ -96,7 +96,9 @@
         getAppvalProc(){
           let data = {
             ProcPhid:this.rowData[0].ProcPhid,
-            PostPhid:this.rowData[0].PostPhid
+            PostPhid:this.rowData[0].PostPhid,
+            RefbillPhid: this.rowData[0].RefbillPhid,
+            FBilltype:this.rowData[0].FBilltype
           }
 
           this.getAxios('/GAppvalPost/GetAppvalProcAndOperator',data).then(res=>{

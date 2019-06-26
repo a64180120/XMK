@@ -88,7 +88,9 @@
       getAppvalProc(){
         let data = {
           ProcPhid:this.rowData[0].ProcPhid,
-          PostPhid:this.rowData[0].PostPhid
+          PostPhid:this.rowData[0].PostPhid,
+          RefbillPhid: this.rowData[0].RefbillPhid,
+          FBilltype:this.rowData[0].FBilltype
         }
 
         this.getAxios('/GAppvalPost/GetAppvalProcAndOperator',data).then(success=>{
