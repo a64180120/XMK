@@ -107,7 +107,7 @@
                       <td @click="showDetailPro(pindex,index)">{{mx.BudgetdtlName }}</td>
                       <td class="right" style="padding: 0 10px;">
                         <span class="num" v-if="!mx.checked" @click="changeInp(pindex,index)">{{mx.FAmount  | NumFormat}}</span>
-                        <input v-if="mx.checked" style="width:100%;height: 100%;text-align: right;" class="numInput"
+                        <input :id="pindex+'-'+index" v-if="mx.checked" :autofocus="mx.checked"  style="width:100%;height: 100%;text-align: right;" class="numInput"
                                v-model="mx.FAmount "
                                @keydown="clearZero(pindex,index)"
                                @keyup="clearNum(pindex,index)"
@@ -375,6 +375,10 @@
         }
         //this.PaymentXmDtl[pindex].PaymentDtls[index]['checked']=true;
         this.$set(this.PaymentXmDtl[pindex].PaymentDtls[index],'checked',true);
+        this.$nextTick(()=>{
+          document.getElementById(pindex+'-'+index).focus();
+        })
+
       },
       clearZero:function(pindex,index){
         let val=this.PaymentXmDtl[pindex].PaymentDtls[index].FAmount;
@@ -726,7 +730,7 @@
         this.PaymentXmDtl[this.choosedPro[0]].PaymentDtls[this.choosedPro[1]].BudgetdtlName=this.choosedProject.FName;
         this.PaymentXmDtl[this.choosedPro[0]].PaymentDtls[this.choosedPro[1]].QtKmdm=this.choosedProject.FBudgetAccounts;
         this.PaymentXmDtl[this.choosedPro[0]].PaymentDtls[this.choosedPro[1]].QtKmmc=this.choosedProject.FBudgetAccounts_EXName;
-
+        this.choosedProject={};
        // this.PaymentXmDtl[this.choosedPro[0]].PaymentDtls[this.choosedPro[1]].pdName=this.prodataList[this.choosedProject];
       },
       //弹出明细项目，f表示项目下标，s,表示项目对应pdlist下标
