@@ -235,7 +235,7 @@ export default {
       if (this.$parent.reSetting == undefined) {
         // 直接送审
         this.postAddAppvalRecord()
-      } else if (this.$parent.reSetting && this.$parent.detail.Mst.PhId) {
+      } else if (this.$parent.reSetting && !this.$parent.detail.Mst.PhId) {
         // 生成新的支付单，送审
         this.$parent.postAddPayList(this.postAddAppvalRecord)
       } else {

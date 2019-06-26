@@ -180,7 +180,8 @@ import {
   postSubmitPayment,
   postSubmitPayments,
   getBankServiceState,
-  PostPayUsbKeyIsActive
+  PostPayUsbKeyIsActive,
+  SearchUSB
 } from '@/api/paycenter'
 import md5 from 'js-md5'
 import usbKey from './usbKey.vue'
@@ -226,6 +227,9 @@ export default {
     this.data.data.forEach(item => {
       this.gridData = [...this.gridData, ...item.Dtls]
     })
+  },
+  mounted() {
+    console.log(SearchUSB().Msg, SearchUSB().Status)
   },
   methods: {
     // 提交口令设置
@@ -344,11 +348,11 @@ export default {
       // 获得银行服务状态
       getBankServiceState({})
         .then(res => {
-          if (res.Status == 'error') {
-            this.$msgBox.error(res.Msg)
-            console.log(res)
-            return
-          }
+          // if (res.Status == 'error') {
+          //   this.$msgBox.error(res.Msg)
+          //   console.log(res)
+          //   return
+          // }
           if (vm.father) {
             postSubmitPayment({
               id: this.data.data[0].Mst.PhId,

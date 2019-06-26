@@ -35,7 +35,7 @@
               <br>请在 "Internet选项"
               中降低安全级别，使得ActiveX控件允许被下载，然后重新刷新本页
               <br>或者点
-              <a href="/Resource/UsbKeyEnvSetup.exe">客户端安装程序</a>，下载,运行该程序即可.
+              <a :href="UsbKeyUrl+'custom2/Resource/UsbKeyEnvSetup.exe'">客户端安装程序</a>，下载,运行该程序即可.
             </font>
           </object>
           <object

@@ -266,7 +266,6 @@ import mergePay from './mergePay.vue'
 import payErrorHandle from './payErrorHandle.vue'
 import goApproval from './goApproval.vue'
 import { mapState } from 'vuex'
-
 export default {
   name: 'pay',
   components: {
