@@ -232,7 +232,7 @@
                 {{payTypeList[item.IsPay]}}
               </td>
               <td class="left">
-                <el-tooltip :content="item.FDescribe">
+                <el-tooltip :content="item.FDescribe" popper-class="tooltipCla" placement="bottom-start">
                   <p>{{item.FDescribe}}</p>
                 </el-tooltip>
 
@@ -1020,6 +1020,7 @@
   }
 </style>
 <style>
+
   .sinor li{
     margin-bottom: 15px;
   }
