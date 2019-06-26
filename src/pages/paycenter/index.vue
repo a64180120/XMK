@@ -120,7 +120,7 @@
           <table>
             <colgroup>
               <col width="5%">
-              <col width="13%">
+              <col width="15%">
               <col width="13%">
               <col width="13%">
               <col width="13%">
@@ -149,7 +149,7 @@
           <table v-if="tableData.length">
             <colgroup>
               <col width="5%">
-              <col width="13%">
+              <col width="15%">
               <col width="13%">
               <col width="13%">
               <col width="13%">
@@ -191,10 +191,14 @@
                   <div>{{item.Mst.RefbillCode}}</div>
                 </td>
                 <td>
-                  <div>{{item.Mst.RefbillName}}</div>
+                  <el-tooltip :content="item.Mst.RefbillName">
+                    <p>{{item.Mst.RefbillName}}</p>
+                  </el-tooltip>
                 </td>
                 <td>
-                  <div>{{item.Mst.NgInsertDt.replace('T',' ')}}</div>
+                  <el-tooltip :content="item.Mst.NgInsertDt.replace('T',' ')">
+                    <p>{{item.Mst.NgInsertDt.replace('T',' ')}}</p>
+                  </el-tooltip>
                 </td>
                 <td>
                   <div v-if="item.Mst.FApproval==0">待送审</div>
@@ -211,7 +215,11 @@
                   <div v-else>————</div>
                 </td>
                 <td>
-                  <div>{{item.Mst.FSubmitdate?item.Mst.FSubmitdate.replace('T',' '):"————"}}</div>
+                  <el-tooltip
+                    :content="item.Mst.FSubmitdate?item.Mst.FSubmitdate.replace('T',' '):'————'"
+                  >
+                    <p>{{item.Mst.FSubmitdate?item.Mst.FSubmitdate.replace('T',' '):"————"}}</p>
+                  </el-tooltip>
                 </td>
               </tr>
             </thead>

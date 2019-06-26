@@ -62,6 +62,7 @@
                       v-model="account"
                       placeholder="请选择"
                       @change="accountChange"
+                      :title="(accountList.length && account&&account!='0')?(accountList.find(item=>{return item.PhId == account})).FBankname:''"
                     >
                       <el-option
                         v-if="accountList.length>0"
@@ -82,6 +83,7 @@
                       popper-class="payList-largeSelects"
                       v-model="detail.Mst.FPaymethod"
                       placeholder="请选择"
+                      :title="detail.Mst.FPaymethod.length==15&&FPaymethodList.length>0?(FPaymethodList.find(item=>item.PhId == detail.Mst.FPaymethod)).TypeName:''"
                     >
                       <el-option
                         v-for="(item,index) in FPaymethodList"
@@ -740,7 +742,12 @@ export default {
             if (postAddAppvalRecord) {
               postAddAppvalRecord(this.detail.Mst.PhId)
             } else {
-              this.$msgBox.show('保存成功')
+              this.$msgBox.show({
+                content: '保存成功',
+                fn: () => {
+                  this.data.openDialog = false
+                }
+              })
             }
           }
         })
@@ -1208,6 +1215,7 @@ export default {
       right: 0;
       bottom: 0;
       line-height: 48px;
+      height: 48px;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;

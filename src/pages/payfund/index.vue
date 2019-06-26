@@ -232,7 +232,7 @@
                 {{payTypeList[item.IsPay]}}
               </td>
               <td class="left">
-                <el-tooltip :content="item.FDescribe">
+                <el-tooltip :content="item.FDescribe" popper-class="tooltipCla" placement="bottom-start">
                   <p>{{item.FDescribe}}</p>
                 </el-tooltip>
 
@@ -318,6 +318,7 @@
     <!--项目新增修改-->
     <el-dialog v-if="applyproType" class="applydialog" :title="applyproTitle"
                :visible.sync="applyproType"
+               :close-on-click-modal="false"
                >
        <applypro :applyNum="applyNum" :prodata="apartData" :isAdd="isAdd"  @delete="handleDelete"></applypro>
     </el-dialog>
@@ -569,6 +570,9 @@
               }
             }else{
               this.chartData.dw='元';
+              for(var k in  this.chartData.chart){
+                this.chartData.chart[k].value=( this.chartData.chart[k].value ).toFixed(2)
+              }
             }
 
 
@@ -1016,6 +1020,7 @@
   }
 </style>
 <style>
+
   .sinor li{
     margin-bottom: 15px;
   }
