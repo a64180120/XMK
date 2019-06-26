@@ -124,7 +124,7 @@ export default {
       &:first-of-type {
         height: 60%;
         font-size: 16px;
-        overflow-y: auto;
+        // overflow-y: auto;
       }
       &:nth-of-type(2) {
         margin-top: 10px;

@@ -37,7 +37,7 @@
         :visible="showAuditfollow"
         @update:visible="closeAuditFollow()"
       ></auditfollow>
-      <el-dialog width="25%" append-to-body :visible.sync="upload">
+      <el-dialog width="410px" append-to-body :visible.sync="upload">
         <upload ref="upload" @submit="uploadClose"/>
       </el-dialog>
     </el-dialog>
