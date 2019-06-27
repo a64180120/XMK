@@ -246,8 +246,16 @@ export default {
     },
     computed:{
         ...mapState({
-            menuButton: state => state.user.menubutton
+            menuButton: state => state.user.menubutton,
+            orgid: state => state.user.orgid
         })
+    },
+    watch:{
+        orgid(val){
+            if(val){
+                this.getorglist();
+            }
+        }
     },
     mounted(){
         this.getTypeData();
@@ -519,7 +527,7 @@ export default {
         //获取组织下部门
         getorglist(){
             let data = {
-                orgid:this.$store.state.user.orgid
+                orgid:this.orgid
             }
             GetAllChildTree(data).then(res => {
                 if(res.Status=='error'){

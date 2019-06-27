@@ -27,7 +27,7 @@
                         :props="defaultProps"
                         
                         :default-expanded-keys="[org.OCode]"
-                        :data="orgList"
+                        :data="orglist"
                         :expand-on-click-node="false"
                         @node-click="orgChange"
                         ></el-tree>
@@ -79,7 +79,7 @@
 <script>
 import {mapState} from 'vuex'
 import search from '@/components/searchInput/searchInput'
-import {getUserByOrg} from '@/api/systemSetting/post'
+import {getUserByOrg,GetAllChildTree} from '@/api/systemSetting/post'
 export default {
     name:'auditer',
     props:{
@@ -96,6 +96,7 @@ export default {
     },
     data(){
         return {
+            orglist:[],
             org:{OCode:101},
             options:[],
             search:'',
@@ -115,7 +116,7 @@ export default {
     },
      computed:{
             ...mapState({
-                  orgList: state=>state.user.orglist,
+                  orgid: state=>state.user.orgid,
                   orgcode: state=>state.user.orgcode,
                   orgname: state=>state.user.orgname,
             })
@@ -124,10 +125,12 @@ export default {
         this.org.OCode=this.orgcode;
         this.org.OName=this.orgname;
         this.getData();
+        this.getorglist();
     },
     watch:{
         getuser(val){
             if(val){
+                debuger;
                 this.allChecked(false);
                 this.checked=false;
                 this.choosedItem=[];
@@ -153,6 +156,11 @@ export default {
                     }
                 }
             }
+        },
+        orgid(val){
+            if(val){
+                this.getorglist();
+            }
         }
     },
     methods:{
@@ -165,6 +173,22 @@ export default {
         orgTreeShow(){//组织树显示
             this.$refs.orgtree.setCurrentNode({OCode:this.org.OCode});
           },
+        //获取组织下部门
+        getorglist(){
+            let data = {
+                orgid:this.orgid
+            }
+            GetAllChildTree(data).then(res => {
+                if(res.Status=='error'){
+                    this.$msgBox.error(res.Msg)
+                }else{
+                    this.orglist=res.Record;
+                }
+            }).catch(err => {
+                this.$msgBox.error('获取组织下部门信息失败!')
+            })
+            
+        },
         handleCurrentChange(val){
             this.pageIndex=val;
             this.getData();
@@ -176,7 +200,9 @@ export default {
         userConfirm(){
             this.$emit('auditer-cancle',JSON.parse(JSON.stringify(this.choosedItem)));
         },
+        //获取审批人
         getData(){
+            let vm = this;
             let data={
                 OrgCode:this.org.OCode,
 //                 PageIndex:this.pageIndex-1,
@@ -185,33 +211,35 @@ export default {
             }
             getUserByOrg(data).then(res => {
                 if(res.Status=='error'){
-                    this.$msgBox.show(res.Msg)
+                    vm.$msgBox.show(res.Msg)
                 }else{
-                    this.choosedItem=[];
-                    this.allChecked(false);
-                    this.checked=false;
-                    this.userList=res.Record;
+                    
+                    vm.choosedItem=[];
+                    vm.allChecked(false);
+                    vm.checked=false;
+                    vm.userList=res.Record;
                     // this.total=res.totalRows;
-                    this.userList.map(user => {
-                        for(let u of this.info){
-                            if(u.OperatorPhid==user.DefStr6){
-                                this.choosedItem.push(user);
-                                this.$set(user,'checked',true);
+                    vm.userList.map(user => {
+
+                        for(let u of vm.info){
+                            if(u.DefStr6==user.DefStr6){
+                                vm.choosedItem.push(user);
+                                vm.$set(user,'checked',true);
                             }
                         }
                     })
                     
-                    let allCheck=this.userList.every((acc)=>{
+                    let allCheck=vm.userList.every((acc)=>{
                         return acc.checked==true;
                     })
                     if(allCheck){
-                        this.checked=true;
-                        this.indeterminate=false;
+                        vm.checked=true;
+                        vm.indeterminate=false;
                     }else{
-                        this.checked=false;
-                        this.indeterminate=false;
-                        if(this.choosedItem.length>0){
-                            this.indeterminate=true;
+                        vm.checked=false;
+                        vm.indeterminate=false;
+                        if(vm.choosedItem.length>0){
+                            vm.indeterminate=true;
                         }
                     }
                 }
@@ -318,7 +346,7 @@ export default {
             position: absolute;
             right:0;
             top:0;
-            bottom:0;
+            height:40px;
             width:17px;
             background:#fff;
         }

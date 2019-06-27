@@ -98,10 +98,10 @@
             </p>
             <div>
                 <span>上限</span>
-                <el-input :disabled="!money.enable" v-model="money.max" placeholder="请输入上限金额(选填)"></el-input>
+                <el-input @keyup.native="clearNoNum($event)" :disabled="!money.enable" v-model="money.max" placeholder="请输入上限金额(选填)"></el-input>
                 <span>元</span>
                 <span style="margin-left:30px">下限</span>
-                <el-input :disabled="!money.enable" v-model="money.min" placeholder="请输入下限金额(选填)"></el-input>
+                <el-input @keyup.native="clearNoNum($event)" :disabled="!money.enable" v-model="money.min" placeholder="请输入下限金额(选填)"></el-input>
                 <span>元</span>
             </div>
         </div>
@@ -221,6 +221,16 @@ export default {
                         this.info=res.Data;
                         this.info.org=res.Data.Organizes;
                         this.postList=res.Data.PostModels;
+                        if(res.Data.CondsModels){
+                            this.money.enable=true;
+                            for(let jine of res.Data.CondsModels){
+                                if(jine.FOperator=='<='){
+                                    this.money.max=jine.FOperand2
+                                }else if(jine.FOperator=='>='){
+                                    this.money.min=jine.FOperand2
+                                }
+                            }
+                        }
                     }
                 }).catch(err=>{
                     this.$msgBox.show('获取流程信息失败!')
@@ -293,39 +303,39 @@ export default {
                 if(this.money.enable&&this.money.max&&this.money.min){
                    maxMin=[
                         {
-                            F_SEQ:1,
-                            F_OPERAND1:'F_AMOUNT_TOTAL',
-                            F_OPERAND1_TP:'number',
-                            F_OPERATOR:'>=',
-                            F_OPERAND2:this.money.min,
-                            F_CONNECTOR:'and',
+                            FSeq:1,
+                            FOperand1:'F_AMOUNT_TOTAL',
+                            FOperand1Tp:'number',
+                            FOperator:'>=',
+                            FOperand2:this.money.min,
+                            FConnector:'and',
                         },
                         {
-                            F_SEQ:1,
-                            F_OPERAND1:'F_AMOUNT_TOTAL',
-                            F_OPERAND1_TP:'number',
-                            F_OPERATOR:'<=',
-                            F_OPERAND2:this.money.max,
-                            F_CONNECTOR:'',
+                            FSeq:1,
+                            FOperand1:'F_AMOUNT_TOTAL',
+                            FOperand1Tp:'number',
+                            FOperator:'<=',
+                            FOperand2:this.money.max,
+                            FConnector:'',
                         }
                     ]
                 }else if(this.money.enable&&this.money.max&&!this.money.min){
                     maxMin=[{
-                            F_SEQ:1,
-                            F_OPERAND1:'F_AMOUNT_TOTAL',
-                            F_OPERAND1_TP:'number',
-                            F_OPERATOR:'<=',
-                            F_OPERAND2:this.money.max,
-                            F_CONNECTOR:'and',
+                            FSeq:1,
+                            FOperand1:'F_AMOUNT_TOTAL',
+                            FOperand1Tp:'number',
+                            FOperator:'<=',
+                            FOperand2:this.money.max,
+                            FConnector:'and',
                         }]
                 }else if(this.money.enable&&!this.money.max&&this.money.min){
                     maxMin=[{
-                            F_SEQ:1,
-                            F_OPERAND1:'F_AMOUNT_TOTAL',
-                            F_OPERAND1_TP:'number',
-                            F_OPERATOR:'>=',
-                            F_OPERAND2:this.money.min,
-                            F_CONNECTOR:'',
+                            FSeq:1,
+                            FOperand1:'F_AMOUNT_TOTAL',
+                            FOperand1Tp:'number',
+                            FOperator:'>=',
+                            FOperand2:this.money.min,
+                            FConnector:'',
                         }]
                 }
                 this.options.map(opt => {
@@ -466,6 +476,21 @@ export default {
                     this.deleteList.push(item);
                 }
                 this.postList.splice(index,1);
+            }
+        },
+        //输入框限定***
+        clearNoNum(event){
+            var obj=event.target;
+            if(obj.value>999999999.99){
+                obj.value=999999999.99;
+                return;
+            }
+            obj.value = obj.value.replace(/[^\d.]/g,"");  //清除“数字”和“.”以外的字符  
+            obj.value = obj.value.replace(/\.{2,}/g,"."); //只保留第一个. 清除多余的  
+            obj.value = obj.value.replace(".","$#$").replace(/\./g,"").replace("$#$",".");
+            obj.value = obj.value.replace(/^(\-)*(\d+)\.(\d\d).*$/,'$1$2.$3');//只能输入两个小数  
+            if(obj.value.indexOf(".")< 0 && obj.value !=""){//以上已经过滤，此处控制的是如果没有小数点，首位不能为类似于 01、02的金额 
+                obj.value= parseFloat(obj.value);
             }
         },
         reset(){
