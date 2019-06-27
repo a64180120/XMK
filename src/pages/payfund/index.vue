@@ -214,23 +214,34 @@
                 <el-checkbox v-model="checkList[index]">{{index+1}}</el-checkbox>
               </td>
               <td @click="showApply(item.PhId)" class="atype">
-                {{item.FCode}}
+                <el-tooltip :content="item.FCode" popper-class="tooltipCla" placement="bottom-start">
+                  <p>{{item.FCode}}</p>
+                </el-tooltip>
               </td>
               <td>
-                {{item.FName}}
+                <el-tooltip :content="item.FName" popper-class="tooltipCla" placement="bottom-start">
+                  <p>{{item.FName}}</p>
+                </el-tooltip>
               </td>
               <td class="right">
-                {{item.FAmountTotal | NumFormat}}
+                <el-tooltip :content="item.FAmountTotal| NumFormat" popper-class="tooltipCla" placement="bottom-start">
+                  <p>{{item.FAmountTotal| NumFormat}}</p>
+                </el-tooltip>
               </td>
               <td>
-                {{item.FDate.substring(0,10)}}
+                <el-tooltip :content="item.FDate.substring(0,10)" popper-class="tooltipCla" placement="bottom-start">
+                  <p>{{item.FDate.substring(0,10)}}</p>
+                </el-tooltip>
               </td>
               <td class="atype" @click="openAuditfollow(item,index)">
-                {{spTypeList[item.FApproval]}}
+                <el-tooltip :content="spTypeList[item.FApproval]" popper-class="tooltipCla" placement="bottom-start">
+                  <p>{{spTypeList[item.FApproval]}}</p>
+                </el-tooltip>
               </td>
               <td>
-
-                {{item.FApproval!=9?'-':payTypeList[item.IsPay]}}
+                <el-tooltip :content="item.FApproval!=9?'-':payTypeList[item.IsPay]" popper-class="tooltipCla" placement="bottom-start">
+                  <p>{{item.FApproval!=9?'-':payTypeList[item.IsPay]}}</p>
+                </el-tooltip>
               </td>
               <td class="left">
                 <el-tooltip :content="item.FDescribe" popper-class="tooltipCla" placement="bottom-start">
@@ -1052,5 +1063,9 @@
   }
   .applydialog .el-dialog__body{
     padding: 10px 20px 30px;
+  }
+  .el-input__inner{
+    vertical-align: middle;
+    line-height: 30px;
   }
 </style>

@@ -20,8 +20,20 @@
               <!--申请信息-->
               <div class="apply-info">
                 <ul>
-                  <li><span>申报部门：</span><span>{{PaymentMst.FOrgname&&PaymentMst.FDepname?PaymentMst.FOrgname+'-'+PaymentMst.FDepname:''}}</span></li>
-                  <li><span>金额合计：</span><span>{{PaymentMst.FAmountTotal | NumFormat}}</span></li>
+                  <li><span>申报部门：</span>
+                    <span>
+                      <el-tooltip :content="PaymentMst.FOrgname&&PaymentMst.FDepname?PaymentMst.FOrgname+'-'+PaymentMst.FDepname:''" popper-class="tooltipCla" placement="bottom-start">
+                          <p>{{PaymentMst.FOrgname&&PaymentMst.FDepname?PaymentMst.FOrgname+'-'+PaymentMst.FDepname:''}}</p>
+                        </el-tooltip>
+                    </span>
+                  </li>
+                  <li><span>金额合计：</span>
+                    <span>
+                        <el-tooltip :content="PaymentMst.FAmountTotal | NumFormat" popper-class="tooltipCla" placement="bottom-start">
+                          <p>{{PaymentMst.FAmountTotal | NumFormat}}</p>
+                        </el-tooltip>
+                    </span>
+                  </li>
                 </ul>
                 <el-card class="payText">
                   <div slot="header">
@@ -82,13 +94,14 @@
 
 
             <div style="margin-top: 10px">
-              <table style="margin:0 20px;width: auto;">
+              <table style="margin:0 0 0 20px;width: auto;">
                 <colgroup>
                   <col width="10%">
                   <col width="25%">
                   <col width="25%">
                   <col width="20%">
                   <col width="20%">
+                  <col width="20px">
                 </colgroup>
                 <thead>
                   <td>序号</td>
@@ -96,9 +109,9 @@
                   <td>明细项目名称</td>
                   <td>申请金额（元）</td>
                   <td>备注</td>
+                  <td class="iconTd"></td>
                 </thead>
                 <tbody>
-
                   <tr v-for="(mx,index) in item.PaymentDtls">
                       <td>{{index+1}}</td>
                       <td @click="showOrg(pindex,index)">
@@ -115,7 +128,7 @@
                         <!--<el-input-number v-if="mx.checked" size="small" :precision="2" :controls="false" style="width:auto;" class="numInput"  v-model="mx.FAmount " @blur="$set(mx,'checked',false)" @change="moneyChange"></el-input-number>-->
                       </td>
                       <td>
-                        <el-tooltip :disabled="mx.FRemarks.length<15"  :content="mx.FRemarks" popper-class="tooltipCla" placement="bottom-start">
+                        <el-tooltip :disabled="mx.FRemarks&&mx.FRemarks.length<15"  :content="mx.FRemarks" popper-class="tooltipCla" placement="bottom-start">
                           <p style="width: 300px;">{{mx.FRemarks}}</p>
                           <p><input v-model="mx.FRemarks " maxlength="100" placeholder="最多100字"/></p>
                         </el-tooltip>
@@ -333,7 +346,10 @@
     },
     watch:{
       'PaymentMst.FDescribe':function(val){
-        this.len=val.length;
+        if(val!=null){
+          this.len=val.length;
+        }
+
       },
     },
     components:{ApprovalDialog, Orgtree,goApproval,ImgView,fileUp},
@@ -615,7 +631,7 @@
       delDtl:function(pindex,index){
         this.PaymentXmDtl[pindex].PaymentDtls.splice(index,1)
         if(this.PaymentXmDtl[pindex].PaymentDtls.length==0){
-          this.addDtl(0)
+          this.addDtl(pindex,0)
         }
       },
       /*金额计算*/
@@ -841,7 +857,9 @@
 <style scoped lang="scss">
   .iconTd{
     border: none;
-    position: absolute;
+    position: relative;
+    min-width: 20px;
+    padding: 0 2px;
   }
   .iconTd i{
     width: 15px;
@@ -853,15 +871,17 @@
     margin: auto;
     text-align: center;
     display: none;
+    cursor: pointer;
   }
   .iconTd .el-icon-minus{
     background-color: red;
   }
   .iconTd .el-icon-plus{
     background-color: #67971a;
+    margin-top: 3px;
   }
   tr:hover i{
-    display: inline-block;
+    display: block;
   }
   .dialog-title {
     > span {
@@ -905,7 +925,8 @@
       box-shadow: 0px 2px 10px #888888;
       margin-top: 20px;
       margin-right: -15px;
-      overflow: auto;
+      overflow-y: auto;
+      overflow-x: hidden;
 
       > .apply-info {
         padding: 8px;
