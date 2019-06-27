@@ -1053,4 +1053,8 @@
   .applydialog .el-dialog__body{
     padding: 10px 20px 30px;
   }
+  .el-input__inner{
+    vertical-align: middle;
+    line-height: 30px;
+  }
 </style>
