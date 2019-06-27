@@ -29,7 +29,9 @@
             >
               <span class="btn btn-large" @click="save('payErrorHandleData')">异常处理</span>
             </template>
-            <template v-if="detail.Mst.FApproval == 0&&menubutton.paycenter_maintain=='True'">
+            <template
+              v-if="(detail.Mst.FApproval == 0||detail.Mst.FApproval == 2)&&menubutton.paycenter_maintain=='True'"
+            >
               <span class="btn btn-large" @click="save('')">保存</span>
               <span class="btn btn-large" style="padding:0" @click="save('approvalData')">保存并送审</span>
             </template>

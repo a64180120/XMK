@@ -692,7 +692,7 @@ export default {
                 return (
                   item.Mst.FPaymethod != 0 &&
                   item.Dtls.every(subitem => {
-                    return !!subitem.BankPhid
+                    return !!subitem.BankPhid && !!subitem.FRecAcnt
                   })
                 )
               })
