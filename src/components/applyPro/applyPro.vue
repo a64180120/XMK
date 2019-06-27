@@ -128,7 +128,7 @@
                         <!--<el-input-number v-if="mx.checked" size="small" :precision="2" :controls="false" style="width:auto;" class="numInput"  v-model="mx.FAmount " @blur="$set(mx,'checked',false)" @change="moneyChange"></el-input-number>-->
                       </td>
                       <td>
-                        <el-tooltip :disabled="mx.FRemarks.length<15"  :content="mx.FRemarks" popper-class="tooltipCla" placement="bottom-start">
+                        <el-tooltip :disabled="mx.FRemarks&&mx.FRemarks.length<15"  :content="mx.FRemarks" popper-class="tooltipCla" placement="bottom-start">
                           <p style="width: 300px;">{{mx.FRemarks}}</p>
                           <p><input v-model="mx.FRemarks " maxlength="100" placeholder="最多100字"/></p>
                         </el-tooltip>
@@ -346,7 +346,10 @@
     },
     watch:{
       'PaymentMst.FDescribe':function(val){
-        this.len=val.length;
+        if(val!=null){
+          this.len=val.length;
+        }
+
       },
     },
     components:{ApprovalDialog, Orgtree,goApproval,ImgView,fileUp},
