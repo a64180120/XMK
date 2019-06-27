@@ -48,6 +48,10 @@ export default {
     cancelBtnText: {
       type: String,
       default: '立即关闭'
+    },
+    timeout: {
+      type: Number,
+      default: 3
     }
   },
   data() {
@@ -55,8 +59,7 @@ export default {
       openDialog: false,
       interval: null,
       count: 0,
-      status: 'success',
-      timeOut: 3
+      status: 'success'
     }
   },
   mounted() {},
@@ -71,7 +74,7 @@ export default {
       this.$destroy()
     },
     showMsgBox: function() {
-      this.count = this.timeOut
+      this.count = this.timeout
       this.openDialog = true
       this.status = 'success'
       this.$nextTick(() => {
@@ -79,7 +82,7 @@ export default {
       })
     },
     showError: function() {
-      this.count = this.timeOut
+      this.count = this.timeout
       this.openDialog = true
       this.status = 'error'
       this.$nextTick(() => {
@@ -88,7 +91,7 @@ export default {
     },
     beginCount: function() {
       var that = this
-      this.count = this.timeOut
+      this.count = this.timeout
       this.interval = setInterval(() => {
         that.count--
         if (that.count == 0) {
