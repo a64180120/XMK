@@ -108,7 +108,7 @@
         <p class="statusBtn">
             <span @click.stop="liucheng((parseInt(selected)-1))" :class="{grey:selected=='1',green:selected=='2',yellow:selected=='3'}">上一步</span>
             <span @click.stop="liucheng((parseInt(selected)+1))" :class="{grey:selected=='3',yellow:selected!='3'}">下一步</span>
-            <span @click.stop="submit(type)" :class="{grey:selected!='3'}">保存</span>
+            <span @click.stop="submit(type)" >保存</span>
             <span @click.stop="$emit('add-cancle')">取消</span>
         </p>
         
@@ -239,24 +239,24 @@ export default {
         },
         //流程切换
         liucheng(str){
-            if(str<1||str>3){
-                return;
-            }
-            if(this.selected==1){
-                if((!this.info.FName)||(!this.info.FCode)||(this.info.org.length==0)||(!this.info.SPLXPhid)){//必填信息为空
-                     this.$msgBox.show('请完善必填信息!')
-                    return;
-                }
-            }else if(str==3&&this.selected==2&&this.info.FEnable==0){
-                let p=this.postList.every((el)=>{
+            // if(str<1||str>3){
+            //     return;
+            // }
+            // if(this.selected==1){
+            //     if((!this.info.FName)||(!this.info.FCode)||(this.info.org.length==0)||(!this.info.SPLXPhid)){//必填信息为空
+            //          this.$msgBox.show('请完善必填信息!')
+            //         return;
+            //     }
+            // }else if(str==3&&this.selected==2&&this.info.FEnable==0){
+            //     let p=this.postList.every((el)=>{
 
-                   return el.PhId;
-                })
-                if(!p){
-                    this.$msgBox.show('编码与名称不能为空!')
-                    return;
-                }
-            }
+            //        return el.PhId;
+            //     })
+            //     if(!p){
+            //         this.$msgBox.show('编码与名称不能为空!')
+            //         return;
+            //     }
+            // }
             this.selected=str;
         },
         // checkInfo(){
@@ -289,99 +289,110 @@ export default {
             this.$set(this.postList[n],'FName',name);
         },
         submit(type){
-            if(this.selected==3){
-                let arr=[],info;
-                let posts=[],maxMin=[],splx;
-                this.postList.map((pos,i )=> {
-                    //岗位列表
-                    posts.push({
-                        PostPhid:pos.PhId,
-                        FSeq:i+1,
-                        FMode:pos.FMode
-                    })
-                })
-                if(this.money.enable&&this.money.max&&this.money.min){
-                   maxMin=[
-                        {
-                            FSeq:1,
-                            FOperand1:'F_AMOUNT_TOTAL',
-                            FOperand1Tp:'number',
-                            FOperator:'>=',
-                            FOperand2:this.money.min,
-                            FConnector:'and',
-                        },
-                        {
-                            FSeq:1,
-                            FOperand1:'F_AMOUNT_TOTAL',
-                            FOperand1Tp:'number',
-                            FOperator:'<=',
-                            FOperand2:this.money.max,
-                            FConnector:'',
-                        }
-                    ]
-                }else if(this.money.enable&&this.money.max&&!this.money.min){
-                    maxMin=[{
-                            FSeq:1,
-                            FOperand1:'F_AMOUNT_TOTAL',
-                            FOperand1Tp:'number',
-                            FOperator:'<=',
-                            FOperand2:this.money.max,
-                            FConnector:'and',
-                        }]
-                }else if(this.money.enable&&!this.money.max&&this.money.min){
-                    maxMin=[{
-                            FSeq:1,
-                            FOperand1:'F_AMOUNT_TOTAL',
-                            FOperand1Tp:'number',
-                            FOperator:'>=',
-                            FOperand2:this.money.min,
-                            FConnector:'',
-                        }]
-                }
-                this.options.map(opt => {
-                    if(opt.PhId==this.info.SPLXPhid){
-                        splx=opt;
-                    }
-                })
-                info={
-                    OrgPhid:this.$store.state.user.orgid,
-                    OrgCode:this.$store.state.user.orgcode,
-                    FCode:this.info.FCode,
-                    FName:this.info.FName,
-                    FBilltype:splx.Value,
-                    FEnable:this.info.FEnable,
-                    FDescribe:this.info.FDescribe,
-                    SPLXPhid:splx.PhId,
-                    SPLXCode:splx.TypeCode,
-                    Proc4PostModels:posts,
-                    CondsModels:maxMin
-                }
-                for(let org of this.info.org){
-                    let inf = JSON.parse(JSON.stringify(info));
-                    inf.OrgPhid=org.PhId?org.PhId:org.OrgId;
-                    inf.OrgCode=org.OCode?org.OCode:org.OrgCode;
-                    arr.push(inf);
-                }
-                
-                if(type=='add'){
-                    let data={
-                        infoData:arr
-                    }
-                    this.add(data);
-                }else{
-                    let orgids=[],data={};
-                    for(let org of this.auditinfo.Organizes){
-                        orgids.push(org.OrgId?org.OrgId:org.PhId);
-                    }
-
-                    data.ApprovalTypeId=splx.PhId;
-                    data.BillType=splx.Value;
-                    data.ProcCode=this.info.FCode;
-                    data.OrgIds=orgids;
-                    data.ProcModels=arr;
-                    this.update(data);
-                }
+            let arr=[],info;
+            let posts=[],maxMin=[],splx;
+            if((!this.info.FName)||(!this.info.FCode)||(this.info.org.length==0)||(!this.info.SPLXPhid)){//必填信息为空
+                this.$msgBox.show('请完善流程必填信息!')
+                return;
             }
+            let p=this.postList.every((el)=>{
+                return el.PhId;
+            })
+            if(!p){
+                this.$msgBox.show('岗位编码与名称不能为空!')
+                return;
+            }
+            this.postList.map((pos,i )=> {
+                //岗位列表
+                posts.push({
+                    PostPhid:pos.PhId,
+                    FSeq:i+1,
+                    FMode:pos.FMode
+                })
+            })
+            
+            if(this.money.enable&&this.money.max&&this.money.min){
+                maxMin=[
+                    {
+                        FSeq:1,
+                        FOperand1:'F_AMOUNT_TOTAL',
+                        FOperand1Tp:'number',
+                        FOperator:'>=',
+                        FOperand2:this.money.min,
+                        FConnector:'and',
+                    },
+                    {
+                        FSeq:1,
+                        FOperand1:'F_AMOUNT_TOTAL',
+                        FOperand1Tp:'number',
+                        FOperator:'<=',
+                        FOperand2:this.money.max,
+                        FConnector:'',
+                    }
+                ]
+            }else if(this.money.enable&&this.money.max&&!this.money.min){
+                maxMin=[{
+                        FSeq:1,
+                        FOperand1:'F_AMOUNT_TOTAL',
+                        FOperand1Tp:'number',
+                        FOperator:'<=',
+                        FOperand2:this.money.max,
+                        FConnector:'and',
+                    }]
+            }else if(this.money.enable&&!this.money.max&&this.money.min){
+                maxMin=[{
+                        FSeq:1,
+                        FOperand1:'F_AMOUNT_TOTAL',
+                        FOperand1Tp:'number',
+                        FOperator:'>=',
+                        FOperand2:this.money.min,
+                        FConnector:'',
+                    }]
+            }
+            this.options.map(opt => {
+                if(opt.PhId==this.info.SPLXPhid){
+                    splx=opt;
+                }
+            })
+            info={
+                OrgPhid:this.$store.state.user.orgid,
+                OrgCode:this.$store.state.user.orgcode,
+                FCode:this.info.FCode,
+                FName:this.info.FName,
+                FBilltype:splx.Value,
+                FEnable:this.info.FEnable,
+                FDescribe:this.info.FDescribe,
+                SPLXPhid:splx.PhId,
+                SPLXCode:splx.TypeCode,
+                Proc4PostModels:posts,
+                CondsModels:maxMin
+            }
+            for(let org of this.info.org){
+                let inf = JSON.parse(JSON.stringify(info));
+                inf.OrgPhid=org.PhId?org.PhId:org.OrgId;
+                inf.OrgCode=org.OCode?org.OCode:org.OrgCode;
+                arr.push(inf);
+            }
+            debugger;
+            if(type=='add'){
+                let data={
+                    infoData:arr
+                }
+                this.add(data);
+            }else{
+                let orgids=[],data={};
+                for(let org of this.auditinfo.Organizes){
+                    orgids.push(org.OrgId?org.OrgId:org.PhId);
+                }
+
+                data.ApprovalTypeId=splx.PhId;
+                data.BillType=splx.Value;
+                data.ProcCode=this.info.FCode;
+                data.OrgIds=orgids;
+                data.ProcModels=arr;
+                this.update(data);
+            }
+        
             
         },
         //新增保存
@@ -402,7 +413,7 @@ export default {
                         
                         
                     }else{
-                        this.$msgBox.show('请至少填写一个金额,且上限金额与下限金额不能相同!')
+                        this.$msgBox.show('启用条件请至少填写一个金额,且上限金额与下限金额不能相同!')
                     }
                 }else{
                     //执行保存
@@ -436,7 +447,7 @@ export default {
                     
                     
                 }else{
-                    this.$msgBox.show('请至少填写一个金额,且上限金额与下限金额不能相同!')
+                    this.$msgBox.show('启用条件请至少填写一个金额,且上限金额与下限金额不能相同!')
                 }
             }else{
                 //执行保存
