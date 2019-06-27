@@ -8,7 +8,9 @@
           <span v-else-if="info.JudgeRefer === 0 && info.OperaName != null">审批人:</span>
           <span v-else-if="info.JudgeRefer === 2 && info.OperaName != null">支付人:</span>
           <span v-else>审批岗位:</span>
-          <em>{{index}}</em>
+          <em>{{startNum +index}}</em>
+<!--          <img style="width: 30px;position: absolute;top:50px;left: -48px" src="../../assets/images/spr1.png">-->
+<!--          <i v-if="index===3" style="width: 30px;position: absolute;top:50px;left: -48px;font-size: 0.24rem;color: #0ee6d4" class="el-icon-right"></i>-->
         </li>
         <li>{{info.OperaName?info.OperaName:info.PostName}}</li>
         <li>{{info.JudgeRefer === 1?info.FSendDate:info.FDate}}</li>
@@ -67,11 +69,9 @@ export default {
       type: Number,
       default: 1
     },
-    sign: {
-      type: Array,
-      default: function() {
-        return []
-      }
+    startNum: {
+      type: Number,
+      default: 0
     },
     isApproval: {
       default: false,

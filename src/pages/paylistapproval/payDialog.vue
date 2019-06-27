@@ -117,6 +117,9 @@
       },
       //下一审批人选中弹框
       selectApprovaler(e){
+        if (e.length === 0){
+          this.operatorID = []
+        }
         for (let k in e){
           this.operatorID[k] = e[k].OperatorPhid
         }
@@ -153,6 +156,24 @@
 
       //确认
       submit(){
+        if (this.isAgree === ''){
+          this.$msgBox.error({
+            content:"必须选择是否同意",
+          })
+          return
+        }
+        if (this.isAgree ==='2'&& this.backPost.length === 0) {
+          this.$msgBox.error({
+            content:"回退人不能为空",
+          })
+          return
+        }
+        if (this.isAgree ==='9'&& this.nextApprovaler.length !== 0 &&this. operatorID.length ===0) {
+          this.$msgBox.error({
+            content:"下一审批人不能为空",
+          })
+          return
+        }
         //同意数据 单条
         let formData = new FormData();
         let data = {
@@ -203,7 +224,18 @@
               }
             })
           }else {
-            this.$msgBox.show(res.Msg)
+            if (res.Msg =='10086'){
+              let that = this;
+              this.$msgBox.error({
+                content:"当前流程已发生变化，请更新！",
+                cancelBtnText:'确定',
+                fn:function () {
+                  that.getAppvalProc()
+                }
+              })
+            }else {
+              this.$msgBox.error(res.Msg)
+            }
             this.fileCount = 0
           }
         }).catch(err=>{

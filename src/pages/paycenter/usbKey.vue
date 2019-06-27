@@ -1,18 +1,12 @@
 <template>
   <div class="usbKey">
-    <table
-      id="Table5"
-      style="opacity:0;width:1px;height:1px"
-      cellspacing="1"
-      cellpadding="1"
-      border="0"
-    >
-      <tr>
-        <td align="center" style="height: 22px">
+    <div id="Table5" style="opacity:0;width:1px;height:1px">
+      <div>
+        <div align="center" style="height: 1px">
           <object
             name="AF"
-            width="100%"
-            height="25"
+            width="1"
+            height="1"
             classid="clsid:B371A9E1-158C-4318-B6F7-8D0BB9AE041E"
             :codebase="UsbKeyUrl+'custom2/Resource/Newgrand.cab#Version=6,8,0,3'"
           >
@@ -50,10 +44,9 @@
             <param name="_ExtentY" value="26">
             <param name="_StockProps" value="0">
           </object>
-        </td>
-      </tr>
-      <tr></tr>
-    </table>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
