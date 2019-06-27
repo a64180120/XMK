@@ -1,18 +1,12 @@
 <template>
   <div class="usbKey">
-    <table
-      id="Table5"
-      style="z-index: 101; left: 8px; width: 100%; position: absolute;top: 610px"
-      cellspacing="1"
-      cellpadding="1"
-      border="0"
-    >
-      <tr>
-        <td align="center" style="height: 22px">
+    <div id="Table5" style="opacity:0;width:1px;height:1px">
+      <div>
+        <div align="center" style="height: 1px">
           <object
             name="AF"
-            width="100%"
-            height="25"
+            width="1"
+            height="1"
             classid="clsid:B371A9E1-158C-4318-B6F7-8D0BB9AE041E"
             :codebase="UsbKeyUrl+'custom2/Resource/Newgrand.cab#Version=6,8,0,3'"
           >
@@ -30,13 +24,13 @@
             <param name="MainProductID" value="G6">
             <param name="URL_Shortcut" value>
             <param name="inifile" value="Modules.ini">
-            <font color="#000000" face="宋体" size="3">
+            <!-- <font color="#000000" face="宋体" size="0">
               无法下载、运行新中大客户端控件！
-              <br>请在 "Internet选项"
+              请在 "Internet选项"
               中降低安全级别，使得ActiveX控件允许被下载，然后重新刷新本页
-              <br>或者点
+              或者点
               <a :href="UsbKeyUrl+'custom2/Resource/UsbKeyEnvSetup.exe'">客户端安装程序</a>，下载,运行该程序即可.
-            </font>
+            </font>-->
           </object>
           <object
             id="USBVal"
@@ -50,16 +44,13 @@
             <param name="_ExtentY" value="26">
             <param name="_StockProps" value="0">
           </object>
-        </td>
-      </tr>
-      <tr></tr>
-    </table>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-import md5 from 'js-md5'
-
 export default {
   name: 'usbKey',
   data() {

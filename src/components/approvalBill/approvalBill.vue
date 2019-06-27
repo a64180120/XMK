@@ -9,7 +9,7 @@
           <ul>
             <li>
               <div v-if="isApproval" class="title">
-                <span>■</span>审批处理
+                <span>■</span>送审备注
               </div>
               <el-radio v-if="!isApproval" v-model="handleValue" label="1">同意</el-radio>
               <el-radio v-if="!isApproval" v-model="handleValue" label="2">不同意</el-radio>
@@ -30,7 +30,9 @@
         <div class="textare">
           <el-input type="textarea" v-model="textare" class="text-input"></el-input>
           <div class="word-num">
-            <span class="word-size"><span style="color: #ec0f0f;">{{wordNum}}</span>/100</span>
+            <span class="word-size">
+              <span style="color: #ec0f0f;">{{wordNum}}</span>/100
+            </span>
           </div>
         </div>
       </div>
@@ -39,7 +41,12 @@
         <!--审批流程-->
         <div class="sub-approval">
           <div class="title">
-            <span>■</span>审批流程
+            <template v-if="isApproval">
+              <span>■</span>送审流程
+            </template>
+            <template v-else>
+              <span>■</span>审批流程
+            </template>
           </div>
           <div class="table">
             <el-table
@@ -67,7 +74,12 @@
         </div>
         <div class="next-approval">
           <div class="title">
-            <span>■</span>下一审批人
+            <template v-if="isApproval">
+              <span>■</span>接收人
+            </template>
+            <template v-else>
+              <span>■</span>下一审批人
+            </template>
           </div>
           <div class="table">
             <el-table
@@ -158,31 +170,30 @@ export default {
       openDialog: false,
       handleValue: '',
       subPeople: [],
-      wordNum:0,
-      remember:''
+      wordNum: 0,
+      remember: ''
     }
   },
   watch: {
     value(newValue) {
-      if (this.wordNum <100){
+      if (this.wordNum < 100) {
         this.textare = newValue
       }
-
     },
     textare(newValue) {
-      if (newValue !==null && newValue.length <100 ){
-        for (let i = 0;i<newValue.length;i++){
-          this.wordNum = i +1
+      if (newValue !== null && newValue.length < 100) {
+        for (let i = 0; i < newValue.length; i++) {
+          this.wordNum = i + 1
         }
         this.$emit('input', newValue)
         this.remember = newValue
-      }else {
-        for (let i = 0;i<newValue.length;i++){
-          this.wordNum = i +1
+      } else {
+        for (let i = 0; i < newValue.length; i++) {
+          this.wordNum = i + 1
         }
-       this.textare = newValue.slice(0,100)
+        this.textare = newValue.slice(0, 100)
       }
-      if (newValue ===''){
+      if (newValue === '') {
         this.wordNum = 0
       }
     },
@@ -298,27 +309,27 @@ export default {
     color: #3294e8;
   }
 }
-.textare{
-  >.text-input{
-    height: 100px
+.textare {
+  > .text-input {
+    height: 100px;
   }
-  >.word-num{
+  > .word-num {
     position: relative;
     text-align: right;
 
-    >.word-size{
+    > .word-size {
       position: absolute;
       bottom: 0;
       right: 10px;
-      font-size: 0.10rem
+      font-size: 0.1rem;
     }
   }
 }
 </style>
 <style scoped>
-  .text-input>>>.el-textarea__inner{
-      height: 100px;
-  }
+.text-input >>> .el-textarea__inner {
+  height: 100px;
+}
 .dialog >>> .el-dialog {
   position: absolute;
   top: 50%;
