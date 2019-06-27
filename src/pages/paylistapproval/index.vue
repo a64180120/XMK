@@ -608,11 +608,9 @@
       },
       //获取组织树
       getOrg(e){
-        console.log(e)
-        this.searchForm.OrgName = e[0].OName
-        this.searchForm.OrgCode = e[0].OCode
-        console.log(this.searchForm)
-        F
+        this.searchForm.OrgName = e[0].OName;
+        this.searchForm.OrgCode = e[0].OCode;
+        this.searchForm.OrgPhId =e[0].PhId;
         this.loadData(e)
       },
       //子组件审批流查看
