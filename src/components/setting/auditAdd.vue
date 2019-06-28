@@ -98,17 +98,17 @@
             </p>
             <div>
                 <span>上限</span>
-                <el-input :disabled="!money.enable" v-model="money.max" placeholder="请输入上限金额(选填)"></el-input>
+                <el-input @keyup.native="clearNoNum($event)" :disabled="!money.enable" v-model="money.max" placeholder="请输入上限金额(选填)"></el-input>
                 <span>元</span>
                 <span style="margin-left:30px">下限</span>
-                <el-input :disabled="!money.enable" v-model="money.min" placeholder="请输入下限金额(选填)"></el-input>
+                <el-input @keyup.native="clearNoNum($event)" :disabled="!money.enable" v-model="money.min" placeholder="请输入下限金额(选填)"></el-input>
                 <span>元</span>
             </div>
         </div>
         <p class="statusBtn">
             <span @click.stop="liucheng((parseInt(selected)-1))" :class="{grey:selected=='1',green:selected=='2',yellow:selected=='3'}">上一步</span>
             <span @click.stop="liucheng((parseInt(selected)+1))" :class="{grey:selected=='3',yellow:selected!='3'}">下一步</span>
-            <span @click.stop="submit(type)" :class="{grey:selected!='3'}">保存</span>
+            <span @click.stop="submit(type)" >保存</span>
             <span @click.stop="$emit('add-cancle')">取消</span>
         </p>
         
@@ -221,6 +221,16 @@ export default {
                         this.info=res.Data;
                         this.info.org=res.Data.Organizes;
                         this.postList=res.Data.PostModels;
+                        if(res.Data.CondsModels){
+                            this.money.enable=true;
+                            for(let jine of res.Data.CondsModels){
+                                if(jine.FOperator=='<='){
+                                    this.money.max=jine.FOperand2
+                                }else if(jine.FOperator=='>='){
+                                    this.money.min=jine.FOperand2
+                                }
+                            }
+                        }
                     }
                 }).catch(err=>{
                     this.$msgBox.show('获取流程信息失败!')
@@ -229,24 +239,24 @@ export default {
         },
         //流程切换
         liucheng(str){
-            if(str<1||str>3){
-                return;
-            }
-            if(this.selected==1){
-                if((!this.info.FName)||(!this.info.FCode)||(this.info.org.length==0)||(!this.info.SPLXPhid)){//必填信息为空
-                     this.$msgBox.show('请完善必填信息!')
-                    return;
-                }
-            }else if(str==3&&this.selected==2&&this.info.FEnable==0){
-                let p=this.postList.every((el)=>{
+            // if(str<1||str>3){
+            //     return;
+            // }
+            // if(this.selected==1){
+            //     if((!this.info.FName)||(!this.info.FCode)||(this.info.org.length==0)||(!this.info.SPLXPhid)){//必填信息为空
+            //          this.$msgBox.show('请完善必填信息!')
+            //         return;
+            //     }
+            // }else if(str==3&&this.selected==2&&this.info.FEnable==0){
+            //     let p=this.postList.every((el)=>{
 
-                   return el.PhId;
-                })
-                if(!p){
-                    this.$msgBox.show('编码与名称不能为空!')
-                    return;
-                }
-            }
+            //        return el.PhId;
+            //     })
+            //     if(!p){
+            //         this.$msgBox.show('编码与名称不能为空!')
+            //         return;
+            //     }
+            // }
             this.selected=str;
         },
         // checkInfo(){
@@ -279,99 +289,110 @@ export default {
             this.$set(this.postList[n],'FName',name);
         },
         submit(type){
-            if(this.selected==3){
-                let arr=[],info;
-                let posts=[],maxMin=[],splx;
-                this.postList.map((pos,i )=> {
-                    //岗位列表
-                    posts.push({
-                        PostPhid:pos.PhId,
-                        FSeq:i+1,
-                        FMode:pos.FMode
-                    })
-                })
-                if(this.money.enable&&this.money.max&&this.money.min){
-                   maxMin=[
-                        {
-                            F_SEQ:1,
-                            F_OPERAND1:'F_AMOUNT_TOTAL',
-                            F_OPERAND1_TP:'number',
-                            F_OPERATOR:'>=',
-                            F_OPERAND2:this.money.min,
-                            F_CONNECTOR:'and',
-                        },
-                        {
-                            F_SEQ:1,
-                            F_OPERAND1:'F_AMOUNT_TOTAL',
-                            F_OPERAND1_TP:'number',
-                            F_OPERATOR:'<=',
-                            F_OPERAND2:this.money.max,
-                            F_CONNECTOR:'',
-                        }
-                    ]
-                }else if(this.money.enable&&this.money.max&&!this.money.min){
-                    maxMin=[{
-                            F_SEQ:1,
-                            F_OPERAND1:'F_AMOUNT_TOTAL',
-                            F_OPERAND1_TP:'number',
-                            F_OPERATOR:'<=',
-                            F_OPERAND2:this.money.max,
-                            F_CONNECTOR:'and',
-                        }]
-                }else if(this.money.enable&&!this.money.max&&this.money.min){
-                    maxMin=[{
-                            F_SEQ:1,
-                            F_OPERAND1:'F_AMOUNT_TOTAL',
-                            F_OPERAND1_TP:'number',
-                            F_OPERATOR:'>=',
-                            F_OPERAND2:this.money.min,
-                            F_CONNECTOR:'',
-                        }]
-                }
-                this.options.map(opt => {
-                    if(opt.PhId==this.info.SPLXPhid){
-                        splx=opt;
-                    }
-                })
-                info={
-                    OrgPhid:this.$store.state.user.orgid,
-                    OrgCode:this.$store.state.user.orgcode,
-                    FCode:this.info.FCode,
-                    FName:this.info.FName,
-                    FBilltype:splx.Value,
-                    FEnable:this.info.FEnable,
-                    FDescribe:this.info.FDescribe,
-                    SPLXPhid:splx.PhId,
-                    SPLXCode:splx.TypeCode,
-                    Proc4PostModels:posts,
-                    CondsModels:maxMin
-                }
-                for(let org of this.info.org){
-                    let inf = JSON.parse(JSON.stringify(info));
-                    inf.OrgPhid=org.PhId?org.PhId:org.OrgId;
-                    inf.OrgCode=org.OCode?org.OCode:org.OrgCode;
-                    arr.push(inf);
-                }
-                
-                if(type=='add'){
-                    let data={
-                        infoData:arr
-                    }
-                    this.add(data);
-                }else{
-                    let orgids=[],data={};
-                    for(let org of this.auditinfo.Organizes){
-                        orgids.push(org.OrgId?org.OrgId:org.PhId);
-                    }
-
-                    data.ApprovalTypeId=splx.PhId;
-                    data.BillType=splx.Value;
-                    data.ProcCode=this.info.FCode;
-                    data.OrgIds=orgids;
-                    data.ProcModels=arr;
-                    this.update(data);
-                }
+            let arr=[],info;
+            let posts=[],maxMin=[],splx;
+            if((!this.info.FName)||(!this.info.FCode)||(this.info.org.length==0)||(!this.info.SPLXPhid)){//必填信息为空
+                this.$msgBox.show('请完善流程必填信息!')
+                return;
             }
+            let p=this.postList.every((el)=>{
+                return el.PhId;
+            })
+            if(!p){
+                this.$msgBox.show('岗位编码与名称不能为空!')
+                return;
+            }
+            this.postList.map((pos,i )=> {
+                //岗位列表
+                posts.push({
+                    PostPhid:pos.PhId,
+                    FSeq:i+1,
+                    FMode:pos.FMode
+                })
+            })
+            
+            if(this.money.enable&&this.money.max&&this.money.min){
+                maxMin=[
+                    {
+                        FSeq:1,
+                        FOperand1:'F_AMOUNT_TOTAL',
+                        FOperand1Tp:'number',
+                        FOperator:'>=',
+                        FOperand2:this.money.min,
+                        FConnector:'and',
+                    },
+                    {
+                        FSeq:1,
+                        FOperand1:'F_AMOUNT_TOTAL',
+                        FOperand1Tp:'number',
+                        FOperator:'<=',
+                        FOperand2:this.money.max,
+                        FConnector:'',
+                    }
+                ]
+            }else if(this.money.enable&&this.money.max&&!this.money.min){
+                maxMin=[{
+                        FSeq:1,
+                        FOperand1:'F_AMOUNT_TOTAL',
+                        FOperand1Tp:'number',
+                        FOperator:'<=',
+                        FOperand2:this.money.max,
+                        FConnector:'and',
+                    }]
+            }else if(this.money.enable&&!this.money.max&&this.money.min){
+                maxMin=[{
+                        FSeq:1,
+                        FOperand1:'F_AMOUNT_TOTAL',
+                        FOperand1Tp:'number',
+                        FOperator:'>=',
+                        FOperand2:this.money.min,
+                        FConnector:'',
+                    }]
+            }
+            this.options.map(opt => {
+                if(opt.PhId==this.info.SPLXPhid){
+                    splx=opt;
+                }
+            })
+            info={
+                OrgPhid:this.$store.state.user.orgid,
+                OrgCode:this.$store.state.user.orgcode,
+                FCode:this.info.FCode,
+                FName:this.info.FName,
+                FBilltype:splx.Value,
+                FEnable:this.info.FEnable,
+                FDescribe:this.info.FDescribe,
+                SPLXPhid:splx.PhId,
+                SPLXCode:splx.TypeCode,
+                Proc4PostModels:posts,
+                CondsModels:maxMin
+            }
+            for(let org of this.info.org){
+                let inf = JSON.parse(JSON.stringify(info));
+                inf.OrgPhid=org.PhId?org.PhId:org.OrgId;
+                inf.OrgCode=org.OCode?org.OCode:org.OrgCode;
+                arr.push(inf);
+            }
+            debugger;
+            if(type=='add'){
+                let data={
+                    infoData:arr
+                }
+                this.add(data);
+            }else{
+                let orgids=[],data={};
+                for(let org of this.auditinfo.Organizes){
+                    orgids.push(org.OrgId?org.OrgId:org.PhId);
+                }
+
+                data.ApprovalTypeId=splx.PhId;
+                data.BillType=splx.Value;
+                data.ProcCode=this.info.FCode;
+                data.OrgIds=orgids;
+                data.ProcModels=arr;
+                this.update(data);
+            }
+        
             
         },
         //新增保存
@@ -392,7 +413,7 @@ export default {
                         
                         
                     }else{
-                        this.$msgBox.show('请至少填写一个金额,且上限金额与下限金额不能相同!')
+                        this.$msgBox.show('启用条件请至少填写一个金额,且上限金额与下限金额不能相同!')
                     }
                 }else{
                     //执行保存
@@ -426,7 +447,7 @@ export default {
                     
                     
                 }else{
-                    this.$msgBox.show('请至少填写一个金额,且上限金额与下限金额不能相同!')
+                    this.$msgBox.show('启用条件请至少填写一个金额,且上限金额与下限金额不能相同!')
                 }
             }else{
                 //执行保存
@@ -466,6 +487,21 @@ export default {
                     this.deleteList.push(item);
                 }
                 this.postList.splice(index,1);
+            }
+        },
+        //输入框限定***
+        clearNoNum(event){
+            var obj=event.target;
+            if(obj.value>999999999.99){
+                obj.value=999999999.99;
+                return;
+            }
+            obj.value = obj.value.replace(/[^\d.]/g,"");  //清除“数字”和“.”以外的字符  
+            obj.value = obj.value.replace(/\.{2,}/g,"."); //只保留第一个. 清除多余的  
+            obj.value = obj.value.replace(".","$#$").replace(/\./g,"").replace("$#$",".");
+            obj.value = obj.value.replace(/^(\-)*(\d+)\.(\d\d).*$/,'$1$2.$3');//只能输入两个小数  
+            if(obj.value.indexOf(".")< 0 && obj.value !=""){//以上已经过滤，此处控制的是如果没有小数点，首位不能为类似于 01、02的金额 
+                obj.value= parseFloat(obj.value);
             }
         },
         reset(){

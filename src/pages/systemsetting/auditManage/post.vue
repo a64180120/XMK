@@ -186,8 +186,16 @@ export default {
     },
      computed:{
         ...mapState({
-            menuButton: state => state.user.menubutton
+            menuButton: state => state.user.menubutton,
+            orgid: state => state.user.orgid
         })
+    },
+    watch:{
+        orgid(val){
+            if(val){
+                this.getorglist();    
+            }
+        }
     },
     mounted(){
         this.getData();
@@ -283,7 +291,7 @@ export default {
                 PageIndex:this.pageIndex-1,//  (分页页码)
                 PageSize:this.pageSize,//  （分页大小）
                 Orgid: this.$store.state.user.orgid, //  （组织id）
-                Ucode: 'Admin', //（用户编码）  admin为显示全部
+                Ucode: this.$store.state.user.orgcode, //（用户编码）  admin为显示全部
                //Ucode:this.$store.state.user.usercode,
                 PostName:this.search.val,//搜索框值
                 EnableMark:this.search.enable,//启用停用
@@ -311,7 +319,7 @@ export default {
             this.orgVisible=true;
         },
         getOrg(val){
-            console.log(val)
+            
             this.search.org=val;
             this.getData();
         },
