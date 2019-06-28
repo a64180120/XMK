@@ -230,3 +230,9 @@ $whiteColor: #fff; //白色
   margin-left: 20px;
   color: $whiteColor;
 }
+
+body {
+  font-family: 'PingFang', 'songti', 'Avenir', Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

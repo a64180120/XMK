@@ -154,6 +154,9 @@ export default {
             this.$msgBox.error(res.Msg)
             return
           }
+          res.forEach(item => {
+            item.FBilltype = '002'
+          })
           this.auditMsg = res
         })
         .catch(err => {

@@ -53,13 +53,13 @@
           </div>
           <template v-if="showList">
             <el-table max-height="200px" :data="gridData" border>
-              <el-table-column type="index" label="序号" width="50"></el-table-column>
-              <el-table-column property="FDepartmentname" label="收款方姓名"></el-table-column>
+              <el-table-column header-align="center" type="index" label="序号" width="50"></el-table-column>
+              <el-table-column header-align="center" property="FDepartmentname" label="收款方姓名"></el-table-column>
               <el-table-column
                 property="FAmount"
                 header-align="center"
                 align="right"
-                label="待付金额"
+                label="待付金额（元）"
                 width="150"
                 class-name="pr15"
               >
@@ -82,6 +82,7 @@
                 :maxlength="6"
                 :disabled="needSet"
                 @keyup.native="clearNoNum"
+                autocomplete="off"
               ></el-input>
               <img
                 v-show="passwordCanSee"
@@ -133,7 +134,7 @@
                 @click="newPasswordCanSee= !newPasswordCanSee"
               >
             </div>
-            <span>确认口令</span>
+            <span>口令确认</span>
             <div class="passwordContent">
               <el-input
                 :type="confirmPasswordCanSee?'text':'password'"
@@ -421,50 +422,16 @@ export default {
     // 请求-支付
     postSubmitPayments() {
       var vm = this
-      console.log(vm)
-      function success(res) {}
-      // 获得银行服务状态
-      getBankServiceState({})
-        .then(res => {
-          if (res.Status == 'error') {
-            this.$msgBox.error(res.Msg)
-            console.log(res)
-            return
-          }
-          if (vm.father) {
-            postSubmitPayment({
-              id: this.data.data[0].Mst.PhId,
-              uid: this.userid,
-              orgid: this.orgid,
-              ryear: this.year
-            })
-              .then(res => {
-                if (res.Status == 'error') {
-                  vm.$msgBox.error(res.Msg)
-                  vm.showPassword = false
-                  vm.showMergePay = true
-                  if (vm.father) vm.father.openDialog = false
-                  vm.data.openDialog = false
-                  console.log(res)
-                  return
-                }
-                vm.refreshIndexData()
-                vm.$msgBox.show({
-                  content:
-                    res.Msg || '支付操作成功！具体到账情况以银行处理时间为准。',
-                  fn: () => {
-                    vm.showPassword = false
-                    vm.showMergePay = true
-                    if (vm.father) vm.father.openDialog = false
-                    vm.data.openDialog = false
-                  }
-                })
-              })
-              .catch(err => {
-                console.log(err)
-                this.$msgBox.error(err.Message || '支付失败！')
-              })
-          } else {
+      if (vm.father) {
+        // 合并支付
+        // 获得银行服务状态
+        getBankServiceState({})
+          .then(res => {
+            if (res.Status == 'error') {
+              this.$msgBox.error(res.Msg)
+              console.log(res)
+              return
+            }
             var ids = this.data.data.map(item => {
               return item.Mst.PhId
             })
@@ -500,12 +467,83 @@ export default {
                 console.log(err)
                 this.$msgBox.error(err.Message || '支付失败！')
               })
-          }
-        })
-        .catch(err => {
-          console.log(err)
-          this.$msgBox.error(err.Message || '获得银行服务状态失败！')
-        })
+          })
+          .catch(err => {
+            console.log(err)
+            this.$msgBox.error(err.Message || '获得银行服务状态失败！')
+          })
+      } else {
+        // 单笔支付
+        // 支付方式
+        var payMethodName =
+          this.$parent.detail.Mst.FPaymethod.length == 15 &&
+          this.$parent.FPaymethodList.length > 0
+            ? this.$parent.FPaymethodList.find(
+                item => item.PhId == this.$parent.detail.Mst.FPaymethod
+              ).TypeName
+            : ''
+        if (payMethodName == '网银') {
+          postSubmitPayment({
+            id: this.data.data[0].Mst.PhId,
+            uid: this.userid,
+            orgid: this.orgid,
+            ryear: this.year
+          })
+            .then(res => {
+              if (res.Status == 'error') {
+                vm.$msgBox.error(res.Msg)
+                vm.showPassword = false
+                vm.showMergePay = true
+                if (vm.father) vm.father.openDialog = false
+                vm.data.openDialog = false
+                console.log(res)
+                return
+              }
+              vm.refreshIndexData()
+              vm.$msgBox.show({
+                content:
+                  res.Msg || '支付操作成功！具体到账情况以银行处理时间为准。',
+                fn: () => {
+                  vm.showPassword = false
+                  vm.showMergePay = true
+                  if (vm.father) vm.father.openDialog = false
+                  vm.data.openDialog = false
+                }
+              })
+            })
+            .catch(err => {
+              console.log(err)
+              this.$msgBox.error(err.Message || '支付失败！')
+            })
+        } else {
+          // 非网银直接更新状态为支付成功
+          // 批量更新支付单支付状态
+          postUpdatePaymentsState({
+            uid: this.userid,
+            orgid: this.orgid,
+            infoData: [this.data.data[0].Mst.PhId],
+            value: 1
+          })
+            .then(res => {
+              if (res.Status == 'error') {
+                this.$msgBox.error(res.Msg)
+                return
+              }
+              this.refreshIndexData()
+              vm.showPassword = false
+              vm.showMergePay = true
+              vm.father.openDialog = false
+              vm.data.openDialog = false
+              this.$msgBox.show({
+                content: '支付成功'
+              })
+            })
+            .catch(err => {
+              this.$msgBox.error('支付失败！')
+              console.log(err)
+            })
+        }
+      }
     },
     // 请求-判断口令正确-正确直接发起支付
     postJudgePayPsd() {
@@ -539,7 +577,9 @@ export default {
   computed: {
     title() {
       return this.showMergePay
-        ? '合并支付'
+        ? this.father
+          ? '支付确认'
+          : '合并支付'
         : this.showPassword
         ? '请输入支付口令'
         : this.showSetting
