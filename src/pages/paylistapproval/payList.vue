@@ -19,7 +19,7 @@
             <template v-if="data.itemType =='approval'">
               <span class="btn btn-large" @click="save('approval')">审批</span>
             </template>
-<!--            <span class="btn btn-large">打印</span>-->
+            <!--            <span class="btn btn-large">打印</span>-->
           </div>
         </el-col>
       </el-row>
@@ -158,7 +158,7 @@
       </el-row>
       <el-row :gutter="10">
         <div class="bottom">
-          <span @click="openFollow()">
+          <span @click="openFollow()" style="text-decoration:underline;">
             <template v-if="data.itemType == 'notApprove'">待送审</template>
             <template v-else-if="data.itemType == ''">审批中</template>
             <template v-else-if="data.itemType == 'approval'">待审批</template>
@@ -201,7 +201,7 @@
       </div>
       <img-view v-if="imgDialog"></img-view>
     </el-dialog>
-        <auditfollow :visible.sync="visible" :auditMsg="auditMsg"></auditfollow>
+    <auditfollow :visible.sync="visible" :auditMsg="auditMsg"></auditfollow>
     <!-- 审批弹框 -->
   </div>
 </template>
@@ -261,15 +261,16 @@ export default {
           bodyAlign: 'center'
         },
         {
-          name: 'FDepartmentname',
-          label: '收款单位/部门',
-          width: '200'
-        },
-        {
           name: 'BudgetdtlName',
           label: '明细项目名称',
           width: '200'
         },
+        {
+          name: 'FDepartmentname',
+          label: '收款单位/部门',
+          width: '200'
+        },
+
         {
           name: 'FAmount',
           label: '申请金额（元）',
@@ -407,8 +408,8 @@ export default {
       payDepart: '', //支付部门
       payType: '', //支付类型
       applyNum: '', //单据编号
-      auditMsg:[],
-      visible:false
+      auditMsg: [],
+      visible: false
     }
   },
   computed: {
@@ -621,22 +622,24 @@ export default {
       this.fundDetailData.openDialog = true
       this.applyNum = this.detail.Mst.RefbillPhid
     },
-    openFollow(){
+    openFollow() {
       this.visible = true
       let data = {
-        RefbillPhid:this.data.RefbillPhid,
-        FBilltype:'002'
+        RefbillPhid: this.data.RefbillPhid,
+        FBilltype: '002'
       }
-      this.getAxios("/GAppvalRecord/GetAppvalRecordList",data).then(res =>{
-        console.log(res)
-        if (res && res.Status === "success") {
-          this.auditMsg = res.Data
-        }else {
-          this.$msgBox.show(res.Msg)
-        }
-      }).catch(err =>{
-        this.$msgBox.show("数据获取异常")
-      })
+      this.getAxios('/GAppvalRecord/GetAppvalRecordList', data)
+        .then(res => {
+          console.log(res)
+          if (res && res.Status === 'success') {
+            this.auditMsg = res.Data
+          } else {
+            this.$msgBox.show(res.Msg)
+          }
+        })
+        .catch(err => {
+          this.$msgBox.show('数据获取异常')
+        })
     }
   },
   watch: {},
@@ -821,8 +824,9 @@ export default {
       }
       &:last-of-type {
         float: right;
+        text-decoration: underline;
         &::before {
-          background-image: url('../../assets/images/dj.png');
+          background: none;
           margin-top: -0.09rem;
         }
       }
@@ -946,7 +950,7 @@ export default {
 .payList-largeSelects.el-popper .el-select-dropdown__item {
   font-size: 0.14rem;
 }
-  .dj:hover{
-    cursor: pointer!important;
-  }
+.dj:hover {
+  cursor: pointer !important;
+}
 </style>
