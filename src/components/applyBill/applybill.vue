@@ -18,8 +18,15 @@
       <el-row class="content" :gutter="10">
         <el-col :span="5">
           <div class="left-card">
-            <i class="el-icon-edit-outline"></i>
-            <span>{{approvalType[record.PaymentMst.FApproval]}}</span>
+            <p style="cursor: pointer" @click="openAuditfollow">
+              <i class="el-icon-edit-outline"></i>
+              <span>{{approvalType[record.PaymentMst.FApproval]}}</span>
+            </p>
+
+            <p >
+              <i class="el-icon-coin"></i>
+              <span style="color: #fff;text-decoration: none">{{payTypeList[record.PaymentMst.IsPay]}}</span>
+            </p>
             <div>
               <!--申请信息-->
               <div class="apply-info">
@@ -43,7 +50,7 @@
               <ul>
                 <li><span style="color: #3294e8;">申报单位/部门：</span>{{record.PaymentMst.FDepname}}</li>
                 <li><span style="color: #3294e8;">申报日期：</span>{{record.PaymentMst.FDate.substring(0,10)}}</li>
-                <li><span style="color: #3294e8;">申报金额：</span>{{record.PaymentMst.FAmountTotal | NumFormat}}元</li>
+                <li><span style="color: #3294e8;">申报金额(元)：</span>{{record.PaymentMst.FAmountTotal | NumFormat}}元</li>
               </ul>
             </div>
             <div class="content">
@@ -168,6 +175,9 @@
       </div>-->
       <img-view v-if="dialogVisible" :images="imgList"></img-view>
     </el-dialog>
+
+    <!--查看审批流程-->
+    <auditfollow v-if="visible" :visible="visible" @update:visible="closeAuditFollow()" :auditMsg="auditMsg" ></auditfollow>
   </section>
 
   <!--内层弹框-->
@@ -178,9 +188,10 @@
   import goApproval from '../applyPro/goApproval.vue';
   import ImgView from "../imgView/imgView";
   import { baseURL } from "@/utils/config.js";
+  import Auditfollow from "@/components/auditFollow/auditfollow";
   export default {
     name: "applybill",
-    components: {ApprovalDialog,goApproval,ImgView},
+    components: {ApprovalDialog,goApproval,ImgView,Auditfollow},
     props:{
       applyNum: {
         type: String,
@@ -221,6 +232,7 @@
           ],
         },
         approvalType:{0:'待送审',1:'审批中',2:'未通过',9:'审批通过'},
+        payTypeList:{'0':'待支付','1':'支付异常','9':'支付成功'},
         //生成支付单
         appDialog:{
           title:'',
@@ -240,6 +252,8 @@
         timeF:'',
         dialogVisible:false,//附件查看弹窗
         imgList:[],//附件数组
+        visible:false,//审批流查看弹窗
+        auditMsg:[],//审批流程 数据
       }
     },
     /*watch:{
@@ -260,6 +274,43 @@
       this.approvalDataS.subData=this.subData;
     },
     methods:{
+      /*审批流查看*/
+      openAuditfollow(){
+        if(this.record.PaymentMst.FApproval==0){
+          this.visible = false;
+          this.$confirm('当前项目未送审，无法查看审批流。是否送审？','提示',{
+            confirmButtonText:'确定',
+            cancelBtnText: '取消',
+            type:'warning'
+          }).then( () => {
+            this.postApply();
+          }).catch(() =>{})
+        }else {
+          /*审批流查看*/
+          this.visible = true;
+          let data = {
+            RefbillPhid: this.applyNum,
+            FBilltype: '001' //单据类型（"001":资金拨付单,"002":支付单）
+          }
+          this.getAuditfollow(data)
+        }
+      },
+      //拉取审批流数据查看
+      getAuditfollow(data){
+        this.getAxios("GSP/GAppvalRecord/GetAppvalRecordList",data).then(res =>{
+          console.log(res)
+          if (res && res.Status === "success") {
+            this.auditMsg = res.Data
+          }else {
+            this.$msgBox.show(res.Msg)
+          }
+        }).catch(err =>{
+          this.$msgBox.show("数据获取异常")
+        })
+      },
+      closeAuditFollow(){
+        this.visible = false
+      },
       //申请单查看
       getApply:function(){
         let param={fPhId:this.applyNum};
@@ -276,8 +327,6 @@
               this.imgList.push(img);
             }
           }
-          console.log(this.imgList);
-          console.log(res);
         }).catch(err=>{
           console.log(err);
         })
@@ -409,17 +458,19 @@
     border-radius: 8px;
     position: relative;
     padding: 7%;
+    >p{
+      > i {
+        font-size: 0.2rem;
+        color: #91BFF8;
+      }
 
-    > i {
-      font-size: 0.2rem;
-      color: #91BFF8;
-    }
+      > span {
+        font-size: 0.2rem;
+        font-family: 宋体;
+        color: #FFFF00;
+        text-decoration: underline;
+      }
 
-    > span {
-      font-size: 0.2rem;
-      font-family: 宋体;
-      color: #FFFF00;
-      text-decoration: underline;
     }
 
     > div {

@@ -229,8 +229,8 @@
                 </el-tooltip>
               </td>
               <td>
-                <el-tooltip :content="item.FDate.substring(0,10)" popper-class="tooltipCla" placement="bottom-start">
-                  <p>{{item.FDate.substring(0,10)}}</p>
+                <el-tooltip :content="(item.FDate.substring(0,19)).replace('T',' ')" popper-class="tooltipCla" placement="bottom-start">
+                  <p>{{(item.FDate.substring(0,19)).replace('T',' ')}}</p>
                 </el-tooltip>
               </td>
               <td class="atype" @click="openAuditfollow(item,index)">
@@ -239,8 +239,8 @@
                 </el-tooltip>
               </td>
               <td>
-                <el-tooltip :content="item.FApproval!=9?'-':payTypeList[item.IsPay]" popper-class="tooltipCla" placement="bottom-start">
-                  <p>{{item.FApproval!=9?'-':payTypeList[item.IsPay]}}</p>
+                <el-tooltip :content="payTypeList[item.IsPay]" popper-class="tooltipCla" placement="bottom-start">
+                  <p>{{payTypeList[item.IsPay]}}</p>
                 </el-tooltip>
               </td>
               <td class="left">
@@ -281,9 +281,9 @@
           </el-card>
           <el-card>
             <div style="border-bottom: 1px solid #ccc">
-              <span>对下补助项目名称：</span>
+              <div style="font-size: .15rem">对下补助项目名称</div>
               <!--部门选择-->
-              <el-select size="small" style="width: 100px" :title="apartDataMst[bzType]" v-model="bzType" @change="getChartList">
+              <el-select size="small" style="width: 100%" :title="apartDataMst[bzType]" v-model="bzType" @change="getChartList">
                 <el-option v-for="item in apartData.Mst"
                            :key="item.PhId"
                            :label="item.FProjName"
@@ -1054,8 +1054,7 @@
   .applydialog .el-dialog{
     padding: 0 10px;
     width: 90%;
-    height: 600px;
-    margin:auto;
+    margin-top: 10%;
   }
   .applydialog .el-dialog__header{
     text-align: left;
