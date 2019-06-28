@@ -8,7 +8,7 @@
       <div class="btnContainer">
         <ul class="rightBtn">
           <li >
-            <el-popover width="270" placement="bottom"  trigger="click">
+            <el-popover width="270" placement="bottom" :popper-class="'topElpop'"  trigger="click">
               
               <ul class="fastNav">
                 <li v-if="menuButton.approvalcenter=='True'" @click.stop="navPage('/approvalcenter')">
@@ -87,7 +87,7 @@
       <div class="orgSelect clear">
         <span class="fl mr-2">单位:</span>
         <div @click.stop="orgTreeShow" class="fl">
-          <el-popover width="300" placement="bottom" :popper-class="'maxH'" trigger="click">
+          <el-popover @show="arrow=true" @hide="arrow=false" width="300" placement="bottom" :popper-class="'maxH topElpop'" trigger="click">
             <el-tree
               ref="orgtree"
               node-key="OCode"
@@ -113,6 +113,8 @@
               >
           </el-tree>-->
           <!-- </div> -->
+        </div>
+        <div class="arrow" :class="{turnArr:arrow}">
         </div>
       </div>
     </div>
@@ -141,6 +143,7 @@
         },
         data(){
           return {
+            arrow:false,//组织箭头样式
             options: [],//年度列表    
             year: '',//年度
             org:{ //当前组织
@@ -301,7 +304,30 @@
   }
   .orgSelect {
     height: 100%;
-    margin-right: 20px;
+    margin-right: 30px;
+    >div.arrow{
+      position: absolute;
+      right: -15px;
+      -webkit-transform: rotate(45deg);
+       -ms-transform: rotate(45deg);
+        -o-transform: rotate(45deg);
+         -moz-transform: rotate(45deg);
+      top: 8px;
+      width: 8px;
+      height: 8px;
+      cursor:pointer;
+      border: 1px solid #ccc;
+      border-width: 0 1px 1px 0;
+      transition: all 0.3s linear;
+    }
+    >div.turnArr{
+      
+      -webkit-transform: rotate(-135deg); 
+      -ms-transform: rotate(-135deg);
+      -o-transform: rotate(-135deg);
+      -moz-transform: rotate(-135deg);
+      top: 11px; 
+    }
     .fl {
       line-height: 30px;
     }
@@ -365,7 +391,8 @@
 
 .orgInfo .el-input--suffix .el-input__inner {
   height: 30px;
-	line-height: 30px;
+  line-height: 30px;
+  border:0;
 }
 .orgInfo .el-input__icon {
   line-height: 30px;
@@ -378,5 +405,8 @@
     overflow-y: auto;
     height:100%;
   }
+.topElpop{
+  box-shadow: 0 2px 12px 0 rgba(98, 172, 252, 0.63) !important;
+}
 </style>
 

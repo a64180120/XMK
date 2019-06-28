@@ -56,7 +56,7 @@
                 @click="newPasswordCanSee= !newPasswordCanSee"
               >
             </div>
-            <span v-show="!disabled">确认口令</span>
+            <span v-show="!disabled">口令确认</span>
             <div v-show="!disabled" class="passwordContent">
               <el-input
                 maxlength="6"
@@ -147,8 +147,8 @@ export default {
           let  data={
             // DicType:'PayPsd',
             // DicName:'支付口令',
-            TypeCode:'9999',
-            TypeName:'省总管理员',
+            TypeCode:this.$store.state.user.orgcode,
+            TypeName:this.$store.state.user.orgname,
             Value:md5(this.confirmPassword),
             Isactive:this.radio,
             Orgid:this.$store.state.user.orgid,
@@ -175,8 +175,8 @@ export default {
         //启用/停用
         updateEnable(){
           let data={
-            TypeCode:'9999',
-            TypeName:'省总管理员',
+            TypeCode:this.$store.state.user.orgcode,
+            TypeName:this.$store.state.user.orgname,
             Isactive:this.radio,
             Orgid:this.$store.state.user.orgid,
             Orgcode:1
@@ -222,7 +222,7 @@ export default {
         },
         getData(){
           let data={
-            TypeCode:'9999',
+            TypeCode:this.$store.state.user.orgcode,
           }
           GetPayPsd(data).then(res => {
             if(res.Status=="error"){
