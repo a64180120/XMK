@@ -61,10 +61,15 @@
                                         <el-checkbox v-model="type.checked" @click.stop.native="1" @change="typechoose(type,'change')">{{n+1}}</el-checkbox>
                                         </td>
                                         <td>
-                                        {{type.TypeName}}
+                                            <el-tooltip :content="type.TypeName">
+                                                <p> {{type.TypeName}}</p>
+                                            </el-tooltip>
+                                        
                                         </td>
                                         <td>
-                                        {{orders[type.Value]}}
+                                             <el-tooltip :content="orders[type.Value]">
+                                                <p> {{orders[type.Value]}}</p>
+                                            </el-tooltip>
                                         </td>
                                     </tr>
                                 </thead>
@@ -138,20 +143,31 @@
                                         <el-checkbox @click.stop.native="1" @change="choose(audit,'change')" v-model="audit.checked">{{m+1}}</el-checkbox>
                                         </td>
                                         <td>
-                                            {{audit.FCode}}
+                                             <el-tooltip :content="audit.FCode">
+                                                <p> {{audit.FCode}}</p>
+                                            </el-tooltip>
+                                            
                                         </td>
                                         <td>
-                                        {{audit.FName}}
+                                            <el-tooltip :content="audit.FName">
+                                                <p> {{audit.FName}}</p>
+                                            </el-tooltip>
                                         </td>
                                         <td class="enable">
                                         <img v-if="audit.FEnable==0" src="@/assets/images/gou.svg" alt="">
                                         <img v-else src="@/assets/images/cha.svg" alt="">
                                         </td>
                                         <td class="atype" @click="orgTree(audit)">
-                                            <span  v-for="org of audit.Organizes">{{org.OrgName}}&nbsp;</span>
+                                            <el-tooltip :content="audit.Organizes | orgname">
+                                                <span >{{audit.Organizes | orgname}}</span>
+                                            </el-tooltip>
+                                            
+                                            <!-- <span  v-for="org of audit.Organizes">{{org.OrgName}}&nbsp;</span> -->
                                         </td>
                                         <td>
-                                        {{audit.FDescribe}}
+                                            <el-tooltip :content="audit.FDescribe">
+                                                <p> {{audit.FDescribe}}</p>
+                                            </el-tooltip>
                                         </td>
                                     </tr>
                                 </thead>
@@ -638,6 +654,15 @@ export default {
                      this.typechoosedItem=[];
                 })
             }
+        }
+    },
+    filters:{
+        orgname(arr){
+            let str='';
+            for(let org of arr){
+                str+= org.OrgName+' ';
+            }
+            return str;
         }
     },
     components:{
