@@ -75,7 +75,7 @@
                 </li>
                 <li>
                   <span style="color: #3294e8;">申报日期：</span>
-                  {{record.PaymentMst.FDate.substring(0,10)}}
+                  {{(record.PaymentMst.FDate.substring(0,19)).replace('T',' ')}}
                 </li>
                 <li>
                   <span style="color: #3294e8;">申报金额：</span>

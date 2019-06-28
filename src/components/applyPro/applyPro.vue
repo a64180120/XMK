@@ -860,6 +860,9 @@
 </script>
 
 <style scoped lang="scss">
+  thead td{
+    text-align: center;
+  }
   .iconTd{
     border: none;
     position: relative;
