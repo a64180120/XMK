@@ -5,26 +5,27 @@
     >
       <template v-if="!isApproval">
         <li>
-          <i
+          <i v-if="index !=nowNum"
             :class="[info.FApproval=='9'?'logo-sptg':(info.FApproval=='0'?'logo-wsp':(info.FApproval=='1'?'logo-spz':'logo-wtg'))]"
           ></i>
+          <i v-else class="logo-now"></i>
           <span v-if="info.JudgeRefer === 1">发起人:</span>
           <span v-else-if="info.JudgeRefer === 0 && info.OperaName != null">审批人:</span>
           <span v-else-if="info.JudgeRefer === 2 && info.OperaName != null">支付人:</span>
-          <span v-else>
+          <span v-else :class="[index==nowNum?'nowClass':'']">
             审批岗位
             <span v-if="index==nowNum">(当前)</span>:
           </span>
           <em>{{startNum +index}}</em>
         </li>
-        <li>{{info.OperaName?info.OperaName:info.PostName}}</li>
-        <li>{{info.JudgeRefer === 1?info.FSendDate:info.FDate}}</li>
-        <li v-if="info.JudgeRefer !== 1 && (info.FApproval ===9 ||info.FApproval ===2) ">
+        <li :class="[index==nowNum?'nowClass':'']">{{info.OperaName?info.OperaName:info.PostName}}</li>
+        <li :class="[index==nowNum?'nowClass':'']">{{info.JudgeRefer === 1?info.FSendDate:info.FDate}}</li>
+        <li :class="[index==nowNum?'nowClass':'']" v-if="info.JudgeRefer !== 1 && (info.FApproval ===9 ||info.FApproval ===2) ">
           意见：
-          <span>{{info.FApproval ===2?'未同意':'已同意'}}</span>
+          <span>{{info.FApproval ===2?'不同意':'同意'}}</span>
         </li>
-        <li v-if="info.JudgeRefer !== 2">备注：{{info.FOpinion}}</li>
-        <li v-if="info.JudgeRefer !== 2">
+        <li :class="[index==nowNum?'nowClass':'']" v-if="info.JudgeRefer !== 2">备注：{{info.FOpinion}}</li>
+        <li :class="[index==nowNum?'nowClass':'']" v-if="info.JudgeRefer !== 2">
           附件:
           <span @click.stop="showAttech" v-if="info.QtAttachments ===null" class="attenchment">无</span>
           <span v-else v-for="(item,idx) in info.QtAttachments">
@@ -151,6 +152,10 @@ export default {
           font-size: 0.18rem;
           color: $btnColor;
         }
+        >.nowBorderClass{
+          border-color:#a87ef3;
+          color: #a87ef3;
+        }
       }
     }
     .attenchment {
@@ -207,6 +212,13 @@ export default {
   height: 20px;
   background-size: 100% 100%;
 }
+.logo-now{
+  background: url(../../assets/images/spr5.png) no-repeat;
+  display: inline-block;
+  width: 25px;
+  height: 20px;
+  background-size: 100% 100%;
+}
 .attenchBtn {
   text-align: right;
   padding: 5px 20px;
@@ -220,6 +232,9 @@ export default {
   font-size: 0.16rem;
   border-bottom: 1px solid #eaeaea;
 }
+  .nowClass{
+    color: #a87ef3 !important;
+  }
 </style>
 <style scoped>
 </style>
