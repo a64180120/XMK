@@ -22,6 +22,7 @@
         :upload.sync="upload"
         :fileCount="fileCount"
         @uploadFn="upload = true"
+        :FMode="mode"
       ></approval-bill>
       <div class="approval-btn">
         <el-button
@@ -116,7 +117,6 @@ export default {
   methods: {
     // 获取审批人
     approvalRowClick(item) {
-      console.log(item)
       this.ProcPhid = item.PhId
       this.NextOperators = []
       GetFirstStepOperator({
@@ -137,7 +137,6 @@ export default {
         })
     },
     selectApprovaler(list) {
-      console.log(list)
       this.NextOperators = list
     },
     closeAuditFollow() {
@@ -148,7 +147,6 @@ export default {
     },
     //查看详细流程
     dialogFlow(row) {
-      console.log('row', row)
       GetAllPostsAndOpersByProc({
         ProcId: row.PhId
       })
@@ -157,6 +155,7 @@ export default {
             this.$msgBox.error(res.Msg)
             return
           }
+
           res.forEach(item => {
             item.FBilltype = '002'
           })
@@ -311,101 +310,6 @@ export default {
     font-size: 0.2rem;
   }
 }
-.content {
-  width: 100%;
-  height: 228px;
-  overflow: auto;
-  > .handle {
-    margin-bottom: 10px;
-    > .title {
-      color: $btnColor;
-      text-align: left;
-      font-size: 0.16rem;
-      > span {
-        &:first-of-type:before {
-          content: '';
-          display: inline-block;
-          width: 0.12rem;
-          height: 0.12rem;
-          background-color: $btnColor;
-          margin-right: 5px;
-        }
-        color: $btnColor;
-      }
-    }
-    > .radio {
-      > ul {
-        list-style: none;
-        > li {
-          display: inline;
-        }
-        > li:first-child {
-          float: left;
-        }
-        > li:last-child {
-          float: right;
-        }
-      }
-    }
-  }
-  > .sub-table {
-    max-width: 100%;
-    display: inline;
-    > .sub-approval {
-      float: left;
-      width: 60%;
-      > .title {
-        color: $btnColor;
-        text-align: left;
-        > span {
-          font-size: 0.16rem;
-          color: $btnColor;
-          &:first-of-type:before {
-            content: '';
-            display: inline-block;
-            width: 0.12rem;
-            height: 0.12rem;
-            margin-right: 5px;
-            background-color: $btnColor;
-          }
-        }
-      }
-      > .table {
-        padding-right: 10px;
-      }
-    }
-    > .next-approval {
-      float: left;
-      width: 40%;
-      > .title {
-        color: $btnColor;
-        text-align: left;
-        > span {
-          font-size: 0.16rem;
-          color: $btnColor;
-          &:first-of-type:before {
-            content: '';
-            display: inline-block;
-            width: 0.12rem;
-            height: 0.12rem;
-            margin-right: 5px;
-            background-color: $btnColor;
-          }
-        }
-      }
-      > .table {
-        padding-right: 10px;
-      }
-    }
-  }
-}
-.icon-search {
-  color: #09f;
-  font-size: 0.16rem;
-  &:hover {
-    cursor: pointer;
-  }
-}
 .approval-btn {
   margin-top: 10px;
   margin-bottom: 10px;
@@ -462,9 +366,6 @@ export default {
       .radio {
         font-size: 16px;
       }
-    }
-    .el-table__body tr.current-row > td {
-      background-color: $primaryColor;
     }
   }
   &.el-dialog__wrapper {

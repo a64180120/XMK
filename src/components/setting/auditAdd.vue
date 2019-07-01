@@ -178,6 +178,8 @@ export default {
             selected:1, //当前页
             money:{ //金额上下限
                 enable:false,
+                max:'',
+                min:''
             },
             checkContent:{  //流程是否为空
                 name:false,
@@ -232,6 +234,7 @@ export default {
                             }
                         }
                     }
+                    console.log(this.money)
                 }).catch(err=>{
                     this.$msgBox.show('获取流程信息失败!')
                 })
@@ -310,7 +313,10 @@ export default {
                     FMode:pos.FMode
                 })
             })
-            
+            if(this.money.max<this.money.min){
+                this.$msgBox.show('上限金额不能小于下限金额,请重新输入!')
+                return;
+            }
             if(this.money.enable&&this.money.max&&this.money.min){
                 maxMin=[
                     {
@@ -327,7 +333,7 @@ export default {
                         FOperand1Tp:'number',
                         FOperator:'<=',
                         FOperand2:this.money.max,
-                        FConnector:'',
+                        FConnector:'and',
                     }
                 ]
             }else if(this.money.enable&&this.money.max&&!this.money.min){
@@ -346,7 +352,7 @@ export default {
                         FOperand1Tp:'number',
                         FOperator:'>=',
                         FOperand2:this.money.min,
-                        FConnector:'',
+                        FConnector:'and',
                     }]
             }
             this.options.map(opt => {
@@ -373,7 +379,6 @@ export default {
                 inf.OrgCode=org.OCode?org.OCode:org.OrgCode;
                 arr.push(inf);
             }
-            debugger;
             if(type=='add'){
                 let data={
                     infoData:arr
@@ -492,10 +497,6 @@ export default {
         //输入框限定***
         clearNoNum(event){
             var obj=event.target;
-            if(obj.value>999999999.99){
-                obj.value=999999999.99;
-                return;
-            }
             obj.value = obj.value.replace(/[^\d.]/g,"");  //清除“数字”和“.”以外的字符  
             obj.value = obj.value.replace(/\.{2,}/g,"."); //只保留第一个. 清除多余的  
             obj.value = obj.value.replace(".","$#$").replace(/\./g,"").replace("$#$",".");
