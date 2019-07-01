@@ -244,8 +244,8 @@
                 </el-tooltip>
               </td>
               <td>
-                <el-tooltip :content="payTypeList[item.IsPay]" popper-class="tooltipCla" placement="bottom-start">
-                  <p>{{payTypeList[item.IsPay]}}</p>
+                <el-tooltip :content="item.FApproval==9?payTypeList[item.IsPay]:'-'" popper-class="tooltipCla" placement="bottom-start">
+                  <p>{{item.FApproval==9?payTypeList[item.IsPay]:'-'}}</p>
                 </el-tooltip>
               </td>
               <td class="left">
