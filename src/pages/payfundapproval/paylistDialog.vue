@@ -18,6 +18,7 @@
         @selectApprovaler="selectApprovaler"
         @uploadFn="openUpload"
         :backPersonnel="backPersonnel"
+        :FMode="FMode"
         ref="approval"
         v-model="textare"
         :file-count="fileCount"
@@ -28,7 +29,7 @@
       </div>
       <el-dialog
         :visible.sync="uploadDialog"
-        width="410px"
+        width="auto"
         :close-on-click-modal="false"
         class=""
         :append-to-body="true">
@@ -68,6 +69,7 @@
         approvalFollow:[],
         nextApprovaler:[],
         backPost:[],//获取回退的审批人岗位
+        FMode:'',
         isAgree:'', //保存是否同意审批
         backPersonnel:[],//回退审批人集合
         backData:[],//回退的审批人岗位集合
@@ -89,6 +91,7 @@
           if (res && res.Status === 'success'){
             this.$set(this.approvalFollow,0,res.Process);
             this.nextApprovaler = res.AppvalPost.Operators;
+            this.FMode =res.AppvalPost.FMode;
             for (let key in this.approvalFollow){
               this.approvalFollow[key].RefbillPhid =this.rowData[0].RefbillPhid;
               this.approvalFollow[key].ProcPhid = this.rowData[0].ProcPhid;
