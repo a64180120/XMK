@@ -14,7 +14,7 @@
         <div class="handle">
           <div class="title">
             <span>送审备注</span>
-            <span style="float:right;color:#333;" @click="openUpload">附单据 {{fileCount}} 张</span>
+            <span style="float:right;color:#333;" @click="openUpload">附单据 <span style="text-decoration: underline">{{fileCount}}</span> 张</span>
           </div>
           <div class="textare" style="height: 100px">
             <el-input type="textarea" maxlength="100" style="height: 100%" resize="none" v-model="param.FOpinion"></el-input>
@@ -206,11 +206,19 @@ export default {
 
     //获取审批人
     getApprovalPerson:function(phid){
-      console.log(this.data)
       let param={PhId:phid};
       this.getAxios('GSP/GAppvalPost/GetFirstStepOperator',param).then(res=>{
-        this.nextDataList=res.Data.Operators;
-        this.param.PostPhid=res.Data.PhId;
+        if(res.Status=='success'){
+          this.nextDataList=res.Data.Operators;
+          this.param.PostPhid=res.Data.PhId;
+          if(res.Data.FMode==1){
+            this.$refs.opTable.toggleAllSelection();
+          }
+        }else{
+          this.$msgBox.error('获取接收人发生错误，或当前审批流未设置接收人')
+        }
+
+        console.log(res);
       }).catch(err=>{
         console.log(err)
       })
@@ -224,14 +232,29 @@ export default {
       };
       this.getAxios('GSP/GAppvalRecord/GetAllPostsAndOpersByProc',param).then(res=>{
         console.log(res);
-        this.auditMsg=res;
+        if(res.length>0){
+          for(var i in res){
+            res[i].FBilltype='001';
+          }
+          this.auditMsg=res;
+          this.showAuditfollow = true;
+        }else{
+          this.$msgBox.error('当前审批流无流程信息，请检查')
+        }
+
       }).then(err=>{
         console.log(err);
       })
-      this.showAuditfollow = true;
+
     },
     //表格单选
-    handleSelect(selection, row) {},
+    handleSelect(selection, row) {
+      console.log(selection,row);
+      if(res.Data.FMode==1){
+        this.$refs.opTable.toggleAllSelection();
+      }
+
+    },
     //表格全选
     handleSelectAll(selection) {},
     //取消

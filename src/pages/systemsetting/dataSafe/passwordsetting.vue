@@ -56,7 +56,7 @@
                 @click="newPasswordCanSee= !newPasswordCanSee"
               >
             </div>
-            <span v-show="!disabled">确认口令</span>
+            <span v-show="!disabled">口令确认</span>
             <div v-show="!disabled" class="passwordContent">
               <el-input
                 maxlength="6"

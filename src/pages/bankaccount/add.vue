@@ -39,7 +39,7 @@
                 </div>
             </li>
             <li>
-                <div>启用/通用:</div>
+                <div>启用/停用:</div>
                 <div>
                     <el-radio v-model="info.FLifecycle" label='1'>启用</el-radio>
                     <el-radio v-model="info.FLifecycle" label='0'>停用</el-radio>

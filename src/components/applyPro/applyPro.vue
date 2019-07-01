@@ -1,7 +1,7 @@
 <template>
   <section>
     <div class="dialog-content">
-      <el-row :gutter="10">
+      <el-row :gutter="10" style="margin-bottom: 20px">
         <el-col :span="24">
           <div class="top-btn">
             <el-button :disabled="PaymentXmDtl.length==0" class="btn" size="mini" @click="save(0)">保存</el-button>
@@ -11,42 +11,42 @@
           </div>
         </el-col>
       </el-row>
+      <el-row :gutter="20">
+         <el-col :span="24">
+               <table class="proTab">
+                 <colgroup>
+                   <col width="15%" />
+                   <col width="35%" />
+                   <col width="15%" />
+                   <col width="35%" />
+                 </colgroup>
+                 <tr>
+                   <td>申请单名称</td>
+                   <td colspan="3"><el-input placeholder="30字以内" maxlength="30" v-model="PaymentMst.FName"></el-input></td>
+                 </tr>
+                 <tr>
+                   <td>申报部门:</td>
+                   <td>
+                     <el-tooltip :content="PaymentMst.FOrgname&&PaymentMst.FDepname?PaymentMst.FOrgname+'-'+PaymentMst.FDepname:''" popper-class="tooltipCla" placement="bottom-start">
+                       <p>{{PaymentMst.FOrgname&&PaymentMst.FDepname?PaymentMst.FOrgname+'-'+PaymentMst.FDepname:''}}</p>
+                     </el-tooltip>
+                   </td>
+                   <td>金额合计:</td>
+                   <td>
+                     <el-tooltip :content="PaymentMst.FAmountTotal | NumFormat" popper-class="tooltipCla" placement="bottom-start">
+                       <p>{{PaymentMst.FAmountTotal | NumFormat}}</p>
+                     </el-tooltip>
+                   </td>
+                 </tr>
+                 <tr>
+                   <td>申报说明</td>
+                   <td colspan="3"><el-input type="textarea" placeholder="100字以内" resize="none" maxlength="100" show-word-limit v-model="PaymentMst.FDescribe"></el-input></td>
+                 </tr>
+               </table>
+         </el-col>
+      </el-row>
       <el-row class="content" :gutter="10">
-        <el-col :span="5">
-          <div class="left-card">
-            <p>申请单名称：</p>
-            <el-input placeholder="30字以内" maxlength="30" v-model="PaymentMst.FName"></el-input>
-            <div>
-              <!--申请信息-->
-              <div class="apply-info">
-                <ul>
-                  <li><span>申报部门：</span>
-                    <span>
-                      <el-tooltip :content="PaymentMst.FOrgname&&PaymentMst.FDepname?PaymentMst.FOrgname+'-'+PaymentMst.FDepname:''" popper-class="tooltipCla" placement="bottom-start">
-                          <p>{{PaymentMst.FOrgname&&PaymentMst.FDepname?PaymentMst.FOrgname+'-'+PaymentMst.FDepname:''}}</p>
-                        </el-tooltip>
-                    </span>
-                  </li>
-                  <li><span>金额合计：</span>
-                    <span>
-                        <el-tooltip :content="PaymentMst.FAmountTotal | NumFormat" popper-class="tooltipCla" placement="bottom-start">
-                          <p>{{PaymentMst.FAmountTotal | NumFormat}}</p>
-                        </el-tooltip>
-                    </span>
-                  </li>
-                </ul>
-                <el-card class="payText">
-                  <div slot="header">
-                    <span>申报说明</span>
-                  </div>
-                  <el-input type="textarea" placeholder="100字以内" resize="none" maxlength="100" v-model="PaymentMst.FDescribe"></el-input>
-                </el-card>
-                <div style="position: relative;font-size: 10px;top: -30px;height: 0;width: 50px;left: 188px;"><span style="color: red">{{len}}</span><span>/100</span></div>
-              </div>
-            </div>
-          </div>
-        </el-col>
-        <el-col :span="19" style="height: 470px;overflow: auto;text-align: left">
+        <el-col :span="24" style="text-align: left">
           <el-card class="payText" v-for="(item,pindex) in PaymentXmDtl">
             <div slot="header" style="padding: 0 10px;text-align: left">
               <span>
@@ -54,15 +54,16 @@
                   <span>申报项目</span>
               </span>
               <span style="float: right">
-                <span style="cursor: pointer"  @click="clickFolder(pindex,item)">附单据 {{item.QtAttachments?item.QtAttachments.length:0}} 张</span>
-                <span class="el-icon-link"></span>
+                <span style="cursor: pointer"  @click="clickFolder(pindex,item)">
+                  附单据 <span style="text-decoration: underline">{{item.QtAttachments?item.QtAttachments.length:0}}</span> 张
+                  <span class="hxzBac"></span>
+                </span>
+
                 <span style="margin-left: 20px;cursor: pointer" @click="delPro(pindex)"><i class="el-icon-close"></i></span>
               </span>
 
             </div>
 
-
-            <!---->
             <div>
               <div style="margin: 0 20px;">
                 <span>项目名称：</span>
@@ -108,7 +109,7 @@
                   <td>补助单位/部门</td>
                   <td>明细项目名称</td>
                   <td>申请金额（元）</td>
-                  <td>备注</td>
+                  <td>备注<span style="font-size: 12px;color: rgb(50, 148, 232);">(最多100字)</span></td>
                   <td class="iconTd"></td>
                 </thead>
                 <tbody>
@@ -130,7 +131,7 @@
                       <td>
                         <el-tooltip :disabled="mx.FRemarks&&mx.FRemarks.length<15"  :content="mx.FRemarks" popper-class="tooltipCla" placement="bottom-start">
                           <p style="width: 300px;">{{mx.FRemarks}}</p>
-                          <p><input v-model="mx.FRemarks " maxlength="100" placeholder="最多100字"/></p>
+                          <p><input v-model="mx.FRemarks " maxlength="100"/></p>
                         </el-tooltip>
 
                       </td>
@@ -388,12 +389,15 @@
         if(!this.PaymentXmDtl[pindex].PaymentXm.XmMstPhid){
           this.$msgBox.error('请先选择项目');
           return;
+        }else{
+          this.$set(this.PaymentXmDtl[pindex].PaymentDtls[index],'checked',true);
+          this.$forceUpdate(this.PaymentXmDtl[pindex].PaymentDtls[index]);
+          this.$nextTick(()=>{
+            document.getElementById(pindex+'-'+index).focus();
+          })
         }
         //this.PaymentXmDtl[pindex].PaymentDtls[index]['checked']=true;
-        this.$set(this.PaymentXmDtl[pindex].PaymentDtls[index],'checked',true);
-        this.$nextTick(()=>{
-          document.getElementById(pindex+'-'+index).focus();
-        })
+
 
       },
       clearZero:function(pindex,index){
@@ -642,15 +646,15 @@
           let count=0;
           for(var j in px.PaymentDtls){
             let pd=px.PaymentDtls[j];
-            count=(count*100+Number(pd.FAmount)*100).toFixed(0)/100;
+            count=((Number(count*100)).toFixed(0)+(Number(pd.FAmount)*100).toFixed(0))/100;
           }
           px.PaymentXm.FAmountTotal=count;
           if(pindex==i&&count>px.PaymentXm.Surplus){
-            let dis=Math.floor(count*100-px.PaymentXm.Surplus*100)/100;//超出的可申请资金
+            let dis=(Number((count*100).toFixed(0))-Number((px.PaymentXm.Surplus*100).toFixed(0)))/100;//超出的可申请资金
             count=px.PaymentXm.Surplus;
             px.PaymentXm.FAmountTotal=count;
 
-            px.PaymentDtls[index].FAmount=Math.floor(px.PaymentDtls[index].FAmount*100-dis*100)/100;
+            px.PaymentDtls[index].FAmount=(Number((px.PaymentDtls[index].FAmount*100).toFixed(0))-Number((dis*100).toFixed(0)))/100;
             this.$msgBox.show({
               content: '您输入的金额已超出可使用金额，已自动为您修改为剩余最大可申请金额。',
               fn:() => {
@@ -795,6 +799,7 @@
           FPayment:'', //(支付状态：0-待支付 1-支付异常  9-支付成功)
           FPaymentdate:'' //（支付日期）
         }]
+        this.moneyChange(index,0)
         this.xmDisable();
       },
       //禁用项目选择
@@ -855,6 +860,9 @@
 </script>
 
 <style scoped lang="scss">
+  thead td{
+    text-align: center;
+  }
   .iconTd{
     border: none;
     position: relative;
@@ -896,7 +904,6 @@
     width:100%;
   }
   .content {
-    height: 470px;
     padding: 20px 0 0 0;
   }
 
@@ -1101,6 +1108,9 @@ table{
   }
 </style>
 <style>
+  .proTab .el-textarea__inner,.proTab .el-input__inner{
+    border: none;
+  }
   #delDialog .el-dialog__footer{
     text-align: center;
   }
