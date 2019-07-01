@@ -229,7 +229,7 @@
                    v-model="textare"></approval-bill>-->
 
     <!--附件上传-->
-    <el-dialog :visible.sync="uploadVis" :append-to-body="true" width="410px" title="附件上传">
+    <el-dialog :visible.sync="uploadVis" :append-to-body="true" width="auto" title="附件上传">
       <file-up v-if="uploadVis" :ind="choosedIndexAndPro" @succe="loadFile"></file-up>
     </el-dialog>
   </section>
@@ -645,9 +645,11 @@
         for(var i in this.PaymentXmDtl){
           let px=this.PaymentXmDtl[i];
           let count=0;
+          debugger
           for(var j in px.PaymentDtls){
             let pd=px.PaymentDtls[j];
-            count=((Number(count*100)).toFixed(0)+(Number(pd.FAmount)*100).toFixed(0))/100;
+            count=(Number((count*100).toFixed(0))+Number((pd.FAmount*100).toFixed(0)))/100;
+            console.log(count)
           }
           px.PaymentXm.FAmountTotal=count;
           if(pindex==i&&count>px.PaymentXm.Surplus){

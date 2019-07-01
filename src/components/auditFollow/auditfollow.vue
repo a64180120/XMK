@@ -21,7 +21,10 @@
         <div class="content" @mouseenter="paylistEnter()" @mouseleave="paylistLeave()" :class="[paylistClass?'paylistHover':'']">
           <!--支付单-->
           <ul class="pay-list" v-if="paylistData.length !==0">
-            <li></li>
+            <li style="height: 55px">
+              <div v-if="paylistClass" class="pay-title">支付单</div>
+              <div v-else class="pay-title"></div>
+            </li>
             <li class="msg" v-for="(item,index) of paylistData" :key="index" :style="{'marginBottom':index == paylistData.length-1?'50px':'0'}">
               <div style="width: 90%">
                 <audit-msg class="paylist" :nowNum="inPaylist?nowNum:-1" v-bind="$attrs" v-on="$listeners" :info="item" :index="index+1" :startNum="paylistStartNum"  @imgList="getImgList"></audit-msg>
@@ -344,5 +347,12 @@ export default {
   .paylistHover .pay-list li .paylist >>> ul li em{
     border: 2px solid #8bc34a;
     color: #8bc34a ;
+  }
+  .pay-title {
+    text-align: left;
+    height: 20px;
+    padding-top: 15px;
+    font-size: 0.14rem;
+    margin-left:15px ;
   }
 </style>

@@ -114,7 +114,7 @@
                     <tr>
                       <td style="color: #3294e8;">申请说明</td>
                       <td>{{record.PaymentMst.FDescribe}}</td>
-                      <td style="color: #3294e8;">申请金额合计</td>
+                      <td style="color: #3294e8;">申请金额合计(元)</td>
                       <td>{{record.PaymentMst.FAmountTotal | NumFormat}}</td>
                     </tr>
                   </tbody>
@@ -148,7 +148,7 @@
                       <td style="color: #3294e8;">项目名称</td>
                       <td style="color: #3294e8;">补助单位/部门</td>
                       <td style="color: #3294e8;">明细项目名称</td>
-                      <td style="color: #3294e8;">申请金额</td>
+                      <td style="color: #3294e8;">申请金额(元)</td>
                       <td style="color: #3294e8;">备注</td>
                     </tr>
                   </tbody>

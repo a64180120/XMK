@@ -22,8 +22,7 @@
             <li>
               <span>
                 附单据 {{fileCount}} 张
-                <i class="el-icon-paperclip show-upload" @click="showUpload"></i>
-<!--                <img style="" src="../../assets/images/hxz.png">-->
+                <img @click="showUpload" class="icon-img" src="../../assets/images/hxz.png">
               </span>
             </li>
           </ul>
@@ -402,5 +401,12 @@ export default {
 }
 .show-upload {
   font-size: 0.24rem;
+}
+  .icon-img{
+    width: 18px;
+  }
+.icon-img:hover{
+  width: 18px;
+  cursor: pointer;
 }
 </style>
