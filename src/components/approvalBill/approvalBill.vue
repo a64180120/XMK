@@ -212,12 +212,21 @@ export default {
       }
     },
     FMode(val){
-      debugger
       if (val == 1){
         this.$nextTick(()=>{
           this.$refs.nextApprovaler.toggleAllSelection()
         })
       }
+    },
+    nextApprovaler:{
+      handler(val){
+        if (this.FMode == 1){
+          this.$nextTick(()=>{
+            this.$refs.nextApprovaler.toggleAllSelection()
+          })
+        }
+      },
+      deep:true
     }
   },
   mounted(){
@@ -242,6 +251,7 @@ export default {
     //表格单选
     handleSelect(selection, row) {
       this.$emit('selectApprovaler', selection)
+      console.log(selection)
     },
     //表格全选
     handleSelectAll(selection) {

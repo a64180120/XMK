@@ -118,7 +118,7 @@ BType：单据类型（"001":资金拨付单,"002":支付单）
 */
 // 获取审批流程列表
 export function getAppvalProc(param) {
-  return Vue.prototype.getAxios('GGK/GAppvalProc/GetAppvalProc', param)
+  return Vue.prototype.getAxios('GSP/GAppvalProc/GetAppvalProcList', param)
 }
 
 /*
