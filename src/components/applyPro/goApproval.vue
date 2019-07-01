@@ -83,12 +83,10 @@
         >{{btnGroup.cancelName}}</el-button>
         <el-button size="small" type="primary" @click="submit">{{btnGroup.onfirmName}}</el-button>
       </div>
-      <auditfollow
-        :isApproval="true"
+      <approval-follow
         :auditMsg="auditMsg"
-        :visible="showAuditfollow"
-        @update:visible="closeAuditFollow()"
-      ></auditfollow>
+        :showAuditfollow="showAuditfollow"
+      ></approval-follow>
     </el-dialog>
     <el-dialog
       :visible.sync="uploadDialog"
@@ -98,18 +96,20 @@
       :append-to-body="true">
       <upload @submit="submitFn"></upload>
     </el-dialog>
+
+
   </section>
 </template>
 
 <script>
-import auditfollow from '../../components/auditFollow/auditfollow'
+import approvalFollow from './approvalFollow'
 import { getAppvalProc, postAddAppvalRecord } from '@/api/paycenter'
 import {mapState} from 'vuex'
 import Upload from "../../components/upload/index";
 
 export default {
   name: 'goApproval',
-  components: { auditfollow,mapState,Upload },
+  components: { approvalFollow,mapState,Upload },
   props: {
     data: {
       type: Object,

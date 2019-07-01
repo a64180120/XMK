@@ -13,27 +13,35 @@
       </el-row>
       <el-row :gutter="20">
          <el-col :span="24">
+           <el-card class="payText">
+             <!--<div slot="header" style="padding: 0 10px;text-align: left;background-color: transparent;border: 1px solid #9acefb">
+              <span>
+                  基本信息
+              </span>
+             </div>-->
+             <div style="margin: 0 14px">
+               <div style="border-bottom: 1px solid rgb(154, 206, 251);text-align: left;font-size: .2rem;margin: 14px 0;padding-top: 4px;padding-bottom: 7px;color: #3294e8;"> 基本信息</div>
                <table class="proTab">
                  <colgroup>
                    <col width="5%" />
-                   <col width="35%" />
-                   <col width="15%" />
+                   <col width="45%" />
+                   <col width="5%" />
                    <col width="45%" />
                  </colgroup>
                  <tr>
                    <td class="right" style="padding-right: 20px">申请单名称:</td>
-                   <td class="left" colspan="3" style="border-bottom: 1px solid #e6e6e6;"><el-input placeholder="30字以内" maxlength="30" show-word-limit v-model="PaymentMst.FName"></el-input></td>
+                   <td class="left" colspan="3" style="border-bottom: 1px solid #9acefb;"><el-input placeholder="30字以内" maxlength="30" show-word-limit v-model="PaymentMst.FName"></el-input></td>
                  </tr>
                  <tr>
                    <td class="right"style="padding-right: 20px">申报部门:</td>
-                   <td class="left" style="border-bottom: 1px solid #e6e6e6">
+                   <td class="left" style="border-bottom: 1px solid #9acefb">
                      <el-tooltip :content="PaymentMst.FOrgname&&PaymentMst.FDepname?PaymentMst.FOrgname+'-'+PaymentMst.FDepname:''" popper-class="tooltipCla" placement="bottom-start">
                        <p>{{PaymentMst.FOrgname&&PaymentMst.FDepname?PaymentMst.FOrgname+'-'+PaymentMst.FDepname:''}}</p>
                      </el-tooltip>
                    </td>
 
-                   <td class="right" style="border-bottom: 1px solid #fff;padding-left: 20px">金额合计:</td>
-                   <td class="left" style="border-bottom:1px solid #e6e6e6;overflow: hidden">
+                   <td class="right" style="border-bottom: 1px solid #fff;min-width: 100px">金额合计:</td>
+                   <td class="left" style="border-bottom:1px solid #9acefb;overflow: hidden">
                      <el-tooltip :content="PaymentMst.FAmountTotal | NumFormat" popper-class="tooltipCla" placement="bottom-start">
                        <p>{{PaymentMst.FAmountTotal | NumFormat}}</p>
                      </el-tooltip>
@@ -41,9 +49,11 @@
                  </tr>
                  <tr>
                    <td class="right" style="padding-right: 20px">申报说明:</td>
-                   <td colspan="3" style="border-bottom: 1px solid #e6e6e6;line-height: .2rem;padding-top: .15rem"><el-input placeholder="100字以内" type="textarea" resize="none" maxlength="100" show-word-limit v-model="PaymentMst.FDescribe"></el-input></td>
+                   <td colspan="3" style="border-bottom: 1px solid #9acefb"><el-input placeholder="100字以内"  resize="none" maxlength="100" show-word-limit v-model="PaymentMst.FDescribe"></el-input></td>
                  </tr>
                </table>
+             </div>
+           </el-card>
          </el-col>
       </el-row>
       <el-row class="content" :gutter="10">
@@ -1108,6 +1118,7 @@ table{
   .proTab .el-textarea__inner,.proTab .el-input__inner{
     border: none;
     padding: 0;
+    height: 40px;
   }
   #delDialog .el-dialog__footer{
     text-align: center;
