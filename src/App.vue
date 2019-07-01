@@ -1,5 +1,5 @@
 <template>
-  <div id="app" @click="closeAuditFollow()">
+  <div id="app">
     <!--<img src="./assets/logo.png">-->
     <router-view></router-view>
   </div>
@@ -42,6 +42,9 @@ export default {
     this.$nextTick(() => {
       console.log(baseURL);
     });
+    let that = this;
+    let _body = document.querySelector('body')
+    _body.addEventListener("click",this.closeAuditFollow)
   },
   methods: {
     getOrganize(){ //获取组织树 

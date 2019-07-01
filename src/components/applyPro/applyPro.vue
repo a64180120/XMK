@@ -645,9 +645,11 @@
         for(var i in this.PaymentXmDtl){
           let px=this.PaymentXmDtl[i];
           let count=0;
+          debugger
           for(var j in px.PaymentDtls){
             let pd=px.PaymentDtls[j];
-            count=((Number(count*100)).toFixed(0)+(Number(pd.FAmount)*100).toFixed(0))/100;
+            count=(Number((count*100).toFixed(0))+Number((pd.FAmount*100).toFixed(0)))/100;
+            console.log(count)
           }
           px.PaymentXm.FAmountTotal=count;
           if(pindex==i&&count>px.PaymentXm.Surplus){
