@@ -120,9 +120,7 @@
       },
       //下一审批人选中弹框
       selectApprovaler(e){
-        if (e.length === 0){
           this.operatorID = []
-        }
         for (let k in e){
           this.operatorID[k] = e[k].OperatorPhid
         }
@@ -187,6 +185,12 @@
         formData.append('FOpinion',this.textare);
         if (this.isAgree === '9') {
           formData.append('NextOperators',JSON.stringify(this.operatorID));
+          if(this.FMode == '1'){
+            if (this.operatorID.length !==this.nextApprovaler.length){
+              this.$msgBox.error('会签模式下，下一审批人必须全选')
+              return;
+            }
+          }
         }else if(this.isAgree === '2'){
           let arr =[]
           for (let key in this.backPersonnel){
