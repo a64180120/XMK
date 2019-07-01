@@ -53,7 +53,13 @@
           </div>
           <template v-if="showList">
             <el-table max-height="200px" :data="gridData" border>
-              <el-table-column header-align="center" type="index" label="序号" width="50"></el-table-column>
+              <el-table-column
+                header-align="center"
+                align="center"
+                type="index"
+                label="序号"
+                width="50"
+              ></el-table-column>
               <el-table-column header-align="center" property="FDepartmentname" label="收款方姓名"></el-table-column>
               <el-table-column
                 property="FAmount"

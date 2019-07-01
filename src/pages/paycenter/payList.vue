@@ -307,24 +307,15 @@
       </el-row>
       <el-row :gutter="10">
         <div class="bottom">
-          <span v-if="!reSetting" @click="getAuditfollow">
-            <!-- <template v-if="data.itemType == 'notApprove'">待送审</template>
-            <template v-else-if="data.itemType == ''">审批中</template>
-            <template v-else-if="data.itemType == 'approval'">待审批</template>
-            <template v-else>审批通过</template>-->
-            {{detail.Mst.FApproval!=undefined?FApprovalList.find(item=>item.value==detail.Mst.FApproval).label:''}}
-          </span>
+          <span
+            v-if="!reSetting"
+            @click="getAuditfollow"
+          >{{detail.Mst.FApproval!=undefined?FApprovalList.find(item=>item.value==detail.Mst.FApproval).label:''}}</span>
           <span
             @click="getAuditfollow"
             v-if="(data.itemType != 'approval')&&!reSetting"
             :class="{success:data.itemType=='success'}"
-          >
-            <!-- <template v-if="data.itemType == 'error'">支付异常</template>
-            <template v-else-if="data.itemType=='success'">支付成功</template>
-            <template v-else-if="data.itemType=='payying'">支付中</template>
-            <template v-else>待支付</template>-->
-            {{detail.Mst.FState!=undefined?FStateList.find(item=>item.value==detail.Mst.FState).label:''}}
-          </span>
+          >{{detail.Mst.FState!=undefined?FStateList.find(item=>item.value==detail.Mst.FState).label:''}}</span>
           <span
             class="dj"
             @click="fundDetailData.openDialog = true"
