@@ -15,32 +15,33 @@
          <el-col :span="24">
                <table class="proTab">
                  <colgroup>
-                   <col width="15%" />
+                   <col width="5%" />
                    <col width="35%" />
                    <col width="15%" />
-                   <col width="35%" />
+                   <col width="45%" />
                  </colgroup>
                  <tr>
-                   <td>申请单名称</td>
-                   <td colspan="3"><el-input placeholder="30字以内" maxlength="30" v-model="PaymentMst.FName"></el-input></td>
+                   <td class="right" style="padding-right: 20px">申请单名称:</td>
+                   <td class="left" colspan="3" style="border-bottom: 1px solid #e6e6e6;"><el-input placeholder="30字以内" maxlength="30" show-word-limit v-model="PaymentMst.FName"></el-input></td>
                  </tr>
                  <tr>
-                   <td>申报部门:</td>
-                   <td>
+                   <td class="right"style="padding-right: 20px">申报部门:</td>
+                   <td class="left" style="border-bottom: 1px solid #e6e6e6">
                      <el-tooltip :content="PaymentMst.FOrgname&&PaymentMst.FDepname?PaymentMst.FOrgname+'-'+PaymentMst.FDepname:''" popper-class="tooltipCla" placement="bottom-start">
                        <p>{{PaymentMst.FOrgname&&PaymentMst.FDepname?PaymentMst.FOrgname+'-'+PaymentMst.FDepname:''}}</p>
                      </el-tooltip>
                    </td>
-                   <td>金额合计:</td>
-                   <td>
+
+                   <td class="right" style="border-bottom: 1px solid #fff;padding-left: 20px">金额合计:</td>
+                   <td class="left" style="border-bottom:1px solid #e6e6e6;overflow: hidden">
                      <el-tooltip :content="PaymentMst.FAmountTotal | NumFormat" popper-class="tooltipCla" placement="bottom-start">
                        <p>{{PaymentMst.FAmountTotal | NumFormat}}</p>
                      </el-tooltip>
                    </td>
                  </tr>
                  <tr>
-                   <td>申报说明</td>
-                   <td colspan="3"><el-input type="textarea" placeholder="100字以内" resize="none" maxlength="100" show-word-limit v-model="PaymentMst.FDescribe"></el-input></td>
+                   <td class="right" style="padding-right: 20px">申报说明:</td>
+                   <td colspan="3" style="border-bottom: 1px solid #e6e6e6;line-height: .2rem;padding-top: .15rem"><el-input placeholder="100字以内" type="textarea" resize="none" maxlength="100" show-word-limit v-model="PaymentMst.FDescribe"></el-input></td>
                  </tr>
                </table>
          </el-col>
@@ -216,16 +217,7 @@
                    :backPersonnel="backPersonnel"
                    ref="approval"
                    v-model="textare"></approval-bill>-->
-    <!--附件查看-->
-    <el-dialog class="dialog img-dialog" :visible.sync="dialogVisible" :append-to-body="true" :close-on-click-modal="false" width="40%">
-      <div slot="title" class="dialog-title">
-        <span style="float: left">查看附件</span>
-      </div>
-      <div class="btn-load">
-        <el-button class="btn">下载</el-button>
-      </div>
-      <img-view v-if="dialogVisible"></img-view>
-    </el-dialog>
+
     <!--附件上传-->
     <el-dialog :visible.sync="uploadVis" :append-to-body="true" width="410px" title="附件上传">
       <file-up v-if="uploadVis" :ind="choosedIndexAndPro" @succe="loadFile"></file-up>
@@ -334,7 +326,6 @@
         ],
         xmCheckList:[false],
         choosedIndexAndPro:{index:0,pro:{}},
-
       }
     },
     computed: {
@@ -1106,10 +1097,16 @@ table{
     overflow: hidden;
     text-overflow: ellipsis;
   }
+  .proTab td{
+    border: none;
+    height: 40px;
+    line-height: 40px;
+  }
 </style>
 <style>
   .proTab .el-textarea__inner,.proTab .el-input__inner{
     border: none;
+    padding: 0;
   }
   #delDialog .el-dialog__footer{
     text-align: center;
