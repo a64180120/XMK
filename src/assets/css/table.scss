@@ -108,7 +108,7 @@ table .left {
 .tableBody table tr {
   border-radius: 8px;
   padding: 10px 0;
-  box-shadow: 0 3px 8px #cbcbcb;
+  box-shadow: 0 0px 8px #cbcbcb;
   transition: all 0.2s linear;
 }
 .tableBody table tr.trActive,
@@ -120,7 +120,7 @@ table .left {
   margin-left: 10px;
 }
 .tableBody table tr td {
-  border-left: 1px solid #cbcbcb;
+  border-left: 1px solid #eaeaea;
   height: 40px;
   padding: 0 4px;
   white-space: nowrap;
@@ -198,4 +198,15 @@ table .left {
 .tooltipCla{
   width: auto;
   max-width: 300px;
+}
+
+/*t图片link*/
+.hxzBac{
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  background-repeat: no-repeat;
+  background-image: url("../images/hxz.png");
+  background-size: cover;
+  vertical-align: middle;
 }

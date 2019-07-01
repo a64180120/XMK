@@ -214,23 +214,34 @@
                 <el-checkbox v-model="checkList[index]">{{index+1}}</el-checkbox>
               </td>
               <td @click="showApply(item.PhId)" class="atype">
-                {{item.FCode}}
+                <el-tooltip :content="item.FCode" popper-class="tooltipCla" placement="bottom-start">
+                  <p>{{item.FCode}}</p>
+                </el-tooltip>
               </td>
               <td>
-                {{item.FName}}
+                <el-tooltip :content="item.FName" popper-class="tooltipCla" placement="bottom-start">
+                  <p>{{item.FName}}</p>
+                </el-tooltip>
               </td>
               <td class="right">
-                {{item.FAmountTotal | NumFormat}}
+                <el-tooltip :content="item.FAmountTotal| NumFormat" popper-class="tooltipCla" placement="bottom-start">
+                  <p>{{item.FAmountTotal| NumFormat}}</p>
+                </el-tooltip>
               </td>
               <td>
-                {{item.FDate.substring(0,10)}}
+                <el-tooltip :content="(item.FDate.substring(0,19)).replace('T',' ')" popper-class="tooltipCla" placement="bottom-start">
+                  <p>{{(item.FDate.substring(0,19)).replace('T',' ')}}</p>
+                </el-tooltip>
               </td>
               <td class="atype" @click="openAuditfollow(item,index)">
-                {{spTypeList[item.FApproval]}}
+                <el-tooltip :content="spTypeList[item.FApproval]" popper-class="tooltipCla" placement="bottom-start">
+                  <p>{{spTypeList[item.FApproval]}}</p>
+                </el-tooltip>
               </td>
               <td>
-
-                {{item.FApproval!=9?'-':payTypeList[item.IsPay]}}
+                <el-tooltip :content="payTypeList[item.IsPay]" popper-class="tooltipCla" placement="bottom-start">
+                  <p>{{payTypeList[item.IsPay]}}</p>
+                </el-tooltip>
               </td>
               <td class="left">
                 <el-tooltip :content="item.FDescribe" popper-class="tooltipCla" placement="bottom-start">
@@ -270,9 +281,9 @@
           </el-card>
           <el-card>
             <div style="border-bottom: 1px solid #ccc">
-              <span>对下补助项目名称：</span>
+              <div style="font-size: .15rem">对下补助项目名称</div>
               <!--部门选择-->
-              <el-select size="small" style="width: 100px" :title="apartDataMst[bzType]" v-model="bzType" @change="getChartList">
+              <el-select size="small" style="width: 100%" :title="apartDataMst[bzType]" v-model="bzType" @change="getChartList">
                 <el-option v-for="item in apartData.Mst"
                            :key="item.PhId"
                            :label="item.FProjName"
@@ -1043,8 +1054,7 @@
   .applydialog .el-dialog{
     padding: 0 10px;
     width: 90%;
-    height: 600px;
-    margin:auto;
+    margin-top: 10%;
   }
   .applydialog .el-dialog__header{
     text-align: left;
@@ -1052,5 +1062,9 @@
   }
   .applydialog .el-dialog__body{
     padding: 10px 20px 30px;
+  }
+  .el-input__inner{
+    vertical-align: middle;
+    line-height: 30px;
   }
 </style>

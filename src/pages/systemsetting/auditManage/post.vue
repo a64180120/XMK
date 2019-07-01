@@ -100,29 +100,48 @@
                                         <el-checkbox @click.stop.native="1" @change="choose(post)" v-model="post.checked">{{n+1}}</el-checkbox>
                                         </td>
                                         <td>
-                                        {{post.GAppvalPost.FCode}}
+                                            <el-tooltip :content="post.GAppvalPost.FCode">
+                                                <p>  {{post.GAppvalPost.FCode}}</p>
+                                            </el-tooltip>
+                                       
                                         </td>
                                         <td>
-                                        {{post.GAppvalPost.FName}}
+                                            <el-tooltip :content="post.GAppvalPost.FName">
+                                                <p>  {{post.GAppvalPost.FName}}</p>
+                                            </el-tooltip>
                                         </td>
                                         <td class="tdCon">
-                                            <div v-for="per of  post.GAppvalPost4Opers">{{per.OperatorName}}</div>
+                                            
+                                            <div v-for="per of  post.GAppvalPost4Opers">
+                                                <el-tooltip :content="per.OperatorName">
+                                                    <p>  {{per.OperatorName}}</p>
+                                                </el-tooltip>
+                                            </div>
                                         
                                         </td>
                                         <td class="tdCon">
-                                            <div v-for="dep of  post.GAppvalPost4Opers">{{dep.DepName}}</div>
+                                            <div v-for="dep of  post.GAppvalPost4Opers">
+                                                <el-tooltip :content="dep.DepName">
+                                                    <p>  {{dep.DepName}}</p>
+                                                </el-tooltip>
+                                            </div>
                                         </td>
                                         <td class="tdCon">
-                                            <div v-for="org of  post.GAppvalPost4Opers">{{org.OrgName}}</div>
+                                            <div v-for="org of  post.GAppvalPost4Opers">
+                                                <el-tooltip :content="org.OrgName">
+                                                    <p>  {{org.OrgName}}</p>
+                                                </el-tooltip>
+                                            </div>
                                         
                                         </td>
                                         <td>
-                                        {{post.GAppvalPost.FDescribe}}
+                                             <el-tooltip :content="post.GAppvalPost.FDescribe">
+                                                <p>  {{post.GAppvalPost.FDescribe}}</p>
+                                            </el-tooltip>
                                         </td>
                                         <td class="postRadio">
-                                             <img v-if="post.GAppvalPost.FEnable==0" src="@/assets/images/gou.svg" alt="">
+                                            <img v-if="post.GAppvalPost.FEnable==0" src="@/assets/images/gou.svg" alt="">
                                             <img v-else src="@/assets/images/cha.svg" alt="">
-                                        
                                         </td>
                                     </tr>
                                 </thead>
@@ -186,8 +205,16 @@ export default {
     },
      computed:{
         ...mapState({
-            menuButton: state => state.user.menubutton
+            menuButton: state => state.user.menubutton,
+            orgid: state => state.user.orgid
         })
+    },
+    watch:{
+        orgid(val){
+            if(val){
+                this.getorglist();    
+            }
+        }
     },
     mounted(){
         this.getData();
@@ -283,7 +310,7 @@ export default {
                 PageIndex:this.pageIndex-1,//  (分页页码)
                 PageSize:this.pageSize,//  （分页大小）
                 Orgid: this.$store.state.user.orgid, //  （组织id）
-                Ucode: 'Admin', //（用户编码）  admin为显示全部
+                Ucode: this.$store.state.user.orgcode, //（用户编码）  admin为显示全部
                //Ucode:this.$store.state.user.usercode,
                 PostName:this.search.val,//搜索框值
                 EnableMark:this.search.enable,//启用停用
@@ -311,7 +338,7 @@ export default {
             this.orgVisible=true;
         },
         getOrg(val){
-            console.log(val)
+            
             this.search.org=val;
             this.getData();
         },

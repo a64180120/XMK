@@ -33,7 +33,7 @@
             },
             submit(){
               this.$emit('submit',this.filelist)
-              this.filelist = []
+              //this.filelist = []
                 // return this.filelist;
             },
             clear(){  //清空文件列表

@@ -81,19 +81,30 @@
                                         <el-checkbox @click.stop.native="1" @change="choose(item,index,'change')"   v-model="item.checked" >{{index+1}}</el-checkbox>
                                     </td>
                                     <td>
-                                    {{item.FBankname}}
+                                        <el-tooltip :content="item.FBankname">
+                                            <p>{{item.FBankname}}</p>
+                                        </el-tooltip>
                                     </td>
                                     <td>
-                                    {{item.FAccount}}
+                                        <el-tooltip :content="item.FAccount">
+                                            <p> {{item.FAccount}}</p>
+                                        </el-tooltip>
+                                   
                                     </td>
                                     <td>
-                                    {{item.FOpenAccount}} 
+                                        <el-tooltip :content="item.FOpenAccount">
+                                            <p> {{item.FOpenAccount}}</p>
+                                        </el-tooltip>
                                     </td>
                                     <td>
-                                    {{item.FBankcode}}
+                                        <el-tooltip :content="item.FBankcode">
+                                            <p> {{item.FBankcode}}</p>
+                                        </el-tooltip>
                                     </td>
                                     <td v-if="type=='handle'">
-                                    {{item.FCity}}
+                                        <el-tooltip :content="item.FCity">
+                                            <p> {{item.FCity}}</p>
+                                        </el-tooltip>
                                     </td>
                                     <td class="enable" v-if="type=='handle'">
                                         <img v-if="item.FLifecycle=='1'" src="@/assets/images/gou.svg" alt="">

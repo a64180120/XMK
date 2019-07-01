@@ -169,8 +169,8 @@
                 <td @click.self="selectItem(item)">
                   <el-checkbox v-model="item.Mst.checked" @change="handleCheckOne(item)">{{index+1}}</el-checkbox>
                 </td>
-                <td>
-                  <span @click.stop="payNav('payListData',item)" class="atype">{{item.Mst.FCode}}</span>
+                <td @click.stop="payNav('payListData',item)" class="atype">
+                  <span>{{item.Mst.FCode}}</span>
                 </td>
                 <td>
                   <div style="text-align:right;">{{item.Mst.FAmountTotal | NumFormat}}</div>
@@ -187,7 +187,7 @@
                 <td>
                   <div>{{typeList.find(i=>item.Mst.FBilltype == i.value).label}}</div>
                 </td>
-                <td>
+                <td class="atype" @click="openRefbill(item.Mst.RefbillPhid)">
                   <div>{{item.Mst.RefbillCode}}</div>
                 </td>
                 <td>
@@ -200,7 +200,7 @@
                     <p>{{item.Mst.NgInsertDt.replace('T',' ')}}</p>
                   </el-tooltip>
                 </td>
-                <td>
+                <td class="atype" @click="openAuditfollow(item.Mst.PhId)">
                   <div v-if="item.Mst.FApproval==0">待送审</div>
                   <div v-else-if="item.Mst.FApproval==1">审批中</div>
                   <div v-else-if="item.Mst.FApproval==2">未通过</div>
@@ -260,15 +260,40 @@
     </div>
     <!-- 支付单查看 -->
     <pay-list :data="payListData"></pay-list>
+    <!-- 合并支付 -->
     <merge-pay v-if="mergePayData.openDialog" :data="mergePayData"></merge-pay>
+    <!-- 异常处理 -->
     <pay-error-handle v-if="payErrorHandleData.openDialog" :data="payErrorHandleData"></pay-error-handle>
+    <!-- 送审 -->
     <go-approval v-if="approvalData.openDialog" :bType="'002'" :data="approvalData"></go-approval>
+    <!-- 审批流程 -->
+    <auditfollow :auditMsg="auditMsg" :visible="showAuditfollow" @update:visible="closeAuditFollow"></auditfollow>
+    <!-- 资金拨付单查看 -->
+    <el-dialog
+      append-to-body
+      v-if="fundDetailData.openDialog"
+      :visible.sync="fundDetailData.openDialog"
+      width="80%"
+      :close-on-click-modal="false"
+      class="dialog detail-dialog payCenter"
+    >
+      <div slot="title" class="dialog-title">
+        <span style="float: left;">查看申请</span>
+      </div>
+      <apply-bill :applyNum="applyNum" :subData="[]">
+        <div slot="btn-group">
+          <el-button v-show="false" class="btn" size="mini">打印</el-button>
+        </div>
+      </apply-bill>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import topHandle from '../../components/topNav/topHandle.vue'
-import searchInput from '../../components/searchInput/searchInput'
+import topHandle from '@/components/topNav/topHandle.vue'
+import auditfollow from '@/components/auditFollow/auditfollow'
+import applyBill from '@/components/applyBill/applybill'
+import searchInput from '@/components/searchInput/searchInput'
 import payList from './payList.vue'
 import mergePay from './mergePay.vue'
 import payErrorHandle from './payErrorHandle.vue'
@@ -282,16 +307,21 @@ export default {
     mergePay,
     payErrorHandle,
     goApproval,
-    searchInput
+    searchInput,
+    auditfollow,
+    applyBill
   },
   provide() {
     return { refreshIndexData: this.getData }
   },
   data() {
     return {
+      applyNum: '',
+      auditMsg: [],
+      showAuditfollow: false,
       needSet: true,
       // dialog数据
-      fundDetailData: { openDialog: false, data: {} },
+      fundDetailData: { openDialog: false },
       mergePayData: { openDialog: false, data: {} },
       payListData: {
         openDialog: false,
@@ -376,10 +406,10 @@ export default {
           width: 200
         },
         {
-          label: '应付金额'
+          label: '应付金额（元）'
         },
         {
-          label: '实付金额'
+          label: '实付金额（元）'
         },
         {
           label: '单据类型'
@@ -416,7 +446,6 @@ export default {
       tabsWidth = [], //各个tab筛选条件宽度
       left = document.querySelector('.selects>i.el-icon-d-arrow-left'),
       right = document.querySelector('.selects>i.el-icon-d-arrow-right')
-    console.log(tabs)
     // tabs.forEach(item => {
     //   contentWidth += item.offsetWidth
     //   tabsWidth.push(item.offsetWidth)
@@ -484,10 +513,36 @@ export default {
     resize()
   },
   methods: {
+    openRefbill(PhId) {
+      this.applyNum = PhId.toString()
+      this.fundDetailData.openDialog = true
+    },
+    openAuditfollow(PhId) {
+      let that = this
+      this.getAxios('GSP/GAppvalRecord/GetAppvalRecordList', {
+        RefbillPhid: PhId,
+        FBilltype: '002'
+      })
+        .then(res => {
+          if (res && res.Status === 'success') {
+            that.auditMsg = res.Data
+            that.showAuditfollow = true
+          } else {
+            that.$msgBox.show(res.Msg)
+          }
+        })
+        .catch(err => {
+          that.$msgBox.show('获取审批流程数据异常')
+        })
+    },
+    closeAuditFollow() {
+      this.showAuditfollow = false
+    },
     selectItem(item) {
       item.Mst.checked = !item.Mst.checked
     },
     getData() {
+      this.showAuditfollow = false
       let query = {
         'NgInsertDt*date*ge*1': this.sbrq ? this.sbrq[0] || '' : '', //申报日期开始
         'NgInsertDt*date*le*1': this.sbrq ? this.sbrq[1] || '' : '', //申报日期结束
@@ -577,6 +632,7 @@ export default {
     },
     // 导航栏事件
     payNav(type, item) {
+      this.showAuditfollow = false
       if (item) {
         if (item.Mst.FApproval == 0 || item.Mst.FApproval == 2) {
           this.payListData.itemType = 'notApprove'
@@ -692,7 +748,7 @@ export default {
                 return (
                   item.Mst.FPaymethod != 0 &&
                   item.Dtls.every(subitem => {
-                    return !!subitem.BankPhid
+                    return !!subitem.BankPhid && !!subitem.FRecAcnt
                   })
                 )
               })

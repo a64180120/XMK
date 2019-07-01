@@ -29,7 +29,9 @@
             >
               <span class="btn btn-large" @click="save('payErrorHandleData')">异常处理</span>
             </template>
-            <template v-if="detail.Mst.FApproval == 0&&menubutton.paycenter_maintain=='True'">
+            <template
+              v-if="(detail.Mst.FApproval == 0||detail.Mst.FApproval == 2)&&menubutton.paycenter_maintain=='True'"
+            >
               <span class="btn btn-large" @click="save('')">保存</span>
               <span class="btn btn-large" style="padding:0" @click="save('approvalData')">保存并送审</span>
             </template>
@@ -293,6 +295,7 @@
             {{detail.Mst.FApproval!=undefined?FApprovalList.find(item=>item.value==detail.Mst.FApproval).label:''}}
           </span>
           <span
+            @click="getAuditfollow"
             v-if="(data.itemType != 'approval')&&!reSetting"
             :class="{success:data.itemType=='success'}"
           >
@@ -331,22 +334,6 @@
         </div>
       </apply-bill>
     </el-dialog>
-    <!--图片预览-->
-    <el-dialog
-      class="dialog img-dialog payCenter"
-      :visible.sync="imgDialog"
-      :close-on-click-modal="false"
-      width="60%"
-      height="600px"
-    >
-      <div slot="title" class="dialog-title">
-        <span style="float: left">查看附件</span>
-      </div>
-      <div class="btn-load" style="text-align:right;">
-        <el-button class="btn">下载</el-button>
-      </div>
-      <img-view v-if="imgDialog"></img-view>
-    </el-dialog>
     <!-- 合并支付组件 -->
     <merge-pay v-if="mergePayData.openDialog" :father="data" :data="mergePayData"></merge-pay>
     <!-- 异常处理 -->
@@ -376,7 +363,6 @@ import payErrorHandle from './payErrorHandle.vue'
 import goApproval from './goApproval.vue'
 import bankChoose from './bankChoose'
 import auditfollow from '@/components/auditFollow/auditfollow'
-import ImgView from '@/components/imgView/imgView'
 import { BankAccountList } from '@/api/bankaccount'
 import { GetSysSetList } from '@/api/systemSetting/dataSafe'
 import {
@@ -395,8 +381,7 @@ export default {
     payErrorHandle,
     goApproval,
     bankChoose,
-    auditfollow,
-    ImgView
+    auditfollow
   },
   inject: ['refreshIndexData'],
   props: {
@@ -430,15 +415,16 @@ export default {
           bodyAlign: 'center'
         },
         {
-          name: 'FDepartmentname',
-          label: '收款单位/部门',
-          width: '200'
-        },
-        {
           name: 'BudgetdtlName',
           label: '明细项目名称',
           width: '200'
         },
+        {
+          name: 'FDepartmentname',
+          label: '收款单位/部门',
+          width: '200'
+        },
+
         {
           name: 'FAmount',
           label: '申请金额（元）',
@@ -598,24 +584,22 @@ export default {
   methods: {
     //拉取审批流数据查看
     getAuditfollow() {
-      if (this.data.data[0].Mst.FApproval != 0) {
-        let that = this
-        this.getAxios('GSP/GAppvalRecord/GetAppvalRecordList', {
-          RefbillPhid: this.data.data[0].Mst.PhId,
-          FBilltype: '002'
+      let that = this
+      this.getAxios('GSP/GAppvalRecord/GetAppvalRecordList', {
+        RefbillPhid: this.data.data[0].Mst.PhId,
+        FBilltype: '002'
+      })
+        .then(res => {
+          if (res && res.Status === 'success') {
+            that.auditMsg = res.Data
+            that.showAuditfollow = true
+          } else {
+            that.$msgBox.show(res.Msg)
+          }
         })
-          .then(res => {
-            if (res && res.Status === 'success') {
-              that.auditMsg = res.Data
-              that.showAuditfollow = true
-            } else {
-              that.$msgBox.show(res.Msg)
-            }
-          })
-          .catch(err => {
-            that.$msgBox.show('获取审批流程数据异常')
-          })
-      }
+        .catch(err => {
+          that.$msgBox.show('获取审批流程数据异常')
+        })
     },
     // 付款账号修改后立即赋值给子表
     accountChange(phid) {
@@ -1241,6 +1225,7 @@ export default {
       margin-right: 20px;
       position: relative;
       padding-left: 0.3rem;
+      text-decoration: underline;
       &::before {
         content: '';
         display: inline-block;
@@ -1257,6 +1242,7 @@ export default {
       }
       &:nth-of-type(2) {
         cursor: auto;
+        text-decoration: none;
         &::before {
           background-image: url('../../assets/images/wzf.png');
         }
@@ -1267,8 +1253,7 @@ export default {
       &:last-of-type {
         float: right;
         &::before {
-          background-image: url('../../assets/images/dj.png');
-          margin-top: -0.09rem;
+          background: none;
         }
       }
     }

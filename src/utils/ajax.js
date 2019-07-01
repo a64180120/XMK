@@ -84,7 +84,7 @@ function apiAxios(method, url, params, hastimeout) {
   }
   // 请求超时时间
   if (!hastimeout) {
-    httpDefault.timeout = 10000
+    httpDefault.timeout = 15000
   }else{
 		httpDefault.timeout=hastimeout
 	}
