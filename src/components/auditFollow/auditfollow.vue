@@ -30,7 +30,7 @@
               <div v-if="item.IsMode =='1'">
                 <!--判断第一个会签模式第一个-->
                 <div v-if="paylistData[index-1].IsMode != '1' && paylistData[index].IsMode == '1'" class="modeTop">
-                  <span class="hqms">会<br/>签<br/>模<br/>式</span>
+                  <span class="hqms" :style="{'top':(item.SameNum-1) * 110 + 50+'px'}">会<br/>签</span>
                 </div>
                 <!--判断会签模式最后一个且非paylistData的最后一个-->
                 <div v-if="paylistData[index+1] &&paylistData[index+1].IsMode != '1' && paylistData[index].IsMode == '1'" class="modeBottom"></div>
@@ -285,12 +285,12 @@ export default {
       /*color: red !important;*/
   }
   .payfundHover .pay-fund li{
-    border-left: 2px solid #f99807 !important;
+    border-left: 2px solid #8bc34a !important;
   }
   .IsMode{
     width: 10px;
     height: 100%;
-    border-right: 2px solid red;
+    border-right: 2px solid #ff2929b5;
     /*border-bottom: 2px solid red;*/
     /*background-color: red;*/
     position: absolute;
@@ -302,15 +302,15 @@ export default {
   .lastMode{
     width: 10px;
     height: 100%;
-    border-right: 2px solid red;
-    border-bottom: 2px solid red;
+    border-right: 2px solid #ff2929b5;
+    border-bottom: 2px solid #ff2929b5;
     position: absolute;
     right: 0;
     top: 0;
     display: inline-block;
   }
   .modeTop{
-    border-top: 2px solid red;
+    border-top: 2px solid #ff2929b5;
     width: 10px;
     height: 100%;
     position: absolute;
@@ -323,10 +323,10 @@ export default {
     position: absolute;
     z-index: 1;
     left: -1px;
-    top: 25px;
+    top: 50px;
   }
   .modeBottom{
-    border-bottom: 2px solid red;
+    border-bottom: 2px solid #ff2929b5;
     width: 10px;
     height: 100%;
     position: absolute;
@@ -335,14 +335,14 @@ export default {
     display: inline-block;
   }
   .payfundHover .pay-fund li .payfund >>> ul li em{
-    color:#f99807 ;
-    border: 2px solid #f99807;
+    color:#8bc34a ;
+    border: 2px solid #8bc34a;
   }
   .paylistHover .pay-list li{
-    border-left: 2px solid #f99807 !important;
+    border-left: 2px solid #8bc34a !important;
   }
   .paylistHover .pay-list li .paylist >>> ul li em{
-    border: 2px solid #f99807;
-    color: #f99807 ;
+    border: 2px solid #8bc34a;
+    color: #8bc34a ;
   }
 </style>

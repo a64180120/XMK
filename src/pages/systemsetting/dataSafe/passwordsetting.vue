@@ -147,8 +147,8 @@ export default {
           let  data={
             // DicType:'PayPsd',
             // DicName:'支付口令',
-            TypeCode:this.$store.state.user.orgcode,
-            TypeName:this.$store.state.user.orgname,
+            TypeCode:this.$store.state.user.usercode,
+            TypeName:this.$store.state.user.username,
             Value:md5(this.confirmPassword),
             Isactive:this.radio,
             Orgid:this.$store.state.user.orgid,
@@ -175,8 +175,8 @@ export default {
         //启用/停用
         updateEnable(){
           let data={
-            TypeCode:this.$store.state.user.orgcode,
-            TypeName:this.$store.state.user.orgname,
+            TypeCode:this.$store.state.user.usercode,
+            TypeName:this.$store.state.user.username,
             Isactive:this.radio,
             Orgid:this.$store.state.user.orgid,
             Orgcode:1
@@ -222,7 +222,7 @@ export default {
         },
         getData(){
           let data={
-            TypeCode:this.$store.state.user.orgcode,
+            TypeCode:this.$store.state.user.usercode,
           }
           GetPayPsd(data).then(res => {
             if(res.Status=="error"){
