@@ -30,7 +30,7 @@
       </div>
       <el-dialog
         :visible.sync="uploadDialog"
-        width="25%"
+        width="auto"
         :close-on-click-modal="false"
         class=""
         :append-to-body="true"
@@ -120,12 +120,11 @@
       },
       //下一审批人选中弹框
       selectApprovaler(e){
-        if (e.length === 0){
-          this.operatorID = []
-        }
+        this.operatorID = []
         for (let k in e){
           this.operatorID[k] = e[k].OperatorPhid
         }
+        console.log(this.operatorID)
       },
       //开启或关闭弹框
       changeDialog(){
@@ -200,11 +199,12 @@
         debugger
         if (this.isAgree === '9') {
           formData.append('NextOperators',JSON.stringify(this.operatorID));
-          // if(this.FMode == '1'){
-          //     if (this.operatorID.length !==this.nextApprovaler.length){
-          //       this.$msgBox.error('会签模式下，下一审批人必须全选')
-          //     }
-          // }
+          if(this.FMode == '1'){
+              if (this.operatorID.length !==this.nextApprovaler.length){
+                this.$msgBox.error('会签模式下，下一审批人必须全选')
+                return;
+              }
+          }
         }else if(this.isAgree === '2'){
           let arr =[]
           for (let key in this.backPersonnel){

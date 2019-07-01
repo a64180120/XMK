@@ -395,9 +395,6 @@ export default {
     beforeClose(done) {
       if (this.showMergePay) {
         this.data.openDialog = false
-        this.data.data.forEach(item => {
-          item.Mst.checked = false
-        })
       } else if (this.showPassword) {
         this.showMergePay = true
         this.showPassword = false
