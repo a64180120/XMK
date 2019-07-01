@@ -26,7 +26,7 @@
               >删除</el-button>
               <!--<el-button class="btn" size="mini" @click="checkApply">审批</el-button>
               <el-button class="btn" size="mini" @click="cancelApply">取消审批</el-button>-->
-              <el-button class="btn" size="mini">打印</el-button>
+              <!--<el-button class="btn" size="mini">打印</el-button>-->
             </slot>
           </div>
         </el-col>

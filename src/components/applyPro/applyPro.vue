@@ -1101,6 +1101,7 @@ table{
     border: none;
     height: 40px;
     line-height: 40px;
+    min-width: 125px;
   }
 </style>
 <style>
