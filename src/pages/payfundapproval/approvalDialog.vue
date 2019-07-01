@@ -3,6 +3,7 @@
       <el-dialog
         :visible.sync="openDialog"
         width="37.5%"
+        v-if="openDialog"
         :close-on-click-modal="false"
         class="dialog approval-dialog"
         :append-to-body="true"
@@ -105,6 +106,7 @@
             if (res && res.Status === 'success'){
               this.$set(this.approvalFollow,0,res.Process);
               this.nextApprovaler = res.AppvalPost.Operators;
+              console.log(res)
             }else {
               let that = this
               this.$msgBox.show({
@@ -217,6 +219,7 @@
               formData.append('files',file.raw);
             }
           }
+          debugger
           this.formAxios('GSP/GAppvalRecord/PostApprovalRecordList',formData).then(res=>{
             if (res.Status == 'success'&&res) {
               this.fileCount = 0
@@ -251,6 +254,7 @@
               that.operatorID=[]
             }
           }).catch(err=>{
+            console.log(err)
             that.operatorID=[],
             this.fileCount = 0
             this.$msgBox.error('请求出错')

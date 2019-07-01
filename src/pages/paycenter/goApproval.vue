@@ -31,7 +31,7 @@
         >{{btnGroup.cancelName}}</el-button>
         <el-button size="small" type="primary" @click="submit">{{btnGroup.onfirmName}}</el-button>
       </div>
-      <el-dialog width="410px" append-to-body :visible.sync="upload">
+      <el-dialog width="auto" append-to-body :visible.sync="upload">
         <upload ref="upload" @submit="uploadClose"/>
       </el-dialog>
       <!-- <div
