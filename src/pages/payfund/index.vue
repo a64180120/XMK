@@ -23,6 +23,10 @@
             <div class="topIcon"><img src="@/assets/images/sc.png" alt=""></div><!-- @click="creatPayItem()"-->
             生成支付单
           </div>
+          <div @click.stop="printTables" class="handle" style="width: 80px;">
+            <div class="topIcon"><img src="@/assets/images/dy.png" alt=""></div><!-- @click="creatPayItem()"-->
+            打印
+          </div>
 
           <!--<div class="nav" @click="payNav('approvalData')">送审</div>-->
         </div>
@@ -30,7 +34,6 @@
     </div>
 
     <div class="container">
-      <el-button @click="printTables">打印</el-button>
       <div class="formArea">
         <div class="btnArea">
           <i class="el-icon-d-arrow-left iicon" style="position:absolute;left:0;top: .12rem;" @click.stop="unionStateScroll(false)"></i>
