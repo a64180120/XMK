@@ -200,11 +200,11 @@
         debugger
         if (this.isAgree === '9') {
           formData.append('NextOperators',JSON.stringify(this.operatorID));
-          if(this.FMode == '1'){
-              if (this.operatorID.length !==this.nextApprovaler.length){
-                this.$msgBox.error('会签模式下，下一审批人必须全选')
-              }
-          }
+          // if(this.FMode == '1'){
+          //     if (this.operatorID.length !==this.nextApprovaler.length){
+          //       this.$msgBox.error('会签模式下，下一审批人必须全选')
+          //     }
+          // }
         }else if(this.isAgree === '2'){
           let arr =[]
           for (let key in this.backPersonnel){
@@ -218,7 +218,7 @@
             formData.append('files',file.raw);
           }
         }
-        this.formAxios('GSP/GAppvalRecord/PostApprovalRecordList').then(res=>{
+        this.formAxios('GSP/GAppvalRecord/PostApprovalRecordList',formData).then(res=>{
           if (res.Status == 'success'&&res) {
             let that= this
             this.visible = false
