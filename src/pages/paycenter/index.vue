@@ -119,7 +119,7 @@
         <div class="tableHead">
           <table>
             <colgroup>
-              <col width="5%">
+              <col width="7%">
               <col width="15%">
               <col width="13%">
               <col width="13%">
@@ -133,14 +133,10 @@
             </colgroup>
             <thead>
               <tr>
-                <td :class="{trActive:checkAll}" title="序号" @click.self="selectAll">
+                <td :class="{trActive:checkAll}" @click.self="selectAll">
                   <el-checkbox v-model="checkAll" @change="handleCheckAll">序号</el-checkbox>
                 </td>
-                <td
-                  v-for="(item,index) in tableHeader"
-                  :key="index"
-                  :title="item.label"
-                >{{item.label}}</td>
+                <td v-for="(item,index) in tableHeader" :key="index">{{item.label}}</td>
               </tr>
             </thead>
           </table>
@@ -148,7 +144,7 @@
         <div class="tableBody">
           <table v-if="tableData.length">
             <colgroup>
-              <col width="5%">
+              <col width="7%">
               <col width="15%">
               <col width="13%">
               <col width="13%">
@@ -259,7 +255,7 @@
       </div>
     </div>
     <!-- 支付单查看 -->
-    <pay-list :data="payListData"></pay-list>
+    <pay-list v-if="payListData.openDialog" :data="payListData"></pay-list>
     <!-- 合并支付 -->
     <merge-pay v-if="mergePayData.openDialog" :data="mergePayData"></merge-pay>
     <!-- 异常处理 -->
@@ -668,9 +664,6 @@ export default {
                 content: '请选择一条数据进行维护。',
                 fn: () => {}
               })
-              this.tableData.forEach(item => {
-                item.Mst.checked = false
-              })
               return
             } else if (
               handleitem[0].Mst.FApproval == 0 ||
@@ -684,9 +677,6 @@ export default {
                     ? '单据正在审批中。'
                     : '单据已经审批通过。',
                 fn: () => {}
-              })
-              this.tableData.forEach(item => {
-                item.Mst.checked = false
               })
               return
             }
@@ -702,9 +692,6 @@ export default {
                   "只有审批状态为“<span class='dangerText'>审批通过</span>”，支付状态为“<span class='dangerText'>待支付</span>”的单据，才可以使用【合并支付】。",
                 fn: () => {}
               })
-              this.tableData.forEach(item => {
-                item.Mst.checked = false
-              })
               return
             }
             break
@@ -715,9 +702,7 @@ export default {
               })
             ) {
               this.$msgBox.error('只能对支付异常和支付中的单据进行处理。')
-              this.tableData.forEach(item => {
-                item.Mst.checked = false
-              })
+
               return
             } else if (
               handleitem.some(item => {
@@ -725,9 +710,6 @@ export default {
               })
             ) {
               this.$msgBox.error('只能对未重新支付的单据进行处理。')
-              this.tableData.forEach(item => {
-                item.Mst.checked = false
-              })
               return
             }
             break
@@ -738,9 +720,6 @@ export default {
               })
             ) {
               this.$msgBox.error('只能对待送审的单据进行处理。')
-              this.tableData.forEach(item => {
-                item.Mst.checked = false
-              })
               return
             }
             if (
@@ -753,10 +732,7 @@ export default {
                 )
               })
             ) {
-              this.$msgBox.error('请先完善数据信息')
-              this.tableData.forEach(item => {
-                item.Mst.checked = false
-              })
+              this.$msgBox.error('请先维护收付款信息！')
               return
             }
             break
@@ -943,6 +919,7 @@ export default {
     }
     .el-date-editor {
       padding: 3px 0;
+      position: relative;
       .el-input__icon.el-range__icon.el-icon-time {
         display: none;
       }
@@ -971,5 +948,17 @@ export default {
       color: #c0c4cc;
     }
   }
+  p.el-tooltip {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+}
+.payCenter .el-dialog__body {
+  padding-top: 0px;
+}
+.el-tooltip__popper > span {
+  display: inline-block;
+  max-width: 300px;
 }
 </style>

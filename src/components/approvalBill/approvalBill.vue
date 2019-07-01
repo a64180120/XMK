@@ -90,6 +90,7 @@
               @select="handleSelect"
               @select-all="handleSelectAll"
               :header-row-class-name="headerRowClass"
+              max-height="130px"
             >
               <el-table-column type="selection" width="30"></el-table-column>
               <el-table-column prop="OperatorCode" align="center" label="操作员编码"></el-table-column>
