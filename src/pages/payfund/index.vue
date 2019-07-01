@@ -238,7 +238,7 @@
                   <p>{{(item.FDate.substring(0,19)).replace('T',' ')}}</p>
                 </el-tooltip>
               </td>
-              <td class="atype" @click="openAuditfollow(item,index)">
+              <td class="atype" @click.stop="openAuditfollow(item,index)">
                 <el-tooltip :content="spTypeList[item.FApproval]" popper-class="tooltipCla" placement="bottom-start">
                   <p>{{spTypeList[item.FApproval]}}</p>
                 </el-tooltip>
@@ -344,7 +344,7 @@
     <!--生成支付单-->
     <approval-dialog v-if="approvalData.openDialog" ref="approvalDialog" :title="appDialog.title" :btn-group="appDialog.btnGroup" :data="approvalData" ></approval-dialog>
     <!--查看审批流程-->
-    <auditfollow v-if="visible" :visible="visible" @update:visible="closeAuditFollow()" :auditMsg="auditMsg" ></auditfollow>
+    <auditfollow  :visible.sync="visible" :auditMsg="auditMsg" ></auditfollow>
   </div>
 </template>
 

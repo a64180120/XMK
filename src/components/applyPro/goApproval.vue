@@ -90,7 +90,7 @@
     </el-dialog>
     <el-dialog
       :visible.sync="uploadDialog"
-      width="410px"
+      width="auto"
       :close-on-click-modal="false"
       class=""
       :append-to-body="true">
