@@ -23,11 +23,16 @@
             <div class="topIcon"><img src="@/assets/images/sc.png" alt=""></div><!-- @click="creatPayItem()"-->
             生成支付单
           </div>
+          <div @click.stop="printTables" class="handle" style="width: 80px;">
+            <div class="topIcon"><img src="@/assets/images/dy.png" alt=""></div><!-- @click="creatPayItem()"-->
+            打印
+          </div>
 
           <!--<div class="nav" @click="payNav('approvalData')">送审</div>-->
         </div>
       </tophandle>
     </div>
+
     <div class="container">
       <div class="formArea">
         <div class="btnArea">
@@ -197,7 +202,7 @@
           </table>
         </div>
         <div class="tableBody">
-          <table>
+          <table ref="printArea">
             <colgroup>
               <col width="7%">
               <col width="13%">
@@ -354,6 +359,7 @@
   import Auditfollow from "../../components/auditFollow/auditfollow";
   import ApprovalDialog from "../payfundapproval/approvalDialog";
   import {mapState} from 'vuex'
+  import {printTable}  from '@/api/upload'
     export default {
         name: "index",
       data(){
@@ -460,6 +466,10 @@
         })
       },
       methods:{
+        printTables:function(){
+          let vm = this;
+          printTable(vm);
+        },
         clearZero:function(type){
           console.log(this.money.smoney)
 
@@ -983,7 +993,8 @@
             this.money.emoney=this.money.smoney;
           }
           this.getData();
-        }
+        },
+
       }
     }
 </script>

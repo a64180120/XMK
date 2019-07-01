@@ -44,7 +44,7 @@
       <template v-else>
         <li>
           <i class="logo"></i>
-          <span>审批岗位:{{info.PostName}}（{{info.FMode?'会签':'非会签'}}）</span>
+          <span>审批岗位:{{info.PostName}}（{{info.IsMode?'会签':'非会签'}}）</span>
           <em>{{index}}</em>
         </li>
         <!-- <li>

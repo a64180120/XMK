@@ -15,6 +15,7 @@ import axios from './utils/axios_new'
 // import xmMessage from '@/components/message'
 import MessageBox from './components/messageDialog'
 import '@/assets/css/font/index.less'
+import Print from '@/plugins/printJS/print'//打印
 Vue.config.productionTip = false
 
 //完整引入element-ui
@@ -24,6 +25,8 @@ Vue.use(ajax)
 Vue.use(MessageBox)
 // 注册组件到Vue
 Vue.prototype.$axios = axios
+// 注册打印
+Vue.use(Print)
 
 // 注入到根实例中
 /* eslint-disable no-new */

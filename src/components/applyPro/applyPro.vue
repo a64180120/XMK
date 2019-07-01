@@ -13,36 +13,47 @@
       </el-row>
       <el-row :gutter="20">
          <el-col :span="24">
+           <el-card class="payText">
+             <!--<div slot="header" style="padding: 0 10px;text-align: left;background-color: transparent;border: 1px solid #9acefb">
+              <span>
+                  基本信息
+              </span>
+             </div>-->
+             <div style="margin: 0 14px">
+               <div style="border-bottom: 1px solid rgb(154, 206, 251);text-align: left;font-size: .2rem;margin: 14px 0;padding-top: 4px;padding-bottom: 7px;color: #3294e8;"> 基本信息</div>
                <table class="proTab">
                  <colgroup>
-                   <col width="15%" />
-                   <col width="35%" />
-                   <col width="15%" />
-                   <col width="35%" />
+                   <col width="5%" />
+                   <col width="45%" />
+                   <col width="5%" />
+                   <col width="45%" />
                  </colgroup>
                  <tr>
-                   <td>申请单名称</td>
-                   <td colspan="3"><el-input placeholder="30字以内" maxlength="30" v-model="PaymentMst.FName"></el-input></td>
+                   <td class="right" style="padding-right: 20px">申请单名称:</td>
+                   <td class="left" colspan="3" style="border-bottom: 1px solid #9acefb;"><el-input placeholder="30字以内" maxlength="30" show-word-limit v-model="PaymentMst.FName"></el-input></td>
                  </tr>
                  <tr>
-                   <td>申报部门:</td>
-                   <td>
+                   <td class="right"style="padding-right: 20px">申报部门:</td>
+                   <td class="left" style="border-bottom: 1px solid #9acefb">
                      <el-tooltip :content="PaymentMst.FOrgname&&PaymentMst.FDepname?PaymentMst.FOrgname+'-'+PaymentMst.FDepname:''" popper-class="tooltipCla" placement="bottom-start">
                        <p>{{PaymentMst.FOrgname&&PaymentMst.FDepname?PaymentMst.FOrgname+'-'+PaymentMst.FDepname:''}}</p>
                      </el-tooltip>
                    </td>
-                   <td>金额合计:</td>
-                   <td>
+
+                   <td class="right" style="border-bottom: 1px solid #fff;min-width: 100px">金额合计:</td>
+                   <td class="left" style="border-bottom:1px solid #9acefb;overflow: hidden">
                      <el-tooltip :content="PaymentMst.FAmountTotal | NumFormat" popper-class="tooltipCla" placement="bottom-start">
                        <p>{{PaymentMst.FAmountTotal | NumFormat}}</p>
                      </el-tooltip>
                    </td>
                  </tr>
                  <tr>
-                   <td>申报说明</td>
-                   <td colspan="3"><el-input type="textarea" placeholder="100字以内" resize="none" maxlength="100" show-word-limit v-model="PaymentMst.FDescribe"></el-input></td>
+                   <td class="right" style="padding-right: 20px">申报说明:</td>
+                   <td colspan="3" style="border-bottom: 1px solid #9acefb"><el-input placeholder="100字以内"  resize="none" maxlength="100" show-word-limit v-model="PaymentMst.FDescribe"></el-input></td>
                  </tr>
                </table>
+             </div>
+           </el-card>
          </el-col>
       </el-row>
       <el-row class="content" :gutter="10">
@@ -216,16 +227,7 @@
                    :backPersonnel="backPersonnel"
                    ref="approval"
                    v-model="textare"></approval-bill>-->
-    <!--附件查看-->
-    <el-dialog class="dialog img-dialog" :visible.sync="dialogVisible" :append-to-body="true" :close-on-click-modal="false" width="40%">
-      <div slot="title" class="dialog-title">
-        <span style="float: left">查看附件</span>
-      </div>
-      <div class="btn-load">
-        <el-button class="btn">下载</el-button>
-      </div>
-      <img-view v-if="dialogVisible"></img-view>
-    </el-dialog>
+
     <!--附件上传-->
     <el-dialog :visible.sync="uploadVis" :append-to-body="true" width="410px" title="附件上传">
       <file-up v-if="uploadVis" :ind="choosedIndexAndPro" @succe="loadFile"></file-up>
@@ -334,7 +336,6 @@
         ],
         xmCheckList:[false],
         choosedIndexAndPro:{index:0,pro:{}},
-
       }
     },
     computed: {
@@ -1106,10 +1107,18 @@ table{
     overflow: hidden;
     text-overflow: ellipsis;
   }
+  .proTab td{
+    border: none;
+    height: 40px;
+    line-height: 40px;
+    min-width: 125px;
+  }
 </style>
 <style>
   .proTab .el-textarea__inner,.proTab .el-input__inner{
     border: none;
+    padding: 0;
+    height: 40px;
   }
   #delDialog .el-dialog__footer{
     text-align: center;

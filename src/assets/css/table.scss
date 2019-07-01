@@ -170,6 +170,7 @@ table .left {
   font-size: 0.2rem;
   color: #58a5e6;
   opacity: 0.5;
+  cursor: pointer;
 }
 .btnArea i:hover {
   opacity: 1;
@@ -206,7 +207,42 @@ table .left {
   width: 20px;
   height: 20px;
   background-repeat: no-repeat;
-  background-image: url("../images/hxz.png");
+  background-image: url("../images/hxz_w.png");
   background-size: cover;
   vertical-align: middle;
+}
+
+/*打印样式*/
+@page {
+  size: A4 landscape;
+  margin: 10px;
+}
+.print td{
+  padding: 10px!important; ;
+}
+.print td .el-checkbox .el-checkbox__inner{
+  display: none;
+}
+.print thead{
+  margin-top: 10px;
+}
+.print thead td{
+  background-color: $listHeader;
+  font-size: 0.15rem;
+  color: #333;
+  border: 1px solid #eaeaea;
+  text-align: center!important;
+}
+
+.print tbody td{
+  border: 1px solid #eaeaea;
+}
+.print tbody td:nth-of-type(1){
+  text-align: center!important;
+}
+::-ms-clear {
+  display: none;
+}
+::-ms-reveal {
+  display:  none;
 }
