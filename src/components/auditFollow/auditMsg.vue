@@ -7,14 +7,13 @@
           <span v-if="info.JudgeRefer === 1">发起人:</span>
           <span v-else-if="info.JudgeRefer === 0 && info.OperaName != null">审批人:</span>
           <span v-else-if="info.JudgeRefer === 2 && info.OperaName != null">支付人:</span>
-          <span v-else>审批岗位:</span>
+          <span v-else>审批岗位<span v-if="index==nowNum">(当前)</span>:</span>
           <em>{{startNum +index}}</em>
-<!--          <img style="width: 30px;position: absolute;top:50px;left: -48px" src="../../assets/images/spr1.png">-->
-<!--          <i v-if="index===3" style="width: 30px;position: absolute;top:50px;left: -48px;font-size: 0.24rem;color: #0ee6d4" class="el-icon-right"></i>-->
         </li>
         <li>{{info.OperaName?info.OperaName:info.PostName}}</li>
         <li>{{info.JudgeRefer === 1?info.FSendDate:info.FDate}}</li>
-        <li v-if="info.JudgeRefer !== 2">意见：{{info.FOpinion}}</li>
+        <li v-if="info.JudgeRefer !== 1 && (info.FApproval ===9 ||info.FApproval ===2) ">意见：<span>{{info.FApproval ===2?'未同意':'已同意'}}</span></li>
+        <li v-if="info.JudgeRefer !== 2">备注：{{info.FOpinion}}</li>
         <li v-if="info.JudgeRefer !== 2">
           附件:
           <span @click.stop="showAttech" v-if="info.QtAttachments ===null" class="attenchment">无</span>
@@ -76,6 +75,10 @@ export default {
     isApproval: {
       default: false,
       type: Boolean
+    },
+    nowNum:{
+      type:Number,
+      default:-1
     }
   },
   data() {
@@ -124,12 +127,12 @@ export default {
           width: 30px;
           height: 30px;
           top: 0;
-          left: -38px;
+          left: -36px;
           border: 2px solid $btnColor;
           border-radius: 50%;
           background: #fff;
           text-align: center;
-          line-height: 30px;
+          line-height: 28px;
           font-size: 0.18rem;
           color:$btnColor ;
         }

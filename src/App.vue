@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="app" @click="closeAuditFollow()">
     <!--<img src="./assets/logo.png">-->
     <router-view></router-view>
   </div>
@@ -23,7 +23,8 @@ export default {
   },
   computed: {
     ...mapState({
-      isLogin: state => state.isLogin
+      isLogin: state => state.isLogin,
+      auditfollow: state => state.auditfollow.auditfollow
     })
   },
    
@@ -82,6 +83,11 @@ export default {
       }).catch(err => {
           this.$msgBox.show('获取用户组织数据失败!');
       })
+    },
+    //点击其他地方关闭审批流程
+    closeAuditFollow(){
+      this.$store.commit('setAuditfollow',true)
+      console.log(this.auditfollow)
     }
   },  
 };

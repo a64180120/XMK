@@ -94,6 +94,7 @@ function apiAxios(method, url, params, hastimeout) {
   }
   // 注意**Promise**使用(Promise首字母大写)
   return new Promise((resolve, reject) => {
+
     axios(httpDefault)
       .then(res => {
         resolve(res)

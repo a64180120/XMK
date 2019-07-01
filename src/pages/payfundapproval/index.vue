@@ -84,7 +84,7 @@
                   申请单名称
                 </td>
                 <td>
-                  申请金额
+                  申请金额(元)
                 </td>
                 <td>
                   申请日期
@@ -127,7 +127,7 @@
                     </p>
                   </el-tooltip>
                 </td>
-                <td @click.stop="handleCellClick(item,idx)" class="apply-epart cell-click">
+                <td @click="handleCellClick(item,idx)" class="apply-epart cell-click">
                   {{item.BNum}}
                 </td>
                 <td>
@@ -211,7 +211,7 @@
                   申请单名称
                 </td>
                 <td>
-                  申请金额
+                  申请金额(元)
                 </td>
                 <td>
                   申请日期

@@ -1,5 +1,5 @@
 <template>
-  <div v-show="visible" style="z-index: 3000;overflow: auto" class="auditfollow msFixed">
+  <div @click.stop="keepInputFocus()" v-show="visible"  style="z-index: 3000;overflow: auto" class="auditfollow msFixed">
     <div class="follow-body">
       <p class="title">
         <span>{{title}}</span>
@@ -12,7 +12,7 @@
           <ul class="pay-fund">
             <li></li>
             <li class="msg" v-for="(item,index) of payfundData" :key="index" >
-                <audit-msg class="payfund" v-bind="$attrs" v-on="$listeners" :info="item" :index="index+1" :startNum="payfundStartNum" @imgList="getImgList"></audit-msg>
+                <audit-msg class="payfund" :nowNum="inPayfund?nowNum:-1" v-bind="$attrs" v-on="$listeners" :info="item" :index="index+1" :startNum="payfundStartNum" @imgList="getImgList"></audit-msg>
             </li>
           </ul>
         </div>
@@ -22,10 +22,23 @@
           <!--支付单-->
           <ul class="pay-list" v-if="paylistData.length !==0">
             <li></li>
-            <li class="msg" v-for="(item,index) of paylistData" :key="index" >
-              <audit-msg class="paylist" v-bind="$attrs" v-on="$listeners" :info="item" :index="index+1" :startNum="paylistStartNum"  @imgList="getImgList"></audit-msg>
-
+            <li class="msg" v-for="(item,index) of paylistData" :key="index" :style="{'marginBottom':index == paylistData.length-1?'50px':'0'}">
+              <div style="width: 90%">
+                <audit-msg class="paylist" :nowNum="inPaylist?nowNum:-1" v-bind="$attrs" v-on="$listeners" :info="item" :index="index+1" :startNum="paylistStartNum"  @imgList="getImgList"></audit-msg>
+              </div>
+              <!--标记是否是会签的左边线-->
+              <div v-if="item.IsMode =='1'">
+                <!--判断第一个会签模式第一个-->
+                <div v-if="paylistData[index-1].IsMode != '1' && paylistData[index].IsMode == '1'" class="modeTop">
+                  <span class="hqms">会<br/>签<br/>模<br/>式</span>
+                </div>
+                <!--判断会签模式最后一个且非paylistData的最后一个-->
+                <div v-if="paylistData[index+1] &&paylistData[index+1].IsMode != '1' && paylistData[index].IsMode == '1'" class="modeBottom"></div>
+                <!--会签模式右边的竖线，最后一个加上border-bottom-->
+                <div :class="[index ==paylistData.length-1?'lastMode':'IsMode']" ></div>
+              </div>
             </li>
+            <li></li>
           </ul>
         </div>
       </div>
@@ -48,6 +61,7 @@
 import auditMsg from './auditMsg'
 import ImgView from "../imgView/imgView";
 import { baseURL } from "@/utils/config.js";
+import { mapState } from "vuex";
 export default {
   name: 'auditfollow',
   props: {
@@ -77,25 +91,62 @@ export default {
       payfundStartNum:0,
       paylistStartNum:0,
       payfundClass:false,//资金拨付移入移出类名
-      paylistClass:false//支付单移入移出类名
+      paylistClass:false,//支付单移入移出类名
+      inPayfund:false,//下一审批在资金拨付流程中
+      inPaylist:false,//下一审批在支付单流程中
+      nowNum:-1//下一审批所在位置
     }
   },
   watch: {
     auditMsg: {
       handler(val) {
-        console.log(val)
-        console.log(val.map(item => item.FApproval).indexOf(1))
+        this.nowNum = -1
         this.payfundData = val.filter(item =>item.FBilltype === '001');
         this.paylistData = val.filter(item =>item.FBilltype === '002');
-        this.paylistStartNum = this.payfundData.length
-        console.log(this.payfundLenght)
+        this.paylistStartNum = this.payfundData.length;
+        for (let key in val){
+          if (val[key].FApproval ===1){
+            if (val[key].FBilltype ==='001') {
+              this.inPayfund = true;
+              this.inPaylist = false;
+              this.nowNum = parseInt(key)+1
+              break
+            }else if(val[key].FBilltype ==='002'){
+              this.inPayfund = false;
+              this.inPaylist = true;
+              this.nowNum = parseInt(key)+1 - parseInt(this.paylistStartNum)
+              break
+            }
+            console.log(this.nowNum)
+          }
+        }
+        // console.log(this.nowNum)
+        for (let key in val){
+
+        }
       },
       deep: true
+    },
+    auditfollow(val){
+      if (val){
+        this.$emit('update:visible', false)
+        this.$store.commit('setAuditfollow',false)
+      }
     }
+  },
+  computed: {
+    ...mapState({
+      isLogin: state => state.isLogin,
+      auditfollow: state => state.auditfollow.auditfollow
+    })
+  },
+  mounted(){
+    this.$store.commit('setAuditfollow',false)
   },
   methods: {
     close() {
       this.$emit('update:visible', false)
+      this.$store.commit('setAuditfollow',false)
     },
     //通过审批流获取图片列表
     getImgList(imgList){
@@ -133,6 +184,13 @@ export default {
     //支付单鼠标移出事件
     paylistLeave(){
       this.paylistClass = false
+    },
+    keepInputFocus(){
+      this.$store.commit('setAuditfollow',false)
+      console.log(this.auditfollow)
+    },
+    keepDialog(){
+
     }
   },
   components: {
@@ -147,7 +205,7 @@ export default {
   right: 0;
   top: 0;
   bottom: 0;
-  width: 240px;
+  width: 310px;
   background: #fff;
   box-shadow: 0px 1px 9px #1b4a7394;
   >.follow-body{
@@ -161,7 +219,7 @@ export default {
       background: $primaryColor;
       position: fixed;
       z-index: 3500;
-      width: 240px;
+      width: 310px;
       > i {
         position: absolute;
         width: 30px;
@@ -194,16 +252,18 @@ export default {
           padding-left: 30px;
           margin-right: -27px;
           > li {
-            border-left: 1px solid $btnColor;
+            width: 220px;
+            border-left: 2px solid $btnColor;
             &:first-of-type {
               height: 50px;
             }
             &:last-of-type {
-              height: 150px;
+              padding-bottom: 0px;
             }
           }
           .msg {
             padding-bottom: 40px;
+            position: relative;
           }
         }
       }
@@ -224,17 +284,65 @@ export default {
   .paylist >>> ul li em{
       /*color: red !important;*/
   }
-  /*.payfundHover .pay-fund li{*/
-  /*  border-left: 1px solid #0ee6d4 !important;*/
-  /*  border-right: 1px solid #0ee6d4 !important;*/
-  /*}*/
-  /*.payfundHover .pay-fund li .payfund >>> ul li em{*/
-  /*  color: #0ee6d4 ;*/
-  /*}*/
-  /*.paylistHover .pay-list li{*/
-  /*  border-left: 1px solid #0ee6d4 !important;*/
-  /*}*/
-  /*.paylistHover .pay-list li .paylist >>> ul li em{*/
-  /*  color: #0ee6d4 ;*/
-  /*}*/
+  .payfundHover .pay-fund li{
+    border-left: 2px solid #f99807 !important;
+  }
+  .IsMode{
+    width: 10px;
+    height: 100%;
+    border-right: 2px solid red;
+    /*border-bottom: 2px solid red;*/
+    /*background-color: red;*/
+    position: absolute;
+    right: 0;
+    top: 0;
+    display: inline-block;
+    /*border-bottom: 1px solid #0ee6d4 !important;*/
+  }
+  .lastMode{
+    width: 10px;
+    height: 100%;
+    border-right: 2px solid red;
+    border-bottom: 2px solid red;
+    position: absolute;
+    right: 0;
+    top: 0;
+    display: inline-block;
+  }
+  .modeTop{
+    border-top: 2px solid red;
+    width: 10px;
+    height: 100%;
+    position: absolute;
+    right: 0;
+    top: 0;
+    display: inline-block;
+  }
+  .hqms{
+    background-color: #ffffff;
+    position: absolute;
+    z-index: 1;
+    left: -1px;
+    top: 25px;
+  }
+  .modeBottom{
+    border-bottom: 2px solid red;
+    width: 10px;
+    height: 100%;
+    position: absolute;
+    right: 0;
+    top: 0;
+    display: inline-block;
+  }
+  .payfundHover .pay-fund li .payfund >>> ul li em{
+    color:#f99807 ;
+    border: 2px solid #f99807;
+  }
+  .paylistHover .pay-list li{
+    border-left: 2px solid #f99807 !important;
+  }
+  .paylistHover .pay-list li .paylist >>> ul li em{
+    border: 2px solid #f99807;
+    color: #f99807 ;
+  }
 </style>
