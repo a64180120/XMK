@@ -229,7 +229,7 @@
                    v-model="textare"></approval-bill>-->
 
     <!--附件上传-->
-    <el-dialog :visible.sync="uploadVis" :append-to-body="true" width="410px" title="附件上传">
+    <el-dialog :visible.sync="uploadVis" :append-to-body="true" width="auto" title="附件上传">
       <file-up v-if="uploadVis" :ind="choosedIndexAndPro" @succe="loadFile"></file-up>
     </el-dialog>
   </section>
