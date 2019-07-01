@@ -23,6 +23,7 @@
               <span>
                 附单据 {{fileCount}} 张
                 <i class="el-icon-paperclip show-upload" @click="showUpload"></i>
+<!--                <img style="" src="../../assets/images/hxz.png">-->
               </span>
             </li>
           </ul>
