@@ -66,7 +66,7 @@
                     collapse-tags
                     v-model="type"
                     placeholder="请选择"
-                    size="mini"
+                    size="small"
                   >
                     <el-option
                       v-for="item in typeList"
@@ -84,7 +84,7 @@
                     v-model="status"
                     multiple
                     placeholder="请选择"
-                    size="mini"
+                   size="small"
                     @visible-change="statusBlur"
                     @remove-tag="getData"
                   >
@@ -128,82 +128,6 @@
           <label class="searchArea" style="float: right">
             <search-input placeholder="支付单编号/申请单编号" v-model="search" @btnClick="getData"></search-input>
           </label>
-          <!-- <div class="selects">
-            <div ref="selectsContainer" style="transform:translateX(0)">
-              <div class="tab">
-                <span>支付单据</span>
-                <el-select
-                  @change="selectType"
-                  collapse-tags
-                  v-model="type"
-                  placeholder="请选择"
-                  size="mini"
-                  style="width:110px"
-                >
-                  <el-option
-                    v-for="item in typeList"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
-                  ></el-option>
-                </el-select>
-              </div>
-              <div class="tab">
-                <span>支付状态</span>
-                <el-select
-                  @change="selectStatus"
-                  collapse-tags
-                  v-model="status"
-                  multiple
-                  placeholder="请选择"
-                  size="mini"
-                  @visible-change="statusBlur"
-                >
-                  <el-option
-                    v-for="item in statusList"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
-                  ></el-option>
-                </el-select>
-              </div>
-              <div class="tab">
-                <span>申报日期</span>
-                <el-date-picker
-                  v-model="sbrq"
-                  type="datetimerange"
-                  range-separator="至"
-                  start-placeholder="开始日期"
-                  end-placeholder="结束日期"
-                  size="mini"
-                  class="large-input"
-                  value-format="yyyy-MM-dd HH:mm:ss"
-                  @change="getData"
-                ></el-date-picker>
-              </div>
-              <div class="tab">
-                <span>支付日期</span>
-                <el-date-picker
-                  v-model="zfrq"
-                  type="datetimerange"
-                  range-separator="至"
-                  start-placeholder="开始日期"
-                  end-placeholder="结束日期"
-                  size="mini"
-                  class="large-input"
-                  @change="getData"
-                  value-format="yyyy-MM-dd HH:mm:ss"
-                ></el-date-picker>
-              </div>
-            </div>
-            <i class="el-icon-d-arrow-left"></i>
-            <i class="el-icon-d-arrow-right"></i>
-          </div>
-          <div class="btns">
-            <div class="search">
-              <search-input placeholder="支付单编号/申请单编号" v-model="search" @btnClick="getData"></search-input>
-            </div>
-          </div>-->
         </div>
         <div class="tableHead" style="margin-top:10px;">
           <table>
@@ -907,6 +831,10 @@ export default {
     position: absolute;
     left: 0;
   }
+  .el-input__inner.el-date-editor--datetimerange.el-range-editor--small{
+    position:relative;
+    top:1px;
+  }
   .el-checkbox,
   .el-checkbox__input.is-checked + .el-checkbox__label,
   .el-checkbox-button__inner {
@@ -945,4 +873,8 @@ export default {
   display: inline-block;
   max-width: 300px;
 }
+.el-input__inner{
+    vertical-align: middle;
+    line-height: 30px;
+  }
 </style>
