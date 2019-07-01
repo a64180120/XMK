@@ -21,6 +21,7 @@
                        :approvalFollow="approvalFollow"
                        :nextApprovaler="nextApprovaler"
                        :backPersonnel="backPersonnel"
+                       :FMode="nextData"
                         ref="approval"
                         v-model="textare"
                        :file-count="fileCount"></approval-bill>
@@ -30,7 +31,7 @@
         </div>
         <el-dialog
           :visible.sync="uploadDialog"
-          width="410px"
+          width="auto"
           :close-on-click-modal="false"
           class=""
           :append-to-body="true">
@@ -69,6 +70,7 @@
             handleValue:'',
             approvalFollow:[],
             nextApprovaler:[],//左边下一审批人信息，绑定表格
+            nextData:0,
             backPersonnel:[],//回退审批人集合
             backData:[],//回退的审批人岗位集合
             backPost:[],//获取回退的审批人岗位
@@ -106,6 +108,7 @@
             if (res && res.Status === 'success'){
               this.$set(this.approvalFollow,0,res.Process);
               this.nextApprovaler = res.AppvalPost.Operators;
+              this.nextData = res.AppvalPost.FMode
               console.log(res)
             }else {
               let that = this

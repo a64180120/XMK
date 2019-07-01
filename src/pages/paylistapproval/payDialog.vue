@@ -20,6 +20,7 @@
                      :approvalFollow="approvalFollow"
                      :nextApprovaler="nextApprovaler"
                      :backPersonnel="backPersonnel"
+                     :FMode="FMode"
                      ref="approval"
                      :file-count="fileCount"
                      v-model="textare"></approval-bill>
@@ -75,7 +76,8 @@
         isAgree:'', //保存是否同意审批
         operatorID:[], //操作人员集合
         fileList:[],//文件列表
-        fileCount:0
+        fileCount:0,
+        FMode:0
 
       }
     },
@@ -97,6 +99,7 @@
           if (success && success.Status === 'success'){
             this.$set(this.approvalFollow,0,success.Process);
             this.nextApprovaler = success.AppvalPost.Operators;
+            this.FMode = success.AppvalPost.FMode;
             console.log(success)
           }else {
             let that = this

@@ -152,7 +152,7 @@ export default {
     getImgList(imgList){
       if (this.imgList.length !== 0){
         for (let key in this.imgList){
-          this.imgList.splice(key,1)
+          this.imgList = []
         }
       }
       this.imgDialog= false

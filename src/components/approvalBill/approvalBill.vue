@@ -85,13 +85,14 @@
           <div class="table">
             <el-table
               v-if="nextApprovaler !== []"
+              ref="nextApprovaler"
               class="table-next"
               :data="nextApprovaler"
               :border="true"
               @select="handleSelect"
               @select-all="handleSelectAll"
               :header-row-class-name="headerRowClass"
-              max-height="130px"
+              height="110px"
             >
               <el-table-column type="selection" width="30"></el-table-column>
               <el-table-column prop="OperatorCode" align="center" label="操作员编码"></el-table-column>
@@ -164,6 +165,10 @@ export default {
     upload: {
       type: Boolean,
       default: false
+    },
+    FMode:{
+      type:Number,
+      default:0
     }
   },
   data() {
@@ -205,7 +210,18 @@ export default {
       } else {
         this.$emit('isArgeen', true)
       }
+    },
+    FMode(val){
+      debugger
+      if (val == 1){
+        this.$nextTick(()=>{
+          this.$refs.nextApprovaler.toggleAllSelection()
+        })
+      }
     }
+  },
+  mounted(){
+
   },
   methods: {
     showUpload() {
