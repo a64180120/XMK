@@ -1,24 +1,39 @@
 <template>
   <div class="auditMsg">
-    <ul :class="[info.FApproval=='9'?'oxford-gray':(info.FApproval=='0'?'light-gray':(info.FApproval=='1'?'blue':'red'))]">
+    <ul
+      :class="[info.FApproval=='9'?'oxford-gray':(info.FApproval=='0'?'light-gray':(info.FApproval=='1'?'blue':'red'))]"
+    >
       <template v-if="!isApproval">
         <li>
-          <i :class="[info.FApproval=='9'?'logo-sptg':(info.FApproval=='0'?'logo-wsp':(info.FApproval=='1'?'logo-spz':'logo-wtg'))]"></i>
+          <i
+            :class="[info.FApproval=='9'?'logo-sptg':(info.FApproval=='0'?'logo-wsp':(info.FApproval=='1'?'logo-spz':'logo-wtg'))]"
+          ></i>
           <span v-if="info.JudgeRefer === 1">发起人:</span>
           <span v-else-if="info.JudgeRefer === 0 && info.OperaName != null">审批人:</span>
           <span v-else-if="info.JudgeRefer === 2 && info.OperaName != null">支付人:</span>
-          <span v-else>审批岗位<span v-if="index==nowNum">(当前)</span>:</span>
+          <span v-else>
+            审批岗位
+            <span v-if="index==nowNum">(当前)</span>:
+          </span>
           <em>{{startNum +index}}</em>
         </li>
         <li>{{info.OperaName?info.OperaName:info.PostName}}</li>
         <li>{{info.JudgeRefer === 1?info.FSendDate:info.FDate}}</li>
-        <li v-if="info.JudgeRefer !== 1 && (info.FApproval ===9 ||info.FApproval ===2) ">意见：<span>{{info.FApproval ===2?'未同意':'已同意'}}</span></li>
+        <li v-if="info.JudgeRefer !== 1 && (info.FApproval ===9 ||info.FApproval ===2) ">
+          意见：
+          <span>{{info.FApproval ===2?'未同意':'已同意'}}</span>
+        </li>
         <li v-if="info.JudgeRefer !== 2">备注：{{info.FOpinion}}</li>
         <li v-if="info.JudgeRefer !== 2">
           附件:
           <span @click.stop="showAttech" v-if="info.QtAttachments ===null" class="attenchment">无</span>
           <span v-else v-for="(item,idx) in info.QtAttachments">
-            <span @click.stop="showAttech(info.QtAttachments)" class="attenchment" style="word-break: break-word">{{item.BName}}</span><span v-if="idx !==info.QtAttachments.length-1">、</span>
+            <span
+              @click.stop="showAttech(info.QtAttachments)"
+              class="attenchment"
+              style="word-break: break-word"
+            >{{item.BName}}</span>
+            <span v-if="idx !==info.QtAttachments.length-1">、</span>
           </span>
         </li>
         <li v-if="info.JudgeRefer === 2">
@@ -28,12 +43,12 @@
       <template v-else>
         <li>
           <i class="logo"></i>
-          <span>审批岗位:{{info.PostName}}</span>
+          <span>审批岗位:{{info.PostName}}（{{info.FMode?'会签':'非会签'}}）</span>
           <em>{{index}}</em>
         </li>
-        <li>
+        <!-- <li>
           <span>审批人:{{info.OperaName}}</span>
-        </li>
+        </li>-->
       </template>
     </ul>
     <el-dialog
@@ -76,9 +91,9 @@ export default {
       default: false,
       type: Boolean
     },
-    nowNum:{
-      type:Number,
-      default:-1
+    nowNum: {
+      type: Number,
+      default: -1
     }
   },
   data() {
@@ -89,7 +104,7 @@ export default {
   methods: {
     showAttech(val) {
       // this.dialogVisible = true
-      this.$emit('imgList',this.info.QtAttachments)
+      this.$emit('imgList', this.info.QtAttachments)
     }
   },
   components: {
@@ -134,7 +149,7 @@ export default {
           text-align: center;
           line-height: 28px;
           font-size: 0.18rem;
-          color:$btnColor ;
+          color: $btnColor;
         }
       }
     }
@@ -143,24 +158,24 @@ export default {
       cursor: pointer;
     }
   }
-  >.blue{
-    >li{
-      color: #3294E8;
+  > .blue {
+    > li {
+      color: #3294e8;
     }
   }
-  >.light-gray{
-    >li{
+  > .light-gray {
+    > li {
       color: #adadad;
     }
   }
-  >.oxford-gray{
-    >li{
-      color:#6f6c6c
+  > .oxford-gray {
+    > li {
+      color: #6f6c6c;
     }
   }
-  >.red{
-    >li{
-      color:#ec0c0c
+  > .red {
+    > li {
+      color: #ec0c0c;
     }
   }
 }
