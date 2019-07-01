@@ -257,11 +257,17 @@ export default {
     }
   },
   mounted() {
-    // 获取所有审批流程
-    getAppvalProc({
+    var data = {
       Orgid: this.orgid,
-      BType: this.bType
-    })
+      BType: this.bType,
+      BPhIds: JSON.stringify(
+        this.data.data.map(item => {
+          return item.Mst.PhId + ''
+        })
+      )
+    }
+    // 获取所有审批流程
+    getAppvalProc(data)
       .then(res => {
         if (res.Status == 'error') {
           this.$msgBox.error(res.Msg)

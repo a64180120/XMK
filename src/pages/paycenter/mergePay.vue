@@ -67,7 +67,6 @@
                 align="right"
                 label="待付金额（元）"
                 width="150"
-                class-name="pr15"
               >
                 <template slot-scope="scope">{{scope.row[scope.column.property] | NumFormat}}</template>
               </el-table-column>
@@ -749,6 +748,9 @@ export default {
 
 <style lang='scss'>
 .payCenter {
+  .el-table col.gutter {
+    display: table-cell !important;
+  }
   .el-checkbox,
   .el-checkbox__input.is-checked + .el-checkbox__label,
   .el-checkbox-button__inner {
