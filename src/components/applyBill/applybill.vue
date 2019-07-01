@@ -534,7 +534,7 @@ export default {
       text-align: left;
       > i {
         font-size: 0.2rem;
-        color: #91bff8;
+        color: #fff;
         width: 20px;
       }
 
