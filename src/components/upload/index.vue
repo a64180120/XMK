@@ -68,6 +68,7 @@
             },
 
             submit(){
+              this.picpreview='';
               this.$emit('submit',this.filelist)
               //this.filelist = []
                 // return this.filelist;
@@ -100,14 +101,17 @@
     }
     >div.preview:last-of-type{
         width:480px;
-        height:auto;
+        height:480px;
+        position: absolute;
+        top:-100px;
+        right:270px;
+        border:1px solid #eee;
+        background: #fff;
         img{
             width:100%;
-            height:auto;
-            position: absolute;
-            top:-100px;
-            right:270px;
-            border:1px solid #eee;
+            height:100%;
+            object-fit: contain;
+           
         }
     }
 }
@@ -117,7 +121,6 @@
 .fileHandle{
     display: inline-block;
     width:250px;
-    position:relative;
     height:100%;
     overflow-y: auto;
     >li{
@@ -127,13 +130,16 @@
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
+        position:relative;
+        padding-right:20px;
         &:hover{
             background:#eee;
         }
        
         >i{
-            float:right;
-            margin-top:8px;
+            position: absolute;
+            right:5px;
+            top:8px;
         }
     }
     
