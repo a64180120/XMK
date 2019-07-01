@@ -31,22 +31,25 @@
         >{{btnGroup.cancelName}}</el-button>
         <el-button size="small" type="primary" @click="submit">{{btnGroup.onfirmName}}</el-button>
       </div>
-      <auditfollow
-        :isApproval="true"
-        :auditMsg="auditMsg"
-        :visible="showAuditfollow"
-        @update:visible="closeAuditFollow()"
-      ></auditfollow>
       <el-dialog width="410px" append-to-body :visible.sync="upload">
         <upload ref="upload" @submit="uploadClose"/>
       </el-dialog>
+      <!-- <div
+        :class="{approvalfollow:true,show:showAuditfollow}"
+        :style="showAuditfollow?'height:'+(auditMsg.length*40+15)+'px':''"
+      >
+        <template v-for="(item,index) in auditMsg">
+          <auditmsg :info="item" :index="index+1" :isApproval="true"></auditmsg>
+        </template>
+      </div>-->
+      <approvalfollow :showAuditfollow="showAuditfollow" :auditMsg="auditMsg"></approvalfollow>
     </el-dialog>
   </section>
 </template>
 
 <script>
-import auditfollow from '../../components/auditFollow/auditfollow'
-import approvalBill from '../../components/approvalBill/approvalBill.vue'
+import approvalfollow from '@/components/applyPro/approvalFollow.vue'
+import approvalBill from '@/components/approvalBill/approvalBill.vue'
 import upload from '@/components/upload'
 import {
   getAppvalProc,
@@ -58,7 +61,7 @@ import { testUpload, PostUploadFile } from '@/api/upload'
 import { mapState } from 'vuex'
 export default {
   name: 'goApproval',
-  components: { auditfollow, approvalBill, upload },
+  components: { approvalfollow, approvalBill, upload },
   props: {
     data: {
       type: Object,
@@ -158,12 +161,12 @@ export default {
             item.FBilltype = '002'
           })
           this.auditMsg = res
+          this.showAuditfollow = true
         })
         .catch(err => {
           console.log(err)
           this.$msgBox.error('获取审批流程信息失败！')
         })
-      this.showAuditfollow = true
     },
     //取消
     cancel() {

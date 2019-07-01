@@ -85,8 +85,6 @@
         handleRemove(file,fileList){
           let param={BUrlPath:file.url};
           this.postAxios('GQT/QtAttachmentApi/PostDeleteFile',param).then(res=>{
-            console.log(res);
-            console.log(this.filelist);
             for(var i in this.filelist){
               if(this.filelist[i].url=file.url);
               this.filelist.splice(i,1);

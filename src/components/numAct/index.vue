@@ -1,7 +1,7 @@
 <template>
   <section>
     <div ref="number" class="wrap-container"></div>
-    <div>支出预算总额({{dw}})</div>
+    <div style="text-shadow: none">支出预算总额({{dw}})</div>
   </section>
 
 </template>

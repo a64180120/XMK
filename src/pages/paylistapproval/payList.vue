@@ -36,11 +36,21 @@
                 </li>
                 <li>
                   <span>付款账户：</span>
-                  <div>{{(accountList.length && account&&account!='0')?(accountList.find(item=>{return item.PhId == account})).FBankname:''}}</div>
+                  <div>
+                    <el-tooltip
+                      :content="(accountList.length && account&&account!='0')?(accountList.find(item=>{return item.PhId == account})).FBankname:''"
+                    >
+                      <span>{{(accountList.length && account&&account!='0')?(accountList.find(item=>{return item.PhId == account})).FBankname:''}}</span>
+                    </el-tooltip>
+                  </div>
                 </li>
                 <li>
                   <span>支付方式：</span>
-                  <div>{{payType}}</div>
+                  <div>
+                    <el-tooltip :content="payType">
+                      <span>{{payType}}</span>
+                    </el-tooltip>
+                  </div>
                 </li>
               </ul>
             </div>

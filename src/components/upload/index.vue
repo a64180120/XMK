@@ -69,7 +69,7 @@
 
             submit(){
               this.$emit('submit',this.filelist)
-              this.filelist = []
+              //this.filelist = []
                 // return this.filelist;
             },
             clear(index){  //清空文件列表
