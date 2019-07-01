@@ -105,7 +105,7 @@ export default {
           oldPassword:'',
             showSetting:true,
             newPasswordCanSee:false,
-            newPassword:'123456',
+            newPassword:'',
             confirmPasswordCanSee:false,
             confirmPassword:'',
             radio:0,
