@@ -313,7 +313,7 @@ export default {
                     FMode:pos.FMode
                 })
             })
-            if(this.money.max&&this.money.min&&paserFloat(this.money.max)<paserFloat(this.money.min)){
+            if(this.money.max&&this.money.min&&parseFloat(this.money.max)<parseFloat(this.money.min)){
                 this.$msgBox.show('上限金额不能小于下限金额,请重新输入!')
                 return;
             }

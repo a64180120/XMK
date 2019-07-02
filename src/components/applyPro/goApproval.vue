@@ -184,6 +184,8 @@ export default {
     })
   },
   mounted(){
+    console.log(this.data)
+    this.param.RefbillPhidList=this.data.data;
     this.getAppvalProc();
   },
   methods: {
@@ -196,13 +198,15 @@ export default {
     //获取审批流
     getAppvalProc:function(){
       let param={
-        BPhIds:this.RefbillPhidList,
+        BPhIds:JSON.stringify(this.param.RefbillPhidList),
         Orgid:this.bmid,//组织id
         BType:'001' //单据类型（"001":资金拨付单,"002":支付单）
        };
       this.getAxios('GSP/GAppvalProc/GetAppvalProcList',param).then(res=>{
           this.subDataNew=res.Data;
-          this.getApprovalPerson(res.Data[0].PhId);
+          /*this.param.ProcPhid=res.Data[0].PhId;
+          this.$refs.content.setCurrentRow(res.Data[0].PhId)
+          this.getApprovalPerson(res.Data[0].PhId);*/
       }).catch(err=>{
         console.log(err);
       })
@@ -268,7 +272,7 @@ export default {
     },
     handleCurrentChange(newRow, oldRow) {
       this.param.ProcPhid=newRow.PhId;
-      this.getApprovalPerson(newRow.PhId)
+      this.getApprovalPerson(newRow.PhId);
     },
     //确认
     submit() {
