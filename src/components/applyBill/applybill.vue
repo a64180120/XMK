@@ -34,49 +34,42 @@
       <el-row class="content" :gutter="10">
         <el-col :span="5">
           <div class="left-card">
-            <div>
-              <p class="left-card_title" @click="openAuditfollow">
+            <p class="left-card_title" @click="openAuditfollow">
               <span>
                 <i class="el-icon-edit-outline"></i>
                 <span>{{approvalType[record.PaymentMst.FApproval]}}</span>
               </span>
 
-              </p>
-              <p  class="left-card_title">
+            </p>
+            <p  class="left-card_title">
               <span>
                 <i class="el-icon-coin"></i>
                 <span style="color: #fff;text-decoration: none">{{record.PaymentMst.FApproval==9?payTypeList[record.PaymentMst.IsPay]:'-'}}</span>
               </span>
-              </p>
-            </div>
-
+            </p>
             <div>
               <!--申请信息-->
               <div class="apply-info">
                 <span class="title">附件</span>
+                <div
+                  class="appendix-item"
+                  v-for="(item,idx) in record.PaymentXmDtl"
 
-                  <div
-                    class="appendix-item"
-                    v-for="(item,idx) in record.PaymentXmDtl"
-                    @click="show"
-                  >
-                    <span class="title">
-                      <i class="el-icon-s-order"></i>
-                      {{item.PaymentXm.XmProjname}}
-                      <i class="el-icon-arrow-right" style="float: right;color: #ccc;"></i>
-                    </span>
-                    <ul v-if="item.QtAttachments&&item.QtAttachments.length>0">
-                      <li
-                        v-for="(folder,idx) in item.QtAttachments"
-                        v-if="folder.BUrlpath"
-                        @click="clickFolder(folder)"
-                        :title="folder.BName"
-                      >{{folder.BName}}</li>
-                    </ul>
-                    <p v-else>无附件</p>
-                  </div>
-
-
+                >
+                  <span class="title">
+                    <i class="el-icon-s-order"></i>
+                    {{item.PaymentXm.XmProjname}}
+                  </span>
+                  <ul v-if="item.QtAttachments&&item.QtAttachments.length>0">
+                    <li
+                      v-for="(folder,idx) in item.QtAttachments"
+                      v-if="folder.BUrlpath"
+                      @click="clickFolder(folder,idx)"
+                      :title="folder.BName"
+                    >{{folder.BName}}</li>
+                  </ul>
+                  <p v-else>无附件</p>
+                </div>
               </div>
             </div>
           </div>
@@ -232,7 +225,7 @@
       <!--<div class="btn-load">
         <el-button class="btn">下载</el-button>
       </div>-->
-      <img-view v-if="dialogVisible" :images="imgList"></img-view>
+      <img-view v-if="dialogVisible" :images="imgList" :nowIdx="activeIdx"></img-view>
     </el-dialog>
     <auditfollow   :visible.sync="visible" :auditMsg="auditMsg" ></auditfollow>
   </section>
@@ -309,7 +302,8 @@ export default {
       },
       timeF: '',
       dialogVisible: false, //附件查看弹窗
-      imgList: [] //附件数组
+      imgList: [], //附件数组
+      activeIdx:0
     }
   },
   /*watch:{
@@ -460,9 +454,11 @@ export default {
     },
 
     //点击文件列表
-    clickFolder(file) {
+    clickFolder(file,idx) {
       //this.$emit('showImg',file)
       this.dialogVisible = true
+      this.activeIdx = idx
+      console.log(this.activeIdx)
     },
     //关闭送审弹窗
     handleDelete: function(val) {
@@ -505,38 +501,6 @@ export default {
         this.$msgBox.show("数据获取异常")
       })
     },
-    show:function(val){
-      console.log(val)
-      if(val.target.classList[0]!='appendix-item'){
-
-        if(val.target.classList[0]=='el-icon-arrow-right'){
-          val=val.target.parentElement.parentElement;
-        }else{
-          val=val.target.parentElement;
-        }
-      }else{
-        val=val.target;
-      }
-      let cd=val.firstElementChild.nextElementSibling;
-      cd.style.transition='none';
-      cd.style.transition='height .5s linear';
-      if(val.classList.length==1){
-        val.classList.add('appendix-active');
-        cd.style.height = 'auto';
-      }else{
-        val.classList.remove('appendix-active');
-        cd.style.height = '0px';
-      }
-      let flag=cd.style.height=='auto'?true:false;
-        let hei=window.getComputedStyle(cd).height;
-        cd.style.height='0px';
-        console.log(hei);
-        cd.style.height=(flag?hei:'0px');
-
-        console.log(cd.style.height)
-
-
-    }
   }
 }
 </script>
@@ -552,57 +516,53 @@ export default {
 }
 
 .content {
+  min-height: 470px;
   margin-top:10px;
   height: 100%;
 }
 
 .left-card {
-
-  height: auto;
+  background-color: $btnColor;
+  height: 200px;
   max-width: 100%;
-
-  >div:nth-of-type(1){
-    background-color: $btnColor;
-    border-radius: 8px;
-    position: relative;
-    padding: 7%;
-    height: 200px;
-    >.left-card_title{
-      margin-bottom: 10px;
-      cursor: pointer;
-      >span{
-        width: 150px;
-        display: inline-block;
-        text-align: left;
-        > i {
-          font-size: 0.2rem;
-          color: #fff;
-          width: 20px;
-        }
-
-        > span {
-          font-size: 0.2rem;
-          font-family: 宋体;
-          color: #ffff00;
-          text-decoration: underline;
-          display: inline-block;
-          width: 100px;
-          text-align: center;
-        }
+  border-radius: 8px;
+  position: relative;
+  padding: 7%;
+  >.left-card_title{
+    margin-bottom: 10px;
+    cursor: pointer;
+    >span{
+      width: 150px;
+      display: inline-block;
+      text-align: left;
+      > i {
+        font-size: 0.2rem;
+        color: #fff;
+        width: 20px;
       }
 
-
+      > span {
+        font-size: 0.2rem;
+        font-family: 宋体;
+        color: #ffff00;
+        text-decoration: underline;
+        display: inline-block;
+        width: 100px;
+        text-align: center;
+      }
     }
+
+
   }
-  &>div:nth-of-type(2) {
-    margin-left: 7%;
+
+  > div {
     background-color: #ffffff;
-    position: relative;
+    position: absolute;
     width: 86%;
-    min-height: 250px;
+    height: 350px;
     border-radius: 8px;
     box-shadow: 0px 2px 10px #888888;
-    top: -110px;
+    margin-top: 20px;
     margin-right: -15px;
     overflow: auto;
 
@@ -618,10 +578,6 @@ export default {
       > .appendix-item {
         margin-bottom: 15px;
         text-align: left;
-        .el-icon-arrow-right{
-          transform: rotate(0deg);
-          transition: all .5s linear;
-        }
         > .title {
           font-size: 0.16rem;
 
@@ -632,8 +588,7 @@ export default {
 
         > ul {
           padding: 0 20px;
-          height: 0;
-          overflow: hidden;
+
           > li {
             text-decoration: underline;
             text-indent: .1rem;
@@ -652,22 +607,12 @@ export default {
           text-indent: .4rem;
         }
       }
-      & .appendix-active{
-        .el-icon-arrow-right{
-          transform: rotate(90deg);
-          transition: all .5s linear;
-        }
-      }
     }
   }
 }
-@keyframes show {
-  0%{height: 0;}
-  50%{height: 50%;}
-  100%{height: 100%;}
-}
 
 .detail-table {
+  min-height: 650px;
   overflow: auto;
   width: 100%;
 
@@ -810,7 +755,7 @@ export default {
 </style>
 <style>
 #delDialog .el-dialog__body {
-  height: auto;
+  height: 550px;
 }
 #delDialog .el-dialog__footer {
   text-align: center;

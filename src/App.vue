@@ -90,7 +90,6 @@ export default {
     //点击其他地方关闭审批流程
     closeAuditFollow(){
       this.$store.commit('setAuditfollow',true)
-      console.log(this.auditfollow)
     }
   },  
 };

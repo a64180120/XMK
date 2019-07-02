@@ -49,13 +49,16 @@
     <el-dialog
       class="dialog img-dialog"
       :visible.sync="imgDialog"
-      :append-to-body="true"
-      :close-on-click-modal="false"
-      width="40%">
-      <div slot="title" class="dialog-title">
+      :append-to-body="false"
+      :close-on-click-modal="true"
+      :modal-append-to-body="true"
+      width="40%"
+      @click.stop="fn()"
+    >
+      <div slot="title" class="dialog-title" @click.stop="fn()">
         <span style="float: left">查看附件</span>
       </div>
-      <img-view v-if="imgDialog" :images="imgList"></img-view>
+      <img-view  :images="imgList"></img-view>
     </el-dialog>
   </div>
 </template>
@@ -147,6 +150,7 @@ export default {
     this.$store.commit('setAuditfollow',false)
   },
   methods: {
+    fn(){},
     close() {
       this.$emit('update:visible', false)
       this.$store.commit('setAuditfollow',false)
@@ -273,16 +277,26 @@ export default {
     }
   }
 }
+.dialog-title{
+  height: 40px;
+  border-bottom: 1px solid #eaeaea;
+  padding: 15px 10px;
+}
 .dialog-title span {
   width: 100%;
   text-align: left;
   font-size: 0.16rem;
-  border-bottom: 1px solid #eaeaea;
 }
 </style>
 <style scoped>
   .img-dialog >>> .el-dialog{
     width: 780px!important;
+  }
+  .img-dialog >>> .el-dialog__body{
+    padding: 0;
+  }
+  .img-dialog >>>.el-dialog__header{
+    padding: 0;
   }
   .paylist >>> ul li em{
       /*color: red !important;*/

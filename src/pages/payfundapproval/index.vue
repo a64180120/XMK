@@ -315,7 +315,7 @@
         </div>
       </div>
       <!--详情弹框-->
-      <el-dialog class="dialog detail-dialog"  @close="closeDetailDialog" :visible.sync="detailDialog" :close-on-click-modal="false" width="90%">
+      <el-dialog class="dialog detail-dialog"  @close="closeDetailDialog" :visible.sync="detailDialog" :close-on-click-modal="false" width="1300px">
         <div slot="title" class="dialog-title">
           <span style="float: left">查看申请</span>
         </div>
@@ -789,7 +789,7 @@
   /*}*/
   .detail-dialog>>>.el-dialog{
     /*height: 86%;*/
-    height: 600px;
+    height: auto;
   }
   .img-dialog >>>.el-dialog{
     height: 550px;
@@ -811,12 +811,7 @@
   .btn-load{
     text-align: right;
   }
-  /*.BDescribe{*/
-  /*  max-width: 400px;*/
-  /*  overflow: hidden;*/
-  /*  text-overflow: ellipsis;*/
-  /*  white-space: nowrap;*/
-  /*}*/
+  /* */
 </style>
 <style>
   .pay-fund-approval_tooltip{
