@@ -15,7 +15,6 @@
         </div>
       </div>
     </div>
-    {{nowIdx}}
     <div class="img-nav">
       <div class="prev" @click="prevImg">
         <i class="el-icon-d-arrow-left"></i>
