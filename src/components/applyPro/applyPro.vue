@@ -492,6 +492,10 @@
                 this.$msgBox.error('第'+(Number(j)+1)+'条申报项目,第'+(Number(l)+1)+'条明细未选择项目，请检查');
                 return;
               }
+              if(n=='FAmount'&&!pdls[n]){
+                this.$msgBox.error('第'+(Number(j)+1)+'条申报项目,第'+(Number(l)+1)+'条明细申请金额为0，请检查');
+                return;
+              }
             }
           }
         };
@@ -827,6 +831,10 @@
           this.PaymentXmDtl[index].PaymentXm['Use']=res.Use;
           this.PaymentXmDtl[index].PaymentXm['Surplus']=res.Surplus;
           this.PaymentXmDtl[index].PaymentXm['Sum']=res.Sum;
+          if(res.Surplus==0){
+            this.$msgBox.error('当前选择项目无可申请金额，无法进行申报，请切换项目');
+            return;
+          }
           /*Frozen:0,//冻结金额
             Use:0,//已使用金额
             Surplus:0,//剩余金额
