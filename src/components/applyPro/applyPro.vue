@@ -33,14 +33,14 @@
                    <td class="left" colspan="3" style="border-bottom: 1px solid #9acefb;"><el-input placeholder="30字以内" maxlength="30" show-word-limit v-model="PaymentMst.FName"></el-input></td>
                  </tr>
                  <tr>
-                   <td class="right"style="padding-right: 20px">申报部门:</td>
+                   <td class="right"style="padding-right: 20px">申&nbsp报&nbsp部&nbsp门:</td>
                    <td class="left" style="border-bottom: 1px solid #9acefb">
                      <el-tooltip :content="PaymentMst.FOrgname&&PaymentMst.FDepname?PaymentMst.FOrgname+'-'+PaymentMst.FDepname:''" popper-class="tooltipCla" placement="bottom-start">
                        <p>{{PaymentMst.FOrgname&&PaymentMst.FDepname?PaymentMst.FOrgname+'-'+PaymentMst.FDepname:''}}</p>
                      </el-tooltip>
                    </td>
 
-                   <td class="right" style="border-bottom: 1px solid #fff;min-width: 100px">金额合计:</td>
+                   <td class="right" style="border-bottom: 1px solid #fff;min-width: 100px">金&nbsp额&nbsp合&nbsp计:</td>
                    <td class="left" style="border-bottom:1px solid #9acefb;overflow: hidden">
                      <el-tooltip :content="PaymentMst.FAmountTotal | NumFormat" popper-class="tooltipCla" placement="bottom-start">
                        <p>{{PaymentMst.FAmountTotal | NumFormat}}</p>
@@ -48,7 +48,7 @@
                    </td>
                  </tr>
                  <tr>
-                   <td class="right" style="padding-right: 20px">申报说明:</td>
+                   <td class="right" style="padding-right: 20px">申&nbsp报&nbsp说&nbsp明:</td>
                    <td colspan="3" style="border-bottom: 1px solid #9acefb"><el-input placeholder="100字以内"  resize="none" maxlength="100" show-word-limit v-model="PaymentMst.FDescribe"></el-input></td>
                  </tr>
                </table>
@@ -147,8 +147,8 @@
 
                       </td>
                     <td class="iconTd">
-                      <i class="el-icon-minus" @click="delDtl(pindex,index)"></i>
                       <i class="el-icon-plus" @click="addDtl(pindex,index)"></i>
+                      <i class="el-icon-minus" @click="delDtl(pindex,index)"></i>
                     </td>
                   </tr>
                 <tr>

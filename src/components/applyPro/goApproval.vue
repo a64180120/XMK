@@ -14,7 +14,11 @@
         <div class="handle">
           <div class="title">
             <span>送审备注</span>
-            <span style="float:right;color:#333;" @click="openUpload">附单据 <span style="text-decoration: underline">{{fileCount}}</span> 张</span>
+            <span style="float:right;color:#333;cursor: pointer" @click="openUpload">附单据 <span style="text-decoration: underline">{{fileCount}}</span> 张
+              <span>
+                <img width="20px" src="@/assets/images/hxz.png">
+              </span>
+            </span>
           </div>
           <div class="textare" style="height: 100px">
             <el-input type="textarea" maxlength="100" style="height: 100%" resize="none" v-model="param.FOpinion"></el-input>
