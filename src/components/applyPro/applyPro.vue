@@ -49,7 +49,11 @@
                  </tr>
                  <tr>
                    <td class="right" style="padding-right: 20px">申&nbsp报&nbsp说&nbsp明:</td>
-                   <td colspan="3" style="border-bottom: 1px solid #9acefb"><el-input placeholder="100字以内"  resize="none" maxlength="100" show-word-limit v-model="PaymentMst.FDescribe"></el-input></td>
+                   <td colspan="3" style="border-bottom: 1px solid #9acefb">
+                     <el-tooltip :disabled="PaymentMst.FDescribe.length<60" :content="PaymentMst.FDescribe" popper-class="tooltipCla" placement="bottom-start">
+                       <p><el-input placeholder="100字以内"  resize="none" maxlength="100" show-word-limit v-model="PaymentMst.FDescribe"></el-input></p>
+                     </el-tooltip>
+                     </td>
                  </tr>
                </table>
              </div>
@@ -1151,4 +1155,10 @@ table{
 #prodetail .el-dialog__body{
   text-align: left;
 }
+  .proTab .el-input__inner{
+    padding-right: 60px;
+  }
+  .proTab .el-input__suffix{
+    right: 0;
+  }
 </style>
