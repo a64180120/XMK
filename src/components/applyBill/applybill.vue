@@ -125,7 +125,7 @@
                   <tbody>
                     <tr>
                       <td style="color: #3294e8;">申请说明</td>
-                      <td>{{record.PaymentMst.FDescribe}}</td>
+                      <td class="left" >{{record.PaymentMst.FDescribe}}</td>
                       <td style="color: #3294e8;">申请金额合计(元)</td>
                       <td>{{record.PaymentMst.FAmountTotal | NumFormat}}</td>
                     </tr>
@@ -190,7 +190,7 @@
                         <td>{{xm.FDepartmentname}}</td>
                         <td>{{xm.BudgetdtlName}}</td>
                         <td style="text-align: right">{{xm.FAmount | NumFormat}}</td>
-                        <td>{{xm.FRemarks}}</td>
+                        <td class="left" >{{xm.FRemarks}}</td>
                       </tr>
                     </template>
                   </tbody>
@@ -517,7 +517,7 @@ export default {
 
 .content {
   min-height: 470px;
-  padding: 20px 0 0 0;
+  margin-top:10px;
   height: 100%;
 }
 
@@ -629,14 +629,18 @@ export default {
 
   > .top {
     > ul {
-      margin: 8px 1%;
+      margin: 10px 1%;
       list-style: none;
-      float: left;
       width: 98%;
-
+      clear: both;
+      height: 20px;
       > li {
         width: 33%;
         display: inline-block;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        float: left;
       }
 
       > li:first-child {
@@ -646,6 +650,10 @@ export default {
       > li:last-child {
         text-align: right;
       }
+    }
+    >:after{
+      content: '';
+      clear: both;
     }
   }
 

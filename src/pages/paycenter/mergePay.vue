@@ -16,7 +16,7 @@
       <div class="dialogContainer" v-show="showMergePay">
         <div class="payCenterDialog">
           <div class="content">
-            <img src="@/assets/images/mergepay.png" alt>
+            <img src="@/assets/images/mergepay.png" alt />
             <span>合计支付{{money | NumFormat}}元？</span>
           </div>
           <div class="btns">
@@ -78,7 +78,7 @@
       <div class="dialogContainer" v-show="showPassword">
         <div class="payCenterDialog">
           <div class="content password">
-            <img src="@/assets/images/mergepay.png" alt>
+            <img src="@/assets/images/mergepay.png" alt />
             <div class="passwordContent">
               <el-input
                 :type="passwordCanSee?'text':'password'"
@@ -94,13 +94,13 @@
                 class="eye"
                 src="@/assets/images/zy.png"
                 @click="passwordCanSee= !passwordCanSee"
-              >
+              />
               <img
                 v-show="!passwordCanSee"
                 class="eye"
                 src="@/assets/images/by.png"
                 @click="passwordCanSee= !passwordCanSee"
-              >
+              />
               <div class="notice" v-show="needSet">
                 <span @click="goSetting">支付口令已启用，不允许为空，请点击维护。</span>
               </div>
@@ -131,13 +131,13 @@
                 class="eye"
                 src="@/assets/images/zy.png"
                 @click="newPasswordCanSee= !newPasswordCanSee"
-              >
+              />
               <img
                 v-show="!newPasswordCanSee"
                 class="eye"
                 src="@/assets/images/by.png"
                 @click="newPasswordCanSee= !newPasswordCanSee"
-              >
+              />
             </div>
             <span>口令确认</span>
             <div class="passwordContent">
@@ -153,13 +153,13 @@
                 class="eye"
                 src="@/assets/images/zy.png"
                 @click="confirmPasswordCanSee= !confirmPasswordCanSee"
-              >
+              />
               <img
                 v-show="!confirmPasswordCanSee"
                 class="eye"
                 src="@/assets/images/by.png"
                 @click="confirmPasswordCanSee= !confirmPasswordCanSee"
-              >
+              />
             </div>
             <span>启用/停用</span>
             <el-radio-group v-model="radio">
@@ -424,7 +424,7 @@ export default {
     // 请求-支付
     postSubmitPayments() {
       var vm = this
-      if (vm.father) {
+      if (!vm.father) {
         // 合并支付
         // 获得银行服务状态
         getBankServiceState({})

@@ -328,7 +328,7 @@
       append-to-body
       v-if="fundDetailData.openDialog"
       :visible.sync="fundDetailData.openDialog"
-      width="80%"
+      width="90%"
       :close-on-click-modal="false"
       class="dialog detail-dialog payCenter"
     >
@@ -1322,6 +1322,9 @@ export default {
         color: #333;
       }
     }
+    .el-table .cell {
+      // position: relative;
+    }
     .el-collapse-item__header {
       font-size: 0.13rem;
       border-bottom: 0px;
@@ -1365,7 +1368,7 @@ export default {
     }
     tr.el-table__row td:not([rowspan='1']) {
       .table-item {
-        height: 100%;
+        position: relative;
         > p {
           margin-top: -24px;
           position: absolute;
