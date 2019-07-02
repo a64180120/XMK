@@ -23,7 +23,7 @@
                 <el-input size="mini" v-model="searchForm.OrgName" @focus="openOrg()" @change="changeInput()" style="width: 120px" placeholder="全部"></el-input>
               </el-form-item>
               <el-form-item label="停留时长" class="top-form-left">
-                <el-input size="mini" v-model="searchForm.StopHour" style="vertical-align:middle !important;width: 200px" placeholder="请输入停留时长" @change="changeInput()">
+                <el-input size="mini" v-model="searchForm.StopHour" style="vertical-align:middle !important;width: 200px;margin-top: -1px" placeholder="请输入停留时长" @change="changeInput()">
                   <el-select v-model="searchForm.Operator" slot="prepend" placeholder="类型" class="select-input" style="width: 75px" @change="changeInput('operator')">
                     <el-option label="等于" value="1"></el-option>
                     <el-option label="大于" value="2"></el-option>
