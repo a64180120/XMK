@@ -64,7 +64,7 @@
                     <li
                       v-for="(folder,idx) in item.QtAttachments"
                       v-if="folder.BUrlpath"
-                      @click="clickFolder(folder)"
+                      @click="clickFolder(folder,idx)"
                       :title="folder.BName"
                     >{{folder.BName}}</li>
                   </ul>
@@ -225,7 +225,7 @@
       <!--<div class="btn-load">
         <el-button class="btn">下载</el-button>
       </div>-->
-      <img-view v-if="dialogVisible" :images="imgList"></img-view>
+      <img-view v-if="dialogVisible" :images="imgList" :nowIdx="activeIdx"></img-view>
     </el-dialog>
     <auditfollow   :visible.sync="visible" :auditMsg="auditMsg" ></auditfollow>
   </section>
@@ -302,7 +302,8 @@ export default {
       },
       timeF: '',
       dialogVisible: false, //附件查看弹窗
-      imgList: [] //附件数组
+      imgList: [], //附件数组
+      activeIdx:0
     }
   },
   /*watch:{
@@ -453,9 +454,11 @@ export default {
     },
 
     //点击文件列表
-    clickFolder(file) {
+    clickFolder(file,idx) {
       //this.$emit('showImg',file)
       this.dialogVisible = true
+      this.activeIdx = idx
+      console.log(this.activeIdx)
     },
     //关闭送审弹窗
     handleDelete: function(val) {
