@@ -804,11 +804,11 @@
   .btn-load{
     text-align: right;
   }
-  .BDescribe{
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
+  /*.BDescribe{*/
+  /*  overflow: hidden;*/
+  /*  text-overflow: ellipsis;*/
+  /*  white-space: nowrap;*/
+  /*}*/
 </style>
 <style>
   .pay-fund-approval_tooltip{

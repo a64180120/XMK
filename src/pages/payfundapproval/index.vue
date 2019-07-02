@@ -811,12 +811,12 @@
   .btn-load{
     text-align: right;
   }
-  .BDescribe{
-    max-width: 400px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
+  /*.BDescribe{*/
+  /*  max-width: 400px;*/
+  /*  overflow: hidden;*/
+  /*  text-overflow: ellipsis;*/
+  /*  white-space: nowrap;*/
+  /*}*/
 </style>
 <style>
   .pay-fund-approval_tooltip{
