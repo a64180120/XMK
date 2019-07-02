@@ -10,6 +10,22 @@
             </div>
             <span>审批</span>
           </li>
+          <li>
+            <div @click.stop="printTables" class="handle" style="width: 80px;">
+              <div class="topIcon"><img src="@/assets/images/dy.png" alt=""></div><!-- @click="creatPayItem()"-->
+              打印
+            </div>
+          </li>
+        </ul>
+      </div>
+      <div class="top" v-else>
+        <ul>
+          <li>
+            <div @click.stop="printTables" class="handle" style="width: 80px;">
+              <div class="topIcon"><img src="@/assets/images/dy.png" alt=""></div><!-- @click="creatPayItem()"-->
+              打印
+            </div>
+          </li>
         </ul>
       </div>
     </handle-btn>
@@ -91,7 +107,7 @@
             </table>
           </div>
           <div v-if="isApproval" class="tableBody">
-            <table>
+            <table ref="printArea">
               <colgroup>
                 <col width="5%">
                 <col width="10%">
@@ -238,7 +254,7 @@
             </table>
           </div>
           <div v-if="!isApproval" class="tableBody">
-            <table>
+            <table ref="printArea">
               <colgroup>
                 <col width="5%">
                 <col width="10%">
@@ -355,6 +371,7 @@
   import {mapState} from 'vuex'
   import PayDialog from "./payDialog";
   import ImgView from "../../components/imgView/imgView";
+  import {printTable}  from '@/api/upload'
   export default {
     name: "index",
     components: {ImgView, PayDialog, Paylist, Orgtree, ApprovalDialog, Applybill, Auditfollow, SearchInput, HandleBtn},
@@ -455,6 +472,10 @@
       },
     },
     methods:{
+      printTables:function(){
+        let vm = this;
+        printTable(vm);
+      },
       //拉取列表数据
       loadData(e){
         let data = {
@@ -783,11 +804,11 @@
   .btn-load{
     text-align: right;
   }
-  .BDescribe{
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
+  /*.BDescribe{*/
+  /*  overflow: hidden;*/
+  /*  text-overflow: ellipsis;*/
+  /*  white-space: nowrap;*/
+  /*}*/
 </style>
 <style>
   .pay-fund-approval_tooltip{
