@@ -14,7 +14,7 @@
       multiple>
       <i class="el-icon-upload"></i>
       <div class="el-upload__text">将文件拖到此处，或<em>点击选择</em></div>
-      <div class="el-upload__tip" slot="tip"> <span @click="$emit('succe',returnList)" class=" btn" slot="tip" style="width: 120px">添加到上传列表</span></div>
+      <div class="el-upload__tip" slot="tip"> <span @click="$emit('succe',returnList)" class=" btn" slot="tip" style="width: 120px">确认上传</span></div>
 
       <!--<el-button slot="trigger" size="small" type="primary">选取文件</el-button>
       <el-button size="small" type="success" @click="$emit('succe',returnList)">完成</el-button>-->

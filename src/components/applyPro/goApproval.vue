@@ -30,7 +30,7 @@
             <div class="table">
               <el-table
                 class="table-content"
-                :data="data.subData"
+                :data="subDataNew"
                 :border="true"
                 highlight-current-row
                 @current-change="handleCurrentChange"
@@ -164,7 +164,8 @@ export default {
       auditMsg:[],//审批流数据存放
       fileList:[],//送审附件存放
       fileCount:0,//附件数量
-      len:0
+      len:0,
+      subDataNew:[],//审批流
     }
   },
   computed: {
@@ -182,6 +183,11 @@ export default {
       usercode:state => state.user.usercode//用户code
     })
   },
+  mounted(){
+    console.log(this.data)
+    this.param.RefbillPhidList=this.data.data;
+    this.getAppvalProc();
+  },
   methods: {
     closeAuditFollow() {
       this.showAuditfollow = false
@@ -189,19 +195,22 @@ export default {
     changeDialog() {
       this.openDialog = true
     },
-    /*//获取审批流
+    //获取审批流
     getAppvalProc:function(){
       let param={
+        BPhIds:JSON.stringify(this.param.RefbillPhidList),
         Orgid:this.bmid,//组织id
         BType:'001' //单据类型（"001":资金拨付单,"002":支付单）
        };
-      this.getAxios('GSP/GAppvalProc/GetAppvalProc',param).then(res=>{
-          this.subData=res.Data;
-          this.getApprovalPerson(res.Data[0].PhId);
+      this.getAxios('GSP/GAppvalProc/GetAppvalProcList',param).then(res=>{
+          this.subDataNew=res.Data;
+          /*this.param.ProcPhid=res.Data[0].PhId;
+          this.$refs.content.setCurrentRow(res.Data[0].PhId)
+          this.getApprovalPerson(res.Data[0].PhId);*/
       }).catch(err=>{
         console.log(err);
       })
-    },*/
+    },
 
 
     //获取审批人
@@ -263,7 +272,7 @@ export default {
     },
     handleCurrentChange(newRow, oldRow) {
       this.param.ProcPhid=newRow.PhId;
-      this.getApprovalPerson(newRow.PhId)
+      this.getApprovalPerson(newRow.PhId);
     },
     //确认
     submit() {
