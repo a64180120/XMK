@@ -1064,7 +1064,7 @@
   }
   .applydialog .el-dialog{
     padding: 0 10px;
-    width: 90%;
+    width:1300px;
     margin-top: 10%;
   }
   .applydialog .el-dialog__header{

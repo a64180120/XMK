@@ -207,13 +207,13 @@
   }
 
   .content {
-    height: 470px;
+    height: auto;
     padding: 20px 0 0 0;
   }
 
   .left-card {
     background-color:  #00B8EE;
-    height: 200px;
+    height: auto;
     max-width: 100%;
     border-radius: 8px;
     position: relative;
@@ -235,7 +235,7 @@
       background-color: #ffffff;
       position: absolute;
       width: 86%;
-      height: 350px;
+      height: auto;
       border-radius: 8px;
       box-shadow: 0px 2px 10px #888888;
       margin-top: 20px;
@@ -276,7 +276,7 @@
   }
 
   .detail-table {
-    height: 450px;
+    height: auto;
     overflow: auto;
     width: 100%;
 
@@ -332,7 +332,8 @@
             > tr {
               > td {
                 border: 1px solid #eaeaea;
-                height: 100px;
+                height: auto;
+                min-height: 30px;
                 border-top: none;
                 /*border-bottom: none;*/
               }
@@ -405,7 +406,7 @@
     left: 50%;
     margin: 0 !important;
     transform: translate(-50%,-50%);
-    height: 600px;
+    height: auto;
     display: flex;
     flex-direction: column;
   }
@@ -414,6 +415,6 @@
   }
 
   .dialog-content {
-    height: 500px;
+    height: auto;
   }
 </style>

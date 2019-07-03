@@ -33,14 +33,14 @@
                    <td class="left" colspan="3" style="border-bottom: 1px solid #9acefb;"><el-input placeholder="30字以内" maxlength="30" show-word-limit v-model="PaymentMst.FName"></el-input></td>
                  </tr>
                  <tr>
-                   <td class="right"style="padding-right: 20px">申报部门:</td>
+                   <td class="right"style="padding-right: 20px">申&nbsp报&nbsp部&nbsp门:</td>
                    <td class="left" style="border-bottom: 1px solid #9acefb">
                      <el-tooltip :content="PaymentMst.FOrgname&&PaymentMst.FDepname?PaymentMst.FOrgname+'-'+PaymentMst.FDepname:''" popper-class="tooltipCla" placement="bottom-start">
                        <p>{{PaymentMst.FOrgname&&PaymentMst.FDepname?PaymentMst.FOrgname+'-'+PaymentMst.FDepname:''}}</p>
                      </el-tooltip>
                    </td>
 
-                   <td class="right" style="border-bottom: 1px solid #fff;min-width: 100px">金额合计:</td>
+                   <td class="right" style="border-bottom: 1px solid #fff;min-width: 100px">金&nbsp额&nbsp合&nbsp计:</td>
                    <td class="left" style="border-bottom:1px solid #9acefb;overflow: hidden">
                      <el-tooltip :content="PaymentMst.FAmountTotal | NumFormat" popper-class="tooltipCla" placement="bottom-start">
                        <p>{{PaymentMst.FAmountTotal | NumFormat}}</p>
@@ -48,8 +48,12 @@
                    </td>
                  </tr>
                  <tr>
-                   <td class="right" style="padding-right: 20px">申报说明:</td>
-                   <td colspan="3" style="border-bottom: 1px solid #9acefb"><el-input placeholder="100字以内"  resize="none" maxlength="100" show-word-limit v-model="PaymentMst.FDescribe"></el-input></td>
+                   <td class="right" style="padding-right: 20px">申&nbsp报&nbsp说&nbsp明:</td>
+                   <td colspan="3" style="border-bottom: 1px solid #9acefb">
+                     <el-tooltip :disabled="PaymentMst.FDescribe.length<60" :content="PaymentMst.FDescribe" popper-class="tooltipCla" placement="bottom-start">
+                       <p><el-input placeholder="100字以内"  resize="none" maxlength="100" show-word-limit v-model="PaymentMst.FDescribe"></el-input></p>
+                     </el-tooltip>
+                     </td>
                  </tr>
                </table>
              </div>
@@ -147,8 +151,8 @@
 
                       </td>
                     <td class="iconTd">
-                      <i class="el-icon-minus" @click="delDtl(pindex,index)"></i>
                       <i class="el-icon-plus" @click="addDtl(pindex,index)"></i>
+                      <i class="el-icon-minus" @click="delDtl(pindex,index)"></i>
                     </td>
                   </tr>
                 <tr>
@@ -488,6 +492,10 @@
                 this.$msgBox.error('第'+(Number(j)+1)+'条申报项目,第'+(Number(l)+1)+'条明细未选择项目，请检查');
                 return;
               }
+              if(n=='FAmount'&&!pdls[n]){
+                this.$msgBox.error('第'+(Number(j)+1)+'条申报项目,第'+(Number(l)+1)+'条明细申请金额为0，请检查');
+                return;
+              }
             }
           }
         };
@@ -823,6 +831,10 @@
           this.PaymentXmDtl[index].PaymentXm['Use']=res.Use;
           this.PaymentXmDtl[index].PaymentXm['Surplus']=res.Surplus;
           this.PaymentXmDtl[index].PaymentXm['Sum']=res.Sum;
+          if(res.Surplus==0){
+            this.$msgBox.error('当前选择项目无可申请金额，无法进行申报，请切换项目');
+            return;
+          }
           /*Frozen:0,//冻结金额
             Use:0,//已使用金额
             Surplus:0,//剩余金额
@@ -1151,4 +1163,10 @@ table{
 #prodetail .el-dialog__body{
   text-align: left;
 }
+  .proTab .el-input__inner{
+    padding-right: 60px;
+  }
+  .proTab .el-input__suffix{
+    right: 0;
+  }
 </style>

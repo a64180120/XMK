@@ -34,19 +34,22 @@
       <el-row class="content" :gutter="10">
         <el-col :span="5">
           <div class="left-card">
-            <p class="left-card_title" @click="openAuditfollow">
+            <div>
+              <p class="left-card_title" @click="openAuditfollow">
               <span>
                 <i class="el-icon-edit-outline"></i>
                 <span>{{approvalType[record.PaymentMst.FApproval]}}</span>
               </span>
 
-            </p>
-            <p  class="left-card_title">
+              </p>
+              <p  class="left-card_title">
               <span>
                 <i class="el-icon-coin"></i>
                 <span style="color: #fff;text-decoration: none">{{record.PaymentMst.FApproval==9?payTypeList[record.PaymentMst.IsPay]:'-'}}</span>
               </span>
-            </p>
+              </p>
+            </div>
+
             <div>
               <!--申请信息-->
               <div class="apply-info">
@@ -64,7 +67,7 @@
                     <li
                       v-for="(folder,idx) in item.QtAttachments"
                       v-if="folder.BUrlpath"
-                      @click="clickFolder(folder)"
+                      @click="clickFolder(folder,idx)"
                       :title="folder.BName"
                     >{{folder.BName}}</li>
                   </ul>
@@ -125,7 +128,7 @@
                   <tbody>
                     <tr>
                       <td style="color: #3294e8;">申请说明</td>
-                      <td>{{record.PaymentMst.FDescribe}}</td>
+                      <td class="left" >{{record.PaymentMst.FDescribe}}</td>
                       <td style="color: #3294e8;">申请金额合计(元)</td>
                       <td>{{record.PaymentMst.FAmountTotal | NumFormat}}</td>
                     </tr>
@@ -190,7 +193,7 @@
                         <td>{{xm.FDepartmentname}}</td>
                         <td>{{xm.BudgetdtlName}}</td>
                         <td style="text-align: right">{{xm.FAmount | NumFormat}}</td>
-                        <td>{{xm.FRemarks}}</td>
+                        <td class="left" >{{xm.FRemarks}}</td>
                       </tr>
                     </template>
                   </tbody>
@@ -225,7 +228,7 @@
       <!--<div class="btn-load">
         <el-button class="btn">下载</el-button>
       </div>-->
-      <img-view v-if="dialogVisible" :images="imgList"></img-view>
+      <img-view v-if="dialogVisible" :images="imgList" :nowIdx="activeIdx"></img-view>
     </el-dialog>
     <auditfollow   :visible.sync="visible" :auditMsg="auditMsg" ></auditfollow>
   </section>
@@ -302,7 +305,8 @@ export default {
       },
       timeF: '',
       dialogVisible: false, //附件查看弹窗
-      imgList: [] //附件数组
+      imgList: [], //附件数组
+      activeIdx:0
     }
   },
   /*watch:{
@@ -453,9 +457,11 @@ export default {
     },
 
     //点击文件列表
-    clickFolder(file) {
+    clickFolder(file,idx) {
       //this.$emit('showImg',file)
       this.dialogVisible = true
+      this.activeIdx = idx
+      console.log(this.activeIdx)
     },
     //关闭送审弹窗
     handleDelete: function(val) {
@@ -513,53 +519,53 @@ export default {
 }
 
 .content {
-  min-height: 470px;
-  padding: 20px 0 0 0;
+  margin-top:10px;
   height: 100%;
 }
 
 .left-card {
-  background-color: $btnColor;
-  height: 200px;
   max-width: 100%;
-  border-radius: 8px;
   position: relative;
-  padding: 7%;
-  >.left-card_title{
-    margin-bottom: 10px;
-    cursor: pointer;
-    >span{
-      width: 150px;
-      display: inline-block;
-      text-align: left;
-      > i {
-        font-size: 0.2rem;
-        color: #fff;
-        width: 20px;
-      }
-
-      > span {
-        font-size: 0.2rem;
-        font-family: 宋体;
-        color: #ffff00;
-        text-decoration: underline;
+  >div:nth-of-type(1){
+    padding-top: 20px;
+    background-color: $btnColor;
+    height: 200px;
+    border-radius: 8px;
+    >.left-card_title{
+      margin-bottom: 10px;
+      cursor: pointer;
+      >span{
+        width: 150px;
         display: inline-block;
-        width: 100px;
-        text-align: center;
+        text-align: left;
+        > i {
+          font-size: 0.2rem;
+          color: #fff;
+          width: 20px;
+        }
+
+        > span {
+          font-size: 0.2rem;
+          font-family: 宋体;
+          color: #ffff00;
+          text-decoration: underline;
+          display: inline-block;
+          width: 100px;
+          text-align: center;
+        }
       }
     }
-
-
   }
-
-  > div {
+  & div:nth-of-type(2) {
+    margin-left: 7%;
     background-color: #ffffff;
-    position: absolute;
+    position: relative;
     width: 86%;
-    height: 350px;
+    height:auto;
     border-radius: 8px;
     box-shadow: 0px 2px 10px #888888;
-    margin-top: 20px;
+    top: -110px;
+    min-height: 270px;
     margin-right: -15px;
     overflow: auto;
 
@@ -609,7 +615,7 @@ export default {
 }
 
 .detail-table {
-  min-height: 650px;
+  height: auto;
   overflow: auto;
   width: 100%;
 
@@ -626,14 +632,18 @@ export default {
 
   > .top {
     > ul {
-      margin: 8px 1%;
+      margin: 10px 1%;
       list-style: none;
-      float: left;
       width: 98%;
-
+      clear: both;
+      height: 20px;
       > li {
         width: 33%;
         display: inline-block;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        float: left;
       }
 
       > li:first-child {
@@ -643,6 +653,10 @@ export default {
       > li:last-child {
         text-align: right;
       }
+    }
+    >:after{
+      content: '';
+      clear: both;
     }
   }
 
@@ -658,6 +672,7 @@ export default {
             > td {
               border: 1px solid #eaeaea;
               height: 30px;
+              padding: 10px;
             }
           }
         }
@@ -673,7 +688,9 @@ export default {
           > tr {
             > td {
               border: 1px solid #eaeaea;
-              height: 100px;
+              height: auto;
+              min-height: 30px;
+              padding: 10px;
               border-top: none;
               /*border-bottom: none;*/
             }
@@ -692,6 +709,7 @@ export default {
             > td {
               border: 1px solid #eaeaea;
               height: 30px;
+              padding: 10px;
               border-top: none;
               /*border-bottom: none;*/
             }
@@ -710,6 +728,7 @@ export default {
             > td {
               border: 1px solid #eaeaea;
               height: 30px;
+              padding: 10px;
               border-top: none;
               /*border-bottom: none;*/
             }
@@ -729,7 +748,7 @@ export default {
               border: 1px solid #eaeaea;
               height: 30px;
               border-top: none;
-              padding:0 10px
+              padding:10px
               /*border-bottom: none;*/
             }
           }
@@ -744,7 +763,7 @@ export default {
 </style>
 <style>
 #delDialog .el-dialog__body {
-  height: 550px;
+  height: auto;
 }
 #delDialog .el-dialog__footer {
   text-align: center;

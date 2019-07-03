@@ -1,5 +1,5 @@
 <template>
-  <section class="img-view">
+  <section class="img-view" @click.stop="fn()">
     <div class="img-body" @mouseenter="enter()" @mouseleave="leave()">
       <img :src="nowImg">
       <div class="img-mask" v-show="maskShow">
@@ -57,16 +57,20 @@ export default {
           }
         ]
       }
+    },
+    nowIdx:{
+      type: Number,
+      default:0
     }
   },
   data() {
     return {
       img: [],
       activeItem: Number,
-      activeIdx: 0, //默认显示第一个
+      activeIdx: this.nowIdx, //默认显示第一个
       imgDialog: false,
       width: '100%',
-      nowImg: this.images[0].path,
+      nowImg: this.images[this.nowIdx].path,
       maxMoveLength: 0, //最大移动距离
       nowMoveLength: 0, //当前移动距离
       maskShow: false, //遮罩层是否隐藏
@@ -75,14 +79,15 @@ export default {
   },
   watch:{
     images(val){
-      this.nowImg = val[0].path
-    }
+      this.nowImg = val[this.nowIdx].path
+    },
   },
   mounted() {
     //默认预览第一个
-    this.nowImg = this.images[0].path
+    this.nowImg = this.images[this.nowIdx].path
   },
   methods: {
+    fn(){},
     //左移动图片列表
     prevImg() {
       if (this.nowMoveLength < 0) {
@@ -134,6 +139,7 @@ export default {
 }
 
 .img-view {
+  padding: 30px 20px;
   width: 100%;
   position: relative;
   > .img-body {
