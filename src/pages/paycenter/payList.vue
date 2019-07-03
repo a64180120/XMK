@@ -160,26 +160,40 @@
                 <!-- 序号列 -->
                 <el-table-column width="80" header-align="center" align="center">
                   <template slot="header" slot-scope="scope">
-                    <el-checkbox
+                    <!-- <el-checkbox
                       @click.stop.native="check"
                       @change="selectAll"
                       v-model="allSelected"
                       v-if="data.itemType == 'notApprove'||data.itemType == 'error'"
+                    >序号</el-checkbox>-->
+                    <el-checkbox
+                      @click.stop.native="check"
+                      @change="selectAll"
+                      v-model="allSelected"
+                      v-if="data.itemType == 'notApprove'"
                     >序号</el-checkbox>
                     <template v-else>序号</template>
                   </template>
                   <template slot-scope="scope">
-                    <el-checkbox
+                    <!-- <el-checkbox
                       @click.stop.native="check"
                       v-if="data.itemType == 'notApprove'||(data.itemType == 'error'&&scope.row.FState==2)"
                       @change="selectOne(scope)"
                       :label="scope.$index"
                       v-model="scope.row.choosed"
+                    >{{scope.$index+1}}</el-checkbox>-->
+                    <el-checkbox
+                      @click.stop.native="check"
+                      v-if="data.itemType == 'notApprove'"
+                      @change="selectOne(scope)"
+                      :label="scope.$index"
+                      v-model="scope.row.choosed"
                     >{{scope.$index+1}}</el-checkbox>
                     <template v-else>
-                      <span
+                      <!-- <span
                         :style="data.itemType == 'error'&&scope.row.FState!=2?'padding-left:25px':''"
-                      >{{scope.$index+1}}</span>
+                      >{{scope.$index+1}}</span>-->
+                      <span>{{scope.$index+1}}</span>
                     </template>
                   </template>
                 </el-table-column>
@@ -675,7 +689,7 @@ export default {
             this.detail.Mst.PhId = res.KeyCodes[0]
             this.getData('', newData => {
               this.oldDetail.Dtls.forEach(item => {
-                if (item.choosed) {
+                if (item.FState == 2) {
                   item.FNewCode = newData.Mst.FCode
                 }
               })
@@ -870,13 +884,8 @@ export default {
           this[type].data = this.data.data
           break
         case 'new':
-          let errorArr = this.detail.Dtls.filter(
-            item => item.choosed && item.FState == 2
-          )
-          if (errorArr.length == 0) {
-            this.$msgBox.error('请至少选择一条数据！')
-            return
-          } else if (
+          let errorArr = this.detail.Dtls.filter(item => item.FState == 2)
+          if (
             errorArr.some(item => {
               return item.FNewCode
             })
@@ -884,48 +893,54 @@ export default {
             this.$msgBox.error('只能对未生成新的支付单的项目重新支付！')
             return
           }
-          // 去除对象中的监听
-          errorArr = errorArr.map(item => {
-            return Object.assign({}, item)
-          })
-          var now = new Date().getTime().toString()
-          let Mst = Object.assign({}, this.detail.Mst, {
-              PhId: 0,
-              FCode: 'P' + now,
-              FAmountTotal: errorArr.reduce(
-                (prev, cur) => prev + cur.FAmount,
-                0
-              ),
-              FApproval: 0,
-              FDate: 0,
-              PersistentState: 1,
-              FState: 0
-            }),
-            Dtls = errorArr.map(item => {
-              return Object.assign(item, {
-                choosed: false,
-                PersistentState: 1,
-                PhId: 0,
-                MstPhid: 0,
-                FSubmitdate: null,
-                FSeqno: null,
-                FBkSn: null,
-                FResult: null,
-                FResultmsg: null,
-                FState: 0,
-                FNewCode: null,
-                ForeignKeys: null,
-                BusinessPrimaryKeys: null,
-                PersistentState: 1,
-                OldMstPhid: this.detail.Mst.PhId,
-                OldDtlPhid: item.PhId
+          this.$msgBox.show({
+            content: '将对所有支付异常的明细项目生成新的支付单！',
+            fn: () => {
+              // 去除对象中的监听
+              errorArr = errorArr.map(item => {
+                return Object.assign({}, item)
               })
-            })
-          this.oldDetail = this.detail
-          this.detail = { Mst, Dtls }
-          this.allSelected = false
-          this.reSetting = true
-          this.data.itemType = 'notApprove'
+              var now = new Date().getTime().toString()
+              let Mst = Object.assign({}, this.detail.Mst, {
+                  PhId: 0,
+                  FCode: 'P' + now,
+                  FAmountTotal: errorArr.reduce(
+                    (prev, cur) => prev + cur.FAmount,
+                    0
+                  ),
+                  FApproval: 0,
+                  FDate: 0,
+                  PersistentState: 1,
+                  FState: 0,
+                  FSubmitdate: null
+                }),
+                Dtls = errorArr.map(item => {
+                  return Object.assign(item, {
+                    choosed: false,
+                    PersistentState: 1,
+                    PhId: 0,
+                    MstPhid: 0,
+                    FSubmitdate: null,
+                    FSeqno: null,
+                    FBkSn: null,
+                    FResult: null,
+                    FResultmsg: null,
+                    FState: 0,
+                    FNewCode: null,
+                    ForeignKeys: null,
+                    BusinessPrimaryKeys: null,
+                    PersistentState: 1,
+                    OldMstPhid: this.detail.Mst.PhId,
+                    OldDtlPhid: item.PhId
+                  })
+                })
+              this.oldDetail = this.detail
+              this.detail = { Mst, Dtls }
+              this.allSelected = false
+              this.reSetting = true
+              this.data.itemType = 'notApprove'
+            }
+          })
           break
         case 'approval':
           this.appDialog.title = '查看'
