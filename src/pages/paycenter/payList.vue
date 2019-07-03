@@ -870,14 +870,11 @@ export default {
           this[type].data = this.data.data
           break
         case 'new':
-          let errorArr = this.detail.Dtls.filter(item => item.choosed)
+          let errorArr = this.detail.Dtls.filter(
+            item => item.choosed && item.FState == 2
+          )
           if (errorArr.length == 0) {
             this.$msgBox.error('请至少选择一条数据！')
-            return
-          } else if (errorArr.some(item => item.FState != 2)) {
-            this.$msgBox.error('只能对支付异常的项目重新支付！')
-            this.allSelected = false
-            this.detail.Dtls.forEach(item => (item.choosed = false))
             return
           } else if (
             errorArr.some(item => {
