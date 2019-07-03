@@ -20,8 +20,8 @@
               </span>
             </li>
             <li>
-              <span>
-                附单据 {{fileCount}} 张
+              <span style="cursor: pointer">
+                附单据 <span style="text-decoration: underline">{{fileCount}}</span> 张
                 <img @click="showUpload" class="icon-img" src="../../assets/images/hxz.png">
               </span>
             </li>
