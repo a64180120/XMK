@@ -34,19 +34,22 @@
       <el-row class="content" :gutter="10">
         <el-col :span="5">
           <div class="left-card">
-            <p class="left-card_title" @click="openAuditfollow">
+            <div>
+              <p class="left-card_title" @click="openAuditfollow">
               <span>
                 <i class="el-icon-edit-outline"></i>
                 <span>{{approvalType[record.PaymentMst.FApproval]}}</span>
               </span>
 
-            </p>
-            <p  class="left-card_title">
+              </p>
+              <p  class="left-card_title">
               <span>
                 <i class="el-icon-coin"></i>
                 <span style="color: #fff;text-decoration: none">{{record.PaymentMst.FApproval==9?payTypeList[record.PaymentMst.IsPay]:'-'}}</span>
               </span>
-            </p>
+              </p>
+            </div>
+
             <div>
               <!--申请信息-->
               <div class="apply-info">
@@ -516,53 +519,53 @@ export default {
 }
 
 .content {
-  min-height: 470px;
   margin-top:10px;
   height: 100%;
 }
 
 .left-card {
-  background-color: $btnColor;
-  height: 200px;
   max-width: 100%;
-  border-radius: 8px;
   position: relative;
-  padding: 7%;
-  >.left-card_title{
-    margin-bottom: 10px;
-    cursor: pointer;
-    >span{
-      width: 150px;
-      display: inline-block;
-      text-align: left;
-      > i {
-        font-size: 0.2rem;
-        color: #fff;
-        width: 20px;
-      }
-
-      > span {
-        font-size: 0.2rem;
-        font-family: 宋体;
-        color: #ffff00;
-        text-decoration: underline;
+  >div:nth-of-type(1){
+    padding-top: 20px;
+    background-color: $btnColor;
+    height: 200px;
+    border-radius: 8px;
+    >.left-card_title{
+      margin-bottom: 10px;
+      cursor: pointer;
+      >span{
+        width: 150px;
         display: inline-block;
-        width: 100px;
-        text-align: center;
+        text-align: left;
+        > i {
+          font-size: 0.2rem;
+          color: #fff;
+          width: 20px;
+        }
+
+        > span {
+          font-size: 0.2rem;
+          font-family: 宋体;
+          color: #ffff00;
+          text-decoration: underline;
+          display: inline-block;
+          width: 100px;
+          text-align: center;
+        }
       }
     }
-
-
   }
-
-  > div {
+  & div:nth-of-type(2) {
+    margin-left: 7%;
     background-color: #ffffff;
-    position: absolute;
+    position: relative;
     width: 86%;
-    height: 350px;
+    height:auto;
     border-radius: 8px;
     box-shadow: 0px 2px 10px #888888;
-    margin-top: 20px;
+    top: -110px;
+    min-height: 270px;
     margin-right: -15px;
     overflow: auto;
 
@@ -612,7 +615,7 @@ export default {
 }
 
 .detail-table {
-  min-height: 650px;
+  height: auto;
   overflow: auto;
   width: 100%;
 
@@ -669,6 +672,7 @@ export default {
             > td {
               border: 1px solid #eaeaea;
               height: 30px;
+              padding: 10px;
             }
           }
         }
@@ -684,7 +688,9 @@ export default {
           > tr {
             > td {
               border: 1px solid #eaeaea;
-              height: 100px;
+              height: auto;
+              min-height: 30px;
+              padding: 10px;
               border-top: none;
               /*border-bottom: none;*/
             }
@@ -703,6 +709,7 @@ export default {
             > td {
               border: 1px solid #eaeaea;
               height: 30px;
+              padding: 10px;
               border-top: none;
               /*border-bottom: none;*/
             }
@@ -721,6 +728,7 @@ export default {
             > td {
               border: 1px solid #eaeaea;
               height: 30px;
+              padding: 10px;
               border-top: none;
               /*border-bottom: none;*/
             }
@@ -740,7 +748,7 @@ export default {
               border: 1px solid #eaeaea;
               height: 30px;
               border-top: none;
-              padding:0 10px
+              padding:10px
               /*border-bottom: none;*/
             }
           }
@@ -755,7 +763,7 @@ export default {
 </style>
 <style>
 #delDialog .el-dialog__body {
-  height: 550px;
+  height: auto;
 }
 #delDialog .el-dialog__footer {
   text-align: center;
