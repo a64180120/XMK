@@ -5,7 +5,7 @@
       append-to-body
       :visible.sync="data.openDialog"
       class="payCenter"
-      :width="showMergePay?'550px':showPassword?'500px':'50%'"
+      :width="showMergePay?'550px':showPassword?'550px':'420px'"
       :close-on-click-modal="false"
       :before-close="beforeClose"
     >
@@ -80,7 +80,15 @@
           <div class="content password">
             <img src="@/assets/images/mergepay.png" alt />
             <div class="passwordContent">
-              <el-input
+              <span>请输入支付口令：</span>
+              <password-input
+                :disabled="needSet"
+                style="top:15px"
+                :value.sync="password"
+                :max-length="6"
+                :enter="pay"
+              ></password-input>
+              <!-- <el-input
                 :type="passwordCanSee?'text':'password'"
                 v-model="password"
                 placeholder="请输入支付口令"
@@ -100,7 +108,7 @@
                 class="eye"
                 src="@/assets/images/by.png"
                 @click="passwordCanSee= !passwordCanSee"
-              />
+              />-->
               <div class="notice" v-show="needSet">
                 <span @click="goSetting">支付口令已启用，不允许为空，请点击维护。</span>
               </div>
@@ -114,12 +122,13 @@
         </div>
       </div>
       <!-- 设置支付口令 -->
-      <div class="dialogContainer" v-show="showSetting&&needSet">
+      <div class="dialogContainer" v-if="showSetting&&needSet">
         <div class="payCenterDialog">
           <div class="content password setting">
             <span>支付口令</span>
             <div class="passwordContent">
-              <el-input
+              <password-input style="top:6px" :value.sync="newPassword" :max-length="6"></password-input>
+              <!-- <el-input
                 :type="newPasswordCanSee?'text':'password'"
                 v-model="newPassword"
                 placeholder="请输入6位数字口令"
@@ -137,11 +146,12 @@
                 class="eye"
                 src="@/assets/images/by.png"
                 @click="newPasswordCanSee= !newPasswordCanSee"
-              />
+              />-->
             </div>
             <span>口令确认</span>
             <div class="passwordContent">
-              <el-input
+              <password-input style="top:6px" :value.sync="confirmPassword" :max-length="6"></password-input>
+              <!-- <el-input
                 :type="confirmPasswordCanSee?'text':'password'"
                 :maxlength="6"
                 v-model="confirmPassword"
@@ -159,7 +169,7 @@
                 class="eye"
                 src="@/assets/images/by.png"
                 @click="confirmPasswordCanSee= !confirmPasswordCanSee"
-              />
+              />-->
             </div>
             <span>启用/停用</span>
             <el-radio-group v-model="radio">
@@ -192,11 +202,13 @@ import md5 from 'js-md5'
 import usbKey from './usbKey.vue'
 import { mapState } from 'vuex'
 import { SearchUSB } from '@/api/paycenter'
+import passwordInput from '@/components/passwordInput/index.vue'
 
 export default {
   name: 'mergePay',
   components: {
-    usbKey
+    usbKey,
+    passwordInput
   },
   props: {
     data: {
@@ -226,7 +238,8 @@ export default {
       showSetting: false,
       password: '',
       gridData: [],
-      needSet: false
+      needSet: false,
+      passwordtest: ''
     }
   },
   created() {
