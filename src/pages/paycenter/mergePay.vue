@@ -183,7 +183,7 @@
           </div>
         </div>
       </div>
-      <usb-key style="height:1px;width:1px;"></usb-key>
+      <!-- <usb-key style="height:1px;width:1px;"></usb-key> -->
     </el-dialog>
   </div>
 </template>
@@ -196,10 +196,11 @@ import {
   postSubmitPayment,
   postSubmitPayments,
   getBankServiceState,
-  PostPayUsbKeyIsActive
+  PostPayUsbKeyIsActive,
+  postUpdatePaymentsState
 } from '@/api/paycenter'
 import md5 from 'js-md5'
-import usbKey from './usbKey.vue'
+// import usbKey from './usbKey.vue'
 import { mapState } from 'vuex'
 import { SearchUSB } from '@/api/paycenter'
 import passwordInput from '@/components/passwordInput/index.vue'
@@ -207,7 +208,7 @@ import passwordInput from '@/components/passwordInput/index.vue'
 export default {
   name: 'mergePay',
   components: {
-    usbKey,
+    // usbKey,
     passwordInput
   },
   props: {
@@ -327,83 +328,83 @@ export default {
     },
     // 进入支付页面
     enterPassword() {
-      // this.postPayPsd()
+      this.postPayPsd()
       // 检测加密狗状态
-      PostPayUsbKeyIsActive({
-        uid: this.userid,
-        orgid: this.orgid
-      })
-        .then(res => {
-          if (res.Status == 'error') {
-            this.$msgBox.error(res.Msg)
-            return
-          }
-          console.log(res)
-          if (res.IsActive == true) {
-            // 需要加密锁
-            this.$nextTick(() => {
-              var re = SearchUSB()
-              if (re.Status == 'error') {
-                // 加密锁读取失败
-                if (re.retuCode == 1) {
-                  this.$alert(
-                    `加密锁驱动程序未安装！点
-            <a style='cursor:pointer;' href="${window.global.UsbKeyUrl +
-              'custom2/Resource/UsbKeyEnvSetup.exe'}">客户端安装程序</a>，下载,运行该程序，然后重启电脑即可。`,
-                    '提示',
-                    {
-                      confirmButtonText: '关闭',
-                      cancelBtnText: '关闭',
-                      dangerouslyUseHTMLString: true,
-                      type: 'warning'
-                    }
-                  )
-                    .then(() => {})
-                    .catch(() => {})
-                  return
-                } else if (re.retuCode == -1) {
-                  this.$alert(
-                    `无法下载新中大客户端控件！请在 "Internet选项"中降低安全级别，使得ActiveX控件允许被下载。点<a style='cursor:pointer;' href="${window
-                      .global.UsbKeyUrl +
-                      'custom2/Resource/UsbKeyEnvSetup.exe'}">客户端安装程序</a>，下载,运行该程序，然后重启电脑即可。`,
-                    '提示',
-                    {
-                      confirmButtonText: '关闭',
-                      cancelBtnText: '关闭',
-                      dangerouslyUseHTMLString: true,
-                      type: 'warning'
-                    }
-                  )
-                    .then(() => {})
-                    .catch(() => {})
-                  return
-                }
-                this.$msgBox.error('加密锁读取失败：' + re.Msg)
-                return
-              } else {
-                // 加密锁读取成功
-                // alert('加密锁suc' + re.id)
-                if (res.LockKeyIsValid == false) {
-                  this.$msgBox.error('加密锁无法获取！')
-                  return
-                } else if (re.id != res.LockKey) {
-                  this.$msgBox.error('请确认是否当前用户的加密锁！')
-                  return
-                } else {
-                  // this.$msgBox.show('加密锁通过验证，将进入支付页面')
-                  this.postPayPsd()
-                }
-              }
-            })
-          } else {
-            // this.$msgBox.show('用户未启用加密锁，将进入支付页面')
-            this.postPayPsd()
-          }
-        })
-        .catch(err => {
-          console.log(err)
-          this.$msgBox.error('获取加密锁状态失败！')
-        })
+      // PostPayUsbKeyIsActive({
+      //   uid: this.userid,
+      //   orgid: this.orgid
+      // })
+      //   .then(res => {
+      //     if (res.Status == 'error') {
+      //       this.$msgBox.error(res.Msg)
+      //       return
+      //     }
+      //     console.log(res)
+      //     if (res.IsActive == true) {
+      //       // 需要加密锁
+      //       this.$nextTick(() => {
+      //         var re = SearchUSB()
+      //         if (re.Status == 'error') {
+      //           // 加密锁读取失败
+      //           if (re.retuCode == 1) {
+      //             this.$alert(
+      //               `加密锁驱动程序未安装！点
+      //       <a style='cursor:pointer;' href="${window.global.UsbKeyUrl +
+      //         'custom2/Resource/UsbKeyEnvSetup.exe'}">客户端安装程序</a>，下载,运行该程序，然后重启电脑即可。`,
+      //               '提示',
+      //               {
+      //                 confirmButtonText: '关闭',
+      //                 cancelBtnText: '关闭',
+      //                 dangerouslyUseHTMLString: true,
+      //                 type: 'warning'
+      //               }
+      //             )
+      //               .then(() => {})
+      //               .catch(() => {})
+      //             return
+      //           } else if (re.retuCode == -1) {
+      //             this.$alert(
+      //               `无法下载新中大客户端控件！请在 "Internet选项"中降低安全级别，使得ActiveX控件允许被下载。点<a style='cursor:pointer;' href="${window
+      //                 .global.UsbKeyUrl +
+      //                 'custom2/Resource/UsbKeyEnvSetup.exe'}">客户端安装程序</a>，下载,运行该程序，然后重启电脑即可。`,
+      //               '提示',
+      //               {
+      //                 confirmButtonText: '关闭',
+      //                 cancelBtnText: '关闭',
+      //                 dangerouslyUseHTMLString: true,
+      //                 type: 'warning'
+      //               }
+      //             )
+      //               .then(() => {})
+      //               .catch(() => {})
+      //             return
+      //           }
+      //           this.$msgBox.error('加密锁读取失败：' + re.Msg)
+      //           return
+      //         } else {
+      //           // 加密锁读取成功
+      //           // alert('加密锁suc' + re.id)
+      //           if (res.LockKeyIsValid == false) {
+      //             this.$msgBox.error('加密锁无法获取！')
+      //             return
+      //           } else if (re.id != res.LockKey) {
+      //             this.$msgBox.error('请确认是否当前用户的加密锁！')
+      //             return
+      //           } else {
+      //             // this.$msgBox.show('加密锁通过验证，将进入支付页面')
+      //             this.postPayPsd()
+      //           }
+      //         }
+      //       })
+      //     } else {
+      //       // this.$msgBox.show('用户未启用加密锁，将进入支付页面')
+      //       this.postPayPsd()
+      //     }
+      //   })
+      //   .catch(err => {
+      //     console.log(err)
+      //     this.$msgBox.error('获取加密锁状态失败！')
+      //   })
     },
     beforeClose(done) {
       if (this.showMergePay) {
@@ -437,16 +438,58 @@ export default {
     // 请求-支付
     postSubmitPayments() {
       var vm = this
-      if (!vm.father) {
-        // 合并支付
-        // 获得银行服务状态
-        getBankServiceState({})
-          .then(res => {
-            if (res.Status == 'error') {
-              this.$msgBox.error(res.Msg)
-              console.log(res)
-              return
-            }
+      if (vm.father) {
+        // 单笔支付非网银
+        var payMethodName =
+          this.$parent.detail.Mst.FPaymethod.length == 15 &&
+          this.$parent.FPaymethodList.length > 0
+            ? this.$parent.FPaymethodList.find(
+                item => item.PhId == this.$parent.detail.Mst.FPaymethod
+              ).TypeName
+            : ''
+        if (payMethodName != '网银') {
+          postSubmitPayment({
+            id: this.data.data[0].Mst.PhId,
+            uid: this.userid,
+            orgid: this.orgid,
+            ryear: this.year
+          })
+            .then(res => {
+              if (res.Status == 'error') {
+                vm.$msgBox.error(res.Msg)
+                vm.showPassword = false
+                vm.showMergePay = true
+                if (vm.father) vm.father.openDialog = false
+                vm.data.openDialog = false
+                console.log(res)
+                return
+              }
+              vm.refreshIndexData()
+              vm.$msgBox.show({
+                content: res.Msg || '支付操作成功！',
+                fn: () => {
+                  vm.showPassword = false
+                  vm.showMergePay = true
+                  if (vm.father) vm.father.openDialog = false
+                  vm.data.openDialog = false
+                }
+              })
+            })
+            .catch(err => {
+              console.log(err)
+              this.$msgBox.error(err.Message || '支付失败！')
+            })
+        }
+      }
+      // 获得银行服务状态
+      getBankServiceState({})
+        .then(res => {
+          if (res.Status == 'error') {
+            this.$msgBox.error(res.Msg)
+            console.log(res)
+            return
+          }
+          if (!vm.father) {
             var ids = this.data.data.map(item => {
               return item.Mst.PhId
             })
@@ -482,83 +525,85 @@ export default {
                 console.log(err)
                 this.$msgBox.error(err.Message || '支付失败！')
               })
-          })
-          .catch(err => {
-            console.log(err)
-            this.$msgBox.error(err.Message || '获得银行服务状态失败！')
-          })
-      } else {
-        // 单笔支付
-        // 支付方式
-        var payMethodName =
-          this.$parent.detail.Mst.FPaymethod.length == 15 &&
-          this.$parent.FPaymethodList.length > 0
-            ? this.$parent.FPaymethodList.find(
-                item => item.PhId == this.$parent.detail.Mst.FPaymethod
-              ).TypeName
-            : ''
-        if (payMethodName == '网银') {
-          postSubmitPayment({
-            id: this.data.data[0].Mst.PhId,
-            uid: this.userid,
-            orgid: this.orgid,
-            ryear: this.year
-          })
-            .then(res => {
-              if (res.Status == 'error') {
-                vm.$msgBox.error(res.Msg)
-                vm.showPassword = false
-                vm.showMergePay = true
-                if (vm.father) vm.father.openDialog = false
-                vm.data.openDialog = false
-                console.log(res)
-                return
-              }
-              vm.refreshIndexData()
-              vm.$msgBox.show({
-                content:
-                  res.Msg || '支付操作成功！具体到账情况以银行处理时间为准。',
-                fn: () => {
+          } else {
+            postSubmitPayment({
+              id: this.data.data[0].Mst.PhId,
+              uid: this.userid,
+              orgid: this.orgid,
+              ryear: this.year
+            })
+              .then(res => {
+                if (res.Status == 'error') {
+                  vm.$msgBox.error(res.Msg)
                   vm.showPassword = false
                   vm.showMergePay = true
                   if (vm.father) vm.father.openDialog = false
                   vm.data.openDialog = false
+                  console.log(res)
+                  return
                 }
+                vm.refreshIndexData()
+                vm.$msgBox.show({
+                  content:
+                    res.Msg || '支付操作成功！具体到账情况以银行处理时间为准。',
+                  fn: () => {
+                    vm.showPassword = false
+                    vm.showMergePay = true
+                    if (vm.father) vm.father.openDialog = false
+                    vm.data.openDialog = false
+                  }
+                })
               })
-            })
-            .catch(err => {
-              console.log(err)
-              this.$msgBox.error(err.Message || '支付失败！')
-            })
-        } else {
-          // 非网银直接更新状态为支付成功
-          // 批量更新支付单支付状态
-          postUpdatePaymentsState({
-            uid: this.userid,
-            orgid: this.orgid,
-            infoData: [this.data.data[0].Mst.PhId],
-            value: 1
-          })
-            .then(res => {
-              if (res.Status == 'error') {
-                this.$msgBox.error(res.Msg)
-                return
-              }
-              this.refreshIndexData()
-              vm.showPassword = false
-              vm.showMergePay = true
-              vm.father.openDialog = false
-              vm.data.openDialog = false
-              this.$msgBox.show({
-                content: '支付成功'
+              .catch(err => {
+                console.log(err)
+                this.$msgBox.error(err.Message || '支付失败！')
               })
-            })
-            .catch(err => {
-              this.$msgBox.error('支付失败！')
-              console.log(err)
-            })
-        }
-      }
+          }
+        })
+        .catch(err => {
+          console.log(err)
+          this.$msgBox.error(err.Message || '获得银行服务状态失败！')
+        })
+      // 单笔支付
+      // 支付方式
+      // var payMethodName =
+      //   this.$parent.detail.Mst.FPaymethod.length == 15 &&
+      //   this.$parent.FPaymethodList.length > 0
+      //     ? this.$parent.FPaymethodList.find(
+      //         item => item.PhId == this.$parent.detail.Mst.FPaymethod
+      //       ).TypeName
+      //     : ''
+      // if (payMethodName == '网银') {
+
+      // } else {
+      //   // 非网银直接更新状态为支付成功
+      //   // 批量更新支付单支付状态
+      //   // postUpdatePaymentsState({
+      //   //   uid: this.userid,
+      //   //   orgid: this.orgid,
+      //   //   infoData: [this.data.data[0].Mst.PhId],
+      //   //   value: 1
+      //   // })
+      //   //   .then(res => {
+      //   //     if (res.Status == 'error') {
+      //   //       this.$msgBox.error(res.Msg)
+      //   //       return
+      //   //     }
+      //   //     this.refreshIndexData()
+      //   //     vm.showPassword = false
+      //   //     vm.showMergePay = true
+      //   //     vm.father.openDialog = false
+      //   //     vm.data.openDialog = false
+      //   //     this.$msgBox.show({
+      //   //       content: '支付成功'
+      //   //     })
+      //   //   })
+      //   //   .catch(err => {
+      //   //     this.$msgBox.error('支付失败！')
+      //   //     console.log(err)
+      //   //   })
+      // }
+      // }
     },
     // 请求-判断口令正确-正确直接发起支付
     postJudgePayPsd() {
