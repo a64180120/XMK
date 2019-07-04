@@ -85,7 +85,7 @@
                 :disabled="needSet"
                 style="top:15px"
                 :value.sync="password"
-                :max-length="6"
+                :maxlength="6"
                 :enter="pay"
               ></password-input>
               <!-- <el-input
@@ -127,7 +127,7 @@
           <div class="content password setting">
             <span>支付口令</span>
             <div class="passwordContent">
-              <password-input style="top:6px" :value.sync="newPassword" :max-length="6"></password-input>
+              <password-input style="top:6px" :value.sync="newPassword" :maxlength="6"></password-input>
               <!-- <el-input
                 :type="newPasswordCanSee?'text':'password'"
                 v-model="newPassword"
@@ -150,7 +150,7 @@
             </div>
             <span>口令确认</span>
             <div class="passwordContent">
-              <password-input style="top:6px" :value.sync="confirmPassword" :max-length="6"></password-input>
+              <password-input style="top:6px" :value.sync="confirmPassword" :maxlength="6"></password-input>
               <!-- <el-input
                 :type="confirmPasswordCanSee?'text':'password'"
                 :maxlength="6"

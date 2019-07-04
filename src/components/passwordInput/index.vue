@@ -18,7 +18,7 @@
           onpaste="return false"
           oncut="return false"
           :disabled="disabled"
-          @keydown="test"
+          @keydown="keydown"
         />
       </template>
       <img
@@ -41,7 +41,7 @@
           onpaste="return false"
           oncut="return false"
           :disabled="disabled"
-          @keydown="test"
+          @keydown="keydown"
         />
       </template>
       <img
@@ -109,7 +109,7 @@ export default {
   created() {},
   mounted() {},
   methods: {
-    test(e) {
+    keydown(e) {
       if (e.preventDefault) {
         e.preventDefault()
       } else {
@@ -131,7 +131,6 @@ export default {
       var key = e.key
       if (/^[0-9]$/.test(key)) {
         if (this.value.length < this.maxlength) {
-          // this.value = this.value + (key + '')
           this.up(this.value + (key + ''))
           if (this.canSee) {
             obj.value = key
@@ -140,7 +139,7 @@ export default {
           }
           if (index < this.maxlength - 1) {
             this.$refs.input[index + 1].focus()
-            this.$refs.input[index + 1].setSelectionRange(1, 1)
+            // this.$refs.input[index + 1].setSelectionRange(1, 1)
           }
         }
       } else if (key == 'Backspace') {
@@ -154,7 +153,7 @@ export default {
           this.up(this.value.substring(0, this.value.length - 1))
           if (index != 0) {
             this.$refs.input[index - 1].value = ''
-            this.$refs.input[index - 1].setSelectionRange(1, 1)
+            // this.$refs.input[index - 1].setSelectionRange(1, 1)
             this.$refs.input[index - 1].focus()
           }
         }
@@ -163,7 +162,7 @@ export default {
         obj.blur()
         this.enter()
       } else if (obj.value != '') {
-        // 防止同时按下两个键时冲突
+        // 防止输完密码后，输入别的内容将最后一位删除
       } else {
         obj.value = ''
       }
