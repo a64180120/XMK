@@ -86,6 +86,7 @@ export default {
       type: 'text'
     }
   },
+  mounted() {},
   watch: {
     canSee(newVal) {
       if (newVal) {
@@ -97,13 +98,6 @@ export default {
           this.$refs.input[i].value = '●'
         }
       }
-    },
-    value(val) {
-      if (val == '') {
-        this.$refs.input.forEach(item => {
-          item.value = ''
-        })
-      }
     }
   },
   created() {},
@@ -112,12 +106,14 @@ export default {
     keydown(e) {
       if (e.preventDefault) {
         e.preventDefault()
+        console.log('prev')
       } else {
         // IE中阻止默认事件
         window.event.returnValue = false
       }
     },
     focusOnInput() {
+      console.log('focus')
       if (this.value.length == this.maxlength) {
         this.$refs.input[this.value.length - 1].focus()
         this.$refs.input[this.value.length - 1].setSelectionRange(1, 1)
@@ -129,7 +125,39 @@ export default {
     keyup(index, e) {
       var obj = e.target
       var key = e.key
-      if (/^[0-9]$/.test(key)) {
+      console.log(key)
+      if (obj.value != '') {
+        // debugger
+        console.log(obj.value)
+        if (index == this.maxlength - 1) {
+          if (this.value.length == this.maxlength) {
+            if (key == 'Backspace') {
+              if (
+                index == this.maxlength - 1 &&
+                this.value.length == this.maxlength
+              ) {
+                obj.value = ''
+                this.up(this.value.substring(0, this.value.length - 1))
+              } else {
+                this.up(this.value.substring(0, this.value.length - 1))
+                if (index != 0) {
+                  this.$refs.input[index - 1].value = ''
+                  // this.$refs.input[index - 1].setSelectionRange(1, 1)
+                  this.$refs.input[index - 1].focus()
+                }
+              }
+              // this.value = this.value.substring(0, this.value.length - 1)
+            } else if (key == 'Enter') {
+              obj.blur()
+              this.enter()
+            }
+            return
+          }
+        }
+        if (!/^[0-9]$/.test(obj.value)) {
+          obj.value = ''
+        }
+      } else if (/^[0-9]$/.test(key)) {
         if (this.value.length < this.maxlength) {
           this.up(this.value + (key + ''))
           if (this.canSee) {
