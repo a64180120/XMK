@@ -11,7 +11,7 @@
             <span>审批</span>
           </li>
           <li>
-            <div @click.stop="printTables" class="handle" style="width: 80px;">
+            <div @click.stop="printTables" class="handle" style=" width: 80px;">
               <div class="topIcon"><img src="@/assets/images/dy.png" alt=""></div><!-- @click="creatPayItem()"-->
               打印
             </div>
@@ -238,6 +238,9 @@
                 </td>
                 <td>
                   申请单编号
+                  <el-tooltip content="显示全部单据">
+                    <i class="el-icon-refresh refrest-same-follow"  @click="resetSameFollow"></i>
+                  </el-tooltip>
                 </td>
                 <td>
                   申请日期
@@ -293,11 +296,13 @@
                   <span v-if="item.BBilltype == '001'">资金拨付单</span>
                   <span v-if="item.BBilltype == '002'">支付单</span>
                 </td>
-                <td>
-                  <el-tooltip  effect="dark" :content="item.BNum" placement="bottom" popper-class="pay-fund-approval_tooltip">
-                    <p class="BDescribe">
+                <td @mouseenter="showSearchIcon(item,idx)" @mouseleave="hideSearchIcon()">
+                    <span class="BDescribe">
                       {{item.BNum}}
-                    </p>
+                    </span>
+                  <el-tooltip content="显示关联单据">
+                    <span>11</span>
+                    <i v-show="idx === showSearchIconIdx" class="el-icon-search refrest-same-follow" @click="seachSameFollow(item.BNum)"></i>
                   </el-tooltip>
                 </td>
                 <td>
@@ -428,6 +433,10 @@
 
         //审批弹框
         approvalDialog:false,
+        //支付单相同数据的编号
+        sameFollowNum:'',
+
+        showSearchIconIdx:''
       }
     },
     computed:{
@@ -486,7 +495,7 @@
           PageIndex:this.page.currentPage,
           PageSize:this.page.pageSize,
           BType:this.BType,
-          BName:this.searchForm.BName.trim(),
+          BName:this.searchForm.BName ==""?this.sameFollowNum:this.searchForm.BName.trim(),
           Operator:this.searchForm.Operator,
           StopHour:this.searchForm.StopHour,
           BStartDate:this.searchForm.BDate === null  ? '':this.searchForm.BDate[0],
@@ -542,6 +551,7 @@
       },
       //搜索框事件
       search(val){
+        this.sameFollowNum = ''
         this.page.pageSize=20;
         this.page.currentPage = 1;
         this.loadData()
@@ -700,6 +710,27 @@
           }
         }
         console.log(this.imgList)
+      },
+      //搜索支付单相同的数据
+      seachSameFollow(num){
+        this.searchForm.BName =""
+        this.sameFollowNum = num
+        this.page.pageSize=20;
+        this.page.currentPage = 1;
+        this.loadData()
+      },
+      resetSameFollow(){
+        this.sameFollowNum = "";
+        this.page.pageSize=20;
+        this.page.currentPage = 1;
+        this.loadData()
+      },
+      //移入显示对应单元格的图标
+      showSearchIcon(item,idx){
+          this.showSearchIconIdx = idx
+      },
+      hideSearchIcon(){
+        this.showSearchIconIdx = ''
       }
     }
   }
@@ -809,6 +840,13 @@
   /*  text-overflow: ellipsis;*/
   /*  white-space: nowrap;*/
   /*}*/
+  .refrest-same-follow{
+    color:#409EFF ;
+    font-size: 0.18rem;
+  }
+  .refrest-same-follow:hover{
+    cursor: pointer;
+  }
 </style>
 <style>
   .pay-fund-approval_tooltip{

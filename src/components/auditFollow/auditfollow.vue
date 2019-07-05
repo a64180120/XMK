@@ -11,6 +11,10 @@
           <!--资金拨付-->
           <ul class="pay-fund">
             <li></li>
+            <li style="height: 45px">
+              <div v-if="payfundClass" class="pay-title">资金拨付单</div>
+              <div v-else class="pay-title"></div>
+            </li>
             <li class="msg" v-for="(item,index) of payfundData" :key="index" >
                 <audit-msg class="payfund" :nowNum="inPayfund?nowNum:-1" v-bind="$attrs" v-on="$listeners" :info="item" :index="index+1" :startNum="payfundStartNum" @imgList="getImgList"></audit-msg>
             </li>
@@ -26,6 +30,9 @@
               <div v-else class="pay-title"></div>
             </li>
             <li class="msg" v-for="(item,index) of paylistData" :key="index" :style="{'marginBottom':index == paylistData.length-1?'50px':'0'}">
+              <div v-if="index !== 0 && paylistData[index].JudgeRefer == '1'" style="text-align: left;margin-bottom: 15px">
+                <span>重新支付</span>
+              </div>
               <div style="width: 90%">
                 <audit-msg class="paylist" :nowNum="inPaylist?nowNum:-1" v-bind="$attrs" v-on="$listeners" :info="item" :index="index+1" :startNum="paylistStartNum"  @imgList="getImgList"></audit-msg>
               </div>
@@ -367,6 +374,5 @@ export default {
     height: 20px;
     padding-top: 15px;
     font-size: 0.14rem;
-    margin-left:15px ;
   }
 </style>

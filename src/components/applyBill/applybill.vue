@@ -556,7 +556,7 @@ export default {
       }
     }
   }
-  & div:nth-of-type(2) {
+  >div:nth-of-type(2) {
     margin-left: 7%;
     background-color: #ffffff;
     position: relative;
