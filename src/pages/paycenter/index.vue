@@ -8,7 +8,7 @@
           @click="payNav('payListData')"
           style="margin-left:0;"
         >
-          <img src="../../assets/images/sfk.png" alt>
+          <img src="../../assets/images/sfk.png" alt />
           <div>收付款信息维护</div>
         </div>
         <div
@@ -16,7 +16,7 @@
           class="nav handle"
           @click="payNav('mergePayData')"
         >
-          <img src="../../assets/images/hb.png" alt>
+          <img src="../../assets/images/hb.png" alt />
           <div>合并支付</div>
         </div>
         <div
@@ -24,7 +24,7 @@
           class="nav handle"
           @click="payNav('payErrorHandleData')"
         >
-          <img src="../../assets/images/yc.png" alt>
+          <img src="../../assets/images/yc.png" alt />
           <div>异常处理</div>
         </div>
         <div
@@ -32,11 +32,11 @@
           class="nav handle"
           @click="payNav('approvalData')"
         >
-          <img src="../../assets/images/ss.png" alt>
+          <img src="../../assets/images/ss.png" alt />
           <div>送审</div>
         </div>
         <div @click.stop="printTables" class="nav handle">
-          <img src="@/assets/images/dy.png" style="width:28px" alt>
+          <img src="@/assets/images/dy.png" style="width:28px" alt />
           <!-- @click="creatPayItem()"-->
           <div>打印</div>
         </div>
@@ -84,7 +84,7 @@
                     v-model="status"
                     multiple
                     placeholder="请选择"
-                   size="small"
+                    size="small"
                     @visible-change="statusBlur"
                     @remove-tag="getData"
                   >
@@ -125,24 +125,39 @@
               </ul>
             </div>
           </div>
+          <!-- <label class="searchArea" style="float: right">
+            <search-input placeholder="" v-model="search" @btnClick="getData"></search-input>
+          </label>-->
           <label class="searchArea" style="float: right">
-            <search-input placeholder="支付单编号/申请单编号" v-model="search" @btnClick="getData"></search-input>
+            <el-input
+              size="small"
+              placeholder="支付单编号/申请单编号"
+              style="border-radius: 5px;width: 250px;overflow: hidden"
+              v-model="search"
+            >
+              <el-button
+                @click="getData"
+                slot="append"
+                size="small"
+                style="background-color: #3294e8;color: #fff;border-top-left-radius: 0;border-bottom-left-radius: 0"
+              >搜索</el-button>
+            </el-input>
           </label>
         </div>
         <div class="tableHead" style="margin-top:10px;">
           <table>
             <colgroup>
-              <col width="7%">
-              <col width="15%">
-              <col width="13%">
-              <col width="13%">
-              <col width="13%">
-              <col width="13%">
-              <col width="13%">
-              <col width="13%">
-              <col width="10%">
-              <col width="10%">
-              <col width="13%">
+              <col width="7%" />
+              <col width="15%" />
+              <col width="13%" />
+              <col width="13%" />
+              <col width="13%" />
+              <col width="13%" />
+              <col width="13%" />
+              <col width="13%" />
+              <col width="10%" />
+              <col width="10%" />
+              <col width="13%" />
             </colgroup>
             <thead>
               <tr>
@@ -157,17 +172,17 @@
         <div class="tableBody">
           <table v-if="tableData.length" ref="printArea">
             <colgroup>
-              <col width="7%">
-              <col width="15%">
-              <col width="13%">
-              <col width="13%">
-              <col width="13%">
-              <col width="13%">
-              <col width="13%">
-              <col width="13%">
-              <col width="10%">
-              <col width="10%">
-              <col width="13%">
+              <col width="7%" />
+              <col width="15%" />
+              <col width="13%" />
+              <col width="13%" />
+              <col width="13%" />
+              <col width="13%" />
+              <col width="13%" />
+              <col width="13%" />
+              <col width="10%" />
+              <col width="10%" />
+              <col width="13%" />
             </colgroup>
             <tbody>
               <tr
@@ -186,11 +201,9 @@
                 </td>
                 <td>
                   <div style="text-align:right;">
-                    <template v-if="item.Mst.FState==1">{{item.Mst.FAmountTotal | NumFormat}}</template>
-                    <template
-                      v-else-if="item.Mst.FState==2"
-                    >{{item.Dtls.reduce((prev,cur)=>{return cur.FState==1?cur.FAmount*100+prev:0+prev},0)/100 | NumFormat}}</template>
-                    <template v-else>{{0 | NumFormat}}</template>
+                    <!-- <template v-if="item.Mst.FState==1">{{item.Mst.FAmountTotal | NumFormat}}</template> -->
+                    <template>{{item.Dtls.reduce((prev,cur)=>{return (cur.FState==1&&!cur.FNewCode)?cur.FAmount*100+prev:0+prev},0)/100 | NumFormat}}</template>
+                    <!-- <template v-else>{{0 | NumFormat}}</template> -->
                   </div>
                 </td>
                 <td>
@@ -541,7 +554,9 @@ export default {
         '[or-dictionary0]*dictionary*or': {
           'RefbillCode*str*like*1': this.search.toString(),
           'FCode*str*like*1': this.search.toString()
-        }
+        },
+        'OrgCode*str*like*1': this.orgcode,
+        'FYear*str*like*1': this.year
         // '[or-dictionary1]*dictionary*or': {
         //   'FState*byte*eq*1': 0,
         //   'FState*byte*eq*2': 1
@@ -774,7 +789,8 @@ export default {
       orgid: state => state.user.orgid,
       userid: state => state.user.userid,
       year: state => state.user.year,
-      menubutton: state => state.user.menubutton
+      menubutton: state => state.user.menubutton,
+      orgcode: state => state.user.orgcode
     })
   },
   beforeDestroy() {
@@ -827,13 +843,16 @@ export default {
 
 <style lang='scss'>
 .payIndex {
+  .el-select .el-tag__close.el-icon-close {
+    background-color: #3b3c40;
+  }
   .scrollNav .el-select__tags {
     position: absolute;
     left: 0;
   }
-  .el-input__inner.el-date-editor--datetimerange.el-range-editor--small{
-    position:relative;
-    top:1px;
+  .el-input__inner.el-date-editor--datetimerange.el-range-editor--small {
+    position: relative;
+    top: 1px;
   }
   .el-checkbox,
   .el-checkbox__input.is-checked + .el-checkbox__label,
@@ -873,8 +892,8 @@ export default {
   display: inline-block;
   max-width: 300px;
 }
-.el-input__inner{
-    vertical-align: middle;
-    line-height: 30px;
-  }
+.el-input__inner {
+  vertical-align: middle;
+  line-height: 30px;
+}
 </style>
