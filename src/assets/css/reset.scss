@@ -236,3 +236,42 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+//el样式
+.el-message-box{
+	background:#fff;
+	.el-message-box__header{
+			background:#fff;
+			border-bottom:1px solid #ccc;
+		}
+		.el-message-box__btns button{
+			border-radius: 3px;
+			display: inline-block;
+			width: 70px;
+			height: 28px;
+			line-height: 28px;
+			padding: 0 10px;
+			text-align: center;
+			border: 1px solid $btnColor;
+			color: $btnColor;
+			background: #fff;
+			cursor: pointer;
+		}
+		.el-message-box__btns button:nth-child(2){
+			color: #fff;
+			border-radius: 3px;
+			display: inline-block;
+			width: 70px;
+			height: 28px;
+			line-height: 28px;
+			padding: 0 10px;
+			text-align: center;
+			border: 1px solid $btnColor;
+			background: $btnColor;
+			cursor: pointer;
+			&:hover {
+			  background: #fff;
+			  color: $btnColor;
+			}
+		}
+}

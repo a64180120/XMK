@@ -310,7 +310,7 @@ export default {
                 posts.push({
                     PostPhid:pos.PhId,
                     FSeq:i+1,
-                    FMode:pos.FMode
+                    FMode:pos.FMode 
                 })
             })
             if(this.money.max&&this.money.min&&parseFloat(this.money.max)<parseFloat(this.money.min)){
