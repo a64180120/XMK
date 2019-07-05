@@ -41,15 +41,16 @@
                         <div @click.stop="addInfo(0)" v-if="typeInfoList.length==0" style="cursor:pointer">请添加类型+</div>
                         <ul :class="{update:!disabled}" v-for="(item,n) of typeInfoList" :key="n">
                             <li>{{n+1}}</li>
-                            <li>
-                                <div v-show="disabled">{{item.TypeCode}}</div> 
-                                <div v-show="!disabled">
+                            <li :class="{gray:!disabled}">
+                                <div >{{item.TypeCode}}</div>
+                                <!-- <div v-show="disabled || item.Issystem==1">{{item.TypeCode}}</div>  -->
+                                <!-- <div v-show="!disabled&&item.Issystem!=1">
                                     <el-input v-model="item.TypeCode" placeholder="请输入类型编码"></el-input>
-                                </div>
+                                </div> -->
                             </li>
-                            <li>
-                                <div v-show="disabled">{{item.TypeName}}</div>
-                                <div v-show="!disabled">
+                            <li :class="{gray:!disabled&&item.Issystem==1}">
+                                <div v-show="disabled || item.Issystem==1">{{item.TypeName}}</div>
+                                <div v-show="!disabled&&item.Issystem!=1">
                                     <el-input v-model="item.TypeName" placeholder="请输入类型名称"></el-input>
                                 </div>
                             </li>
@@ -370,6 +371,7 @@ export default {
                 }
                 
             } 
+           
             ul.update:hover{
                 .enable >.active{
                     display: block;
@@ -391,7 +393,7 @@ export default {
     }
 }
 .gray{
-    background: #ddd;
+    background: #e6e8ea;
 }
 </style>
 <style>
@@ -399,5 +401,8 @@ export default {
     border:none;
     height: 100%;
 }
+.dictionary .listBody  ul.update input{
+  text-align: center;
+} 
 </style>
 
