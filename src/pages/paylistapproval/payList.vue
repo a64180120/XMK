@@ -17,155 +17,160 @@
           <span style="float:left;font-size:0.16rem;line-height:28px;">支付单号：{{detail.Mst.FCode}}</span>
           <div class="top-btn">
             <template v-if="data.itemType =='approval'">
-              <span class="btn btn-large" @click="save('approval')">审批</span>
+              <el-button class="btn" size="mini" @click="save('approval')">审批</el-button>
             </template>
             <!--            <span class="btn btn-large">打印</span>-->
           </div>
         </el-col>
       </el-row>
-      <el-row class="content" :gutter="10">
-        <!--付款方信息-->
-        <el-col :span="5" style="min-height:240px">
-          <div class="left-card">
-            <span>付款方</span>
-            <div>
-              <ul class="apply-info">
+      <!--  付款方信息    -->
+      <el-row :gutter="20">
+        <el-col :span="24">
+          <el-card class="payText">
+            <div class="pay-card">
+              <div>付款方</div>
+              <ul>
                 <li>
                   <span>付款单位：</span>
-                  <div>{{payDepart}}</div>
+                  <div style>{{payDepart}}</div>
                 </li>
-                <li>
+                <li >
                   <span>付款账户：</span>
-                  <div>
+                  <div
+                  >
                     <el-tooltip
                       :content="(accountList.length && account&&account!='0')?(accountList.find(item=>{return item.PhId == account})).FBankname:''"
                     >
-                      <span>{{(accountList.length && account&&account!='0')?(accountList.find(item=>{return item.PhId == account})).FBankname:''}}</span>
+                      <div>{{(accountList.length && account&&account!='0')?(accountList.find(item=>{return item.PhId == account})).FBankname:''}}</div>
                     </el-tooltip>
                   </div>
                 </li>
                 <li>
                   <span>支付方式：</span>
-                  <div>
-                    <el-tooltip :content="payType">
-                      <span>{{payType}}</span>
-                    </el-tooltip>
-                  </div>
+                  <el-tooltip :content="payType">
+                    <div>{{payType}}</div>
+                  </el-tooltip>
                 </li>
               </ul>
             </div>
-          </div>
+          </el-card>
         </el-col>
-        <!--收款方信息-->
-        <el-col :span="19">
-          <div class="detail-table">
-            <div class="title">
-              <span>收款方</span>
+      </el-row>
+      <!--  收款方信息    -->
+      <el-row class="content" :gutter="10">
+        <el-col :span="24" style="text-align: left">
+          <el-card class="payText">
+            <div slot="header" style="padding: 0 10px;text-align: left">
+              <span>
+                <span>收款方</span>
+              </span>
             </div>
-            <div class="top"></div>
-            <div class="getDetail">
-              <el-table
-                max-height="350px"
-                ref="payListTable"
-                style="margin-top:10px;"
-                :data="detail.Dtls"
-                border
-                :span-method="tabelColspan"
-              >
-                <!-- 序号列 -->
-                <el-table-column type="index" width="80" header-align="center" align="center">
-                  <template slot="header" slot-scope="scope">
-                    <template>序号</template>
-                  </template>
-                  <template slot-scope="scope">
-                    <span>{{scope.$index+1}}</span>
-                  </template>
-                </el-table-column>
-                <!-- 公共列 -->
-                <el-table-column
-                  v-for="(item,index) in payHeaders1"
-                  :key="index"
-                  :property="item.name"
-                  :label="item.label"
-                  :width="item.width||''"
-                  :header-align="item.headerAlign||'center'"
-                  :align="item.bodyAlign||'left'"
-                  empty-text="————"
+            <div class="detail-table">
+              <div class="getDetail">
+                <el-table
+                  max-height="350px"
+                  ref="payListTable"
+                  style="margin-top:10px;"
+                  :data="detail.Dtls"
+                  border
+                  :span-method="tabelColspan"
                 >
-                  <template slot-scope="scope">
-                    <!-- 申请金额 -->
-                    <div
-                      v-if="scope.column.property=='FAmount'"
-                      :title="scope.row[scope.column.property] | NumFormat"
-                      class="table-item"
-                    >{{scope.row[scope.column.property] | NumFormat}}</div>
-                    <!-- 预算科目  -->
-                    <div v-else-if="scope.column.property=='QtKmdm'" class="table-item nopadding">
-                      <template>{{scope.row.QtKmdm}} {{scope.row.QtKmmc}}</template>
-                    </div>
-                    <!-- 支付方式 -->
-                    <div
-                      v-else-if="scope.column.property=='FSamebank'"
-                      class="table-item nopadding"
-                    >
-                      <template>{{FSamebankList.find(item=>item.value==scope.row[scope.column.property]).label}}</template>
-                    </div>
-                    <!-- 收款方账户名称 -->
-                    <div
-                      v-else-if="scope.column.property=='FRecAcntname'&&data.itemType == 'notApprove'"
-                      class="table-item"
-                      @click="selectBank(scope.row)"
-                    >{{scope.row[scope.column.property]}}</div>
-                    <!-- 其他 -->
-                    <div :title="scope.row[scope.column.property]" class="table-item" v-else>
-                      <span>{{scope.row[scope.column.property]}}</span>
-                    </div>
-                  </template>
-                </el-table-column>
-                <!-- 支付异常列 -->
-                <template v-if="data.itemType=='error'">
+                  <!-- 序号列 -->
+                  <el-table-column type="index" width="80" header-align="center" align="center">
+                    <template slot="header" slot-scope="scope">
+                      <template>序号</template>
+                    </template>
+                    <template slot-scope="scope">
+                      <span>{{scope.$index+1}}</span>
+                    </template>
+                  </el-table-column>
+                  <!-- 公共列 -->
                   <el-table-column
-                    v-for="(item,index) in payHeaders2"
-                    :key="index+20"
+                    v-for="(item,index) in payHeaders1"
+                    :key="index"
                     :property="item.name"
                     :label="item.label"
                     :width="item.width||''"
                     :header-align="item.headerAlign||'center'"
                     :align="item.bodyAlign||'left'"
+                    empty-text="————"
                   >
                     <template slot-scope="scope">
-                      <div v-if="scope.column.property=='FState'" class="table-item">
-                        <template>{{FStateList.find(item=>item.value==scope.row[scope.column.property]).label}}</template>
+                      <!-- 申请金额 -->
+                      <div
+                        v-if="scope.column.property=='FAmount'"
+                        :title="scope.row[scope.column.property] | NumFormat"
+                        class="table-item"
+                      >{{scope.row[scope.column.property] | NumFormat}}</div>
+                      <!-- 预算科目  -->
+                      <div v-else-if="scope.column.property=='QtKmdm'" class="table-item nopadding">
+                        <template>{{scope.row.QtKmdm}} {{scope.row.QtKmmc}}</template>
                       </div>
+                      <!-- 支付方式 -->
+                      <div
+                        v-else-if="scope.column.property=='FSamebank'"
+                        class="table-item nopadding"
+                      >
+                        <template>{{FSamebankList.find(item=>item.value==scope.row[scope.column.property]).label}}</template>
+                      </div>
+                      <!-- 收款方账户名称 -->
+                      <div
+                        v-else-if="scope.column.property=='FRecAcntname'&&data.itemType == 'notApprove'"
+                        class="table-item"
+                        @click="selectBank(scope.row)"
+                      >{{scope.row[scope.column.property]}}</div>
+                      <!-- 其他 -->
                       <div :title="scope.row[scope.column.property]" class="table-item" v-else>
-                        <span v-if="scope.row.FState == 1">————</span>
-                        <span v-else>{{scope.row[scope.column.property]||'————'}}</span>
+                        <span>{{scope.row[scope.column.property]}}</span>
                       </div>
                     </template>
                   </el-table-column>
-                </template>
-                <!-- 支付成功列 -->
-                <template v-if="data.itemType=='success'">
-                  <el-table-column
-                    :property="payHeaders2[0].name"
-                    :label="payHeaders2[0].label"
-                    :width="payHeaders2[0].width||''"
-                    :header-align="payHeaders2[0].headerAlign||'center'"
-                    :align="payHeaders2[0].bodyAlign||'left'"
-                  >
-                    <template slot-scope="scope">
-                      <div v-if="scope.column.property=='FState'" class="table-item">
-                        <!-- <template>{{FStateList.find(item=>item.value==scope.row[scope.column.property]).label}}</template> -->
-                        支付成功
-                      </div>
-                    </template>
-                  </el-table-column>
-                </template>
-              </el-table>
+                  <!-- 支付异常列 -->
+                  <template v-if="data.itemType=='error'">
+                    <el-table-column
+                      v-for="(item,index) in payHeaders2"
+                      :key="index+20"
+                      :property="item.name"
+                      :label="item.label"
+                      :width="item.width||''"
+                      :header-align="item.headerAlign||'center'"
+                      :align="item.bodyAlign||'left'"
+                    >
+                      <template slot-scope="scope">
+                        <div v-if="scope.column.property=='FState'" class="table-item">
+                          <template>{{FStateList.find(item=>item.value==scope.row[scope.column.property]).label}}</template>
+                        </div>
+                        <div :title="scope.row[scope.column.property]" class="table-item" v-else>
+                          <span v-if="scope.row.FState == 1">————</span>
+                          <span v-else>{{scope.row[scope.column.property]||'————'}}</span>
+                        </div>
+                      </template>
+                    </el-table-column>
+                  </template>
+                  <!-- 支付成功列 -->
+                  <template v-if="data.itemType=='success'">
+                    <el-table-column
+                      :property="payHeaders2[0].name"
+                      :label="payHeaders2[0].label"
+                      :width="payHeaders2[0].width||''"
+                      :header-align="payHeaders2[0].headerAlign||'center'"
+                      :align="payHeaders2[0].bodyAlign||'left'"
+                    >
+                      <template slot-scope="scope">
+                        <div v-if="scope.column.property=='FState'" class="table-item">
+                          <!-- <template>{{FStateList.find(item=>item.value==scope.row[scope.column.property]).label}}</template> -->
+                          支付成功
+                        </div>
+                      </template>
+                    </el-table-column>
+                  </template>
+                </el-table>
+              </div>
             </div>
-          </div>
+          </el-card>
         </el-col>
       </el-row>
+
       <el-row :gutter="10">
         <div class="bottom">
           <span @click="openFollow()" style="text-decoration:underline;">
@@ -842,6 +847,42 @@ export default {
       }
     }
   }
+  .pay-card {
+    margin: 0 14px;
+    > div {
+      border-bottom: 1px solid rgb(154, 206, 251);
+      text-align: left;
+      font-size: 0.2rem;
+      margin: 14px 0;
+      padding-top: 4px;
+      padding-bottom: 7px;
+      color: #3294e8;
+      & ~ ul > li {
+        width: 100%;
+        padding-left: 125px;
+        overflow: hidden;
+        line-height: 40px;
+        text-align: left;
+        &.my-10 {
+          margin: 10px 0;
+        }
+        > span {
+          float: left;
+          margin-left: -100px;
+          letter-spacing: 3px;
+        }
+        > div {
+          border-bottom: 1px solid #9acefb;
+          float: left;
+          width: 100%;
+          padding-left: 10px;
+          .payTooltip {
+            width: 100%;
+          }
+        }
+      }
+    }
+  }
 }
 </style>
 
@@ -962,5 +1003,11 @@ export default {
 }
 .dj:hover {
   cursor: pointer !important;
+}
+.payText .el-card__header {
+  background-color: #3294e8;
+  color: #fff;
+  text-align: center;
+  padding: 10px 0;
 }
 </style>

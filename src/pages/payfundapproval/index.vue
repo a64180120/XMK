@@ -63,7 +63,7 @@
                 <el-date-picker v-model="searchForm.BDate" @change="changeInput()" style="width: 240px" size="mini" type="daterange" start-placeholder="开始时间" end-placeholder="开始时间"></el-date-picker>
               </el-form-item>
               <el-form-item label="" class="top-form-right">
-                <search-input @btnClick="search()" placeholder="申请单名称/编号" v-model="searchForm.BName"></search-input>
+                <search-input @btnClick="search()" placeholder="申报单名称/编号" v-model="searchForm.BName"></search-input>
               </el-form-item>
             </el-form>
           </div>
@@ -90,22 +90,24 @@
                   申报部门
                 </td>
                 <td>
-                  申请单编号
+                  申报单编号
                 </td>
                 <td>
-                  申请单名称
+                  申报单名称
                 </td>
                 <td>
-                  申请金额(元)
+                  申报金额(元)
                 </td>
                 <td>
-                  申请日期
+                  申报日期
                 </td>
                 <td>
                   审批状态
                 </td>
                 <td>
-                  停留时长
+                  <el-tooltip content="停留时长">
+                    <span>停留时长</span>
+                  </el-tooltip>
                 </td>
                 <td>
                   申报说明
@@ -217,16 +219,16 @@
                   申报部门/单位
                 </td>
                 <td>
-                  申请单编号
+                  申报单编号
                 </td>
                 <td>
-                  申请单名称
+                  申报单名称
                 </td>
                 <td>
-                  申请金额(元)
+                  申报金额(元)
                 </td>
                 <td>
-                  申请日期
+                  申报日期
                 </td>
                 <td>
                   审批状态
@@ -317,7 +319,7 @@
       <!--详情弹框-->
       <el-dialog class="dialog detail-dialog"  @close="closeDetailDialog" :visible.sync="detailDialog" :close-on-click-modal="false" width="1300px">
         <div slot="title" class="dialog-title">
-          <span style="float: left">查看申请</span>
+          <span style="float: left">查看申报</span>
         </div>
           <applybill v-if="detailDialog" @showImg="showImg" :applyNum="applyNum"
                      @delete="handleDelete">

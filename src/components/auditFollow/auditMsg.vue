@@ -6,9 +6,9 @@
       <template v-if="!isApproval">
         <li>
           <i v-if="index !=nowNum"
-            :class="[info.FApproval=='9'?'logo-sptg':(info.FApproval=='0'?'logo-wsp':(info.FApproval=='1'?'logo-spz':'logo-wtg'))]"
+            :class="[info.FApproval=='9'?'logo-sptg':(info.FApproval=='0'?'logo-wsp':(info.FApproval=='1'?'logo-now':'logo-wtg'))]"
           ></i>
-          <i v-else class="logo-now"></i>
+          <i v-else class="logo-spz "></i>
           <span v-if="info.JudgeRefer === 1">发起人:</span>
           <span v-else-if="info.JudgeRefer === 0 && info.OperaName != null">审批人:</span>
           <span v-else-if="info.JudgeRefer === 2 && info.OperaName != null">支付人:</span>
@@ -38,7 +38,7 @@
           </span>
         </li>
         <li v-if="info.JudgeRefer === 2">
-          <span>支付状态：{{info.isPay===0?'待支付':(info.isPay===1?'支付完成':'支付异常')}}</span>
+          <span>支付状态：{{info.isPay===0?'待支付':(info.isPay===1?'支付完成':info.isPay ===2?'支付异常':'支付中')}}</span>
         </li>
       </template>
       <template v-else>
@@ -165,7 +165,8 @@ export default {
   }
   > .blue {
     > li {
-      color: #3294e8;
+      /*color: #3294e8;*/
+      color: #a87ef3;
     }
   }
   > .light-gray {
@@ -233,7 +234,8 @@ export default {
   border-bottom: 1px solid #eaeaea;
 }
   .nowClass{
-    color: #a87ef3 !important;
+    /*color: #a87ef3 !important;*/
+    color: #3294e8 !important;
   }
 </style>
 <style scoped>
