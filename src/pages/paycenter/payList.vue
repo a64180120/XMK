@@ -148,7 +148,7 @@
             </div>
             <div class="detail-table">
               <div class="top">
-                <template v-if="data.itemType == 'notApprove'">
+                <template v-if="detail.Mst.FApproval == 0 || detail.Mst.FApproval == 2">
                   批量设置转账方式
                   <el-select
                     @focus="selectFSamebankFocus"
@@ -184,14 +184,14 @@
                         @click.stop.native="check"
                         @change="selectAll"
                         v-model="allSelected"
-                        v-if="data.itemType == 'notApprove'"
+                        v-if="detail.Mst.FApproval == 0 || detail.Mst.FApproval == 2"
                       >序号</el-checkbox>
                       <template v-else>序号</template>
                     </template>
                     <template slot-scope="scope">
                       <el-checkbox
                         @click.stop.native="check"
-                        v-if="data.itemType == 'notApprove'"
+                        v-if="detail.Mst.FApproval == 0 || detail.Mst.FApproval == 2"
                         @change="selectOne(scope)"
                         :label="scope.$index"
                         v-model="scope.row.choosed"
@@ -220,7 +220,7 @@
                       >{{scope.row[scope.column.property] | NumFormat}}</div>
                       <!-- 备注  -->
                       <div
-                        v-else-if="scope.column.property=='FDescribe'&& data.itemType == 'notApprove'"
+                        v-else-if="scope.column.property=='FDescribe'&& (detail.Mst.FApproval == 0 || detail.Mst.FApproval == 2)"
                         class
                       >
                         <el-input v-model="scope.row[scope.column.property]" placeholder></el-input>
@@ -228,7 +228,7 @@
                       <!-- 预算科目  -->
                       <div v-else-if="scope.column.property=='QtKmdm'" class>
                         <template
-                          v-if="data.itemType == 'notApprove'&&kemuList.length>0&&scope.row.QtKmdm"
+                          v-if="(detail.Mst.FApproval == 0 || detail.Mst.FApproval == 2)&&kemuList.length>0&&scope.row.QtKmdm"
                         >
                           <el-select
                             v-model="scope.row.QtKmdm"
@@ -247,7 +247,7 @@
                       </div>
                       <!-- 支付方式 -->
                       <div v-else-if="scope.column.property=='FSamebank'" class>
-                        <template v-if="data.itemType == 'notApprove'">
+                        <template v-if="(detail.Mst.FApproval == 0 || detail.Mst.FApproval == 2)">
                           <el-select
                             v-model="scope.row[scope.column.property]"
                             placeholder="请选择支付方式"
@@ -266,7 +266,7 @@
                       </div>
                       <!-- 收款方账户名称 -->
                       <div
-                        v-else-if="scope.column.property=='FRecAcntname'&&data.itemType == 'notApprove'"
+                        v-else-if="scope.column.property=='FRecAcntname'&&(detail.Mst.FApproval == 0 || detail.Mst.FApproval == 2)"
                         class="atype"
                         @click="selectBank(scope.row)"
                       >
@@ -298,6 +298,17 @@
                         <template
                           v-if="scope.column.property=='FState'"
                         >{{FStateList.find(item=>item.value==scope.row[scope.column.property]).label}}</template>
+                        <template v-if="scope.column.property=='FNewCodes'">
+                          <template v-if="scope.row[scope.column.property]">
+                            <p
+                              class="atype"
+                              style="display:inline-block;position:relative;"
+                              v-for="(item,index) in scope.row[scope.column.property].split(',')"
+                              @click="goNewPayList(scope.row,index)"
+                            >{{item}}</p>
+                          </template>
+                          <template v-else>————</template>
+                        </template>
                         <span v-else>{{scope.row[scope.column.property]||'————'}}</span>
                       </template>
                     </el-table-column>
@@ -315,9 +326,8 @@
             @click="getAuditfollow"
           >{{detail.Mst.FApproval!=undefined?FApprovalList.find(item=>item.value==detail.Mst.FApproval).label:''}}</span>
           <span
-            @click="getAuditfollow"
-            v-if="(data.itemType != 'approval')&&!reSetting"
-            :class="{success:data.itemType=='success'}"
+            v-if="!reSetting"
+            :class="{success:detail.Mst.FState==1}"
           >{{detail.Mst.FState!=undefined?FStateList.find(item=>item.value==detail.Mst.FState).label:''}}</span>
           <span
             class="dj"
@@ -338,11 +348,7 @@
       <div slot="title" class="dialog-title">
         <span style="float: left;">查看申请</span>
       </div>
-      <apply-bill
-        :applyNum="this.data.data[0].Mst.RefbillPhid.toString()"
-        :subData="[]"
-        @showImg="showImg"
-      >
+      <apply-bill :applyNum="detail.Mst.RefbillPhid.toString()" :subData="[]" @showImg="showImg">
         <div slot="btn-group">
           <el-button v-show="false" class="btn" size="mini">打印</el-button>
         </div>
@@ -367,6 +373,7 @@
     <!-- 银行档案 -->
     <bank-choose v-if="bankChooseData.openDialog" :data="bankChooseData" @getBank="getBank"></bank-choose>
     <auditfollow :auditMsg="auditMsg" :visible="showAuditfollow" @update:visible="closeAuditFollow"></auditfollow>
+    <pay-list v-if="boy.openDialog" :data="boy" />
   </div>
 </template>
 
@@ -410,6 +417,19 @@ export default {
   },
   data() {
     return {
+      boy: {
+        openDialog: false,
+        data: [
+          {
+            Mst: {
+              FCode: '',
+              FPaymethod: '',
+              PhId: ''
+            },
+            Dtls: []
+          }
+        ]
+      },
       imgDialog: false, //图片预览弹框
       showAuditfollow: false,
       auditMsg: [], //审批流程 数据
@@ -500,7 +520,7 @@ export default {
         {
           name: 'FNewCodes',
           label: '重新支付后关联支付单编号',
-          width: '250',
+          width: '200',
           bodyAlign: 'center'
         }
       ],
@@ -592,7 +612,8 @@ export default {
         },
         Dtls: []
       },
-      oldDetail: null
+      oldDetail: null,
+      orgName: ''
     }
   },
   methods: {
@@ -600,7 +621,7 @@ export default {
     getAuditfollow() {
       let that = this
       this.getAxios('GSP/GAppvalRecord/GetAppvalRecordList', {
-        RefbillPhid: this.data.data[0].Mst.PhId,
+        RefbillPhid: this.detail.Mst.PhId,
         FBilltype: '002'
       })
         .then(res => {
@@ -636,6 +657,7 @@ export default {
       })
         .then(res => {
           if (res.Status == 'error') {
+            this.$msgBox.error(res.Msg || '获取支付单详情失败！')
             return
           }
           if (getNewFCode) {
@@ -654,9 +676,25 @@ export default {
               res.Dtls[0].BankPhid == '0' ? '' : parseInt(res.Dtls[0].BankPhid)
           }
           this.allSelected = false
+          this.orgName = (() => {
+            let orgListJson = JSON.stringify(this.orglist)
+            let phidIndex = orgListJson.indexOf(this.detail.Mst.OrgPhid)
+            let nameIndex = orgListJson.indexOf('OName', phidIndex) + 8
+            let nameEndIndex = orgListJson.indexOf('"', nameIndex)
+            if (phidIndex == -1 || nameIndex == -1 || nameEndIndex == -1) {
+              return ''
+            }
+            return orgListJson.slice(nameIndex, nameEndIndex)
+          })()
           if (res.Mst.FPaymethod == 0) {
             this.detail.Mst.FPaymethod = ''
           }
+          this.getAccountList({
+            OrgPhid: this.detail.Mst.OrgPhid,
+            selectStr: ''
+          })
+          this.GetSysSetList()
+          this.getBudgetAccountsList()
         })
         .catch(err => {
           this.$msgBox.error('获取支付单详情失败！')
@@ -810,11 +848,13 @@ export default {
           if (res.Status == 'error') {
             this.$msgBox.error(res.Msg)
           } else {
-            if (this.data.itemType == 'notApprove') {
+            if (
+              this.detail.Mst.FApproval == 0 ||
+              this.detail.Mst.FApproval == 2
+            ) {
               this.FPaymethodList = res.Record.filter(item => {
                 return (
-                  item.Isactive == 0 ||
-                  item.PhId == this.data.data[0].Mst.FPaymethod
+                  item.Isactive == 0 || item.PhId == this.detail.Mst.FPaymethod
                 )
               })
             } else {
@@ -857,7 +897,7 @@ export default {
             return
           }
           this[type].openDialog = true
-          this[type].data = this.data.data
+          this[type].data = [this.detail]
           break
         case 'payErrorHandleData':
           if (
@@ -870,7 +910,7 @@ export default {
           }
         case 'mergePayData':
           this[type].openDialog = true
-          this[type].data = this.data.data
+          this[type].data = [this.detail]
           break
         case 'new':
           let errorArr = this.detail.Dtls.filter(item => item.FState == 2)
@@ -927,7 +967,6 @@ export default {
               this.detail = { Mst, Dtls }
               this.allSelected = false
               this.reSetting = true
-              this.data.itemType = 'notApprove'
             }
           })
           break
@@ -1020,7 +1059,6 @@ export default {
     payListClose(done) {
       if (this.reSetting) {
         this.reSetting = false
-        this.data.itemType = 'error'
         this.detail = this.oldDetail
         this.allSelected = this.detail.Dtls.every(item => item.choosed)
       } else {
@@ -1030,11 +1068,6 @@ export default {
     // dialog中的check事件
     selectOne($scope) {
       if ($scope.row.choosed) {
-        if (this.data.itemType == 'error') {
-          var newDtls = this.detail.Dtls.filter(item => item.FState == 2)
-          this.allSelected = newDtls.every(item => item.choosed)
-          return
-        }
         this.allSelected = this.detail.Dtls.every(item => item.choosed)
       } else {
         this.allSelected = false
@@ -1051,54 +1084,21 @@ export default {
     selectBank(item) {
       this.bankChooseData.openDialog = true
       this.bankChooseData.data = item
+    },
+    // 跳转子支付单
+    goNewPayList(row, index) {
+      console.log(row, index)
+      let phid = row.FNewCodesMstPhid.split(',')[index]
+      this.boy.data[0].Mst.PhId = phid
+      this.boy.openDialog = true
     }
   },
   mounted() {
     this.allSelected = false
     this.detail.Mst.PhId = this.data.data[0].Mst.PhId
     this.getData()
-    this.getAccountList({
-      OrgPhid: this.data.data[0].Mst.OrgPhid,
-      selectStr: ''
-    })
-    this.GetSysSetList()
-    if (this.kemuList.length == 0) {
-      this.getBudgetAccountsList()
-    }
-  },
-  watch: {
-    // 'data.openDialog'(newVal) {
-    //   if (newVal) {
-    //     this.allSelected = false
-    //     this.detail.Mst.PhId = this.data.data[0].Mst.PhId
-    //     this.getData()
-    //     this.getAccountList({
-    //       OrgPhid: this.data.data[0].Mst.OrgPhid,
-    //       selectStr: ''
-    //     })
-    //     this.GetSysSetList()
-    //     if (this.kemuList.length == 0) {
-    //       this.getBudgetAccountsList()
-    //     }
-    //   } else {
-    //     this.closeAuditFollow()
-    //   }
-    // }
   },
   computed: {
-    orgName() {
-      let orgListJson = JSON.stringify(this.orglist)
-      if (!this.data.data.length) {
-        return ''
-      }
-      let phidIndex = orgListJson.indexOf(this.data.data[0].Mst.OrgPhid)
-      let nameIndex = orgListJson.indexOf('OName', phidIndex) + 8
-      let nameEndIndex = orgListJson.indexOf('"', nameIndex)
-      if (phidIndex == -1 || nameIndex == -1 || nameEndIndex == -1) {
-        return ''
-      }
-      return orgListJson.slice(nameIndex, nameEndIndex)
-    },
     ...mapState({
       menubutton: state => state.user.menubutton,
       orgid: state => state.user.orgid,
@@ -1328,6 +1328,7 @@ export default {
           float: left;
           width: 100%;
           padding-left: 10px;
+          min-height: 40px;
           .payTooltip {
             width: 100%;
           }
