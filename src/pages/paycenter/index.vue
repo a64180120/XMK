@@ -230,7 +230,7 @@
                 <td>
                   <div v-if="item.Mst.FState==0">待支付</div>
                   <div v-else-if="item.Mst.FState==1">支付成功</div>
-                  <div v-else-if="item.Mst.FState==2">支付异常</div>
+                  <div class="dangerText" v-else-if="item.Mst.FState==2">支付异常</div>
                   <div v-else-if="item.Mst.FState==3">支付中</div>
                   <div v-else>————</div>
                 </td>

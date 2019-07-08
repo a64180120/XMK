@@ -526,6 +526,7 @@ export default {
            this.getTypeData();
            this.getPosts();
         },
+        //显示组织树选择
         orgTree(val){
             if(val){
                 let arr=[];

@@ -283,7 +283,7 @@
                   </el-table-column>
                   <!-- 支付异常列 -->
                   <template
-                    v-if="(!detail.Dtls.every(item=>(item.FState==1&&!item.FNewCode)))&&detail.Mst.FApproval==9"
+                    v-if="(!detail.Dtls.every(item=>(item.FState==1&&!item.FNewCode)))&&detail.Mst.FApproval==9&&detail.Mst.FState!=0"
                   >
                     <el-table-column
                       v-for="(item,index) in payHeaders2"
@@ -298,7 +298,7 @@
                         <template
                           v-if="scope.column.property=='FState'"
                         >{{FStateList.find(item=>item.value==scope.row[scope.column.property]).label}}</template>
-                        <template v-if="scope.column.property=='FNewCodes'">
+                        <template v-else-if="scope.column.property=='FNewCodes'">
                           <template v-if="scope.row[scope.column.property]">
                             <p
                               class="atype"
@@ -310,6 +310,25 @@
                           <template v-else>————</template>
                         </template>
                         <span v-else>{{scope.row[scope.column.property]||'————'}}</span>
+                      </template>
+                    </el-table-column>
+                  </template>
+                  <template
+                    v-if="(detail.Dtls.every(item=>(item.FState==1&&!item.FNewCode)))&&detail.Mst.FState==1&&detail.Mst.FApproval"
+                  >
+                    <el-table-column
+                      v-for="(item,index) in payHeaders3"
+                      :key="index+20"
+                      :property="item.name"
+                      :label="item.label"
+                      :width="item.width||''"
+                      :header-align="item.headerAlign||'center'"
+                      :align="item.bodyAlign||'left'"
+                    >
+                      <template slot-scope="scope">
+                        <template
+                          v-if="scope.column.property=='FState'"
+                        >{{FStateList.find(item=>item.value==scope.row[scope.column.property]).label}}</template>
                       </template>
                     </el-table-column>
                   </template>
@@ -521,6 +540,14 @@ export default {
           name: 'FNewCodes',
           label: '重新支付后关联支付单编号',
           width: '200',
+          bodyAlign: 'center'
+        }
+      ],
+      payHeaders3: [
+        {
+          name: 'FState',
+          label: '支付状态',
+          width: '150',
           bodyAlign: 'center'
         }
       ],
@@ -863,8 +890,8 @@ export default {
           }
         })
         .catch(err => {
-          console.log('获取支付列表信息失败! ' + err)
-          this.$msgBox.error('获取支付列表信息失败!')
+          console.log('获取支付方式列表失败! ' + err)
+          this.$msgBox.error('获取支付方式列表失败!')
         })
     },
     // 支付单 按钮事件
@@ -878,22 +905,22 @@ export default {
           this.savePayList(this.detail)
           break
         case 'approvalData':
-          if (!this.detail.Mst.FPaymethod) {
-            this.$msgBox.error('请选择支付方式！')
-            return
-          } else if (
+          if (
             this.detail.Dtls.some(item => {
               return item.BankPhid == '0'
             })
           ) {
             this.$msgBox.error('请选择付款账户！')
             return
+          } else if (!this.detail.Mst.FPaymethod) {
+            this.$msgBox.error('请选择支付方式！')
+            return
           } else if (
             this.detail.Dtls.some(item => {
               return !item.FRecAcnt
             })
           ) {
-            this.$msgBox.error('请完善所有单据收款账户！')
+            this.$msgBox.error('请完善所有单据收款账户信息！')
             return
           }
           this[type].openDialog = true

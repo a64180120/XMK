@@ -477,6 +477,9 @@ export default {
             })
             .catch(err => {
               console.log(err)
+              vm.showPassword = false
+              vm.showMergePay = true
+              vm.data.openDialog = false
               this.$msgBox.error(err.Message || '支付失败！')
             })
           return
@@ -524,6 +527,9 @@ export default {
               })
               .catch(err => {
                 console.log(err)
+                vm.showPassword = false
+                vm.showMergePay = true
+                vm.data.openDialog = false
                 this.$msgBox.error(err.Message || '支付失败！')
               })
           } else {
@@ -557,6 +563,9 @@ export default {
               })
               .catch(err => {
                 console.log(err)
+                vm.showPassword = false
+                vm.showMergePay = true
+                vm.data.openDialog = false
                 this.$msgBox.error(err.Message || '支付失败！')
               })
           }

@@ -204,8 +204,8 @@
     <el-dialog
       class="dialog img-dialog payCenter"
       :visible.sync="imgDialog"
-      :close-on-click-modal="false"
-      width="60%"
+      :close-on-click-modal="true"
+      width="800px"
       height="600px"
     >
       <div slot="title" class="dialog-title">
@@ -876,6 +876,7 @@ export default {
           float: left;
           width: 100%;
           padding-left: 10px;
+          min-height: 40px;
           .payTooltip {
             width: 100%;
           }

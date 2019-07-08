@@ -136,7 +136,7 @@
                 </td>
                 <td>
                   <el-tooltip  effect="dark" :content="item.OrgName" placement="bottom" popper-class="pay-fund-approval_tooltip">
-                    <p class="BDescribe">
+                    <p>
                       {{item.OrgName}}
                     </p>
                   </el-tooltip>
@@ -146,7 +146,7 @@
                 </td>
                 <td>
                   <el-tooltip  effect="dark" :content="item.BName" placement="bottom" popper-class="pay-fund-approval_tooltip">
-                    <p class="BDescribe">
+                    <p>
                       {{item.BName}}
                     </p>
                   </el-tooltip>
@@ -156,7 +156,7 @@
                 </td>
                 <td>
                   <el-tooltip  effect="dark" :content="item.BDate" placement="bottom" popper-class="pay-fund-approval_tooltip">
-                    <p class="BDescribe">
+                    <p >
                       {{item.BDate}}
                     </p>
                   </el-tooltip>
@@ -185,7 +185,7 @@
                 </td>
                 <td  style="text-align: left">
                   <el-tooltip  effect="dark" :content="item.BDescribe" placement="bottom-start" popper-class="pay-fund-approval_tooltip">
-                    <p class="BDescribe">
+                    <p >
                       {{item.BDescribe}}
                     </p>
                   </el-tooltip>
@@ -259,7 +259,7 @@
                 </td>
                 <td>
                   <el-tooltip  effect="dark" :content="item.OrgName" placement="bottom" popper-class="pay-fund-approval_tooltip">
-                    <p class="BDescribe">
+                    <p >
                       {{item.OrgName}}
                     </p>
                   </el-tooltip>
@@ -269,7 +269,7 @@
                 </td>
                 <td>
                   <el-tooltip  effect="dark" :content="item.BName" placement="bottom" popper-class="pay-fund-approval_tooltip">
-                    <p class="BDescribe">
+                    <p >
                       {{item.BName}}
                     </p>
                   </el-tooltip>
@@ -279,7 +279,7 @@
                 </td>
                 <td>
                   <el-tooltip  effect="dark" :content="item.BDate" placement="bottom" popper-class="pay-fund-approval_tooltip">
-                    <p class="BDescribe">
+                    <p >
                       {{item.BDate}}
                     </p>
                   </el-tooltip>
@@ -292,7 +292,7 @@
                 </td>
                 <td  style="text-align: left">
                   <el-tooltip  effect="dark" :content="item.BDescribe" placement="bottom-start" popper-class="pay-fund-approval_tooltip">
-                    <p class="BDescribe">
+                    <p >
                       {{item.BDescribe}}
                     </p>
                   </el-tooltip>

@@ -59,7 +59,7 @@
       :append-to-body="false"
       :close-on-click-modal="true"
       :modal-append-to-body="true"
-      width="40%"
+      width="800px"
       @click.stop="fn()"
     >
       <div slot="title" class="dialog-title" @click.stop="fn()">

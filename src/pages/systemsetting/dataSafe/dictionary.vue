@@ -30,6 +30,7 @@
                             <li>序号</li>
                             <li>类型编码</li>
                             <li>类型名称</li>
+                            <li>组织</li>
                             <li>备注</li>
                             <li>启用/停用</li>
                         </ul>
@@ -53,6 +54,12 @@
                                 <div v-show="!disabled&&item.Issystem!=1">
                                     <el-input v-model="item.TypeName" placeholder="请输入类型名称"></el-input>
                                 </div>
+                            </li>
+                            <li :class="{gray:!disabled&&item.Issystem==1}">
+                                <div  v-show="disabled">{{item.Bz}}</div>  
+                                <div @click="orgTree(item)" v-show="!disabled&&item.Issystem!=1">
+                                    {{item.Bz}}
+                                </div>  
                             </li>
                             <li :class="{gray:!disabled&&item.Issystem==1}">
                                 <div  v-show="disabled || item.Issystem==1">{{item.Bz}}</div>
@@ -92,10 +99,13 @@
                 </div>        
             </div>
         </div>
+        <!--组织树弹窗   visible:显示,,,,@confirm接收选中的值   data组织列表  checked-org当前选中的组织的code列表-->
+        <orgtree :visible.sync="orgVisible"  @confirm="getOrg" :data="orglist" :checked-org="orgSelected"></orgtree>
     </div>
 </template>
 
 <script>
+import Orgtree from "@/components/orgtree/index"
 import {mapState} from 'vuex'
 import topHandle from '@/components/topNav/topHandle'
 import {GetSysSetList,dictionarySave} from '@/api/systemSetting/dataSafe'
@@ -103,6 +113,8 @@ export default {
     name:'dictionary',
     data(){
         return{
+            orgVisible:false,
+            orgSelected:[],    
             disabled:true,//不可编辑,修改
             Value:'',//对下补助代码
             typeList:[
@@ -126,7 +138,8 @@ export default {
     },
     computed:{
         ...mapState({
-            menuButton: state => state.user.menubutton
+            menuButton: state => state.user.menubutton,
+            orglist: state => state.user.orglist
         })
     },
     mounted(){
@@ -202,10 +215,27 @@ export default {
             }
             this.typeInfoList.splice(index,1);
         
-        }
+        },
+        //接收选中的组织
+        getOrg(){
+
+        },
+        //显示组织树选择
+        orgTree(val){
+            if(val){
+                let arr=[];
+                // val.Organizes.map(v =>{
+                //     arr.push(v.OrgCode)
+                // })
+                 this.orgSelected=[101];//需要code的列表
+            }
+            this.orgInfo=val;
+            this.orgVisible=true;
+        },
     },
     components:{
-        topHandle
+        topHandle,
+        Orgtree
     }
 }
 </script>
@@ -302,20 +332,24 @@ export default {
                     border-width:0 1px 1px 0;
                     height:40px;
                     line-height: 40px;
+                    font-size:0.16rem;
                     &:first-of-type{
                         width:10%;
                         border-left:1px solid $borderColor_ccc;
                     }
                     &:nth-of-type(2){
-                        width:20%;
+                        width:15%;
                     }
                      &:nth-of-type(3){
                          width:20%;
                     }
                      &:nth-of-type(4){
-                         width:30%;
+                         width:20%;
                     }
                      &:nth-of-type(5){
+                         width:15%;
+                    }
+                    &:nth-of-type(6){
                          width:20%;
                     }
                 }
