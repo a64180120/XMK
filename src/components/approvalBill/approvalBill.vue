@@ -61,7 +61,7 @@
             >
               <el-table-column prop="FCode" width="80" align="center" label="流程编码"></el-table-column>
               <el-table-column prop="FName" align="center" label="流程名称"></el-table-column>
-              <el-table-column width="60" align="center" label="查看">
+              <el-table-column v-if="!isApproval" width="60" align="center" label="查看">
                 <template slot-scope="scope">
                   <i
                     class="el-icon-search icon-search"
