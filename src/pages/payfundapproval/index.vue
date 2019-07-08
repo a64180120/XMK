@@ -366,7 +366,7 @@
     data(){
       return{
 
-        BType:"001", //单据类型 资金拨付 001  申请单 002
+        BType:"001", //单据类型 资金拨付 001  申报单 002
         searchForm:{
           BName:'',//申报单名称或编号查询内容
           BDate:[],//申报时间段
@@ -408,7 +408,7 @@
 
         //判断显示为已审批页面还是未审批页面
         isApproval:true,
-        applyNum:"",//当前查看申请单的编号
+        applyNum:"",//当前查看申报单的编号
         SplxPhid:"",
         Approval:Boolean,
       }

@@ -96,7 +96,7 @@
                     empty-text="————"
                   >
                     <template slot-scope="scope">
-                      <!-- 申请金额 -->
+                      <!-- 申报金额 -->
                       <div
                         v-if="scope.column.property=='FAmount'"
                         :title="scope.row[scope.column.property] | NumFormat"
@@ -179,11 +179,11 @@
             <template v-else-if="data.itemType == 'approval'">待审批</template>
             <template v-else>审批通过</template>
           </span>
-          <span class="dj" @click="openDetailDialog()">点击查看关联申请单信息（申请编号：{{detail.Mst.RefbillCode}}）</span>
+          <span class="dj" @click="openDetailDialog()">点击查看关联申报单信息（申报编号：{{detail.Mst.RefbillCode}}）</span>
         </div>
       </el-row>
     </el-dialog>
-    <!-- 关联申请单信息查看 -->
+    <!-- 关联申报单信息查看 -->
     <el-dialog
       append-to-body
       :visible.sync="fundDetailData.openDialog"
@@ -192,7 +192,7 @@
       class="dialog detail-dialog payCenter"
     >
       <div slot="title" class="dialog-title">
-        <span style="float: left;">查看申请</span>
+        <span style="float: left;">查看申报</span>
       </div>
       <apply-bill v-if="fundDetailData.openDialog" :applyNum="applyNum" @showImg="showImg">
         <div slot="btn-group">
@@ -288,7 +288,7 @@ export default {
 
         {
           name: 'FAmount',
-          label: '申请金额（元）',
+          label: '申报金额（元）',
           width: '150',
           bodyAlign: 'right'
         },

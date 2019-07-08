@@ -387,7 +387,7 @@
     data(){
       return{
         payListVisible:false,
-        BType:"002", //单据类型 资金拨付 001  申请单 002
+        BType:"002", //单据类型 资金拨付 001  申报单 002
         checkedAll:false, //是否全选
         IsIndeterminate:false, //列表中是否有选中的值并且不是全选
         check:[],//列表所有选中状态

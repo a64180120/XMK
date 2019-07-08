@@ -62,7 +62,7 @@
                   </el-select>
                 </li>
                 <li>
-                  <span>申请日期</span>
+                  <span>申报日期</span>
                   <el-date-picker
                     size="small"
                     v-model="searchData.date"
@@ -73,7 +73,7 @@
                   </el-date-picker>
                 </li>
                 <li>
-                  <span>申请金额</span>
+                  <span>申报金额</span>
                   <input style="width:auto;height: 32px;" class="el-input__inner"
                                    :precision="2"
                                    :controls="false"
@@ -97,7 +97,7 @@
 
           </div>
           <label class="searchArea" style="float: right">
-            <el-input size="small" placeholder="请输入申请单编号/名称" style="border-radius: 5px;width: 250px;overflow: hidden" v-model="searchData.searchValue">
+            <el-input size="small" placeholder="请输入申报单编号/名称" style="border-radius: 5px;width: 250px;overflow: hidden" v-model="searchData.searchValue">
               <el-button slot="append" size="small" style="background-color: #3294e8;color: #fff;border-top-left-radius: 0;border-bottom-left-radius: 0">搜索</el-button>
             </el-input>
           </label>
@@ -133,7 +133,7 @@
                     </el-select>
                   </li>
                   <li>
-                    <span>申请日期</span>
+                    <span>申报日期</span>
                     <el-date-picker
                       size="small"
                       v-model="searchData.date"
@@ -144,7 +144,7 @@
                     </el-date-picker>
                   </li>
                   <li class="smallinput">
-                    <span>申请金额</span>
+                    <span>申报金额</span>
                     <el-input size="small" v-model="money.smoney"></el-input>
                     <span>至</span>
                     <el-input size="small" v-model="money.emoney"></el-input>
@@ -176,17 +176,17 @@
                 <td title="序号" style="text-align: right;padding-right: .5rem">
                   <el-checkbox v-model="checked">序号</el-checkbox>
                 </td>
-                <td title="申请单编号">
-                  申请单编号
+                <td title="申报单编号">
+                  申报单编号
                 </td>
-                <td title="申请单名称">
-                  申请单名称
+                <td title="申报单名称">
+                  申报单名称
                 </td>
-                <td title="申请单金额（元）">
-                  申请单金额（元）
+                <td title="申报单金额（元）">
+                  申报单金额（元）
                 </td>
-                <td title="申请日期">
-                  申请日期
+                <td title="申报日期">
+                  申报日期
                 </td>
                 <td title="审批状态">
                   审批状态
@@ -194,8 +194,8 @@
                 <td title="支付状态">
                   支付状态
                 </td>
-                <td title="申请说明">
-                  申请说明
+                <td title="申报说明">
+                  申报说明
                 </td>
               </tr>
             </thead>
@@ -322,18 +322,20 @@
       </div>
     </div>
 
-    <!--申请单弹窗-->
+    <!--申报单弹窗-->
 
-    <el-dialog v-if="applyType" class="applydialog" title="查看申请"
-    :visible.sync="applyType"
-    :before-close="handleClose">
-      <applybill :applyNum="applyNum"
-                 :subData="approvalDataS.subData"
-        @delete="handleDelete"
-      ></applybill>
+    <el-dialog v-if="applyType"
+               class="applydialog"
+               title="查看申报"
+               :visible.sync="applyType"
+               :close-on-click-modal="false"
+               :before-close="handleClose">
+        <applybill :applyNum="applyNum" :subData="approvalDataS.subData" @delete="handleDelete"></applybill>
     </el-dialog>
     <!--项目新增修改-->
-    <el-dialog v-if="applyproType" class="applydialog" :title="applyproTitle"
+    <el-dialog v-if="applyproType"
+               class="applydialog"
+               :title="applyproTitle"
                :visible.sync="applyproType"
                :close-on-click-modal="false"
                >
@@ -396,12 +398,12 @@
             payTypeList:{'0':'待支付','1':'支付异常','9':'支付成功'},
             visiable:false,//高级搜索框显示隐藏
             chartData:{
-              chart:[{name:'可申请',value:13210},{name:'冻结',value:1200},{name:'已使用',value:2301}],
-              title:['可申请','冻结','已使用'],
+              chart:[{name:'可申报',value:13210},{name:'冻结',value:1200},{name:'已使用',value:2301}],
+              title:['可申报','冻结','已使用'],
               dw:'元'
             },//图表数据
-            applyType:false,//是否显示查看申请弹窗
-            applyNum:'',//当前查看申请单的编号
+            applyType:false,//是否显示查看申报弹窗
+            applyNum:'',//当前查看申报单的编号
             applyproType:false,//显示项目新增修改弹窗
             applyproTitle:'',
             approvalDataS: {
@@ -573,7 +575,7 @@
         getChartList:function(val){
           let param={xmPhid:val,PhId:0};
           this.getAxios('GBK/PaymentMstApi/GetAmountOfMoney',param).then(res=>{
-            this.chartData.chart=[{name:'可申请',value:res.Sum},{name:'冻结',value:res.Frozen},{name:'已使用',value:res.Use}];
+            this.chartData.chart=[{name:'可申报',value:res.Sum},{name:'冻结',value:res.Frozen},{name:'已使用',value:res.Use}];
             let maxNum=0;
             for(var i in  this.chartData.chart){
               if( this.chartData.chart[i].value>maxNum){
@@ -604,7 +606,7 @@
           })
          /* for(var i in this.apartData.Mst){
             if(val==this.apartData.Mst[i].XmMstPhid){//FProjAmount FBudgetAmount RemainAmount UseAmount
-              this.chartData.chart=[{name:'可申请',value:FBudgetAmount},{name:'冻结',value:1200},{name:'已使用',value:2301}];
+              this.chartData.chart=[{name:'可申报',value:FBudgetAmount},{name:'冻结',value:1200},{name:'已使用',value:2301}];
             }
           }*/
         },
@@ -636,7 +638,7 @@
           this.apartData.Mst=[];
           this.apartData.Amount=0;
           this.bzType='';
-          this.chartData.chart=[{name:'可申请',value:0},{name:'冻结',value:0},{name:'已使用',value:0}];
+          this.chartData.chart=[{name:'可申报',value:0},{name:'冻结',value:0},{name:'已使用',value:0}];
           this.getAxios('GYS/BudgetMstApi/GetBudgetMstList',param).then(res=>{
             this.apartData.Mst=res.Mst;
             if(res.Mst.length>0){
@@ -708,7 +710,7 @@
             //alert('cloase');
             this.applyType=false;
         },
-        //查看申请弹窗
+        //查看申报弹窗
         showApply:function(num){
           this.applyType=true;
           this.applyNum=num+'';
@@ -737,12 +739,12 @@
           switch (val) {
             case 'add':
               if(this.apartData.Mst.length==0){
-                this.$msgBox.error('当前部门无预算支出项目，无法发起资金拨付申请。')
+                this.$msgBox.error('当前部门无预算支出项目，无法发起资金拨付申报。')
                 return;
               }
               this.isAdd=true;
               this.$forceUpdate(this.isAdd);
-              this.applyproTitle='新增申请';
+              this.applyproTitle='新增申报';
               this.applyproType=true;
               break;
             case 'update':
@@ -764,7 +766,7 @@
                   this.applyNum=upList[0].PhId+'';
                   this.isAdd=false;
                   this.$forceUpdate(this.isAdd);
-                  this.applyproTitle='修改申请';
+                  this.applyproTitle='修改申报';
                   this.applyproType=true;
                 }
               }
@@ -810,7 +812,7 @@
               }
               break;
             case 'SS':
-              //this.applyproTitle='修改申请';
+              //this.applyproTitle='修改申报';
               let ssList=this.getCheckedList();
               if(ssList.length==0){
                 this.$msgBox.show({
