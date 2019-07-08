@@ -32,8 +32,8 @@
         >{{btnGroup.cancelName}}</el-button>
         <el-button size="small" type="primary" @click="submit">{{btnGroup.onfirmName}}</el-button>
       </div>
-      <el-dialog width="auto" append-to-body :visible.sync="upload">
-        <upload ref="upload" @submit="uploadClose"/>
+      <el-dialog :close-on-click-modal="false" width="auto" append-to-body :visible.sync="upload">
+        <upload ref="upload" @submit="uploadClose" />
       </el-dialog>
       <!-- <div
         :class="{approvalfollow:true,show:showAuditfollow}"
@@ -378,7 +378,7 @@ export default {
     text-align: center;
   }
   .el-table__body-wrapper.is-scrolling-none {
-    max-height: 90px !important;
+    // max-height: 90px !important;
   }
 }
 </style>
