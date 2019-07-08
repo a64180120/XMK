@@ -11,7 +11,7 @@
             <span>审批</span>
           </li>
           <li>
-            <div @click.stop="printTables" class="handle" style="width: 80px;">
+            <div @click.stop="printTables" class="handle" style=" width: 80px;">
               <div class="topIcon"><img src="@/assets/images/dy.png" alt=""></div><!-- @click="creatPayItem()"-->
               打印
             </div>
@@ -51,7 +51,7 @@
                 <el-date-picker v-model="searchForm.BDate" @change="changeInput()" style="width: 240px" size="mini" type="daterange" start-placeholder="开始时间" end-placeholder="开始时间"></el-date-picker>
               </el-form-item>
               <el-form-item label="" class="top-form-right">
-                <search-input @btnClick="search()" placeholder="申请单编号" v-model="searchForm.BName"></search-input>
+                <search-input @btnClick="search()" placeholder="申报单编号" v-model="searchForm.BName"></search-input>
               </el-form-item>
             </el-form>
           </div>
@@ -89,10 +89,10 @@
                   单据类型
                 </td>
                 <td>
-                  申请单编号
+                  申报单编号
                 </td>
                 <td>
-                  申请日期
+                  申报日期
                 </td>
                 <td>
                   支付单名称
@@ -100,7 +100,11 @@
                 <td>
                   审批状态
                 </td>
-                <td v-if="isApproval">停留时长</td>
+                <td v-if="isApproval">
+                  <el-tooltip content="停留时长">
+                    <span>停留时长</span>
+                  </el-tooltip>
+                </td>
                 <td>申报说明</td>
               </tr>
               </thead>
@@ -237,16 +241,19 @@
                   单据类型
                 </td>
                 <td>
-                  申请单编号
+                  申报单编号
+                  <el-tooltip content="显示全部单据">
+                    <i class="el-icon-refresh refrest-same-follow"  @click="resetSameFollow"></i>
+                  </el-tooltip>
                 </td>
                 <td>
-                  申请日期
+                  申报日期
                 </td>
                 <td>
                   支付单名称
                 </td>
                 <td>
-                  申请状态
+                  申报状态
                 </td>
                 <td>申报说明</td>
               </tr>
@@ -293,11 +300,13 @@
                   <span v-if="item.BBilltype == '001'">资金拨付单</span>
                   <span v-if="item.BBilltype == '002'">支付单</span>
                 </td>
-                <td>
-                  <el-tooltip  effect="dark" :content="item.BNum" placement="bottom" popper-class="pay-fund-approval_tooltip">
-                    <p class="BDescribe">
+                <td @mouseenter="showSearchIcon(item,idx)" @mouseleave="hideSearchIcon()">
+                    <span class="BDescribe">
                       {{item.BNum}}
-                    </p>
+                    </span>
+                  <el-tooltip content="显示关联单据">
+                    <span>11</span>
+                    <i v-show="idx === showSearchIconIdx" class="el-icon-search refrest-same-follow" @click="seachSameFollow(item.BNum)"></i>
                   </el-tooltip>
                 </td>
                 <td>
@@ -428,6 +437,10 @@
 
         //审批弹框
         approvalDialog:false,
+        //支付单相同数据的编号
+        sameFollowNum:'',
+
+        showSearchIconIdx:''
       }
     },
     computed:{
@@ -486,7 +499,7 @@
           PageIndex:this.page.currentPage,
           PageSize:this.page.pageSize,
           BType:this.BType,
-          BName:this.searchForm.BName.trim(),
+          BName:this.searchForm.BName ==""?this.sameFollowNum:this.searchForm.BName.trim(),
           Operator:this.searchForm.Operator,
           StopHour:this.searchForm.StopHour,
           BStartDate:this.searchForm.BDate === null  ? '':this.searchForm.BDate[0],
@@ -542,6 +555,7 @@
       },
       //搜索框事件
       search(val){
+        this.sameFollowNum = ''
         this.page.pageSize=20;
         this.page.currentPage = 1;
         this.loadData()
@@ -700,6 +714,27 @@
           }
         }
         console.log(this.imgList)
+      },
+      //搜索支付单相同的数据
+      seachSameFollow(num){
+        this.searchForm.BName =""
+        this.sameFollowNum = num
+        this.page.pageSize=20;
+        this.page.currentPage = 1;
+        this.loadData()
+      },
+      resetSameFollow(){
+        this.sameFollowNum = "";
+        this.page.pageSize=20;
+        this.page.currentPage = 1;
+        this.loadData()
+      },
+      //移入显示对应单元格的图标
+      showSearchIcon(item,idx){
+          this.showSearchIconIdx = idx
+      },
+      hideSearchIcon(){
+        this.showSearchIconIdx = ''
       }
     }
   }
@@ -809,6 +844,13 @@
   /*  text-overflow: ellipsis;*/
   /*  white-space: nowrap;*/
   /*}*/
+  .refrest-same-follow{
+    color:#409EFF ;
+    font-size: 0.18rem;
+  }
+  .refrest-same-follow:hover{
+    cursor: pointer;
+  }
 </style>
 <style>
   .pay-fund-approval_tooltip{

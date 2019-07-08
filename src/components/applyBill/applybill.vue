@@ -220,7 +220,7 @@
       :visible.sync="dialogVisible"
       :append-to-body="true"
       :close-on-click-modal="false"
-      width="50%"
+      width="800px"
     >
       <div slot="title" class="dialog-title">
         <span style="float: left">查看附件</span>
@@ -556,7 +556,7 @@ export default {
       }
     }
   }
-  & div:nth-of-type(2) {
+  >div:nth-of-type(2) {
     margin-left: 7%;
     background-color: #ffffff;
     position: relative;

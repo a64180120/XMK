@@ -439,7 +439,7 @@ export default {
     postSubmitPayments() {
       var vm = this
       if (vm.father) {
-        // 单笔支付非网银
+        // 单笔支付非网银,不校验银行状态
         var payMethodName =
           this.$parent.detail.Mst.FPaymethod.length == 15 &&
           this.$parent.FPaymethodList.length > 0
@@ -479,6 +479,7 @@ export default {
               console.log(err)
               this.$msgBox.error(err.Message || '支付失败！')
             })
+          return
         }
       }
       // 获得银行服务状态

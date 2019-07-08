@@ -14,8 +14,8 @@
       <div class="payCenterDialog">
         <div class="content">
           <el-radio-group v-model="radio">
-            <el-radio :label="0">发起线上异常处理。</el-radio>
-            <el-radio :label="1">线下确认已成功支付，消除异常。</el-radio>
+            <el-radio :label="0">发起线上异常处理。（支付中）</el-radio>
+            <el-radio :label="1">线下确认已成功支付，消除异常。（支付异常）</el-radio>
           </el-radio-group>
         </div>
         <div class="btns">
@@ -63,16 +63,24 @@ export default {
   methods: {
     errorHandle() {
       if (this.radio === '') {
-        this.$msgBox.show('请选择一种处理方式。')
+        this.$msgBox.error('请选择一种处理方式。')
         return
       }
       if (this.radio == 0) {
+        if (!this.data.data.every(i => i.Mst.FState == 3)) {
+          this.$msgBox.error('只能对支付中的单据进行此操作。')
+          return
+        }
         // 重新刷新支付状态
         var ids = this.data.data.map(item => {
           return item.Mst.PhId
         })
         this.postRefreshPaymentsState(ids)
       } else {
+        if (!this.data.data.every(i => i.Mst.FState == 2)) {
+          this.$msgBox.error('只能对支付异常的单据进行此操作。')
+          return
+        }
         // 直接更改支付状态
         var ids = this.data.data.map(item => {
           return item.Mst.PhId
