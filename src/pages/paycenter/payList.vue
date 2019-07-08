@@ -890,8 +890,8 @@ export default {
           }
         })
         .catch(err => {
-          console.log('获取支付列表信息失败! ' + err)
-          this.$msgBox.error('获取支付列表信息失败!')
+          console.log('获取支付方式列表失败! ' + err)
+          this.$msgBox.error('获取支付方式列表失败!')
         })
     },
     // 支付单 按钮事件
