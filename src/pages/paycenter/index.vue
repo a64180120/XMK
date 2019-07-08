@@ -25,7 +25,7 @@
           @click="payNav('payErrorHandleData')"
         >
           <img src="../../assets/images/yc.png" alt />
-          <div>异常处理</div>
+          <div>支付状态清查</div>
         </div>
         <div
           v-if="menubutton.paycenter_check=='True'"
@@ -79,13 +79,11 @@
                 <li>
                   <span>支付状态</span>
                   <el-select
-                    @change="selectStatus"
                     collapse-tags
                     v-model="status"
                     multiple
                     placeholder="请选择"
                     size="small"
-                    @visible-change="statusBlur"
                     @remove-tag="getData"
                   >
                     <el-option
@@ -131,7 +129,7 @@
           <label class="searchArea" style="float: right">
             <el-input
               size="small"
-              placeholder="支付单编号/申请单编号"
+              placeholder="支付单编号/申报单编号"
               style="border-radius: 5px;width: 250px;overflow: hidden"
               v-model="search"
             >
@@ -300,7 +298,7 @@
       class="dialog detail-dialog payCenter"
     >
       <div slot="title" class="dialog-title">
-        <span style="float: left;">查看申请</span>
+        <span style="float: left;">查看申报</span>
       </div>
       <apply-bill :applyNum="applyNum" :subData="[]">
         <div slot="btn-group">
@@ -438,10 +436,10 @@ export default {
           label: '单据类型'
         },
         {
-          label: '申请单编号'
+          label: '申报单编号'
         },
         {
-          label: '申请单名称'
+          label: '申报单名称'
         },
         {
           label: '申报日期'
@@ -579,15 +577,17 @@ export default {
         }
       }
       if (this.status || this.status.length > 0) {
-        if (this.status.length === 1) {
-          query['FState*byte*eq*1'] = this.status[0]
-        } else {
-          query['[or-dictionary1]*dictionary*or'] = {}
-          this.status.forEach((item, index) => {
-            query['[or-dictionary1]*dictionary*or'][
-              'FState*byte*eq*' + (index + 1)
-            ] = item
-          })
+        if (this.status.findIndex(i => i === '') == -1) {
+          if (this.status.length === 1) {
+            query['FState*byte*eq*1'] = this.status[0]
+          } else {
+            query['[or-dictionary1]*dictionary*or'] = {}
+            this.status.forEach((item, index) => {
+              query['[or-dictionary1]*dictionary*or'][
+                'FState*byte*eq*' + (index + 1)
+              ] = item
+            })
+          }
         }
       }
       deleteBlank(query)
@@ -753,17 +753,6 @@ export default {
       console.log(cur, this.type)
       this.getData()
     },
-    selectStatus(cur) {
-      if (cur && cur.length > 0) {
-        if (cur[cur.length - 1] === '') {
-          this.status = ['']
-        } else if (cur.includes('')) {
-          cur.splice(cur.findIndex(item => item === ''), 1)
-        } else if (cur.length == this.statusList.length - 1) {
-          this.status = ['']
-        }
-      }
-    },
     statusBlur(visible) {
       if (!visible) this.getData()
     },
@@ -792,6 +781,34 @@ export default {
       menubutton: state => state.user.menubutton,
       orgcode: state => state.user.orgcode
     })
+  },
+  watch: {
+    status(newVal, oldVal) {
+      function arrSame(arr1, arr2) {
+        return JSON.stringify(arr1) == JSON.stringify(arr2)
+      }
+      let allChoosed = this.statusList.map(i => i.value)
+      if (newVal[newVal.length - 1] === '') {
+        //点击全选
+        this.status = this.statusList.map(i => i.value)
+      } else if (
+        arrSame(oldVal, allChoosed) &&
+        arrSame(['', ...newVal], allChoosed)
+      ) {
+        // 点击全部取消全选
+        this.status = []
+      } else if (arrSame(oldVal, allChoosed) && newVal[0] === '') {
+        // 点击其他取消全选
+        newVal.splice(0, 1)
+      } else if (
+        newVal.length == allChoosed.length - 1 &&
+        newVal.findIndex(i => i === '') == -1
+      ) {
+        //手动全选
+        this.status = allChoosed
+      }
+      this.getData()
+    }
   },
   beforeDestroy() {
     window.onresize = function() {}
