@@ -723,7 +723,7 @@ export default {
           case 'approvalData':
             if (
               !handleitem.every(item => {
-                return item.Mst.FApproval == 0
+                return item.Mst.FApproval == 0 || item.Mst.FApproval == 2
               })
             ) {
               this.$msgBox.error('只能对待送审的单据进行处理。')

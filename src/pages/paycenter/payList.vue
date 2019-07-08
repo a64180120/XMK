@@ -172,6 +172,7 @@
                   ref="payListTable"
                   style="margin-top:10px;"
                   :data="detail.Dtls"
+                  v-if="detail.Dtls.length"
                   border
                   :span-method="tabelColspan"
                   @row-click="rowClick"
@@ -184,21 +185,20 @@
                         @click.stop.native="check"
                         @change="selectAll"
                         v-model="allSelected"
-                        v-if="detail.Mst.FApproval == 0 || detail.Mst.FApproval == 2"
-                      >序号</el-checkbox>
+                        label="序号"
+                        v-if="(detail.Mst.FApproval == 0) ||( detail.Mst.FApproval == 2)"
+                      ></el-checkbox>
                       <template v-else>序号</template>
                     </template>
                     <template slot-scope="scope">
                       <el-checkbox
                         @click.stop.native="check"
-                        v-if="detail.Mst.FApproval == 0 || detail.Mst.FApproval == 2"
                         @change="selectOne(scope)"
-                        :label="scope.$index"
+                        :label="scope.$index+1"
                         v-model="scope.row.choosed"
-                      >{{scope.$index+1}}</el-checkbox>
-                      <template v-else>
-                        <span>{{scope.$index+1}}</span>
-                      </template>
+                        v-if="(detail.Mst.FApproval == 0) ||( detail.Mst.FApproval == 2)"
+                      ></el-checkbox>
+                      <span v-else>{{scope.$index+1}}</span>
                     </template>
                   </el-table-column>
                   <!-- 公共列 -->
@@ -213,7 +213,7 @@
                     empty-text="————"
                   >
                     <template slot-scope="scope">
-                      <!-- 申请金额 -->
+                      <!-- 申报金额 -->
                       <div
                         v-if="scope.column.property=='FAmount'"
                         class
@@ -351,11 +351,11 @@
           <span
             class="dj"
             @click="fundDetailData.openDialog = true"
-          >点击查看关联申请单信息（申请编号：{{detail.Mst.RefbillCode}}）</span>
+          >点击查看关联申报单信息（申报编号：{{detail.Mst.RefbillCode}}）</span>
         </div>
       </el-row>
     </el-dialog>
-    <!-- 关联申请单信息查看 -->
+    <!-- 关联申报单信息查看 -->
     <el-dialog
       append-to-body
       v-if="fundDetailData.openDialog"
@@ -365,7 +365,7 @@
       class="dialog detail-dialog payCenter"
     >
       <div slot="title" class="dialog-title">
-        <span style="float: left;">查看申请</span>
+        <span style="float: left;">查看申报</span>
       </div>
       <apply-bill :applyNum="detail.Mst.RefbillPhid.toString()" :subData="[]" @showImg="showImg">
         <div slot="btn-group">
@@ -458,14 +458,12 @@ export default {
         {
           name: 'XmProjcode',
           label: '项目编码',
-          width: '200',
-          bodyAlign: 'center'
+          width: '200'
         },
         {
           name: 'XmProjname',
           label: '项目名称',
-          width: '200',
-          bodyAlign: 'center'
+          width: '200'
         },
         {
           name: 'BudgetdtlName',
@@ -480,7 +478,7 @@ export default {
 
         {
           name: 'FAmount',
-          label: '申请金额（元）',
+          label: '申报金额（元）',
           width: '150',
           bodyAlign: 'right'
         },
@@ -716,10 +714,13 @@ export default {
           if (res.Mst.FPaymethod == 0) {
             this.detail.Mst.FPaymethod = ''
           }
-          this.getAccountList({
-            OrgPhid: this.detail.Mst.OrgPhid,
-            selectStr: ''
-          })
+          this.getAccountList(
+            {
+              OrgPhid: this.detail.Mst.OrgPhid,
+              selectStr: ''
+            },
+            this.detail.Mst.FApproval
+          )
           this.GetSysSetList()
           this.getBudgetAccountsList()
         })
@@ -832,14 +833,21 @@ export default {
         })
     },
     // 获取付款银行档案
-    getAccountList(data) {
+    getAccountList(data, FApproval) {
       BankAccountList(data)
         .then(res => {
           if (res.Status == 'error') {
             this.$msgBox.error(res.Msg)
           } else {
             // this.account = this.detail.Mst.OrgPhid
-            this.accountList = res.Record
+            let record = res.Record
+            if (FApproval == 0 || FApproval == 2) {
+              record = record.filter(i => i.FLifecycle == '1')
+            }
+            this.accountList = record
+            if (record.length == 1 && !this.account) {
+              this.account = record[0].PhId
+            }
           }
         })
         .catch(err => {
@@ -848,7 +856,7 @@ export default {
     },
     // 获取到新的银行信息
     getBank(data) {
-      if (this.bankChooseData.data.choosed) {
+      if (this.bankChooseData.data[0].choosed) {
         this.detail.Dtls.forEach(item => {
           if (item.choosed) {
             item.FRecAcntname = data.FBankname
@@ -859,17 +867,19 @@ export default {
           }
         })
       } else {
-        this.bankChooseData.data.FRecAcntname = data.FBankname
-        this.bankChooseData.data.FRecAcnt = data.FAccount
-        this.bankChooseData.data.FRecBankname = data.FOpenAccount
-        this.bankChooseData.data.FRecBankcode = data.FBankcode
-        this.bankChooseData.data.FRecCityname = data.FCity
+        this.bankChooseData.data[0].FRecAcntname = data.FBankname
+        this.bankChooseData.data[0].FRecAcnt = data.FAccount
+        this.bankChooseData.data[0].FRecBankname = data.FOpenAccount
+        this.bankChooseData.data[0].FRecBankcode = data.FBankcode
+        this.bankChooseData.data[0].FRecCityname = data.FCity
       }
     },
     // 获取支付方式
     GetSysSetList() {
       GetSysSetList({
-        DicType: 'PayMethod'
+        DicType: 'PayMethod',
+        uid: this.userid,
+        orgid: this.orgid
       })
         .then(res => {
           if (res.Status == 'error') {
@@ -1024,13 +1034,13 @@ export default {
     // checkBox所在框选中
     check(e) {},
     headerClick(column, event) {
-      if (column.type == 'index') {
+      if (!column.property) {
         this.allSelected = !this.allSelected
         this.selectAll(this.allSelected)
       }
     },
     rowClick(row, column, event) {
-      if (column && column.type == 'index') {
+      if (column && !column.property) {
         row.choosed = !row.choosed
         this.selectOne({ row })
       }
@@ -1110,7 +1120,9 @@ export default {
     //  选择银行
     selectBank(item) {
       this.bankChooseData.openDialog = true
-      this.bankChooseData.data = item
+      this.bankChooseData.data = item.choosed
+        ? this.detail.Dtls.filter(i => i.choosed)
+        : [item]
     },
     // 跳转子支付单
     goNewPayList(row, index) {

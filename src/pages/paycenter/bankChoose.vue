@@ -17,8 +17,8 @@
             <span class="btn" @click="data.openDialog = false">取消</span>
             <span class="btn" @click="bankConfirm">确定</span>
           </div>
-          <div style="height: 300px;">
-            <bankorder ref="bankorder"></bankorder>
+          <div style="height: 500px;">
+            <bankorder ref="bankorder" :selectitem="data"></bankorder>
           </div>
         </div>
       </div>
@@ -27,7 +27,8 @@
 </template>
 
 <script>
-import bankorder from '@/components/bankorder'
+import { mapState } from 'Vuex'
+import bankorder from '@/components/paybankorder'
 export default {
   name: 'bankChoose',
   components: { bankorder },
@@ -41,9 +42,7 @@ export default {
     }
   },
   data() {
-    return {
-      radio: ''
-    }
+    return {}
   },
   created() {},
   mounted() {},
@@ -56,11 +55,17 @@ export default {
       } else {
         data = data[0]
       }
+      console.log('bankdata', data)
       this.data.openDialog = false
       this.$emit('getBank', data)
     }
   },
-  watch: {}
+  watch: {},
+  computed: {
+    ...mapState({
+      orglist: state => state.user.orglist
+    })
+  }
 }
 </script>
 <style lang="scss" scoped>

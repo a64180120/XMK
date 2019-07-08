@@ -546,7 +546,7 @@ export default {
       // padding-bottom: 15px;
     }
     .el-table__body tr.current-row > td {
-      background-color: $primaryColor;
+      background-color: $selectedColor;
     }
   }
   &.el-dialog__wrapper {
