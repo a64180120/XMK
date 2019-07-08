@@ -325,7 +325,7 @@
                      @delete="handleDelete">
             <div slot="btn-group" >
               <el-button v-if="isApproval" class="btn" size="mini" @click="aprovalItem">审批</el-button>
-              <el-button  v-if="isApproval" class="btn" size="mini" style="width: 90px" @click="creatPayItem">生成支付单</el-button>
+              <el-button  v-if="isApproval" class="btn" size="mini" style="width: 120px" @click="creatPayItem">审批并生成支付单</el-button>
 
               <!--              <el-button class="btn" size="mini">打印</el-button>-->
             </div>
@@ -366,7 +366,7 @@
     data(){
       return{
 
-        BType:"001", //单据类型 资金拨付 001  申请单 002
+        BType:"001", //单据类型 资金拨付 001  申报单 002
         searchForm:{
           BName:'',//申报单名称或编号查询内容
           BDate:[],//申报时间段
@@ -408,7 +408,7 @@
 
         //判断显示为已审批页面还是未审批页面
         isApproval:true,
-        applyNum:"",//当前查看申请单的编号
+        applyNum:"",//当前查看申报单的编号
         SplxPhid:"",
         Approval:Boolean,
       }

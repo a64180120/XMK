@@ -51,7 +51,7 @@
             </div>
 
             <div>
-              <!--申请信息-->
+              <!--申报信息-->
               <div class="apply-info">
                 <span class="title">附件</span>
                 <div
@@ -80,7 +80,7 @@
         <el-col :span="19">
           <div class="detail-table">
             <div class="title">
-              <span>资金拨付申请单</span>
+              <span>资金拨付申报单</span>
             </div>
             <div class="top">
               <ul>
@@ -107,11 +107,11 @@
                   </colgroup>
                   <tbody>
                     <tr>
-                      <td style="color: #3294e8;">申请单号</td>
+                      <td style="color: #3294e8;">申报单号</td>
                       <td>{{record.PaymentMst.FCode}}</td>
                     </tr>
                     <tr>
-                      <td style="color: #3294e8;">申请单位名称</td>
+                      <td style="color: #3294e8;">申报单位名称</td>
                       <td>{{record.PaymentMst.FOrgname+'-'+record.PaymentMst.FDepname}}</td>
                     </tr>
                   </tbody>
@@ -127,9 +127,9 @@
                   </colgroup>
                   <tbody>
                     <tr>
-                      <td style="color: #3294e8;">申请说明</td>
+                      <td style="color: #3294e8;">申报说明</td>
                       <td class="left" >{{record.PaymentMst.FDescribe}}</td>
-                      <td style="color: #3294e8;">申请金额合计(元)</td>
+                      <td style="color: #3294e8;">申报金额合计(元)</td>
                       <td>{{record.PaymentMst.FAmountTotal | NumFormat}}</td>
                     </tr>
                   </tbody>
@@ -142,7 +142,7 @@
                   </colgroup>
                   <tbody>
                     <tr>
-                      <td style="background-color: #3294e86b">申请拨付明细</td>
+                      <td style="background-color: #3294e86b">申报拨付明细</td>
                     </tr>
                   </tbody>
                 </table>
@@ -163,7 +163,7 @@
                       <td style="color: #3294e8;">项目名称</td>
                       <td style="color: #3294e8;">补助单位/部门</td>
                       <td style="color: #3294e8;">明细项目名称</td>
-                      <td style="color: #3294e8;">申请金额(元)</td>
+                      <td style="color: #3294e8;">申报金额(元)</td>
                       <td style="color: #3294e8;">备注</td>
                     </tr>
                   </tbody>
@@ -327,7 +327,7 @@ export default {
     this.approvalDataS.subData = this.subData
   },
   methods: {
-    //申请单查看
+    //申报单查看
     getApply: function() {
       let param = { fPhId: this.applyNum }
       this.getAxios('GBK/PaymentMstApi/GetPaymentMst', param)
@@ -420,7 +420,7 @@ export default {
     },
     //删除
     deleteApply: function() {
-      this.$confirm('此操作将永久删除该申请，是否继续？', '提示', {
+      this.$confirm('此操作将永久删除该申报，是否继续？', '提示', {
         confirmButtonText: '确定',
         cancelBtnText: '取消',
         type: 'warning'

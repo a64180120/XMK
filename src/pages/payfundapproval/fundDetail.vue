@@ -24,7 +24,7 @@
               <i class="el-icon-edit-outline"></i>
               <span>待审核</span>
               <div>
-                <!--申请信息-->
+                <!--申报信息-->
                 <div class="apply-info">
                   <span class="title">附件</span>
                   <div class="appendix-item" v-for="(item,idx) in projectItem">
@@ -40,7 +40,7 @@
           <el-col :span="19">
             <div class="detail-table">
               <div class="title">
-                <span>资金拨付申请单</span>
+                <span>资金拨付申报单</span>
               </div>
               <div class="top">
                 <ul>
@@ -58,11 +58,11 @@
                     </colgroup>
                     <tbody>
                     <tr>
-                      <td>申请单号</td>
+                      <td>申报单号</td>
                       <td>{{data.applyCode}}</td>
                     </tr>
                     <tr>
-                      <td>申请单位名称</td>
+                      <td>申报单位名称</td>
                       <td>{{data.applyDepart}}</td>
                     </tr>
                     </tbody>
@@ -78,9 +78,9 @@
                     </colgroup>
                     <tbody>
                     <tr>
-                      <td>申请说明</td>
+                      <td>申报说明</td>
                       <td></td>
-                      <td>申请金额合计</td>
+                      <td>申报金额合计</td>
                       <td>{{data.applyAmount}}</td>
                     </tr>
                     </tbody>
@@ -93,7 +93,7 @@
                     </colgroup>
                     <tbody>
                     <tr>
-                      <td>申请拨付明细</td>
+                      <td>申报拨付明细</td>
                     </tr>
                     </tbody>
                   </table>
@@ -114,7 +114,7 @@
                       <td>项目名称</td>
                       <td>补助单位/部门</td>
                       <td>明细项目名称</td>
-                      <td>申请金额</td>
+                      <td>申报金额</td>
                       <td>备注</td>
                     </tr>
                     </tbody>
