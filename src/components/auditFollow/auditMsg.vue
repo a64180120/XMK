@@ -57,7 +57,7 @@
       :visible.sync="dialogVisible"
       :append-to-body="true"
       :close-on-click-modal="false"
-      width="40%"
+      width="800px"
     >
       <div slot="title" class="dialog-title">
         <span style="float: left">查看附件</span>

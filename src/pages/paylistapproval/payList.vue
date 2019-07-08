@@ -205,7 +205,7 @@
       class="dialog img-dialog payCenter"
       :visible.sync="imgDialog"
       :close-on-click-modal="false"
-      width="60%"
+      width="800px"
       height="600px"
     >
       <div slot="title" class="dialog-title">
