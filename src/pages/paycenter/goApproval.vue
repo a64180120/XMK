@@ -43,7 +43,7 @@
           <auditmsg :info="item" :index="index+1" :isApproval="true"></auditmsg>
         </template>
       </div>-->
-      <approvalfollow :showAuditfollow="showAuditfollow" :auditMsg="auditMsg"></approvalfollow>
+      <approvalfollow :showAuditfollow.sync="showAuditfollow" :auditMsg="auditMsg"></approvalfollow>
     </el-dialog>
   </section>
 </template>
@@ -95,6 +95,7 @@ export default {
   data() {
     return {
       showAuditfollow: false,
+      auditfollowPhId: '',
       openDialog: false,
       handleValue: '',
       content: '',
@@ -117,6 +118,7 @@ export default {
   methods: {
     // 获取审批人
     approvalRowClick(item) {
+      console.log('item:', item)
       this.ProcPhid = item.PhId
       this.NextOperators = []
       GetFirstStepOperator({
@@ -130,6 +132,7 @@ export default {
           this.mode = res.Data.FMode
           this.PostPhid = res.Data.PhId
           this.nextApprovaler = res.Data.Operators
+          this.dialogFlow(item)
         })
         .catch(err => {
           console.log(err)
@@ -139,9 +142,7 @@ export default {
     selectApprovaler(list) {
       this.NextOperators = list
     },
-    closeAuditFollow() {
-      this.showAuditfollow = false
-    },
+
     changeDialog() {
       this.openDialog = true
     },
@@ -160,7 +161,7 @@ export default {
             item.FBilltype = '002'
           })
           this.auditMsg = res
-          this.showAuditfollow = true
+          this.auditfollowPhId = row.PhId
         })
         .catch(err => {
           console.log(err)
@@ -279,6 +280,7 @@ export default {
           this.$refs.approvalbill.$refs.approvalFollowTable.setCurrentRow(
             res.Data[0]
           )
+          this.dialogFlow(res.Data[0])
         }
       })
       .catch(err => {
