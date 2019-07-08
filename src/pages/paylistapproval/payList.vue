@@ -876,6 +876,7 @@ export default {
           float: left;
           width: 100%;
           padding-left: 10px;
+          min-height: 40px;
           .payTooltip {
             width: 100%;
           }

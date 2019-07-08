@@ -75,7 +75,15 @@
           }
       },
       mounted(){
-        this.getProcTypes()
+        this.getProcTypes();
+        let m = {
+          a:0,
+          b:1
+        }
+        let n = m
+        n.a = 10
+        console.log(m)
+        console.log(n)
       },
       computed:{
         ...mapState({
