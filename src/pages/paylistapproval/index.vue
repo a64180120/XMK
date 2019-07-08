@@ -217,11 +217,11 @@
                 <col width="8%">
                 <col width="8%">
                 <col width="8%">
-                <col width="8%">
+                <col width="12%">
                 <col width="10%">
                 <col width="10%">
                 <col width="8%">
-                <col width="25%">
+                <col width="21%">
               </colgroup>
               <thead>
               <tr>
@@ -268,11 +268,11 @@
                 <col width="8%">
                 <col width="8%">
                 <col width="8%">
-                <col width="8%">
+                <col width="12%">
                 <col width="10%">
                 <col width="10%">
                 <col width="8%">
-                <col width="25%">
+                <col width="21%">
               </colgroup>
               <tbody>
               <tr :class="{trActive:check[idx]}" v-for="(item,idx) in tableData"  :key="idx">
@@ -305,7 +305,6 @@
                       {{item.BNum}}
                     </span>
                   <el-tooltip content="显示关联单据">
-                    <span>11</span>
                     <i v-show="idx === showSearchIconIdx" class="el-icon-search refrest-same-follow" @click="seachSameFollow(item.BNum)"></i>
                   </el-tooltip>
                 </td>

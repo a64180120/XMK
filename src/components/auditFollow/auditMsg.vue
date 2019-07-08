@@ -56,7 +56,7 @@
       class="dialog img-dialog"
       :visible.sync="dialogVisible"
       :append-to-body="true"
-      :close-on-click-modal="false"
+      :close-on-click-modal="true"
       width="800px"
     >
       <div slot="title" class="dialog-title">

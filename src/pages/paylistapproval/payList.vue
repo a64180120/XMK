@@ -204,7 +204,7 @@
     <el-dialog
       class="dialog img-dialog payCenter"
       :visible.sync="imgDialog"
-      :close-on-click-modal="false"
+      :close-on-click-modal="true"
       width="800px"
       height="600px"
     >
