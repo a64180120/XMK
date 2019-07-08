@@ -19,7 +19,7 @@
         <div class="container">
             <order :type="'handle'"  ref="order"/>
         </div>
-        <el-dialog :title="'银行账号'+(handleBtn=='add'?'新增':'修改')" :visible.sync="accountAddShow">
+        <el-dialog :close-on-click-modal="false" :title="'银行账号'+(handleBtn=='add'?'新增':'修改')" :visible.sync="accountAddShow">
             <accountAdd v-if="accountAddShow" @add-cancle="addCancle" :type="handleBtn" :info="info"></accountAdd>
         </el-dialog>
         <!-- <el-dialog  :visible.sync="upload">

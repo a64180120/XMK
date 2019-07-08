@@ -2,6 +2,7 @@
   <div
     :class="{approvalfollow:true,show:showAuditfollow}"
     :style="showAuditfollow?'height:'+(auditMsg.length*40+15)+'px':''"
+    v-if="showAuditfollow"
   >
     <template v-for="(item,index) in auditMsg">
       <auditmsg :info="item" :index="index+1" :isApproval="true"></auditmsg>

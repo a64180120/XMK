@@ -164,7 +164,7 @@
         </div>
         <!--组织树弹窗   visible:显示,,,,@confirm接收选中的值   data组织列表  checked-org当前选中的组织的code列表-->
         <orgtree :visible.sync="orgVisible"  @confirm="getOrg" :data="orglist" :checked-org="orgSelected"></orgtree>
-        <el-dialog  :title="(postBtn=='add'?'新增':'修改')+'岗位'" :visible.sync="postAddShow">
+        <el-dialog :close-on-click-modal="false" :title="(postBtn=='add'?'新增':'修改')+'岗位'" :visible.sync="postAddShow">
             <post-add v-if="postAddShow" :postinfo="postinfo" :type="postBtn" @add-cancle="addCancle"></post-add>
         </el-dialog>
     </div>
