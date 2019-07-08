@@ -50,7 +50,7 @@
             <span @click="$emit('add-cancle')" class="whiteBtn">取消</span>
             <span @click="update" class="btn">保存</span>
         </p>
-         <el-dialog class="bankAddOrg" :append-to-body="true" :visible.sync="orgVisible"  width="30%" title="组织选择">
+         <el-dialog :close-on-click-modal="false" class="bankAddOrg" :append-to-body="true" :visible.sync="orgVisible"  width="30%" title="组织选择">
             <p></p>
             <el-tree
                 ref="orgtree"

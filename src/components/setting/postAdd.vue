@@ -60,7 +60,7 @@
                 </ul>
             </div>
         </div>
-        <el-dialog class="postAddModel" append-to-body title="选择操作员" :visible.sync="showAddAuditer">
+        <el-dialog :close-on-click-modal="false" class="postAddModel" append-to-body title="选择操作员" :visible.sync="showAddAuditer">
             <auditer v-if="showAddAuditer" :info="userList" :getuser="users" @auditer-cancle="auditerCancle"/>
         </el-dialog>
     </div>
