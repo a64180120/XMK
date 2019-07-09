@@ -98,6 +98,14 @@ export default {
           this.$refs.input[i].value = '●'
         }
       }
+    },
+    value(newVal, oldVal) {
+      console.log(newVal, oldVal)
+      if (newVal == '') {
+        this.$refs.input.forEach(i => {
+          i.value = ''
+        })
+      }
     }
   },
   created() {},

@@ -455,7 +455,8 @@ export default {
     getBack(e) {
       GetSysSetList({
         DicType: 'PayMethod',
-        uid: this.userid
+        uid: this.userid,
+        orgid: this.orgid
       })
         .then(res => {
           if (res) {
