@@ -76,20 +76,13 @@
       },
       mounted(){
         this.getProcTypes();
-        let m = {
-          a:0,
-          b:1
-        }
-        let n = m
-        n.a = 10
-        console.log(m)
-        console.log(n)
       },
       computed:{
         ...mapState({
           OrgCode:state =>state.user.orgcode,
           UserId:state =>state.user.userid,
           Orgid:state =>state.user.orgid,
+          Year:state =>state.user.year,
         })
       },
       methods:{
@@ -99,8 +92,9 @@
             Uid:this.UserId,
             Orgid:this.Orgid,
             OrgCode:this.OrgCode,
-            Year:"2019"
+            Year:this.Year
           }
+          debugger
           // this.getAxios('/GAppvalProc/GetProcTypes',data).then(success=>{
           //     console.log(success);
           //   this.myApproval = success.Data;
