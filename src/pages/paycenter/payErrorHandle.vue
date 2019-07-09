@@ -229,5 +229,8 @@ export default {
       font-size: 0.16rem;
     }
   }
+  .el-dialog__body {
+    padding-bottom: 10px;
+  }
 }
 </style>
