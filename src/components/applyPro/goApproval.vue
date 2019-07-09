@@ -363,7 +363,19 @@ export default {
   watch: {
     'param.FOpinion': function(val) {
       this.len = val.length
+    },
+    nextDataList:{
+      handler(val){
+
+        if (val.length === 1 ){
+          this.$nextTick(() => {
+            this.$refs.opTable.toggleAllSelection()
+          })
+        }
+      },
+      deep:true
     }
+
   }
   /*created() {
     this.getAppvalProc();

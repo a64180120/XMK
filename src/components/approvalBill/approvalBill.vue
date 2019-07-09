@@ -223,6 +223,11 @@ export default {
             this.$refs.nextApprovaler.toggleAllSelection()
           })
         }
+        if (val.length == 1 ) {
+          this.$nextTick(() => {
+            this.$refs.nextApprovaler.toggleAllSelection()
+          })
+        }
       },
       deep: true
     }

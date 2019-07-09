@@ -265,7 +265,7 @@
       <div class="rightPanel">
         <div style="width: 278px;overflow-y: scroll;padding-right: 11px;height: 100%;">
           <!--部门选择-->
-          <el-select size="small" style="width: 250px;" v-model="searchData.bmType" @change="changeApart">
+          <el-select size="small" style="width: 250px;" class="approvalDepart" popper-class="AD-proper" v-model="searchData.bmType" @change="changeApart">
             <el-option v-for="item in bmList"
                        :key="item.PhId"
                        :label="item.OName"
@@ -1079,5 +1079,19 @@
   .el-input__inner{
     vertical-align: middle;
     line-height: 30px;
+  }
+  .AD-proper .el-scrollbar .el-select-dropdown__wrap ul li{
+      text-align: center;
+  }
+  .AD-proper .popper__arrow{
+    left: 110px !important;
+  }
+</style>
+<style scoped>
+  .approvalDepart >>> .el-input--suffix .el-input__inner{
+    text-align: center;
+  }
+  .AD-proper{
+
   }
 </style>
