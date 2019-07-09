@@ -713,6 +713,7 @@
         if(this.delSOD){
           this.$emit('delete',{flag:true,type:'applyproType'})
         };
+        this.prodataList=[];
       },
       //提示窗口倒计时
       timer:function(){
