@@ -4,7 +4,7 @@
     <el-dialog
       append-to-body
       :visible.sync="data.openDialog"
-      width="350px"
+      width="390px"
       :close-on-click-modal="false"
       class="payCenter"
     >
@@ -14,10 +14,10 @@
       <div class="payCenterDialog">
         <div class="content">
           <el-radio-group v-model="radio">
-            <el-radio :label="0">发起线上异常处理。</el-radio>
-            <div class="notice">（支付中单据处理）</div>
-            <el-radio :label="1">线下确认已成功支付，消除异常。</el-radio>
-            <div class="notice">（支付异常单据处理）</div>
+            <el-radio :label="0" :disabled="data.data[0].Mst.FState != 3 ">重新从银行获取最新的支付状态回执。</el-radio>
+            <!-- <div class="notice">（）</div> -->
+            <el-radio :label="1" :disabled="data.data[0].Mst.FState != 2 ">已线下确认支付成功，将支付状态改为成功。</el-radio>
+            <!-- <div class="notice">（已线下确认支付成功，将支付状态改为成功）</div> -->
           </el-radio-group>
         </div>
         <div class="btns">
@@ -58,6 +58,7 @@ export default {
     }
   },
   created() {
+    this.radio = this.data.data[0].Mst.FState == 3 ? 0 : 1
     console.log(this.data.data)
     console.log(this.data.father)
   },
@@ -190,9 +191,7 @@ export default {
     .content {
       text-align: left;
       font-size: 0.16rem;
-      .el-radio {
-        margin-bottom: 0;
-      }
+
       .notice {
         font-size: 0.16rem;
         line-height: 22px;
