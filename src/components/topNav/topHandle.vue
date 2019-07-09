@@ -178,7 +178,7 @@
           },
           setyearList(){ //年度列表
             this.year=this.$store.state.user.year;//当前默认选中的年份
-            for(let y=2018;y<=new Date().getFullYear();y++){
+            for(let y=2019;y<=new Date().getFullYear();y++){
               this.options.unshift({label:y,value:y})
             }
           },
