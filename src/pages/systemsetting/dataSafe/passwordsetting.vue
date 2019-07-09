@@ -14,7 +14,7 @@
             <div v-show="!disabled" class="passwordContent">
               <el-input
                 maxlength="6"
-                @keyup.native="clearNoNum($event)"
+                @keyup.native="clearNoNum('oldPassword',oldPassword)"
                 :disabled="disabled"
                 :type="oldPasswordCanSee?'text':'password'"
                 v-model="oldPassword"
@@ -37,7 +37,7 @@
             <div class="passwordContent">
               <el-input
                 maxlength="6"
-                @keyup.native="clearNoNum($event)"
+                @keyup.native="clearNoNum('newPassword',newPassword)"
                 :disabled="disabled"
                 :type="newPasswordCanSee?'text':'password'"
                 v-model="newPassword"
@@ -60,7 +60,7 @@
             <div v-show="!disabled" class="passwordContent">
               <el-input
                 maxlength="6"
-                @keyup.native="clearNoNum($event)"
+                @keyup.native="clearNoNum('confirmPassword',confirmPassword)"
                 :type="confirmPasswordCanSee?'text':'password'"
                 v-model="confirmPassword"
                 placeholder="请再次输入6位数字口令"
@@ -193,9 +193,9 @@ export default {
           })  
         },
         //输入框限定***
-        clearNoNum(event){
-            var obj=event.target;
-            obj.value = obj.value.replace(/[^0-9]/g,"");  //清除“数字”和“.”以外的字符  
+        clearNoNum(val,val2){
+            this[val]=val2.replace(/[^0-9]/g,"");
+              //清除“数字”和“.”以外的字符  
         },
         //检查口令
         checkNum(val){
@@ -236,7 +236,8 @@ export default {
         },
         beforeClose(){
             this.disabled=true;
-            this.newPassword='123456'
+            this.newPassword='123456';
+            this.newPasswordCanSee=false;
             this.getData();
         }
     }
