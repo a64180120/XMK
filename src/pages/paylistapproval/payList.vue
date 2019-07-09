@@ -34,10 +34,9 @@
                   <span>付款单位：</span>
                   <div style>{{payDepart}}</div>
                 </li>
-                <li >
+                <li>
                   <span>付款账户：</span>
-                  <div
-                  >
+                  <div>
                     <el-tooltip
                       :content="(accountList.length && account&&account!='0')?(accountList.find(item=>{return item.PhId == account})).FBankname:''"
                     >
@@ -96,7 +95,7 @@
                     empty-text="————"
                   >
                     <template slot-scope="scope">
-                      <!-- 申请金额 -->
+                      <!-- 申报金额 -->
                       <div
                         v-if="scope.column.property=='FAmount'"
                         :title="scope.row[scope.column.property] | NumFormat"
@@ -173,17 +172,15 @@
 
       <el-row :gutter="10">
         <div class="bottom">
-          <span @click="openFollow()" style="text-decoration:underline;">
-            <template v-if="data.itemType == 'notApprove'">待送审</template>
-            <template v-else-if="data.itemType == ''">审批中</template>
-            <template v-else-if="data.itemType == 'approval'">待审批</template>
-            <template v-else>审批通过</template>
-          </span>
-          <span class="dj" @click="openDetailDialog()">点击查看关联申请单信息（申请编号：{{detail.Mst.RefbillCode}}）</span>
+          <span
+            @click="openFollow()"
+            style="text-decoration:underline;"
+          >{{detail.Mst.FApproval!=undefined?FApprovalList.find(item=>item.value==detail.Mst.FApproval).label:''}}</span>
+          <span class="dj" @click="openDetailDialog()">点击查看关联申报单信息（申报编号：{{detail.Mst.RefbillCode}}）</span>
         </div>
       </el-row>
     </el-dialog>
-    <!-- 关联申请单信息查看 -->
+    <!-- 关联申报单信息查看 -->
     <el-dialog
       append-to-body
       :visible.sync="fundDetailData.openDialog"
@@ -192,7 +189,7 @@
       class="dialog detail-dialog payCenter"
     >
       <div slot="title" class="dialog-title">
-        <span style="float: left;">查看申请</span>
+        <span style="float: left;">查看申报</span>
       </div>
       <apply-bill v-if="fundDetailData.openDialog" :applyNum="applyNum" @showImg="showImg">
         <div slot="btn-group">
@@ -204,7 +201,7 @@
     <el-dialog
       class="dialog img-dialog payCenter"
       :visible.sync="imgDialog"
-      :close-on-click-modal="false"
+      :close-on-click-modal="true"
       width="800px"
       height="600px"
     >
@@ -288,7 +285,7 @@ export default {
 
         {
           name: 'FAmount',
-          label: '申请金额（元）',
+          label: '申报金额（元）',
           width: '150',
           bodyAlign: 'right'
         },
@@ -385,6 +382,24 @@ export default {
           value: 3
         }
       ],
+      FApprovalList: [
+        {
+          label: '待送审',
+          value: 0
+        },
+        {
+          label: '审批中',
+          value: 1
+        },
+        {
+          label: '未通过',
+          value: 2
+        },
+        {
+          label: '审批通过',
+          value: 9
+        }
+      ],
       bankType: '',
       kemuList: [],
       FSamebankList: [
@@ -439,7 +454,8 @@ export default {
     //获取银行信息
     getBack(e) {
       GetSysSetList({
-        DicType: 'PayMethod'
+        DicType: 'PayMethod',
+        uid: this.userid
       })
         .then(res => {
           if (res) {
@@ -876,6 +892,7 @@ export default {
           float: left;
           width: 100%;
           padding-left: 10px;
+          min-height: 40px;
           .payTooltip {
             width: 100%;
           }

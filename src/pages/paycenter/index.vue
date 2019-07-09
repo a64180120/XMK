@@ -84,7 +84,7 @@
                     multiple
                     placeholder="请选择"
                     size="small"
-                    @remove-tag="getData"
+                    @remove-tag="rePageGetData"
                   >
                     <el-option
                       v-for="item in statusList"
@@ -104,7 +104,7 @@
                     end-placeholder="结束日期"
                     size="small"
                     value-format="yyyy-MM-dd HH:mm:ss"
-                    @change="getData"
+                    @change="rePageGetData"
                   ></el-date-picker>
                 </li>
                 <li>
@@ -116,7 +116,7 @@
                     start-placeholder="开始日期"
                     end-placeholder="结束日期"
                     size="small"
-                    @change="getData"
+                    @change="rePageGetData"
                     value-format="yyyy-MM-dd HH:mm:ss"
                   ></el-date-picker>
                 </li>
@@ -124,7 +124,7 @@
             </div>
           </div>
           <!-- <label class="searchArea" style="float: right">
-            <search-input placeholder="" v-model="search" @btnClick="getData"></search-input>
+            <search-input placeholder="" v-model="search" @btnClick="rePageGetData"></search-input>
           </label>-->
           <label class="searchArea" style="float: right">
             <el-input
@@ -134,7 +134,7 @@
               v-model="search"
             >
               <el-button
-                @click="getData"
+                @click="rePageGetData"
                 slot="append"
                 size="small"
                 style="background-color: #3294e8;color: #fff;border-top-left-radius: 0;border-bottom-left-radius: 0"
@@ -162,7 +162,15 @@
                 <td :class="{trActive:checkAll}" @click.self="selectAll">
                   <el-checkbox v-model="checkAll" @change="handleCheckAll">序号</el-checkbox>
                 </td>
-                <td v-for="(item,index) in tableHeader" :key="index">{{item.label}}</td>
+                <td v-for="(item,index) in tableHeader" :key="index">
+                  <template v-if="item.label == '申报单编号'">
+                    {{item.label}}
+                    <el-tooltip content="显示全部单据">
+                      <i class="el-icon-refresh refrest-same-follow" @click="RefbillCode=''"></i>
+                    </el-tooltip>
+                  </template>
+                  <template v-else>{{item.label}}</template>
+                </td>
               </tr>
             </thead>
           </table>
@@ -207,13 +215,19 @@
                 <td>
                   <div>{{typeList.find(i=>item.Mst.FBilltype == i.value).label}}</div>
                 </td>
-                <td class="atype" @click="openRefbill(item.Mst.RefbillPhid)">
-                  <div>{{item.Mst.RefbillCode}}</div>
+                <td class="refbillitem">
+                  <div>
+                    {{item.Mst.RefbillCode}}
+                    <el-tooltip content="显示关联单据">
+                      <i
+                        class="el-icon-search refrest-same-follow"
+                        @click="RefbillCode=item.Mst.RefbillCode"
+                      ></i>
+                    </el-tooltip>
+                  </div>
                 </td>
                 <td>
-                  <el-tooltip :content="item.Mst.RefbillName">
-                    <p>{{item.Mst.RefbillName}}</p>
-                  </el-tooltip>
+                  <p>{{item.Mst.RefbillName}}</p>
                 </td>
                 <td>
                   <el-tooltip :content="item.Mst.NgInsertDt.replace('T',' ')">
@@ -230,7 +244,7 @@
                 <td>
                   <div v-if="item.Mst.FState==0">待支付</div>
                   <div v-else-if="item.Mst.FState==1">支付成功</div>
-                  <div v-else-if="item.Mst.FState==2">支付异常</div>
+                  <div class="dangerText" v-else-if="item.Mst.FState==2">支付异常</div>
                   <div v-else-if="item.Mst.FState==3">支付中</div>
                   <div v-else>————</div>
                 </td>
@@ -454,7 +468,8 @@ export default {
           label: '支付日期'
         }
       ],
-      tableData: []
+      tableData: [],
+      RefbillCode: ''
     }
   },
   created() {},
@@ -462,6 +477,10 @@ export default {
     this.getData()
   },
   methods: {
+    rePageGetData() {
+      this.currentPage = 1
+      this.getData()
+    },
     printTables() {
       let vm = this
       printTable(vm)
@@ -512,9 +531,11 @@ export default {
         }
       }
     },
-    openRefbill(PhId) {
-      this.applyNum = PhId.toString()
-      this.fundDetailData.openDialog = true
+    openRefbill(code) {
+      // this.applyNum = PhId.toString()
+      // this.fundDetailData.openDialog = true
+      this.RefbillCode = code
+      this.rePageGetData()
     },
     openAuditfollow(PhId) {
       let that = this
@@ -554,6 +575,7 @@ export default {
           'FCode*str*like*1': this.search.toString()
         },
         'OrgCode*str*like*1': this.orgcode,
+        'RefbillCode*str*eq*1': this.RefbillCode,
         'FYear*str*like*1': this.year
         // '[or-dictionary1]*dictionary*or': {
         //   'FState*byte*eq*1': 0,
@@ -723,7 +745,7 @@ export default {
           case 'approvalData':
             if (
               !handleitem.every(item => {
-                return item.Mst.FApproval == 0
+                return item.Mst.FApproval == 0 || item.Mst.FApproval == 2
               })
             ) {
               this.$msgBox.error('只能对待送审的单据进行处理。')
@@ -751,11 +773,9 @@ export default {
     // 筛选
     selectType(cur) {
       console.log(cur, this.type)
-      this.getData()
+      this.rePageGetData()
     },
-    statusBlur(visible) {
-      if (!visible) this.getData()
-    },
+
     // 分页
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`)
@@ -807,7 +827,10 @@ export default {
         //手动全选
         this.status = allChoosed
       }
-      this.getData()
+      this.rePageGetData()
+    },
+    RefbillCode() {
+      this.rePageGetData()
     }
   },
   beforeDestroy() {
@@ -855,11 +878,27 @@ export default {
       right: 1%;
     }
   }
+  .refrest-same-follow {
+    color: #409eff;
+    font-size: 0.18rem;
+  }
+  .refrest-same-follow:hover {
+    cursor: pointer;
+  }
+  td.refbillitem .refrest-same-follow {
+    display: none;
+  }
+  td.refbillitem:hover .refrest-same-follow {
+    display: inline-block;
+  }
 }
 </style>
 
 <style lang='scss'>
 .payIndex {
+  .el-date-editor .el-range__close-icon {
+    color: #3b3c40;
+  }
   .el-select .el-tag__close.el-icon-close {
     background-color: #3b3c40;
   }

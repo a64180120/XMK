@@ -29,7 +29,7 @@
                    <col width="45%" />
                  </colgroup>
                  <tr>
-                   <td class="right" style="padding-right: 20px">申请单名称:</td>
+                   <td class="right" style="padding-right: 20px">申报单名称:</td>
                    <td class="left" colspan="3" style="border-bottom: 1px solid #9acefb;"><el-input placeholder="30字以内" maxlength="30" show-word-limit v-model="PaymentMst.FName"></el-input></td>
                  </tr>
                  <tr>
@@ -40,7 +40,7 @@
                      </el-tooltip>
                    </td>
 
-                   <td class="right" style="border-bottom: 1px solid #fff;min-width: 100px">金&nbsp额&nbsp合&nbsp计:</td>
+                   <td class="right" style="border-bottom: 1px solid #fff;min-width: 140px">金&nbsp额&nbsp合&nbsp计（元）:</td>
                    <td class="left" style="border-bottom:1px solid #9acefb;overflow: hidden">
                      <el-tooltip :content="PaymentMst.FAmountTotal | NumFormat" popper-class="tooltipCla" placement="bottom-start">
                        <p>{{PaymentMst.FAmountTotal | NumFormat}}</p>
@@ -102,7 +102,7 @@
               </div>
               <!--frozen: 0 sum: 660000 surplus: 660000 use: 0-->
               <div style="height: 40px;line-height: 40px;background-color: #d7d7d7;padding:0 10px;margin-top: 10px;">
-                <span>预算总额 （{{item.PaymentXm.Sum | NumFormat}}元）- 实际已使用 （{{item.PaymentXm.Use | NumFormat}}元） - 冻结 （{{item.PaymentXm.Frozen | NumFormat}}元） = </span><span style="color: red;">本次可申请 （{{item.PaymentXm.Surplus | NumFormat}}元）</span>
+                <span>预算总额 （{{item.PaymentXm.Sum | NumFormat}}元）- 实际已使用 （{{item.PaymentXm.Use | NumFormat}}元） - 冻结 （{{item.PaymentXm.Frozen | NumFormat}}元） = </span><span style="color: red;">本次可申报 （{{item.PaymentXm.Surplus | NumFormat}}元）</span>
               </div>
             </div>
 
@@ -123,7 +123,7 @@
                   <td>序号</td>
                   <td>补助单位/部门</td>
                   <td>明细项目名称</td>
-                  <td>申请金额（元）</td>
+                  <td>申报金额（元）</td>
                   <td>备注<span style="font-size: 12px;color: rgb(50, 148, 232);">(最多100字)</span></td>
                   <td class="iconTd"></td>
                 </thead>
@@ -146,7 +146,7 @@
                       <td>
                         <el-tooltip :disabled="mx.FRemarks&&mx.FRemarks.length<15"  :content="mx.FRemarks" popper-class="tooltipCla" placement="bottom-start">
                           <p style="width: 300px;">{{mx.FRemarks}}</p>
-                          <p><input v-model="mx.FRemarks " maxlength="100"/></p>
+                          <p><input  v-model="mx.FRemarks " @focus="topClick(pindex,index)" maxlength="100"/></p>
                         </el-tooltip>
 
                       </td>
@@ -176,6 +176,7 @@
       height="100px"
       append-to-body
       id="delDialog"
+      :close-on-click-modal="false"
     >
       <p>确定删除该记录？</p>
       <span slot="footer"   style="text-align: center">
@@ -190,7 +191,8 @@
       width="500px"
       height="100px"
       :before-close="handleClose"
-      append-to-body>
+      append-to-body
+      :close-on-click-modal="false">
       <p>{{msg}} &nbsp（{{time}}s）后自动关闭</p>
       <span slot="footer">
         <button class="confirmBtn"  @click="handleClose">确定</button>
@@ -207,7 +209,7 @@
     </el-dialog>-->
     <!--二级项目弹窗-->
     <el-dialog width="600px" id="prodetail" title="请选择项目明细"
-               :visible.sync="orgDetailType" :append-to-body="true">
+               :visible.sync="orgDetailType" :append-to-body="true" :close-on-click-modal="false">
         <el-radio-group v-model="choosedProject">
             <el-radio v-for="item in prodataList" v-if="prodataList.length>0"
                       :label="item"
@@ -233,7 +235,7 @@
                    v-model="textare"></approval-bill>-->
 
     <!--附件上传-->
-    <el-dialog :visible.sync="uploadVis" :append-to-body="true" width="auto" title="附件上传">
+    <el-dialog :visible.sync="uploadVis" :append-to-body="true" width="auto" title="附件上传" :close-on-click-modal="false">
       <file-up v-if="uploadVis" :ind="choosedIndexAndPro" @succe="loadFile"></file-up>
     </el-dialog>
   </section>
@@ -292,15 +294,15 @@
         PaymentMst:{
           PhId:0,
           FYear: '',//（年度）
-          FName: '',//（申请单名）
+          FName: '',//（申报单名）
           FOrgphid: '',//（组织主键）
           FOrgcode: '',//（组织编码）
           FOrgname: '',//（组织名）
           FDepphid: "",//（部门主键）
           FDepcode: '',//（部门编码）
           FDepname: '',//（部门名称）
-          FAmountTotal: 0,//（申请单金额）
-          FDate: '',//（申请单时间）2019-05-30
+          FAmountTotal: 0,//（申报单金额）
+          FDate: '',//（申报单时间）2019-05-30
           FApproval: '',//（审批状态：0- 未审批 1-待审批 2- 未通过 9-审批通过）
           IsPay: '',//（支付状态：0- 否 1-待支付 9-支付完成）
           FDescribe: '', //（申报说明）
@@ -326,7 +328,7 @@
                 BudgetdtlName: '', //（预算明细名称）
                 FDepartmentcode: '', //（补助单位/部门）
                 FDepartmentname: '', //（补助单位名称）
-                FAmount: 0, //（项目明细申请金额）
+                FAmount: 0, //（项目明细申报金额）
                 FRemarks: '', //（备注）
                 QtKmdm: '', //（预算项目编码）
                 QtKmmc: '' , //（预算项目名称）
@@ -357,6 +359,9 @@
         }
 
       },
+      'prodata.Mst'(val){
+        console.log(val)
+      }
     },
     components:{ApprovalDialog, Orgtree,goApproval,ImgView,fileUp},
     mounted(){
@@ -372,15 +377,15 @@
         this.getApply();
       }else{
         this.PaymentMst.FYear= this.year;//（年度）
-        this.PaymentMst.FName= '';//（申请单名）
+        this.PaymentMst.FName= '';//（申报单名）
         this.PaymentMst.FOrgphid=this.orgid;//（组织主键）
         this.PaymentMst.FOrgcode=this.orgcode;//（组织编码）
         this.PaymentMst.FOrgname=this.orgname;//（组织名）
         this.PaymentMst.FDepphid=this.prodata.bm.PhId;//（部门主键）
         this.PaymentMst.FDepcode=this.prodata.bm.OCode;//（部门编码）
         this.PaymentMst.FDepname=this.prodata.bm.OName;//（部门名称）
-        this.PaymentMst.FAmountTotal= '';//（申请单金额）
-        this.PaymentMst.FDate= '';//（申请单时间）2019-05-30
+        this.PaymentMst.FAmountTotal= '';//（申报单金额）
+        this.PaymentMst.FDate= '';//（申报单时间）2019-05-30
         this.PaymentMst.FApproval='0';//（审批状态：0- 未审批 1-待审批 2- 未通过 9-审批通过）
         this.PaymentMst.IsPay= '0';//（支付状态：0- 否 1-待支付 9-支付完成）
         this.PaymentMst.FDescribe= ''; //（申报说明）
@@ -425,7 +430,7 @@
         this.PaymentXmDtl[pindex].PaymentDtls[index].FAmount=val;
       },
 
-      //申请单查看
+      //申报单查看
       getApply:function(){
         console.log(this.applyNum+'这里添加数据查询方法');
         let param={fPhId:this.applyNum};
@@ -465,7 +470,7 @@
         }
         for(var i in this.PaymentMst){
           if(i=='FName'&&!this.PaymentMst[i]){
-            this.$msgBox.error('请填写申请单名称');
+            this.$msgBox.error('请填写申报单名称');
             return;
           }
         }
@@ -493,7 +498,7 @@
                 return;
               }
               if(n=='FAmount'&&!pdls[n]){
-                this.$msgBox.error('第'+(Number(j)+1)+'条申报项目,第'+(Number(l)+1)+'条明细申请金额为0，请检查');
+                this.$msgBox.error('第'+(Number(j)+1)+'条申报项目,第'+(Number(l)+1)+'条明细申报金额为0，请检查');
                 return;
               }
             }
@@ -575,7 +580,7 @@
               BudgetdtlName: '', //（预算明细名称）
               FDepartmentcode: '', //（补助单位/部门）
               FDepartmentname: '', //（补助单位名称）
-              FAmount: 0, //（项目明细申请金额）
+              FAmount: 0, //（项目明细申报金额）
               FRemarks: '', //（备注）
               QtKmdm: '', //（预算项目编码）
               QtKmmc: '' , //（预算项目名称）
@@ -631,14 +636,22 @@
           BudgetdtlName: '', //（预算明细名称）
           FDepartmentcode: '', //（补助单位/部门）
           FDepartmentname: '', //（补助单位名称）
-          FAmount: '', //（项目明细申请金额）
+          FAmount: '', //（项目明细申报金额）
           FRemarks: '', //（备注）
           QtKmdm: '', //（预算项目编码）
           QtKmmc: '' , //（预算项目名称）
           FPayment:'', //(支付状态：0-待支付 1-支付异常  9-支付成功)
           FPaymentdate:'' //（支付日期）
         };
-        this.PaymentXmDtl[pindex].PaymentDtls.splice(index+1,0,dtl)
+        this.PaymentXmDtl[pindex].PaymentDtls.splice(index+1,0,dtl);
+        if(this.prodataList.length==1){
+          this.$nextTick(()=>{
+            this.choosedProject=this.prodataList[0];
+            this.choosedPro=[pindex,index+1]
+            this.confirmProDetail();
+          })
+        }
+
       },
       //删除项目明细
       delDtl:function(pindex,index){
@@ -660,13 +673,13 @@
           }
           px.PaymentXm.FAmountTotal=count;
           if(pindex==i&&count>px.PaymentXm.Surplus){
-            let dis=(Number((count*100).toFixed(0))-Number((px.PaymentXm.Surplus*100).toFixed(0)))/100;//超出的可申请资金
+            let dis=(Number((count*100).toFixed(0))-Number((px.PaymentXm.Surplus*100).toFixed(0)))/100;//超出的可申报资金
             count=px.PaymentXm.Surplus;
             px.PaymentXm.FAmountTotal=count;
 
             px.PaymentDtls[index].FAmount=(Number((px.PaymentDtls[index].FAmount*100).toFixed(0))-Number((dis*100).toFixed(0)))/100;
             this.$msgBox.show({
-              content: '您输入的金额已超出可使用金额，已自动为您修改为剩余最大可申请金额。',
+              content: '您输入的金额已超出可使用金额，已自动为您修改为剩余最大可申报金额。',
               fn:() => {
                 this.xmDisable()
               }
@@ -719,8 +732,18 @@
       },
       //弹出组织树f表示项目下标，s表示项目对应的pdList下标
       showOrg(f,s){
+        if(!this.PaymentXmDtl[f].PaymentXm.XmMstPhid){
+          this.$msgBox.error('请先选择项目');
+          return;
+        }
         this.choosedPro=[f,s];
         this.orgType=true;
+      },
+      topClick(f,s){
+        if(!this.PaymentXmDtl[f].PaymentXm.XmMstPhid){
+          this.$msgBox.error('请先选择项目');
+          return;
+        }
       },
       //组织树点击选择事件
       getOrg:function(data){
@@ -732,26 +755,36 @@
         //OCode: "100001" OName: "广东省总工会(大账)" FDepartmentcode: '101.09', //（补助单位/部门）   FDepartmentname: '法工部', //（补助单位名称）
         this.PaymentXmDtl[this.choosedPro[0]].PaymentDtls[this.choosedPro[1]].FDepartmentcode=val[0].OCode;
         this.PaymentXmDtl[this.choosedPro[0]].PaymentDtls[this.choosedPro[1]].FDepartmentname=val[0].OName;
+        if(this.prodataList.length==1){
+          this.choosedProject=this.prodataList[0];
+        }
         if(val.length>1){
+          let item={
+            XmMstPhid: '', //（预算项目主表主键）
+            BudgetdtlPhid: '', //（预算明细主键）
+            BudgetdtlName: '', //（预算明细名称）
+            FDepartmentcode: '', //（补助单位/部门）
+            FDepartmentname: '', //（补助单位名称）
+            FAmount: '', //（项目明细申报金额）
+            FRemarks: '', //（备注）
+            QtKmdm: '', //（预算项目编码）
+            QtKmmc: '' , //（预算项目名称）
+            FPayment:'', //(支付状态：0-待支付 1-支付异常  9-支付成功)
+            FPaymentdate:'' //（支付日期）
+          }
           for(var i=0; i<val.length-1;i++){
-            let sc={
-              XmMstPhid: '', //（预算项目主表主键）
-              BudgetdtlPhid: '', //（预算明细主键）
-              BudgetdtlName: '', //（预算明细名称）
-              FDepartmentcode: '', //（补助单位/部门）
-              FDepartmentname: '', //（补助单位名称）
-              FAmount: '', //（项目明细申请金额）
-              FRemarks: '', //（备注）
-              QtKmdm: '', //（预算项目编码）
-              QtKmmc: '' , //（预算项目名称）
-              FPayment:'', //(支付状态：0-待支付 1-支付异常  9-支付成功)
-              FPaymentdate:'' //（支付日期）
-            }
+            let sc=JSON.parse(JSON.stringify(item));
             sc.FDepartmentcode=val[i+1].OCode;
             sc.FDepartmentname=val[i+1].OName;
+            sc.BudgetdtlPhid=this.choosedProject.PhId;
+            sc.BudgetdtlName=this.choosedProject.FName;
+            sc.QtKmdm=this.choosedProject.FBudgetAccounts;
+            sc.QtKmmc=this.choosedProject.FBudgetAccounts_EXName;
             this.PaymentXmDtl[this.choosedPro[0]].PaymentDtls.splice(this.choosedPro[1]+1,0,sc);
             sc=null;
           }
+          item=null;
+          this.choosedProject={};
         }
       },
       confirmProDetail:function(){
@@ -771,7 +804,7 @@
         }
         this.orgDetailType=true;
 
-        this.getProDetail(f);
+        //this.getProDetail(f);
 
         this.choosedPro=[f,s];
       },
@@ -802,7 +835,7 @@
           BudgetdtlName: '', //（预算明细名称）
           FDepartmentcode: '', //（补助单位/部门）
           FDepartmentname: '', //（补助单位名称）
-          FAmount: 0, //（项目明细申请金额）
+          FAmount: 0, //（项目明细申报金额）
           FRemarks: '', //（备注）
           QtKmdm: '', //（预算项目编码）
           QtKmmc: '' , //（预算项目名称）
@@ -811,6 +844,7 @@
         }]
         this.moneyChange(index,0)
         this.xmDisable();
+        this.getProDetail(index);
       },
       //禁用项目选择
       xmDisable:function(){
@@ -832,7 +866,7 @@
           this.PaymentXmDtl[index].PaymentXm['Surplus']=res.Surplus;
           this.PaymentXmDtl[index].PaymentXm['Sum']=res.Sum;
           if(res.Surplus==0){
-            this.$msgBox.error('当前选择项目无可申请金额，无法进行申报，请切换项目');
+            this.$msgBox.error('当前选择项目无可申报金额，无法进行申报，请切换项目');
             return;
           }
           /*Frozen:0,//冻结金额
@@ -851,6 +885,11 @@
         };
         this.getAxios('GYS/BudgetMstApi/GetBudgetMstDtlList',param).then(res=>{
           this.prodataList=res.Dtl;
+          if(res.Dtl.length==1){
+            this.choosedProject=res.Dtl[0];
+            this.choosedPro=[f,0]
+            this.confirmProDetail();
+          }
         }).catch(err=>{
           console.log(err);
         })

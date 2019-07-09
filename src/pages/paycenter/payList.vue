@@ -172,6 +172,7 @@
                   ref="payListTable"
                   style="margin-top:10px;"
                   :data="detail.Dtls"
+                  v-if="detail.Dtls.length"
                   border
                   :span-method="tabelColspan"
                   @row-click="rowClick"
@@ -184,21 +185,20 @@
                         @click.stop.native="check"
                         @change="selectAll"
                         v-model="allSelected"
-                        v-if="detail.Mst.FApproval == 0 || detail.Mst.FApproval == 2"
-                      >序号</el-checkbox>
+                        label="序号"
+                        v-if="(detail.Mst.FApproval == 0) ||( detail.Mst.FApproval == 2)"
+                      ></el-checkbox>
                       <template v-else>序号</template>
                     </template>
                     <template slot-scope="scope">
                       <el-checkbox
                         @click.stop.native="check"
-                        v-if="detail.Mst.FApproval == 0 || detail.Mst.FApproval == 2"
                         @change="selectOne(scope)"
-                        :label="scope.$index"
+                        :label="scope.$index+1"
                         v-model="scope.row.choosed"
-                      >{{scope.$index+1}}</el-checkbox>
-                      <template v-else>
-                        <span>{{scope.$index+1}}</span>
-                      </template>
+                        v-if="(detail.Mst.FApproval == 0) ||( detail.Mst.FApproval == 2)"
+                      ></el-checkbox>
+                      <span v-else>{{scope.$index+1}}</span>
                     </template>
                   </el-table-column>
                   <!-- 公共列 -->
@@ -213,7 +213,7 @@
                     empty-text="————"
                   >
                     <template slot-scope="scope">
-                      <!-- 申请金额 -->
+                      <!-- 申报金额 -->
                       <div
                         v-if="scope.column.property=='FAmount'"
                         class
@@ -283,7 +283,7 @@
                   </el-table-column>
                   <!-- 支付异常列 -->
                   <template
-                    v-if="(!detail.Dtls.every(item=>(item.FState==1&&!item.FNewCode)))&&detail.Mst.FApproval==9"
+                    v-if="(!detail.Dtls.every(item=>(item.FState==1&&!item.FNewCode)))&&detail.Mst.FApproval==9&&detail.Mst.FState!=0"
                   >
                     <el-table-column
                       v-for="(item,index) in payHeaders2"
@@ -298,7 +298,7 @@
                         <template
                           v-if="scope.column.property=='FState'"
                         >{{FStateList.find(item=>item.value==scope.row[scope.column.property]).label}}</template>
-                        <template v-if="scope.column.property=='FNewCodes'">
+                        <template v-else-if="scope.column.property=='FNewCodes'">
                           <template v-if="scope.row[scope.column.property]">
                             <p
                               class="atype"
@@ -310,6 +310,25 @@
                           <template v-else>————</template>
                         </template>
                         <span v-else>{{scope.row[scope.column.property]||'————'}}</span>
+                      </template>
+                    </el-table-column>
+                  </template>
+                  <template
+                    v-if="(detail.Dtls.every(item=>(item.FState==1&&!item.FNewCode)))&&detail.Mst.FState==1&&detail.Mst.FApproval"
+                  >
+                    <el-table-column
+                      v-for="(item,index) in payHeaders3"
+                      :key="index+20"
+                      :property="item.name"
+                      :label="item.label"
+                      :width="item.width||''"
+                      :header-align="item.headerAlign||'center'"
+                      :align="item.bodyAlign||'left'"
+                    >
+                      <template slot-scope="scope">
+                        <template
+                          v-if="scope.column.property=='FState'"
+                        >{{FStateList.find(item=>item.value==scope.row[scope.column.property]).label}}</template>
                       </template>
                     </el-table-column>
                   </template>
@@ -332,11 +351,11 @@
           <span
             class="dj"
             @click="fundDetailData.openDialog = true"
-          >点击查看关联申请单信息（申请编号：{{detail.Mst.RefbillCode}}）</span>
+          >点击查看关联申报单信息（申报编号：{{detail.Mst.RefbillCode}}）</span>
         </div>
       </el-row>
     </el-dialog>
-    <!-- 关联申请单信息查看 -->
+    <!-- 关联申报单信息查看 -->
     <el-dialog
       append-to-body
       v-if="fundDetailData.openDialog"
@@ -346,7 +365,7 @@
       class="dialog detail-dialog payCenter"
     >
       <div slot="title" class="dialog-title">
-        <span style="float: left;">查看申请</span>
+        <span style="float: left;">查看申报</span>
       </div>
       <apply-bill :applyNum="detail.Mst.RefbillPhid.toString()" :subData="[]" @showImg="showImg">
         <div slot="btn-group">
@@ -439,14 +458,12 @@ export default {
         {
           name: 'XmProjcode',
           label: '项目编码',
-          width: '200',
-          bodyAlign: 'center'
+          width: '200'
         },
         {
           name: 'XmProjname',
           label: '项目名称',
-          width: '200',
-          bodyAlign: 'center'
+          width: '200'
         },
         {
           name: 'BudgetdtlName',
@@ -461,7 +478,7 @@ export default {
 
         {
           name: 'FAmount',
-          label: '申请金额（元）',
+          label: '申报金额（元）',
           width: '150',
           bodyAlign: 'right'
         },
@@ -521,6 +538,14 @@ export default {
           name: 'FNewCodes',
           label: '重新支付后关联支付单编号',
           width: '200',
+          bodyAlign: 'center'
+        }
+      ],
+      payHeaders3: [
+        {
+          name: 'FState',
+          label: '支付状态',
+          width: '150',
           bodyAlign: 'center'
         }
       ],
@@ -689,10 +714,13 @@ export default {
           if (res.Mst.FPaymethod == 0) {
             this.detail.Mst.FPaymethod = ''
           }
-          this.getAccountList({
-            OrgPhid: this.detail.Mst.OrgPhid,
-            selectStr: ''
-          })
+          this.getAccountList(
+            {
+              OrgPhid: this.detail.Mst.OrgPhid,
+              selectStr: ''
+            },
+            this.detail.Mst.FApproval
+          )
           this.GetSysSetList()
           this.getBudgetAccountsList()
         })
@@ -805,14 +833,21 @@ export default {
         })
     },
     // 获取付款银行档案
-    getAccountList(data) {
+    getAccountList(data, FApproval) {
       BankAccountList(data)
         .then(res => {
           if (res.Status == 'error') {
             this.$msgBox.error(res.Msg)
           } else {
             // this.account = this.detail.Mst.OrgPhid
-            this.accountList = res.Record
+            let record = res.Record
+            if (FApproval == 0 || FApproval == 2) {
+              record = record.filter(i => i.FLifecycle == '1')
+            }
+            this.accountList = record
+            if (record.length == 1 && !this.account) {
+              this.account = record[0].PhId
+            }
           }
         })
         .catch(err => {
@@ -821,7 +856,7 @@ export default {
     },
     // 获取到新的银行信息
     getBank(data) {
-      if (this.bankChooseData.data.choosed) {
+      if (this.bankChooseData.data[0].choosed) {
         this.detail.Dtls.forEach(item => {
           if (item.choosed) {
             item.FRecAcntname = data.FBankname
@@ -832,17 +867,19 @@ export default {
           }
         })
       } else {
-        this.bankChooseData.data.FRecAcntname = data.FBankname
-        this.bankChooseData.data.FRecAcnt = data.FAccount
-        this.bankChooseData.data.FRecBankname = data.FOpenAccount
-        this.bankChooseData.data.FRecBankcode = data.FBankcode
-        this.bankChooseData.data.FRecCityname = data.FCity
+        this.bankChooseData.data[0].FRecAcntname = data.FBankname
+        this.bankChooseData.data[0].FRecAcnt = data.FAccount
+        this.bankChooseData.data[0].FRecBankname = data.FOpenAccount
+        this.bankChooseData.data[0].FRecBankcode = data.FBankcode
+        this.bankChooseData.data[0].FRecCityname = data.FCity
       }
     },
     // 获取支付方式
     GetSysSetList() {
       GetSysSetList({
-        DicType: 'PayMethod'
+        DicType: 'PayMethod',
+        uid: this.userid,
+        orgid: this.orgid
       })
         .then(res => {
           if (res.Status == 'error') {
@@ -863,8 +900,8 @@ export default {
           }
         })
         .catch(err => {
-          console.log('获取支付列表信息失败! ' + err)
-          this.$msgBox.error('获取支付列表信息失败!')
+          console.log('获取支付方式列表失败! ' + err)
+          this.$msgBox.error('获取支付方式列表失败!')
         })
     },
     // 支付单 按钮事件
@@ -878,22 +915,22 @@ export default {
           this.savePayList(this.detail)
           break
         case 'approvalData':
-          if (!this.detail.Mst.FPaymethod) {
-            this.$msgBox.error('请选择支付方式！')
-            return
-          } else if (
+          if (
             this.detail.Dtls.some(item => {
               return item.BankPhid == '0'
             })
           ) {
             this.$msgBox.error('请选择付款账户！')
             return
+          } else if (!this.detail.Mst.FPaymethod) {
+            this.$msgBox.error('请选择支付方式！')
+            return
           } else if (
             this.detail.Dtls.some(item => {
               return !item.FRecAcnt
             })
           ) {
-            this.$msgBox.error('请完善所有单据收款账户！')
+            this.$msgBox.error('请完善所有单据收款账户信息！')
             return
           }
           this[type].openDialog = true
@@ -997,13 +1034,13 @@ export default {
     // checkBox所在框选中
     check(e) {},
     headerClick(column, event) {
-      if (column.type == 'index') {
+      if (!column.property) {
         this.allSelected = !this.allSelected
         this.selectAll(this.allSelected)
       }
     },
     rowClick(row, column, event) {
-      if (column && column.type == 'index') {
+      if (column && !column.property) {
         row.choosed = !row.choosed
         this.selectOne({ row })
       }
@@ -1083,7 +1120,9 @@ export default {
     //  选择银行
     selectBank(item) {
       this.bankChooseData.openDialog = true
-      this.bankChooseData.data = item
+      this.bankChooseData.data = item.choosed
+        ? this.detail.Dtls.filter(i => i.choosed)
+        : [item]
     },
     // 跳转子支付单
     goNewPayList(row, index) {

@@ -49,10 +49,10 @@
         <li></li>
       </ul>
     </div>
-    <div class="footer">
-      <el-button size="medium" class="btn" @click="close()">取消</el-button>
-      <el-button size="medium" class="btn" @click="confirm()">确认</el-button>
-    </div>
+<!--    <div class="footer">-->
+<!--      <el-button size="medium" class="btn" @click="close()">取消</el-button>-->
+<!--      <el-button size="medium" class="btn" @click="confirm()">确认</el-button>-->
+<!--    </div>-->
   </div>
 </template>
 
@@ -96,7 +96,8 @@
     },
     watch:{
       radio(val){
-
+        console.log(val)
+        this.$emit('getBackPeople',val)
       }
     },
     methods:{

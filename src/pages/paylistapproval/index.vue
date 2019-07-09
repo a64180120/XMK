@@ -132,14 +132,14 @@
                 </td>
                 <td>
                   <el-tooltip  effect="dark" :content="item.OrgName" placement="bottom" popper-class="pay-fund-approval_tooltip">
-                    <p class="BDescribe">
+                    <p >
                       {{item.OrgName}}
                     </p>
                   </el-tooltip>
                 </td>
                 <td @click="handleRowClick(item,idx)" class="apply-epart cell-click">
                   <el-tooltip  effect="dark" :content="item.PayNum" placement="bottom" popper-class="pay-fund-approval_tooltip">
-                    <p class="BDescribe">
+                    <p >
                       {{item.PayNum}}
                     </p>
                   </el-tooltip>
@@ -153,21 +153,21 @@
                 </td>
                 <td>
                   <el-tooltip  effect="dark" :content="item.BNum" placement="bottom" popper-class="pay-fund-approval_tooltip">
-                    <p class="BDescribe">
+                    <p >
                       {{item.BNum}}
                     </p>
                   </el-tooltip>
                 </td>
                 <td>
                   <el-tooltip  effect="dark" :content="item.BDate" placement="bottom" popper-class="pay-fund-approval_tooltip">
-                    <p class="BDescribe">
+                    <p >
                       {{item.BDate}}
                     </p>
                   </el-tooltip>
                 </td>
                 <td>
                   <el-tooltip  effect="dark" :content="item.BName" placement="bottom" popper-class="pay-fund-approval_tooltip">
-                    <p class="BDescribe">
+                    <p >
                       {{item.BName}}
                     </p>
                   </el-tooltip>
@@ -196,7 +196,7 @@
                 </td>
                 <td style="text-align: left">
                   <el-tooltip  effect="dark" :content="item.BDescribe" placement="bottom-start" popper-class="pay-fund-approval_tooltip">
-                    <p class="BDescribe">
+                    <p >
                       {{item.BDescribe}}
                     </p>
                   </el-tooltip>
@@ -217,11 +217,11 @@
                 <col width="8%">
                 <col width="8%">
                 <col width="8%">
-                <col width="8%">
+                <col width="12%">
                 <col width="10%">
                 <col width="10%">
                 <col width="8%">
-                <col width="25%">
+                <col width="21%">
               </colgroup>
               <thead>
               <tr>
@@ -268,11 +268,11 @@
                 <col width="8%">
                 <col width="8%">
                 <col width="8%">
-                <col width="8%">
+                <col width="12%">
                 <col width="10%">
                 <col width="10%">
                 <col width="8%">
-                <col width="25%">
+                <col width="21%">
               </colgroup>
               <tbody>
               <tr :class="{trActive:check[idx]}" v-for="(item,idx) in tableData"  :key="idx">
@@ -281,14 +281,14 @@
                 </td>
                 <td >
                   <el-tooltip  effect="dark" :content="item.OrgName" placement="bottom" popper-class="pay-fund-approval_tooltip">
-                    <p class="BDescribe">
+                    <p >
                       {{item.OrgName}}
                     </p>
                   </el-tooltip>
                 </td>
                 <td @click="handleRowClick(item,idx)" class="apply-epart cell-click">
                   <el-tooltip  effect="dark" :content="item.PayNum" placement="bottom" popper-class="pay-fund-approval_tooltip">
-                    <p class="BDescribe">
+                    <p >
                       {{item.PayNum}}
                     </p>
                   </el-tooltip>
@@ -301,24 +301,23 @@
                   <span v-if="item.BBilltype == '002'">支付单</span>
                 </td>
                 <td @mouseenter="showSearchIcon(item,idx)" @mouseleave="hideSearchIcon()">
-                    <span class="BDescribe">
+                    <span >
                       {{item.BNum}}
                     </span>
                   <el-tooltip content="显示关联单据">
-                    <span>11</span>
                     <i v-show="idx === showSearchIconIdx" class="el-icon-search refrest-same-follow" @click="seachSameFollow(item.BNum)"></i>
                   </el-tooltip>
                 </td>
                 <td>
                   <el-tooltip  effect="dark" :content="item.BDate" placement="bottom" popper-class="pay-fund-approval_tooltip">
-                    <p class="BDescribe">
+                    <p >
                       {{item.BDate}}
                     </p>
                   </el-tooltip>
                 </td>
                 <td>
                   <el-tooltip  effect="dark" :content="item.BName" placement="bottom" popper-class="pay-fund-approval_tooltip">
-                    <p class="BDescribe">
+                    <p>
                       {{item.BName}}
                     </p>
                   </el-tooltip>
@@ -331,7 +330,7 @@
                 </td>
                 <td style="text-align: left">
                   <el-tooltip  effect="dark" :content="item.BDescribe" placement="bottom-start" popper-class="pay-fund-approval_tooltip">
-                    <p class="BDescribe">
+                    <p>
                       {{item.BDescribe}}
                     </p>
                   </el-tooltip>
@@ -387,7 +386,7 @@
     data(){
       return{
         payListVisible:false,
-        BType:"002", //单据类型 资金拨付 001  申请单 002
+        BType:"002", //单据类型 资金拨付 001  申报单 002
         checkedAll:false, //是否全选
         IsIndeterminate:false, //列表中是否有选中的值并且不是全选
         check:[],//列表所有选中状态

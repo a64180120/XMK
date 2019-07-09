@@ -21,8 +21,9 @@
             </li>
             <li>
               <span style="cursor: pointer">
-                附单据 <span style="text-decoration: underline">{{fileCount}}</span> 张
-                <img @click="showUpload" class="icon-img" src="../../assets/images/hxz.png">
+                附单据
+                <span style="text-decoration: underline">{{fileCount}}</span> 张
+                <img @click="showUpload" class="icon-img" src="../../assets/images/hxz.png" />
               </span>
             </li>
           </ul>
@@ -57,11 +58,10 @@
               highlight-current-row
               ref="approvalFollowTable"
               @row-click="handleRowClick"
-              max-height="130px"
             >
               <el-table-column prop="FCode" width="80" align="center" label="流程编码"></el-table-column>
               <el-table-column prop="FName" align="center" label="流程名称"></el-table-column>
-              <el-table-column width="60" align="center" label="查看">
+              <el-table-column v-if="!isApproval" width="60" align="center" label="查看">
                 <template slot-scope="scope">
                   <i
                     class="el-icon-search icon-search"
@@ -91,14 +91,13 @@
               @select="handleSelect"
               @select-all="handleSelectAll"
               :header-row-class-name="headerRowClass"
-              height="110px"
             >
               <el-table-column type="selection" width="30"></el-table-column>
               <el-table-column prop="OperatorCode" align="center" label="操作员编码"></el-table-column>
               <el-table-column prop="OperatorName" align="center" label="姓名"></el-table-column>
             </el-table>
             <div v-else class="sptg">
-              <img src="../../assets/images/sptg.png">
+              <img src="../../assets/images/sptg.png" />
             </div>
           </div>
         </div>
@@ -165,9 +164,9 @@ export default {
       type: Boolean,
       default: false
     },
-    FMode:{
-      type:Number,
-      default:0
+    FMode: {
+      type: Number,
+      default: 0
     }
   },
   data() {
@@ -210,27 +209,30 @@ export default {
         this.$emit('isArgeen', true)
       }
     },
-    FMode(val){
-      if (val == 1){
-        this.$nextTick(()=>{
+    FMode(val) {
+      if (val == 1) {
+        this.$nextTick(() => {
           this.$refs.nextApprovaler.toggleAllSelection()
         })
       }
     },
-    nextApprovaler:{
-      handler(val){
-        if (this.FMode == 1){
-          this.$nextTick(()=>{
+    nextApprovaler: {
+      handler(val) {
+        if (this.FMode == 1) {
+          this.$nextTick(() => {
+            this.$refs.nextApprovaler.toggleAllSelection()
+          })
+        }
+        if (val.length == 1 ) {
+          this.$nextTick(() => {
             this.$refs.nextApprovaler.toggleAllSelection()
           })
         }
       },
-      deep:true
+      deep: true
     }
   },
-  mounted(){
-
-  },
+  mounted() {},
   methods: {
     showUpload() {
       this.$emit('uploadFn', true)
@@ -402,10 +404,10 @@ export default {
 .show-upload {
   font-size: 0.24rem;
 }
-  .icon-img{
-    width: 18px;
-  }
-.icon-img:hover{
+.icon-img {
+  width: 18px;
+}
+.icon-img:hover {
   width: 18px;
   cursor: pointer;
 }
