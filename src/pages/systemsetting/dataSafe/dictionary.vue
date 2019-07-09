@@ -100,19 +100,15 @@
                     <div><el-input :disabled="disabled" placeholder="请输入补助代码" v-model="Value"></el-input>   </div>
                 </div>   
                 <div v-else class="adminCode">
-                    
-                    <div class="pageArea">
-                        <el-pagination
-                            @size-change="handleSizeChange"
-                            @current-change="handleCurrentChange"
-                            :current-page="pageIndex"
-                            :page-sizes="[30,50,100,150,200]"
-                            :page-size="pageSize"
-                            layout="total,sizes,prev,pager,next,jumper"
-                            :total="total"
-                        >
-                        </el-pagination>
+                    <div class="listBody">
+                        <div @click.stop="addInfo(0)" v-if="typeInfoList.length==0" style="cursor:pointer">添加组织+</div>
+                        <ul :class="{update:!disabled}" v-for="(item,n) of typeInfoList" :key="n">
+                            <li>{{n+1}}</li>
+                            <li>对下组织代码</li>
+                            <li>组织</li>
+                        </ul>
                     </div>
+                    
                 </div>     
             </div>
         </div>
@@ -132,7 +128,7 @@ export default {
     data(){
         return{
             codeList:[],//admin对下补助代码
-            // ucode:'Admin',
+            //ucode:'Admin',
             // orglist:[],//组织树
             orgIndex:'',//当前选中的组织切换
             orgVisible:false,
@@ -178,7 +174,8 @@ export default {
         getData(){
             let data={
                 orgid:this.$store.state.user.orgid,
-                uid:this.$store.state.user.userid,
+                // uid:this.$store.state.user.userid,
+                uid:266190618000001,
                 DicType: this.selected.DicType
             }
             GetSysSetList(data).then(res=>{
@@ -186,7 +183,7 @@ export default {
                     this.$msgBox.show(res.Msg)
                 }else{
                     this.typeInfoList=res.Record;
-                    if(res.Record.length>0&&res.Record[0].DicType=="DxbzCode"){  
+                    if(res.Record[0].DicType=="DxbzCode"&&this.ucode!='Admin'){  
                         this.Value=res.Record[0].Value;
                     }
                     this.typeInfoList.map(info => info.PersistentState=2)
