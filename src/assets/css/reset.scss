@@ -185,7 +185,7 @@ $selectedColor: #e4e4e4;
   line-height: 28px;
   padding: 0 10px;
   text-align: center;
-  border: 1px solid $btnColor;
+  border: 1px solid $btnColor !important;
   background: $btnColor;
   cursor: pointer;
   &:hover {

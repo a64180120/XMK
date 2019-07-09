@@ -9,13 +9,15 @@
       class="payCenter"
     >
       <div slot="title" class="dialog-title">
-        <span style="float: left">支付异常处理</span>
+        <span style="float: left">支付状态清查</span>
       </div>
       <div class="payCenterDialog">
         <div class="content">
           <el-radio-group v-model="radio">
-            <el-radio :label="0">发起线上异常处理。（支付中）</el-radio>
-            <el-radio :label="1">线下确认已成功支付，消除异常。（支付异常）</el-radio>
+            <el-radio :label="0">发起线上异常处理。</el-radio>
+            <div class="notice">（支付中单据处理）</div>
+            <el-radio :label="1">线下确认已成功支付，消除异常。</el-radio>
+            <div class="notice">（支付异常单据处理）</div>
           </el-radio-group>
         </div>
         <div class="btns">
@@ -188,28 +190,15 @@ export default {
     .content {
       text-align: left;
       font-size: 0.16rem;
-      > span {
-        line-height: 55px;
+      .el-radio {
+        margin-bottom: 0;
       }
-      > .el-input {
-        width: auto;
-        line-height: 55px;
-      }
-      > img {
-        width: 55px;
-        height: 55px;
-        margin-right: 10px;
-      }
-      &.payListContent {
-        background-color: #f5f5f5;
-        padding: 10px;
-        margin-top: 15px;
-        .payDetail {
-          background-color: #fff;
-          border-radius: 5px;
-        }
-        .getDetail {
-          background-color: #fff;
+      .notice {
+        font-size: 0.16rem;
+        line-height: 22px;
+        padding-left: 12px;
+        &:first-of-type {
+          margin-bottom: 10px;
         }
       }
     }
@@ -217,27 +206,10 @@ export default {
       text-align: right;
       padding-top: 10px;
       .btn {
-        border: 1px solid $btnColor;
-        cursor: pointer;
         &:not(:last-of-type) {
           margin-right: 10px;
         }
-        &.btn-cancel {
-          background: #fff;
-          color: $btnColor;
-          border: 1px solid $btnColor;
-        }
-        &.btn-large {
-          width: 88px;
-        }
       }
-      .payId {
-        float: left;
-        line-height: 30px;
-      }
-    }
-    .el-collapse {
-      margin-top: 10px;
     }
   }
 }
@@ -245,46 +217,7 @@ export default {
 
 <style lang='scss'>
 .payCenter {
-  .el-checkbox,
-  .el-checkbox__input.is-checked + .el-checkbox__label,
-  .el-checkbox-button__inner {
-    color: #333;
-  }
-  .el-checkbox__label {
-    font-size: 0.14rem;
-  }
-  .tableBody .el-checkbox__label {
-    font-size: 0.12rem;
-  }
-  .el-table td,
-  .el-table th.is-leaf {
-    border-color: rgb(204, 204, 204);
-  }
-  .el-table--border,
-  .el-table--group {
-    border-color: rgb(204, 204, 204);
-  }
   .payCenterDialog {
-    .el-table {
-      font-size: 0.14rem;
-      th {
-        background-color: $btnColor;
-        border-right-color: #fff;
-      }
-      thead {
-        color: #fff;
-      }
-    }
-    .el-collapse-item__header {
-      font-size: 0.13rem;
-      border-bottom: 0px;
-    }
-    .el-collapse-item__wrap {
-      border-bottom: 0px;
-    }
-    .el-collapse-item__content {
-      padding-bottom: 0;
-    }
     .el-table__header-wrapper thead .el-checkbox__label {
       color: #fff;
     }
@@ -294,9 +227,6 @@ export default {
     }
     .el-radio__label {
       font-size: 0.16rem;
-    }
-    .el-radio:not(:last-of-type) {
-      margin-bottom: 10px;
     }
   }
 }
