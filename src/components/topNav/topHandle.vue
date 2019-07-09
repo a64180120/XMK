@@ -11,6 +11,12 @@
             <el-popover width="270" placement="bottom" :popper-class="'topElpop'"  trigger="click">
               
               <ul class="fastNav">
+                <li v-if="menuButton.fund=='True'" @click.stop="navPage('/fund')">
+                  <div>
+                    <img src="@/assets/images/zjbf.png" alt>
+                  </div>
+                  <span>资金拨付</span>
+                </li>
                 <li v-if="menuButton.approvalcenter=='True'" @click.stop="navPage('/approvalcenter')">
                   <div>
                     <img src="@/assets/images/zj6.png" alt>
@@ -23,12 +29,7 @@
                   </div>
                   <span>支付中心</span>
                 </li>
-                <li v-if="menuButton.fund=='True'" @click.stop="navPage('/fund')">
-                  <div>
-                    <img src="@/assets/images/zjbf.png" alt>
-                  </div>
-                  <span>资金拨付</span>
-                </li>
+                
                 <li v-if="menuButton.bankaccount=='True'" @click.stop="navPage('/bankaccount')">
                   <div>
                     <img src="@/assets/images/yhda.png" alt>
@@ -177,7 +178,7 @@
           },
           setyearList(){ //年度列表
             this.year=this.$store.state.user.year;//当前默认选中的年份
-            for(let y=2018;y<=new Date().getFullYear();y++){
+            for(let y=2019;y<=new Date().getFullYear();y++){
               this.options.unshift({label:y,value:y})
             }
           },

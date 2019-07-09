@@ -19,7 +19,7 @@
         <div class="container">
             <div class="searchCon">
                 <div class="leftBtn">
-                    <span>组织/部门:</span>
+                    <span>组织:</span>
                     <div @click="orgtreeShow" class="searchOrgCon">
                         <span v-show="search.org.length<1">全部</span>
                         <span v-for="org of search.org">{{org.OName}}&nbsp;&nbsp;</span>    
@@ -187,7 +187,7 @@ export default {
                 {label:'启用',value:'1'},
                 {label:'停用',value:'2'}
             ],
-            orglist:[],//组织列表
+             orglist:[],//组织列表
             search:{org:[],enable:'0',val:''},
             indeterminate:false,
             checked:false,
@@ -338,7 +338,6 @@ export default {
             this.orgVisible=true;
         },
         getOrg(val){
-            
             this.search.org=val;
             this.getData();
         },

@@ -169,6 +169,7 @@ $loadColor: #1f6cfc; //蓝色进行中颜色
 $alertColor: #ff9900; //提示颜色
 $waitColor: #67971a;
 $whiteColor: #fff; //白色
+$selectedColor: #e4e4e4;
 
 .msFixed {
   position: fixed;
@@ -184,7 +185,7 @@ $whiteColor: #fff; //白色
   line-height: 28px;
   padding: 0 10px;
   text-align: center;
-  border: 1px solid $btnColor;
+  border: 1px solid $btnColor !important;
   background: $btnColor;
   cursor: pointer;
   &:hover {
@@ -238,40 +239,40 @@ body {
 }
 
 //el样式
-.el-message-box{
-	background:#fff;
-	.el-message-box__header{
-			background:#fff;
-			border-bottom:1px solid #ccc;
-		}
-		.el-message-box__btns button{
-			border-radius: 3px;
-			display: inline-block;
-			width: 70px;
-			height: 28px;
-			line-height: 28px;
-			padding: 0 10px;
-			text-align: center;
-			border: 1px solid $btnColor;
-			color: $btnColor;
-			background: #fff;
-			cursor: pointer;
-		}
-		.el-message-box__btns button:nth-child(2){
-			color: #fff;
-			border-radius: 3px;
-			display: inline-block;
-			width: 70px;
-			height: 28px;
-			line-height: 28px;
-			padding: 0 10px;
-			text-align: center;
-			border: 1px solid $btnColor;
-			background: $btnColor;
-			cursor: pointer;
-			&:hover {
-			  background: #fff;
-			  color: $btnColor;
-			}
-		}
+.el-message-box {
+  background: #fff;
+  .el-message-box__header {
+    background: #fff;
+    border-bottom: 1px solid #ccc;
+  }
+  .el-message-box__btns button {
+    border-radius: 3px;
+    display: inline-block;
+    width: 70px;
+    height: 28px;
+    line-height: 28px;
+    padding: 0 10px;
+    text-align: center;
+    border: 1px solid $btnColor;
+    color: $btnColor;
+    background: #fff;
+    cursor: pointer;
+  }
+  .el-message-box__btns button:nth-child(2) {
+    color: #fff;
+    border-radius: 3px;
+    display: inline-block;
+    width: 70px;
+    height: 28px;
+    line-height: 28px;
+    padding: 0 10px;
+    text-align: center;
+    border: 1px solid $btnColor;
+    background: $btnColor;
+    cursor: pointer;
+    &:hover {
+      background: #fff;
+      color: $btnColor;
+    }
+  }
 }

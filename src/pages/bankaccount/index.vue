@@ -20,7 +20,7 @@
             <order :type="'handle'"  ref="order"/>
         </div>
         <el-dialog :close-on-click-modal="false" :title="'银行账号'+(handleBtn=='add'?'新增':'修改')" :visible.sync="accountAddShow">
-            <accountAdd v-if="accountAddShow" @add-cancle="addCancle" :type="handleBtn" :info="info"></accountAdd>
+            <accountAdd v-if="accountAddShow" @add-cancle="addCancle" :accounts="accounts"  :type="handleBtn" :info="info"></accountAdd>
         </el-dialog>
         <!-- <el-dialog  :visible.sync="upload">
             <upload  @submit="submit"/>
@@ -45,7 +45,8 @@ export default {
             upload:true,
             handleBtn:'',
             accountAddShow:false,
-            info:''
+            info:'',
+            accounts:[],//order组件的账户列表
         }
     },
     computed:{
@@ -80,6 +81,7 @@ export default {
                 this.info.OrgCode=this.$refs.order.checkedOrg.OCode;
                 this.info.OrgName=this.$refs.order.checkedOrg.OName;
             }
+            this.accounts=this.$refs.order.accountList;
             this.accountAddShow=true;
         },
         //关闭新增修改窗口
