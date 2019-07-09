@@ -34,10 +34,9 @@
                   <span>付款单位：</span>
                   <div style>{{payDepart}}</div>
                 </li>
-                <li >
+                <li>
                   <span>付款账户：</span>
-                  <div
-                  >
+                  <div>
                     <el-tooltip
                       :content="(accountList.length && account&&account!='0')?(accountList.find(item=>{return item.PhId == account})).FBankname:''"
                     >
@@ -173,12 +172,10 @@
 
       <el-row :gutter="10">
         <div class="bottom">
-          <span @click="openFollow()" style="text-decoration:underline;">
-            <template v-if="data.itemType == 'notApprove'">待送审</template>
-            <template v-else-if="data.itemType == ''">审批中</template>
-            <template v-else-if="data.itemType == 'approval'">待审批</template>
-            <template v-else>审批通过</template>
-          </span>
+          <span
+            @click="openFollow()"
+            style="text-decoration:underline;"
+          >{{detail.Mst.FApproval!=undefined?FApprovalList.find(item=>item.value==detail.Mst.FApproval).label:''}}</span>
           <span class="dj" @click="openDetailDialog()">点击查看关联申报单信息（申报编号：{{detail.Mst.RefbillCode}}）</span>
         </div>
       </el-row>
@@ -385,6 +382,24 @@ export default {
           value: 3
         }
       ],
+      FApprovalList: [
+        {
+          label: '待送审',
+          value: 0
+        },
+        {
+          label: '审批中',
+          value: 1
+        },
+        {
+          label: '未通过',
+          value: 2
+        },
+        {
+          label: '审批通过',
+          value: 9
+        }
+      ],
       bankType: '',
       kemuList: [],
       FSamebankList: [
@@ -439,7 +454,8 @@ export default {
     //获取银行信息
     getBack(e) {
       GetSysSetList({
-        DicType: 'PayMethod'
+        DicType: 'PayMethod',
+        uid: this.userid
       })
         .then(res => {
           if (res) {

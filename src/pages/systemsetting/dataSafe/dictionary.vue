@@ -42,28 +42,30 @@
                         <div @click.stop="addInfo(0)" v-if="typeInfoList.length==0" style="cursor:pointer">请添加类型+</div>
                         <ul :class="{update:!disabled}" v-for="(item,n) of typeInfoList" :key="n">
                             <li>{{n+1}}</li>
-                            <li :class="{gray:!disabled}">
-                                <div >{{item.TypeCode}}</div>
+                            <li :class="{gray:!disabled&&ucode!='Admin'}">
+                                <div v-show="!(!disabled&&ucode=='Admin')">{{item.TypeCode}}</div>
                                 <!-- <div v-show="disabled || item.Issystem==1">{{item.TypeCode}}</div>  -->
-                                <!-- <div v-show="!disabled&&item.Issystem!=1">
+                                <div v-show="!disabled&&ucode=='Admin'">
                                     <el-input v-model="item.TypeCode" placeholder="请输入类型编码"></el-input>
-                                </div> -->
+                                </div>
                             </li>
-                            <li :class="{gray:!disabled&&item.Issystem==1}">
-                                <div v-show="disabled || item.Issystem==1">{{item.TypeName}}</div>
-                                <div v-show="!disabled&&item.Issystem!=1">
+                            <li :class="{gray:!disabled&&item.Issystem==1&&ucode!='Admin'}">
+                                <div v-show="disabled || item.Issystem==1&&ucode!='Admin'">{{item.TypeName}}</div>
+                                <div v-show="!disabled&&(item.Issystem!=1||ucode=='Admin')">
                                     <el-input v-model="item.TypeName" placeholder="请输入类型名称"></el-input>
                                 </div>
                             </li>
-                            <li :class="{gray:!disabled&&item.Issystem==1}">
-                                <div  v-show="disabled">{{item.Bz}}</div>  
-                                <div @click="orgTree(item)" v-show="!disabled&&item.Issystem!=1">
-                                    {{item.Bz}}
-                                </div>  
+                            <li :class="{gray:!disabled&&item.Issystem==1&&ucode!='Admin'}">
+                                <div  v-show="disabled || item.Issystem==1&&ucode!='Admin'">{{item.OrgList | orgname}}</div> 
+                                <el-tooltip :content="item.OrgList | orgname"> 
+                                    <div style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap"  @click="orgTree(item,n)" v-show="!disabled&&(item.Issystem!=1||ucode=='Admin')">
+                                        {{item.OrgList | orgname}}
+                                    </div> 
+                                </el-tooltip> 
                             </li>
-                            <li :class="{gray:!disabled&&item.Issystem==1}">
-                                <div  v-show="disabled || item.Issystem==1">{{item.Bz}}</div>
-                                <div v-show="!disabled&&item.Issystem!=1">
+                            <li :class="{gray:!disabled&&item.Issystem==1&&ucode!='Admin'}">
+                                <div  v-show="disabled || item.Issystem==1&&ucode!='Admin'">{{item.Bz}}</div>
+                                <div v-show="!disabled&&(item.Issystem!=1||ucode=='Admin')">
                                     <el-input  v-model="item.Bz" placeholder="请输入备注"></el-input>
                                 </div>
                             </li>
@@ -92,11 +94,26 @@
                    
             </div>
             <div v-else-if="selected.DicType=='DxbzCode'" class="content">
-                <div class="codeCon">
+                <div v-if="ucode!='Admin'" class="codeCon">
                     <span>对下补助代码: </span>
                     
                     <div><el-input :disabled="disabled" placeholder="请输入补助代码" v-model="Value"></el-input>   </div>
-                </div>        
+                </div>   
+                <div v-else class="adminCode">
+                    
+                    <div class="pageArea">
+                        <el-pagination
+                            @size-change="handleSizeChange"
+                            @current-change="handleCurrentChange"
+                            :current-page="pageIndex"
+                            :page-sizes="[30,50,100,150,200]"
+                            :page-size="pageSize"
+                            layout="total,sizes,prev,pager,next,jumper"
+                            :total="total"
+                        >
+                        </el-pagination>
+                    </div>
+                </div>     
             </div>
         </div>
         <!--组织树弹窗   visible:显示,,,,@confirm接收选中的值   data组织列表  checked-org当前选中的组织的code列表-->
@@ -109,20 +126,22 @@ import Orgtree from "@/components/orgtree/index"
 import {mapState} from 'vuex'
 import topHandle from '@/components/topNav/topHandle'
 import {GetSysSetList,dictionarySave} from '@/api/systemSetting/dataSafe'
+import {GetAllChildTree} from '@/api/systemSetting/post'
 export default {
     name:'dictionary',
     data(){
         return{
+            codeList:[],//admin对下补助代码
+            // ucode:'Admin',
+            // orglist:[],//组织树
+            orgIndex:'',//当前选中的组织切换
             orgVisible:false,
             orgSelected:[],    
             disabled:true,//不可编辑,修改
             Value:'',//对下补助代码
             typeList:[
-              
-
                 {   DicType: 'PayMethod',
                     DicName: '支付方式',
-                    
                 }  ,
                 {   DicType: 'DxbzCode',
                     DicName: '对下补助代码维护',
@@ -139,15 +158,27 @@ export default {
     computed:{
         ...mapState({
             menuButton: state => state.user.menubutton,
-            orglist: state => state.user.orglist
+            orglist: state => state.user.orglist,
+            orgid: state => state.user.orgid,
+            ucode: state => state.user.usercode
         })
     },
     mounted(){
         this.getData();
+        // this.getorglist();
+    },
+    watch:{
+        orgid(val){
+            if(val){
+                this.getData();
+            }
+        }
     },
     methods:{
         getData(){
             let data={
+                orgid:this.$store.state.user.orgid,
+                uid:this.$store.state.user.userid,
                 DicType: this.selected.DicType
             }
             GetSysSetList(data).then(res=>{
@@ -155,13 +186,9 @@ export default {
                     this.$msgBox.show(res.Msg)
                 }else{
                     this.typeInfoList=res.Record;
-                    if(res.Record.length>0){
-                        if(res.Record[0].DicType=="DxbzCode"){
-                             this.Value=res.Record[0].Value;
-                        }
-                       
+                    if(res.Record.length>0&&res.Record[0].DicType=="DxbzCode"){  
+                        this.Value=res.Record[0].Value;
                     }
-                    
                     this.typeInfoList.map(info => info.PersistentState=2)
                 }
             }).catch(err=>{
@@ -169,14 +196,15 @@ export default {
             })
         },
         update(){
-
             if(this.typeInfoList.length>0){
                 this.typeInfoList[0].Value=this.Value;
             }
             
             let arr=this.typeInfoList.concat(this.deleteList);
             let data={
-
+                orgid:this.$store.state.user.orgid,
+                uid:this.$store.state.user.userid,
+                //uid:266190618000001,
                 infoData:arr
             }
             dictionarySave(data).then(res=>{
@@ -201,7 +229,19 @@ export default {
             if(index==0){
                 this.disabled=false;
             }
-            this.typeInfoList.splice(index+1,0,{DicType:"PayMethod",Isactive:0,PersistentState:1,DicName:'支付方式',Orgid:this.$store.state.user.orgid,Orgcode:this.$store.state.user.orgcode})
+            this.typeInfoList.splice(
+                    index+1,
+                    0,
+                    {
+                        DicType:"PayMethod",
+                        Isactive:0,
+                        PersistentState:1,
+                        DicName:'支付方式',
+                        Orgid:this.$store.state.user.orgid,
+                        Orgcode:this.$store.state.user.orgcode,
+                        OrgList:[{PhId:this.$store.state.user.orgid,OCode:this.$store.state.user.orgcode,OName:this.$store.state.user.orgname}]
+                    }
+                )
         },
         //类型信息删除
         deleteInfo(index,item){ 
@@ -216,27 +256,63 @@ export default {
             this.typeInfoList.splice(index,1);
         
         },
+        //获取组织筛选列表
+        // getorglist(){
+        //     let data={
+        //         orgid:this.$store.state.user.orgid
+        //     }
+        //     GetAllChildTree(data).then(res => {
+        //         if(res.Status=='error'){
+        //             this.$msgBox.error(res.Msg)
+        //         }else{
+        //             this.orglist=res.Record;
+        //         }
+        //     }).catch(err => {
+        //         this.$msgBox.error('获取组织列表失败!')
+        //     })
+        // },
         //接收选中的组织
-        getOrg(){
-
+        getOrg(val){
+            this.typeInfoList[this.orgIndex].OrgList=[];
+             val.map(org => {
+                 this.typeInfoList[this.orgIndex].OrgList.push({
+                     PhId:val.PhId,
+                     OCode:org.OCode,
+                     OName:org.OName
+                 })
+             })
+            //this.typeInfoList[this.orgIndex].OrgList=val;
+            this.$forceUpdate();
         },
         //显示组织树选择
-        orgTree(val){
+        orgTree(val,index){
+            if(this.ucode!='Admin'){
+                return;
+            }
+            this.orgIndex=index;
             if(val){
                 let arr=[];
-                // val.Organizes.map(v =>{
-                //     arr.push(v.OrgCode)
-                // })
-                 this.orgSelected=[101];//需要code的列表
+                val.OrgList.map(v =>{
+                    arr.push(v.OCode)
+                })
+                 this.orgSelected=arr;//需要code的列表
             }
-            this.orgInfo=val;
             this.orgVisible=true;
         },
     },
     components:{
         topHandle,
         Orgtree
-    }
+    },
+    filters:{
+        orgname(arr){
+            let str='';
+            for(let org of arr){
+                str+= org.OName+' ';
+            }
+            return str;
+        }
+    },
 }
 </script>
 

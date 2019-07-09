@@ -22,7 +22,7 @@
         :upload.sync="upload"
         :fileCount="fileCount"
         @uploadFn="upload = true"
-        :FMode="mode"
+        :FMode="FMode"
       ></approval-bill>
       <div class="approval-btn">
         <el-button
@@ -112,7 +112,8 @@ export default {
       files: null,
       fileCount: 0,
       auditMsg: [],
-      files: []
+      files: [],
+      FMode: 0
     }
   },
   methods: {
@@ -130,6 +131,11 @@ export default {
             return
           }
           this.mode = res.Data.FMode
+          let fm = res.Data.FMode
+          if (res.Data.Operators.length == 1) {
+            fm = 1
+          }
+          this.FMode = fm
           this.PostPhid = res.Data.PhId
           this.nextApprovaler = res.Data.Operators
           this.dialogFlow(item)

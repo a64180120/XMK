@@ -93,8 +93,8 @@
                   {{(record.PaymentMst.FDate.substring(0,19)).replace('T',' ')}}
                 </li>
                 <li>
-                  <span style="color: #3294e8;">申报金额：</span>
-                  {{record.PaymentMst.FAmountTotal | NumFormat}}元
+                  <span style="color: #3294e8;">申报金额（元）：</span>
+                  {{record.PaymentMst.FAmountTotal | NumFormat}}
                 </li>
               </ul>
             </div>

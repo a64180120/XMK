@@ -325,7 +325,7 @@
                      @delete="handleDelete">
             <div slot="btn-group" >
               <el-button v-if="isApproval" class="btn" size="mini" @click="aprovalItem">审批</el-button>
-              <el-button  v-if="isApproval" class="btn" size="mini" style="width: 90px" @click="creatPayItem">生成支付单</el-button>
+              <el-button  v-if="isApproval" class="btn" size="mini" style="width: 120px" @click="creatPayItem">审批并生成支付单</el-button>
 
               <!--              <el-button class="btn" size="mini">打印</el-button>-->
             </div>

@@ -3,7 +3,7 @@
       <el-dialog
         :visible.sync="openDialog"
         width="37.5%"
-        v-if="openDialog"
+        v-show="openDialog"
         :close-on-click-modal="false"
         class="dialog approval-dialog"
         :append-to-body="true"

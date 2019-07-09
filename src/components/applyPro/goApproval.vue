@@ -363,7 +363,19 @@ export default {
   watch: {
     'param.FOpinion': function(val) {
       this.len = val.length
+    },
+    nextDataList:{
+      handler(val){
+
+        if (val.length === 1 ){
+          this.$nextTick(() => {
+            this.$refs.opTable.toggleAllSelection()
+          })
+        }
+      },
+      deep:true
     }
+
   }
   /*created() {
     this.getAppvalProc();
@@ -546,7 +558,7 @@ export default {
       // padding-bottom: 15px;
     }
     .el-table__body tr.current-row > td {
-      background-color: $primaryColor;
+      background-color: $selectedColor;
     }
   }
   &.el-dialog__wrapper {

@@ -40,7 +40,7 @@
                      </el-tooltip>
                    </td>
 
-                   <td class="right" style="border-bottom: 1px solid #fff;min-width: 100px">金&nbsp额&nbsp合&nbsp计:</td>
+                   <td class="right" style="border-bottom: 1px solid #fff;min-width: 140px">金&nbsp额&nbsp合&nbsp计（元）:</td>
                    <td class="left" style="border-bottom:1px solid #9acefb;overflow: hidden">
                      <el-tooltip :content="PaymentMst.FAmountTotal | NumFormat" popper-class="tooltipCla" placement="bottom-start">
                        <p>{{PaymentMst.FAmountTotal | NumFormat}}</p>
@@ -146,7 +146,7 @@
                       <td>
                         <el-tooltip :disabled="mx.FRemarks&&mx.FRemarks.length<15"  :content="mx.FRemarks" popper-class="tooltipCla" placement="bottom-start">
                           <p style="width: 300px;">{{mx.FRemarks}}</p>
-                          <p><input v-model="mx.FRemarks " maxlength="100"/></p>
+                          <p><input  v-model="mx.FRemarks " @focus="topClick(pindex,index)" maxlength="100"/></p>
                         </el-tooltip>
 
                       </td>
@@ -359,6 +359,9 @@
         }
 
       },
+      'prodata.Mst'(val){
+        console.log(val)
+      }
     },
     components:{ApprovalDialog, Orgtree,goApproval,ImgView,fileUp},
     mounted(){
@@ -730,8 +733,18 @@
       },
       //弹出组织树f表示项目下标，s表示项目对应的pdList下标
       showOrg(f,s){
+        if(!this.PaymentXmDtl[f].PaymentXm.XmMstPhid){
+          this.$msgBox.error('请先选择项目');
+          return;
+        }
         this.choosedPro=[f,s];
         this.orgType=true;
+      },
+      topClick(f,s){
+        if(!this.PaymentXmDtl[f].PaymentXm.XmMstPhid){
+          this.$msgBox.error('请先选择项目');
+          return;
+        }
       },
       //组织树点击选择事件
       getOrg:function(data){
