@@ -83,6 +83,12 @@ export default {
             default(){
                 return {FLifecycle:'1'}
             }
+        },
+        accounts:{
+            type:Array,
+            default(){
+                return []
+            }
         }
     },
     data(){
@@ -115,17 +121,45 @@ export default {
             return;
           }
           if(this.info.FAccount.length<19){
-              this.$msgBox.error('银行账户要大于19位!');
+              this.$msgBox.error('银行账号要大于19位!');
             return;
           }
           if(this.info.FBankcode.length<3){
               this.$msgBox.error('银行行号要大于3位!');
             return;
           }
-            let data={
+          for(let acc of this.accounts){ //判断重复账号
+              if(acc.FAccount===this.info.FAccount&&acc.PhId!==this.info.PhId){
+                    this.$confirm('银行账号重复, 是否继续保存?', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(()=>{
+                        let data={
+                            infoData:[this.info]       
+                        }   
+                            
+                        BankAccountSave(data).then(res=>{
+                            if(res.Status=='success'){
+                                this.$msgBox.show(res.Msg)
+                                this.$emit('add-cancle',true);
+                            }else{
+                                this.$msgBox.error(res.Msg)
+                            }
+
+                        }).catch(err=>{
+                            this.$msgBox.error('保存失败!')
+                        })
+                    }).catch(err => console.log(err))
+                    
+                    return;
+              }
+             
+            }
+           let data={
                 infoData:[this.info]       
             }   
-                 
+                
             BankAccountSave(data).then(res=>{
                 if(res.Status=='success'){
                     this.$msgBox.show(res.Msg)
@@ -135,8 +169,10 @@ export default {
                 }
 
             }).catch(err=>{
-                 this.$msgBox.error('保存失败!')
+                this.$msgBox.error('保存失败!')
             })
+
+            
         }
     },
     mounted(){
