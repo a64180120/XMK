@@ -6,8 +6,10 @@
     :visible.sync="visible2"
     :append-to-body="true"
   >
-    <el-button class="btn" size="mini" @click="selectAll(1)">全选</el-button>
-    <el-button class="btn" size="mini" @click="selectAll(0)">反选</el-button>
+    <div style="margin-bottom:10px;">
+      <span style="margin-right:10px;" class="btn" size="mini" @click="selectAll(1)">全选</span>
+      <span class="btn" size="mini" @click="selectAll(0)">反选</span>
+    </div>
     <div style="height: 350px;overflow-y: auto">
       <el-tree
         ref="elt"
@@ -111,8 +113,7 @@ export default {
   },
   methods: {
     selectAll(type) {
-      var arr = [...this.data],
-        key = []
+      let key = []
       function getKey(d) {
         d.forEach(item => {
           key.push(item.OCode)
@@ -121,12 +122,7 @@ export default {
           }
         })
       }
-      getKey(arr)
-      console.log(key)
-      // dother(arr)
-      // console.log(arr)
-      // var node = this.$refs.elt.getNode(this.data)
-      // console.log(node)
+      getKey([...this.data])
       if (type) {
         this.$refs.elt.setCheckedKeys(key)
         this.selected = this.$refs.elt.getCheckedNodes()

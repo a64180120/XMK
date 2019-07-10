@@ -412,7 +412,10 @@ export default {
       } else if (this.showPassword) {
         this.showMergePay = true
         this.showPassword = false
+        this.password = ''
       } else if (this.needSet) {
+        this.confirmPassword = ''
+        this.newPassword = ''
         this.showSetting = false
         this.showPassword = true
       }
