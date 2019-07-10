@@ -9,7 +9,7 @@
       class="payCenter"
     >
       <div slot="title" class="dialog-title">
-        <span style="float: left">请选择收款方账户</span>
+        <span style="float: left">请选择收款方账户2</span>
       </div>
       <div class="payCenterDialog">
         <div class="content" style="position:relative">
@@ -114,6 +114,7 @@ export default {
     .btns {
       text-align: right;
       padding-top: 10px;
+			padding-right: 1%;
       .btn {
         border: 1px solid $btnColor;
         cursor: pointer;

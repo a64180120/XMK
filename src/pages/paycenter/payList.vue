@@ -856,23 +856,23 @@ export default {
     },
     // 获取到新的银行信息
     getBank(data) {
-      if (this.bankChooseData.data[0].choosed) {
-        this.detail.Dtls.forEach(item => {
-          if (item.choosed) {
-            item.FRecAcntname = data.FBankname
-            item.FRecAcnt = data.FAccount
-            item.FRecBankname = data.FOpenAccount
-            item.FRecBankcode = data.FBankcode
-            item.FRecCityname = data.FCity
-          }
-        })
-      } else {
+      // if (this.bankChooseData.data[0].choosed) {
+      //   this.detail.Dtls.forEach(item => {
+      //     if (item.choosed) {
+      //       item.FRecAcntname = data.FBankname
+      //       item.FRecAcnt = data.FAccount
+      //       item.FRecBankname = data.FOpenAccount
+      //       item.FRecBankcode = data.FBankcode
+      //       item.FRecCityname = data.FCity
+      //     }s
+      //   })
+      // } else {
         this.bankChooseData.data[0].FRecAcntname = data.FBankname
         this.bankChooseData.data[0].FRecAcnt = data.FAccount
         this.bankChooseData.data[0].FRecBankname = data.FOpenAccount
         this.bankChooseData.data[0].FRecBankcode = data.FBankcode
         this.bankChooseData.data[0].FRecCityname = data.FCity
-      }
+    // }
     },
     // 获取支付方式
     GetSysSetList() {

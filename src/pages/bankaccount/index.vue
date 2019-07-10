@@ -17,7 +17,7 @@
             </div>
         </topHandle>
         <div class="container">
-            <order :type="'handle'"  ref="order"/>
+            <order type="handle"  ref="order"/>
         </div>
         <el-dialog :close-on-click-modal="false" :title="'银行账号'+(handleBtn=='add'?'新增':'修改')" :visible.sync="accountAddShow">
             <accountAdd v-if="accountAddShow" @add-cancle="addCancle" :accounts="accounts"  :type="handleBtn" :info="info"></accountAdd>
