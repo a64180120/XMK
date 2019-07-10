@@ -1,6 +1,6 @@
 <template>
     <div class="dictionary">
-        <topHandle :title="'系统管理在线工作平台'">
+        <topHandle :title="'系统管理在线工作平台'" @refresh="refresh">
             <div class="btnCon">
                 <div v-if="menuButton.datadic_edit=='True'" v-show="disabled" @click.stop="disabled=false" class="handle">
                     <div class="topIcon"><img src="@/assets/images/zj2.png" alt=""></div>
@@ -99,16 +99,44 @@
                     
                     <div><el-input :disabled="disabled" placeholder="请输入补助代码" v-model="Value"></el-input>   </div>
                 </div>   
-                <div v-else class="adminCode">
-                    <div class="listBody">
-                        <div @click.stop="addInfo(0)" v-if="typeInfoList.length==0" style="cursor:pointer">添加组织+</div>
-                        <ul :class="{update:!disabled}" v-for="(item,n) of typeInfoList" :key="n">
-                            <li>{{n+1}}</li>
-                            <li>对下组织代码</li>
+                <div v-else class="adminCode list">
+                    <div class="listHead">
+                        <ul >
+                            <li>序号</li>
+                            <li>对下补助代码</li>
                             <li>组织</li>
                         </ul>
                     </div>
-                    
+                    <div class="list listBodyCon">
+                        <div class="listBody">
+                            <div @click.stop="addCodeInfo(0)" v-if="typeInfoList.length==0" style="cursor:pointer">请添加组织+</div>
+                            <ul :class="{update:!disabled}" v-for="(item,n) of typeInfoList" :key="n">
+                                <li>{{n+1}}</li>
+                                <li>
+                                    <span v-show="disabled">{{item.Value}}</span>
+                                    <input v-show="!disabled" type="text" placeholder="请输入对下补助代码" @keyup="clearNoNum(item)" v-model="item.Value">
+                                </li>
+                                <li>
+                                    <div v-if="item.OrgList.length==0" style="width:100%;height:100%" @click="orgTree(item,n)"></div>
+                                    <el-tooltip :content="item.OrgList | orgname"> 
+                                        <div style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap"  @click="orgTree(item,n)" >
+                                            {{item.OrgList | orgname}}
+                                        </div> 
+                                    </el-tooltip> 
+                                    <div class="icon active">
+                                        <div @click="addCode(n)">
+                                            <img src="@/assets/images/jia.png" alt="">
+                                        </div>
+                                        <div @click="deleteInfo(n,item)">
+                                            <img src="@/assets/images/jian.png" alt="">
+                                        </div>
+                                    </div> 
+                                </li>
+                                
+                            </ul>
+                        </div>
+                        
+                    </div>
                 </div>     
             </div>
         </div>
@@ -128,7 +156,7 @@ export default {
     data(){
         return{
             codeList:[],//admin对下补助代码
-            //ucode:'Admin',
+            // ucode:'Admin',
             // orglist:[],//组织树
             orgIndex:'',//当前选中的组织切换
             orgVisible:false,
@@ -171,11 +199,15 @@ export default {
         }
     },
     methods:{
+        refresh(){
+            this.disabled=true;
+            this.getData();
+        },
         getData(){
             let data={
                 orgid:this.$store.state.user.orgid,
-                // uid:this.$store.state.user.userid,
-                uid:266190618000001,
+                uid:this.$store.state.user.userid,
+                //uid:266190618000001,
                 DicType: this.selected.DicType
             }
             GetSysSetList(data).then(res=>{
@@ -183,18 +215,34 @@ export default {
                     this.$msgBox.show(res.Msg)
                 }else{
                     this.typeInfoList=res.Record;
-                    if(res.Record[0].DicType=="DxbzCode"&&this.ucode!='Admin'){  
-                        this.Value=res.Record[0].Value;
+                    if(this.selected.DicType=="DxbzCode"&&this.ucode!='Admin'){  
+                        if(res.Record.length){
+                             this.Value=res.Record[0].Value;
+                        }else{
+                             this.Value=''   
+                        }
                     }
                     this.typeInfoList.map(info => info.PersistentState=2)
+                    this.deleteList=[];
                 }
             }).catch(err=>{
+                console.log(err)
                 this.$msgBox.show('获取数据失败!')
             })
         },
         update(){
-            if(this.typeInfoList.length>0){
-                this.typeInfoList[0].Value=this.Value;
+            if(this.ucode!='Admin'&&this.selected.DicType=='DxbzCode'){
+                if(this.typeInfoList.length){
+                    this.typeInfoList[0].Value=this.Value;
+                    this.typeInfoList[0].OrgList=[{
+                        PhId:this.$store.state.user.orgid,
+                        OCode:this.$store.state.user.orgcode,
+                        OName:this.$store.state.user.orgname
+                    }]
+                }else{
+                    this.typeInfoList=[]
+                }
+                
             }
             
             let arr=this.typeInfoList.concat(this.deleteList);
@@ -220,6 +268,30 @@ export default {
             this.selected=type;
             this.disabled=true;
             this.getData();
+        },
+        //输入框限定***
+        clearNoNum(val){
+           val.Value=val.Value.replace(/[^0-9]/g,"");
+              //清除“数字”和“.”以外的字符  
+        },
+        //code信息新增
+        addCode(index){
+            if(index==0){
+                this.disabled=false;
+            }
+            this.typeInfoList.splice(
+                    index+1,
+                    0,
+                    {
+                        DicType:"DxbzCode",
+                        Isactive:0,
+                        PersistentState:1,
+                        DicName:'对下补助代码维护',
+                        Orgid:this.$store.state.user.orgid,
+                        Orgcode:this.$store.state.user.orgcode,
+                        OrgList:[]
+                    }
+                )
         },
         //类型信息新增
         addInfo(index){
@@ -273,7 +345,7 @@ export default {
             this.typeInfoList[this.orgIndex].OrgList=[];
              val.map(org => {
                  this.typeInfoList[this.orgIndex].OrgList.push({
-                     PhId:val.PhId,
+                     PhId:org.PhId,
                      OCode:org.OCode,
                      OName:org.OName
                  })
@@ -283,7 +355,7 @@ export default {
         },
         //显示组织树选择
         orgTree(val,index){
-            if(this.ucode!='Admin'){
+            if(this.ucode!='Admin'||this.disabled){
                 return;
             }
             this.orgIndex=index;
@@ -383,7 +455,9 @@ export default {
         width:82%;
         height:100%;
         
-        .list{
+        
+    }
+    .list{
             position:relative;
             padding-left:17px;
             width:100%;
@@ -430,14 +504,14 @@ export default {
             .listHead{
                 overflow-y: scroll;
                 padding-right:25px;
-                
                 font-size:0.18rem;
                 color:#fff;
                 >ul{
                   
                     height:100%;
                     >li{
-                          background:$btnColor;
+                        float:left;
+                        background:$btnColor;
                         border-top:1px solid $borderColor_ccc;
                     }
                 }
@@ -497,10 +571,81 @@ export default {
                 display: inline-block;
             }
         }
-    }
 }
 .gray{
     background: #e6e8ea;
+}
+.adminCode{
+        padding-left:0;
+        width:100%;
+        .listHead{
+            width:100%;
+            >ul{
+                width:100%;
+                height:40px;
+                >li{
+                    &:first-of-type{
+                        width:20%;
+                    }
+                    &:nth-of-type(2){
+                        width:40%;
+                    }
+                    &:nth-of-type(3){
+                        width:40%;    
+                    }
+                }
+            }
+        }
+        .listBodyCon{
+            padding-left:0;
+            .listBody{
+                >ul{
+                    >li{
+                        position: relative;
+                        &:first-of-type{
+                            width:20%;
+                        }
+                        &:nth-of-type(2){
+                            width:40%;
+                        }
+                        &:nth-of-type(3){
+                            width:40%;    
+                        }
+                        
+                    }
+                }
+                ul.update{
+                    >li{
+                        &:hover{
+                            .active{
+                                display: block;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    .icon{
+        display: none;
+        position: absolute;
+        right: -20px;
+        top: 0;
+        z-index: 999;
+        width: 20px;
+        padding-left: 5px;
+        height: 100%;
+        >div{
+            width:100%;
+            height:50%;
+            cursor: pointer;
+            >img{
+                width:100%;
+                height:16px;
+            }
+        }
+    }
+    
+    
 }
 </style>
 <style>
