@@ -862,7 +862,7 @@ export default {
     padding: 0 15px;
   }
   .container {
-    min-width: 1200px;
+    min-width: 1400px;
     .btns {
       position: absolute;
       top: 8px;

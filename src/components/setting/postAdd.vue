@@ -182,6 +182,7 @@ export default {
                 })
             })
             let data={
+                Ucode:'Admin',
                 GAppvalPost:this.info,
                 GAppvalPost4Opers:info2
             }

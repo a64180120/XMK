@@ -63,7 +63,7 @@ export default {
         showAccountAdd(val){
             this.handleBtn=val;
             if(val=='update'){
-                 this.info=this.$refs.order.choosedItem[0];
+                 this.info=JSON.parse(JSON.stringify(this.$refs.order.choosedItem[0]));
                  if(!this.info){
                     this.$msgBox.show('请选择一行数据!')
                     return;
@@ -87,9 +87,8 @@ export default {
         //关闭新增修改窗口
         addCancle(val){
             this.accountAddShow=false;
-            if(val){
-                this.refresh();
-            }
+            this.refresh();
+            
 
         },
         //删除行
@@ -148,6 +147,9 @@ export default {
 
 <style lang="scss" scoped>
 .bankaccount{
+    .container{
+        min-width: 1100px;
+    }
     .btnCon{
 
         .handle{

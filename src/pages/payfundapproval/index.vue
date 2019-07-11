@@ -71,15 +71,15 @@
           <div v-if="isApproval" class="tableHead">
             <table>
               <colgroup>
-                <col width="5%">
+                <col width="7%">
                 <col width="10%">
                 <col width="10%">
-                <col width="17%">
+                <col width="15%">
                 <col width="10%">
-                <col width="12%">
+                <col width="15%">
                 <col width="10%">
-                <col width="5%">
-                <col width="21%">
+                <col width="7%">
+                <col width="16%">
               </colgroup>
               <thead>
               <tr>
@@ -119,15 +119,15 @@
           <div v-if="isApproval" class="tableBody">
             <table ref="printArea">
               <colgroup>
-                <col width="5%">
+                <col width="7%">
                 <col width="10%">
                 <col width="10%">
-                <col width="17%">
+                <col width="15%">
                 <col width="10%">
-                <col width="12%">
+                <col width="15%">
                 <col width="10%">
-                <col width="5%">
-                <col width="21%">
+                <col width="7%">
+                <col width="16%">
               </colgroup>
               <tbody>
               <tr :class="{trActive:check[idx]}" v-for="(item,idx) in tableData"  :key="idx">

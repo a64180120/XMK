@@ -61,15 +61,15 @@
               <colgroup>
                 <col width="5%">
                 <col width="10%">
-                <col width="8%">
-                <col width="8%">
+                <col width="10%">
                 <col width="8%">
                 <col width="8%">
                 <col width="10%">
+                <col width="15%">
                 <col width="10%">
                 <col width="8%">
                 <col v-if="isApproval" width="5%">
-                <col width="20%">
+                <col width="11%">
               </colgroup>
               <thead>
               <tr>
@@ -115,15 +115,15 @@
               <colgroup>
                 <col width="5%">
                 <col width="10%">
-                <col width="8%">
-                <col width="8%">
+                <col width="10%">
                 <col width="8%">
                 <col width="8%">
                 <col width="10%">
+                <col width="15%">
                 <col width="10%">
                 <col width="8%">
                 <col width="5%">
-                <col width="20%">
+                <col width="11%">
               </colgroup>
               <tbody>
               <tr :class="{trActive:check[idx]}" v-for="(item,idx) in tableData"  :key="idx">
@@ -740,7 +740,7 @@
 </script>
 <style scoped>
   .content-body{
-    min-width: 1200px;
+    min-width: 1355px;
     min-height: 500px;
   }
   .top{

@@ -699,6 +699,7 @@ export default {
             this.detail.Dtls = res.Dtls
             this.account =
               res.Dtls[0].BankPhid == '0' ? '' : parseInt(res.Dtls[0].BankPhid)
+            this.accountChange(this.account); //修改bug 第一次没有把account给子表
           }
           this.allSelected = false
           this.orgName = (() => {
