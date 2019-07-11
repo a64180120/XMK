@@ -33,8 +33,8 @@
       </tophandle>
     </div>
 
-    <div class="container">
-      <div class="formArea">
+    <div ref="container" class="container fullTable">
+      <div class="formArea" style="transition: all .3s linear;">
         <div class="btnArea">
           <i class="el-icon-d-arrow-left iicon" style="position:absolute;left:0;top: .12rem;" @click.stop="unionStateScroll(false)"></i>
           <i class="el-icon-d-arrow-right iicon" style="position:absolute;right:275px;top: .12rem;" @click.stop="unionStateScroll(true)"></i>
@@ -43,7 +43,14 @@
               <ul>
                 <li>
                   <span>审批状态：</span>
-                  <el-select size="small" v-model="searchData.approvalType">
+                  <el-select collapse-tags size="small"
+                             v-model="searchData.approvalType"
+                             multiple
+                             placeholder="请选择"
+                             @change="handleChange"
+                             @remove-tag="getData"
+                            ref="sp"
+                  >
                     <el-option v-for="item in approvalList"
                                :key="item.value"
                                :label="item.label"
@@ -238,12 +245,20 @@
                   <p>{{(item.FDate.substring(0,19)).replace('T',' ')}}</p>
                 </el-tooltip>
               </td>
-              <td class="atype" @click.stop="openAuditfollow(item,index)">
+              <td class="atype" style="position: relative;overflow: visible" @click.stop="openAuditfollow(item,index)">
+                <div style="color: red;"  class="iconMsg">
+                  <i class="el-icon-chat-round"></i>
+                  <span>审批</span>
+                </div>
                 <el-tooltip :content="spTypeList[item.FApproval]" popper-class="tooltipCla" placement="bottom-start">
                   <p>{{spTypeList[item.FApproval]}}</p>
                 </el-tooltip>
               </td>
-              <td>
+              <td style="position: relative;overflow: visible">
+                <div style="color: #20c1ff;" class="iconMsg">
+                  <i class="el-icon-chat-round"></i>
+                  <span>支付</span>
+                </div>
                 <el-tooltip :content="item.FApproval==9?payTypeList[item.IsPay]:'-'" popper-class="tooltipCla" placement="bottom-start">
                   <p>{{item.FApproval==9?payTypeList[item.IsPay]:'-'}}</p>
                 </el-tooltip>
@@ -262,7 +277,7 @@
           </table>
         </div>
       </div>
-      <div class="rightPanel">
+      <div class="rightPanel"  style="transition: all .3s linear;" >
         <div style="width: 278px;overflow-y: scroll;padding-right: 11px;height: 100%;">
           <!--部门选择-->
           <el-select size="small" style="width: 250px;" class="approvalDepart" popper-class="AD-proper" v-model="searchData.bmType" @change="changeApart">
@@ -274,35 +289,46 @@
           </el-select>
           <!--预算显示区域-->
           <el-card>
-            <div>
-              <p style="color: #3294e8;font-size: .4rem">{{apartData.Mst.length}}</p>
-              <div>预算支出项目总数</div>
-            </div>
-            <div>
-              <p :title="apartData.Amount | NumFormat">
-                <num :vv="Number(apartData.Amount)"></num>
-                <!--{{apartData.money}}--></p>
-            </div>
+            <div style="font-size: .15rem" @click="rightShow.show1=!rightShow.show1" :class="{showTil:rightShow.show1}">预算支出</div>
+            <transition name="el-zoom-in-top">
+             <div v-show="rightShow.show1" class="transition-box">
+               <div>
+                 <p style="color: #3294e8;font-size: .4rem">{{apartData.Mst.length}}</p>
+                 <div>项目总数</div>
+               </div>
+               <div>
+                 <p :title="apartData.Amount | NumFormat">
+                   <num :vv="Number(apartData.Amount)"></num>
+                   <!--{{apartData.money}}--></p>
+               </div>
+             </div>
+            </transition>
           </el-card>
           <el-card>
-            <div style="border-bottom: 1px solid #ccc">
-              <div style="font-size: .15rem">对下补助项目名称</div>
-              <!--部门选择-->
-              <el-select size="small" style="width: 100%" :title="apartDataMst[bzType]" v-model="bzType" @change="getChartList">
-                <el-option v-for="item in apartData.Mst"
-                           :key="item.PhId"
-                           :label="item.FProjName"
-                           :value="item.PhId">
-                </el-option>
-              </el-select>
-            </div>
-            <div>
-              <!--echartArea-->
-              <pie-chart
-                         :dw="chartData.dw"
-                         :opinion="chartData.title"
-                         :opinionData="chartData.chart"></pie-chart>
-            </div>
+            <div style="font-size: .15rem" @click="rightShow.show2=!rightShow.show2" :class="{showTil:rightShow.show2}">对下补助项目</div>
+            <transition name="el-zoom-in-top">
+              <div v-show="rightShow.show2" class="transition-box">
+                <div style="margin: 10px 0;">
+                  <div style="width: 30px;display:inline-block;font-size: .14rem">名称</div>
+                  <!--部门选择-->
+                  <el-select size="small" style="display: inline-block;width: 200px;border-bottom: 1px solid #ccc" :title="apartDataMst[bzType]" v-model="bzType" @change="getChartList">
+                    <el-option v-for="item in apartData.Mst"
+                               :key="item.PhId"
+                               :label="item.FProjName"
+                               :value="item.PhId">
+                    </el-option>
+                  </el-select>
+                </div>
+                <div>
+                  <!--echartArea-->
+                  <pie-chart
+                    :dw="chartData.dw"
+                    :opinion="chartData.title"
+                    :opinionData="chartData.chart"></pie-chart>
+                </div>
+              </div>
+            </transition>
+
           </el-card>
         </div>
 
@@ -320,6 +346,7 @@
 
         </el-pagination>
       </div>
+      <div class="arrowShow" style="position: absolute;right: 285px;top: 47%;font-size: 33px;text-shadow: 0 0 10px #58a5e6;color: #58a5e6;transition: all .3s linear;"><i class="el-icon-d-arrow-right" @click.stop="arrowShow"></i></div>
     </div>
 
     <!--申报单弹窗-->
@@ -366,6 +393,11 @@
         name: "index",
       data(){
           return{
+            /*右边面板显示隐藏*/
+            rightShow:{
+              show1:true,
+              show2:true
+            },
             checked:false,//多选选择框
             checkList:[],//选择框列表
             dataList:{
@@ -454,7 +486,6 @@
           },
           deep:true
         },
-
       },
 
       computed: {
@@ -996,12 +1027,20 @@
           }
           this.getData();
         },
-
+        handleChange:function(val){
+          console.log(val)
+          console.log(this.$refs.sp)
+        },
+        arrowShow:function(){
+          let cls=this.$refs.container.className;
+          this.$refs.container.className=(cls=='container'?'container fullTable':'container')
+        }
       }
     }
 </script>
 
 <style scoped>
+
   .formArea,.pageArea{
     right: 300px;
   }
@@ -1021,9 +1060,12 @@
     margin-top: 10px;
     text-shadow: 1px 2px 1px #5302026e;
   }
+  .approvalDepart >>> .el-input--suffix .el-input__inner{
+    text-align: center;
+  }
 </style>
 <style lang="scss">
-  .self{
+    .self{
     .btnCon{
       .handle{
         display: inline-block;
@@ -1042,10 +1084,49 @@
         height:100%;
       }
     }
+    .iconMsg{
+      position: absolute;
+      right: 5px;
+      width: 30px;
+      height: 30px;
+      font-size: 12px;
+      top: -4px;
+      background-color: #fff;
+      >i{
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        font-size: 35px;
+        top: -10px;
+        right: 2px;
+      }
+    }
+  }
+  .showTil{
+    border-bottom: 1px solid #ccc;
+    padding: 0 0 10px 0;
+  }
+  .fullTable{
+    >.rightPanel{
+      right: -280px;
+      transition: all .3s linear;
+    }
+    >.formArea{
+      right:20px;
+      transition: all .3s linear;
+    }
+    >.arrowShow{
+      right: 0!important;
+      transform: rotate(180deg);
+      transition: all .3s linear;
+    }
   }
 </style>
 <style>
-
+  .self .el-select__tags{
+    position: absolute;
+    left: 0;
+  }
   .sinor li{
     margin-bottom: 15px;
   }
@@ -1085,13 +1166,5 @@
   }
   .AD-proper .popper__arrow{
     left: 110px !important;
-  }
-</style>
-<style scoped>
-  .approvalDepart >>> .el-input--suffix .el-input__inner{
-    text-align: center;
-  }
-  .AD-proper{
-
   }
 </style>

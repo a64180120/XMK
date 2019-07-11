@@ -182,17 +182,17 @@
                   <tbody>
                     <template v-for="(item) in record.PaymentXmDtl" v-if="record.PaymentXmDtl">
                       <tr v-for="(xm,idx) in item.PaymentDtls" v-if="item.PaymentDtls">
-                        <td
-                          :rowspan="item.PaymentDtls.length"
+                        <td class="left"
+                            :rowspan="item.PaymentDtls.length"
                           v-if="idx%item.PaymentDtls.length==0"
                         >{{item.PaymentXm.XmProjcode}}</td>
-                        <td
-                          :rowspan="item.PaymentDtls.length"
+                        <td class="left"
+                            :rowspan="item.PaymentDtls.length"
                           v-if="idx%item.PaymentDtls.length==0"
                         >{{item.PaymentXm.XmProjname}}</td>
-                        <td>{{xm.FDepartmentname}}</td>
-                        <td>{{xm.BudgetdtlName}}</td>
-                        <td style="text-align: right">{{xm.FAmount | NumFormat}}</td>
+                        <td class="left" >{{xm.FDepartmentname}}</td>
+                        <td  class="left" >{{xm.BudgetdtlName}}</td>
+                        <td class="right">{{xm.FAmount | NumFormat}}</td>
                         <td class="left" >{{xm.FRemarks}}</td>
                       </tr>
                     </template>
