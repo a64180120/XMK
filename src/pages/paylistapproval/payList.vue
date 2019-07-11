@@ -444,7 +444,10 @@ export default {
   },
   computed: {
     ...mapState({
-      Orglist: state => state.user.orglist
+      Orglist: state => state.user.orglist,
+      UserId:state =>state.user.userid,
+      Orgid:state =>state.user.orgid,
+      Year:state =>state.user.year,
     })
   },
   mounted() {
@@ -455,7 +458,8 @@ export default {
     getBack(e) {
       GetSysSetList({
         DicType: 'PayMethod',
-        uid: this.userid
+        uid: this.userid,
+        orgid: this.orgid
       })
         .then(res => {
           if (res) {
@@ -481,7 +485,7 @@ export default {
         // id: 401190528000001,
         uid: this.userid || 488181024000001, //用户id
         orgid: this.orgid, //组织id
-        ryear: '2019' //年度
+        ryear: this.Year //年度
       })
         .then(res => {
           console.log('payList', res)

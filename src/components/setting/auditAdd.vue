@@ -380,6 +380,9 @@ export default {
                 arr.push(inf);
             }
             if(type=='add'){
+                arr.map(a => {
+                    a.Ucode='Admin'
+                })
                 let data={
                     infoData:arr
                 }
@@ -389,7 +392,7 @@ export default {
                 for(let org of this.auditinfo.Organizes){
                     orgids.push(org.OrgId?org.OrgId:org.PhId);
                 }
-
+                data.Ucode='Admin',
                 data.ApprovalTypeId=splx.PhId;
                 data.BillType=splx.Value;
                 data.ProcCode=this.info.FCode;

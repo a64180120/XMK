@@ -107,7 +107,7 @@
                                         </td>
                                         <td>
                                             <el-tooltip :content="post.GAppvalPost.FName">
-                                                <p>  {{post.GAppvalPost.FName}}</p>
+                                                <p>  {{post.GAppvalPost.FName+(post.GAppvalPost.IsSystem?'(公有)':'')}}</p>
                                             </el-tooltip>
                                         </td>
                                         <td class="tdCon">
@@ -206,7 +206,8 @@ export default {
      computed:{
         ...mapState({
             menuButton: state => state.user.menubutton,
-            orgid: state => state.user.orgid
+            orgid: state => state.user.orgid,
+            ucode: state => state.user.usercode
         })
     },
     watch:{
@@ -242,6 +243,10 @@ export default {
                 this.$msgBox.show('只能选择一行数据!');
                 return;
             }
+            if(str=='update'&&this.ucode!='Admin'&&this.choosedItem[0].GAppvalPost.IsSystem){
+                this.$msgBox.show('公有岗位无法修改,请联系管理员!');
+                return;
+            }
             if(str=='update'){
                 this.postinfo=this.choosedItem[0].GAppvalPost.PhId;
             }else{
@@ -261,6 +266,17 @@ export default {
                 this.$msgBox.show('请先选择一行数据!');
                 return;
             }
+            if(this.ucode!='Admin'){
+                let bo;
+                bo=this.choosedItem.some(item => {
+                    return item.GAppvalPost.IsSystem==1
+                })
+                if(bo){
+                    this.$msgBox.show('公有岗位无法删除,请联系管理员!');
+                    return;
+                }
+                
+            }
             this.$confirm('此操作将永久删除该岗位, 是否继续?', '提示', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
@@ -272,6 +288,7 @@ export default {
                         arr.push(ch.GAppvalPost.PhId);
                     })
                     let data = {
+                        Ucode:this.$store.state.user.usercode,
                         PostPhidList:arr
                     }
                     PostDelete(data).then(res => {
@@ -310,8 +327,8 @@ export default {
                 PageIndex:this.pageIndex-1,//  (分页页码)
                 PageSize:this.pageSize,//  （分页大小）
                 Orgid: this.$store.state.user.orgid, //  （组织id）
-                Ucode: this.$store.state.user.orgcode, //（用户编码）  admin为显示全部
-               //Ucode:this.$store.state.user.usercode,
+                Ucode: this.$store.state.user.usercode, //（用户编码）  admin为显示全部
+               
                 PostName:this.search.val,//搜索框值
                 EnableMark:this.search.enable,//启用停用
                 SearchOrgid:orgids

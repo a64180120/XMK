@@ -659,17 +659,6 @@ export default {
     payNav(type, item) {
       this.showAuditfollow = false
       if (item) {
-        if (item.Mst.FApproval == 0 || item.Mst.FApproval == 2) {
-          this.payListData.itemType = 'notApprove'
-        } else if (item.Mst.FState == 2) {
-          this.payListData.itemType = 'error'
-        } else if (item.Mst.FState == 0 && item.Mst.FApproval == 9) {
-          this.payListData.itemType = 'pay'
-        } else if (item.Mst.FState == 1) {
-          this.payListData.itemType = 'success'
-        } else {
-          this.payListData.itemType = ''
-        }
       } else {
         var handleitem = []
         let checkedCount = this.tableData.reduce((prev, cur) => {
@@ -731,7 +720,14 @@ export default {
               })
             ) {
               this.$msgBox.error('只能对支付异常和支付中的单据进行处理。')
-
+              return
+            } else if (
+              handleitem.length > 1 &&
+              !handleitem.every(item => {
+                return item.Mst.FState == handleitem[0].Mst.FState
+              })
+            ) {
+              this.$msgBox.error('只能对相同支付状态的单据进行处理。')
               return
             } else if (
               handleitem.some(item => {
@@ -866,7 +862,7 @@ export default {
     padding: 0 15px;
   }
   .container {
-    min-width: 1200px;
+    min-width: 1400px;
     .btns {
       position: absolute;
       top: 8px;

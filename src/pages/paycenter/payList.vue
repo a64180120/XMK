@@ -281,56 +281,56 @@
                       </div>
                     </template>
                   </el-table-column>
-                  <!-- 支付异常列 -->
-                  <template
-                    v-if="(!detail.Dtls.every(item=>(item.FState==1&&!item.FNewCode)))&&detail.Mst.FApproval==9&&detail.Mst.FState!=0"
-                  >
-                    <el-table-column
-                      v-for="(item,index) in payHeaders2"
-                      :key="index+20"
-                      :property="item.name"
-                      :label="item.label"
-                      :width="item.width||''"
-                      :header-align="item.headerAlign||'center'"
-                      :align="item.bodyAlign||'left'"
+                  <!-- 支付状态列 -->
+                  <template v-if="detail.Mst.FApproval==9">
+                    <template
+                      v-if="(detail.Dtls.some(item=>item.FNewCode)||detail.Mst.FState==2)&&detail.Mst.FState!=0"
                     >
-                      <template slot-scope="scope">
-                        <template
-                          v-if="scope.column.property=='FState'"
-                        >{{FStateList.find(item=>item.value==scope.row[scope.column.property]).label}}</template>
-                        <template v-else-if="scope.column.property=='FNewCodes'">
-                          <template v-if="scope.row[scope.column.property]">
-                            <p
-                              class="atype"
-                              style="display:inline-block;position:relative;"
-                              v-for="(item,index) in scope.row[scope.column.property].split(',')"
-                              @click="goNewPayList(scope.row,index)"
-                            >{{item}}</p>
+                      <el-table-column
+                        v-for="(item,index) in payHeaders2"
+                        :key="index+20"
+                        :property="item.name"
+                        :label="item.label"
+                        :width="item.width||''"
+                        :header-align="item.headerAlign||'center'"
+                        :align="item.bodyAlign||'left'"
+                      >
+                        <template slot-scope="scope">
+                          <template
+                            v-if="scope.column.property=='FState'"
+                          >{{FStateList.find(item=>item.value==scope.row[scope.column.property]).label}}</template>
+                          <template v-else-if="scope.column.property=='FNewCodes'">
+                            <template v-if="scope.row[scope.column.property]">
+                              <p
+                                class="atype"
+                                style="display:inline-block;position:relative;"
+                                v-for="(item,index) in scope.row[scope.column.property].split(',')"
+                                @click="goNewPayList(scope.row,index)"
+                              >{{item}}</p>
+                            </template>
+                            <template v-else>————</template>
                           </template>
-                          <template v-else>————</template>
+                          <span v-else>{{scope.row[scope.column.property]||'————'}}</span>
                         </template>
-                        <span v-else>{{scope.row[scope.column.property]||'————'}}</span>
-                      </template>
-                    </el-table-column>
-                  </template>
-                  <template
-                    v-if="(detail.Dtls.every(item=>(item.FState==1&&!item.FNewCode)))&&detail.Mst.FState==1&&detail.Mst.FApproval"
-                  >
-                    <el-table-column
-                      v-for="(item,index) in payHeaders3"
-                      :key="index+20"
-                      :property="item.name"
-                      :label="item.label"
-                      :width="item.width||''"
-                      :header-align="item.headerAlign||'center'"
-                      :align="item.bodyAlign||'left'"
-                    >
-                      <template slot-scope="scope">
-                        <template
-                          v-if="scope.column.property=='FState'"
-                        >{{FStateList.find(item=>item.value==scope.row[scope.column.property]).label}}</template>
-                      </template>
-                    </el-table-column>
+                      </el-table-column>
+                    </template>
+                    <template v-else>
+                      <el-table-column
+                        v-for="(item,index) in payHeaders3"
+                        :key="index+20"
+                        :property="item.name"
+                        :label="item.label"
+                        :width="item.width||''"
+                        :header-align="item.headerAlign||'center'"
+                        :align="item.bodyAlign||'left'"
+                      >
+                        <template slot-scope="scope">
+                          <template
+                            v-if="scope.column.property=='FState'"
+                          >{{FStateList.find(item=>item.value==scope.row[scope.column.property]).label}}</template>
+                        </template>
+                      </el-table-column>
+                    </template>
                   </template>
                 </el-table>
               </div>
@@ -699,6 +699,7 @@ export default {
             this.detail.Dtls = res.Dtls
             this.account =
               res.Dtls[0].BankPhid == '0' ? '' : parseInt(res.Dtls[0].BankPhid)
+            this.accountChange(this.account); //修改bug 第一次没有把account给子表
           }
           this.allSelected = false
           this.orgName = (() => {
@@ -856,23 +857,23 @@ export default {
     },
     // 获取到新的银行信息
     getBank(data) {
-      if (this.bankChooseData.data[0].choosed) {
-        this.detail.Dtls.forEach(item => {
-          if (item.choosed) {
-            item.FRecAcntname = data.FBankname
-            item.FRecAcnt = data.FAccount
-            item.FRecBankname = data.FOpenAccount
-            item.FRecBankcode = data.FBankcode
-            item.FRecCityname = data.FCity
-          }
-        })
-      } else {
+      // if (this.bankChooseData.data[0].choosed) {
+      //   this.detail.Dtls.forEach(item => {
+      //     if (item.choosed) {
+      //       item.FRecAcntname = data.FBankname
+      //       item.FRecAcnt = data.FAccount
+      //       item.FRecBankname = data.FOpenAccount
+      //       item.FRecBankcode = data.FBankcode
+      //       item.FRecCityname = data.FCity
+      //     }s
+      //   })
+      // } else {
         this.bankChooseData.data[0].FRecAcntname = data.FBankname
         this.bankChooseData.data[0].FRecAcnt = data.FAccount
         this.bankChooseData.data[0].FRecBankname = data.FOpenAccount
         this.bankChooseData.data[0].FRecBankcode = data.FBankcode
         this.bankChooseData.data[0].FRecCityname = data.FCity
-      }
+    // }
     },
     // 获取支付方式
     GetSysSetList() {
