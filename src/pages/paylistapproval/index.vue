@@ -740,7 +740,7 @@
 </script>
 <style scoped>
   .content-body{
-    min-width: 1355px;
+    min-width: 1480px;
     min-height: 500px;
   }
   .top{
