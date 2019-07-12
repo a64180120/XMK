@@ -28,6 +28,7 @@
                 },
                 legend:{
                   data:this.opinion,
+                  selectedMode:false,
                   bottom:20
                 },
 
@@ -122,7 +123,6 @@
       },
       methods:{
         chartsInit(){
-          //debugger
           var vm=this;
 
           // window.addEventListener("resize", () => { vm.chart2.target.resize();});
@@ -157,6 +157,41 @@
 
           })
           this.chart2.target.on('mouseout',function(params){
+            vm.delay=false;
+            vm.currentIndex=params.dataIndex;
+            setTimeout(vm.delayInfinite,1500)
+          })
+          this.chart2.target.on('legendmouseover',function(params){
+            //隐藏tooltip
+            vm.chart2.target.dispatchAction({
+              type: 'hideTip',
+              seriesIndex: 0,
+              dataIndex: vm.currentIndex
+            });
+            // 取消之前高亮的图形
+            vm.chart2.target.dispatchAction({
+              type: 'downplay',
+              seriesIndex: 0,
+              dataIndex: vm.currentIndex
+            });
+            clearInterval(vm.chart);
+            vm.delay=true;
+            vm.chart=null;
+            //显示tooltip
+            vm.chart2.target.dispatchAction({
+              type: 'showTip',
+              seriesIndex: 0,
+              dataIndex: vm.currentIndex
+            });
+            // 高亮当前图形
+            vm.chart2.target.dispatchAction({
+              type: 'highlight',
+              seriesIndex: 0,
+              dataIndex: params.dataIndex
+            });
+
+          })
+          this.chart2.target.on('legendmouseout',function(params){
             vm.delay=false;
             vm.currentIndex=params.dataIndex;
             setTimeout(vm.delayInfinite,1500)
@@ -218,7 +253,9 @@
           var vm=this;
           // 创建图表对象
           if(!this.chart2.target){
+
             this.chart2.target = echarts.init(document.getElementById('piechart'), 'westeros')
+
           }
             let option={
               title: {
@@ -235,6 +272,7 @@
               },
               legend:{
                 data:this.opinion,
+                selectedMode:false,
                 bottom:20
               },
 
