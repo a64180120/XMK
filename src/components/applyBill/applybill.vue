@@ -26,7 +26,7 @@
               >删除</el-button>
               <!--<el-button class="btn" size="mini" @click="checkApply">审批</el-button>
               <el-button class="btn" size="mini" @click="cancelApply">取消审批</el-button>-->
-              <!--<el-button class="btn" size="mini">打印</el-button>-->
+              <el-button class="btn" size="mini" @click="printTable">打印</el-button>
             </slot>
           </div>
         </el-col>
@@ -82,126 +82,7 @@
             <div class="title">
               <span>资金拨付申报单</span>
             </div>
-            <div class="top">
-              <ul>
-                <li>
-                  <span style="color: #3294e8;">申报单位/部门：</span>
-                  {{record.PaymentMst.FDepname}}
-                </li>
-                <li>
-                  <span style="color: #3294e8;">申报日期：</span>
-                  {{(record.PaymentMst.FDate.substring(0,19)).replace('T',' ')}}
-                </li>
-                <li>
-                  <span style="color: #3294e8;">申报金额（元）：</span>
-                  {{record.PaymentMst.FAmountTotal | NumFormat}}
-                </li>
-              </ul>
-            </div>
-
-
-
-            <div class="content">
-              <!--<div class="top-tbody">
-                <table>
-                  <colgroup>
-                    <col width="16%">
-                    <col width="84%">
-                  </colgroup>
-                  <tbody>
-                    <tr>
-                      <td style="color: #3294e8;">申报单号</td>
-                      <td>{{record.PaymentMst.FCode}}</td>
-                    </tr>
-                    <tr>
-                      <td style="color: #3294e8;">申报单位名称</td>
-                      <td>{{record.PaymentMst.FOrgname+'-'+record.PaymentMst.FDepname}}</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-              <div class="top-total">
-                <table>
-                  <colgroup>
-                    <col width="16%">
-                    <col width="44%">
-                    <col width="20%">
-                    <col width="20%">
-                  </colgroup>
-                  <tbody>
-                    <tr>
-                      <td style="color: #3294e8;">申报说明</td>
-                      <td class="left" >{{record.PaymentMst.FDescribe}}</td>
-                      <td style="color: #3294e8;">申报金额合计(元)</td>
-                      <td>{{record.PaymentMst.FAmountTotal | NumFormat}}</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-              <div class="title">
-                <table>
-                  <colgroup>
-                    <col width="84%">
-                  </colgroup>
-                  <tbody>
-                    <tr>
-                      <td style="background-color: #3294e86b">申报拨付明细</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-              <div class="bottom-thead">
-                <table>
-                  <colgroup>
-                    <col width="16%">
-                    <col width="16%">
-                    <col width="16%">
-                    <col width="20%">
-                    <col width="16%">
-                    <col width="16%">
-                  </colgroup>
-                  <tbody>
-                    <tr>
-                      <td style="color: #3294e8;">项目编码</td>
-                      <td style="color: #3294e8;">项目名称</td>
-                      <td style="color: #3294e8;">补助单位/部门</td>
-                      <td style="color: #3294e8;">明细项目名称</td>
-                      <td style="color: #3294e8;">申报金额(元)</td>
-                      <td style="color: #3294e8;">备注</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-              <div class="bottom-tbody">
-                <table>
-                  <colgroup>
-                    <col width="16%">
-                    <col width="16%">
-                    <col width="16%">
-                    <col width="20%">
-                    <col width="16%">
-                    <col width="16%">
-                  </colgroup>
-                  <tbody>
-                    <template v-for="(item) in record.PaymentXmDtl" v-if="record.PaymentXmDtl">
-                      <tr v-for="(xm,idx) in item.PaymentDtls" v-if="item.PaymentDtls">
-                        <td class="left"
-                            :rowspan="item.PaymentDtls.length"
-                          v-if="idx%item.PaymentDtls.length==0"
-                        >{{item.PaymentXm.XmProjcode}}</td>
-                        <td class="left"
-                            :rowspan="item.PaymentDtls.length"
-                          v-if="idx%item.PaymentDtls.length==0"
-                        >{{item.PaymentXm.XmProjname}}</td>
-                        <td class="left" >{{xm.FDepartmentname}}</td>
-                        <td  class="left" >{{xm.BudgetdtlName}}</td>
-                        <td class="right">{{xm.FAmount | NumFormat}}</td>
-                        <td class="left" >{{xm.FRemarks}}</td>
-                      </tr>
-                    </template>
-                  </tbody>
-                </table>
-              </div>-->
+            <div class="content" ref="printArea">
               <table>
                 <colgroup>
                   <col width="15%"/>
@@ -211,6 +92,20 @@
                   <col width="15%"/>
                   <col width="20%"/>
                 </colgroup>
+                <tr>
+                  <td colspan="2" class="left" style="border: 0;">
+                    <span style="color: #3294e8;">申报单位/部门：</span>
+                    {{record.PaymentMst.FDepname}}
+                  </td>
+                  <td colspan="2" style="border: 0;">
+                    <span style="color: #3294e8;">申报日期：</span>
+                    {{(record.PaymentMst.FDate.substring(0,19)).replace('T',' ')}}
+                  </td>
+                  <td colspan="2" class="right" style="border: 0;">
+                    <span style="color: #3294e8;">申报金额（元）：</span>
+                    {{record.PaymentMst.FAmountTotal | NumFormat}}
+                  </td>
+                </tr>
                 <tr>
                   <td colspan="1" class="tbTitle" style="letter-spacing: 9px;padding-left: 14px;">申报单号</td>
                   <td colspan="5">{{record.PaymentMst.FCode}}</td>
@@ -226,21 +121,20 @@
                   <td class="right">{{record.PaymentMst.FAmountTotal | NumFormat}}</td>
                 </tr>
               </table>
-              <table style="display: none">
+              <table style="display:none">
                 <colgroup>
-                  <col width="15%"/>
-                  <col width="20%"/>
-                  <col width="40%"/>
                   <col width="25%"/>
+                  <col width="45%"/>
+                  <col width="30%"/>
                 </colgroup>
+                <tr><td colspan="3" class="secondTitle">审批流程</td></tr>
                 <tr>
-                  <td></td>
-                  <td>审批人</td>
-                  <td>审批意见</td>
-                  <td>审批时间</td>
+                  <td class="tbTitle">审批人</td>
+                  <td class="tbTitle">审批意见</td>
+                  <td class="tbTitle">审批时间</td>
                 </tr>
                 <tr v-for="(item,index) in auditMsg">
-                  <td v-if="index==0" :rowspan="auditMsg.length">审批流程</td>
+
                   <td>{{item.OperaName}}</td>
                   <td>{{item.FOpinion}}</td>
                   <td>{{item.FDate}}</td>
@@ -410,6 +304,17 @@ export default {
 
   },
   methods: {
+    /*打印*/
+    printTable: function() {
+      let printArea=this.$refs.printArea.cloneNode(true);
+      printArea.childNodes[2].style.display='table';
+      let title=document.createElement("h2");
+      title.innerText='资金拨付申报单';
+      title.style.width='100%';
+      title.style.textAlign='center';
+      printArea.insertBefore(title,printArea.firstChild);
+      this.$print(printArea);
+    },
     //申报单查看
     getApply: function() {
       let param = { fPhId: this.applyNum }
@@ -775,103 +680,44 @@ export default {
         text-align: right;
       }
     }
-/*    > .top-tbody {
-      > table {
-        border: 1px solid #eaeaea;
-        width: 100%;
-        > tbody {
-          > tr {
-            > td {
-              border: 1px solid #eaeaea;
-              height: 30px;
-              padding: 10px;
-            }
-          }
-        }
-      }
-    }
-    > .top-total {
-      > table {
-        border: 1px solid #eaeaea;
-        border-top: none;
-        border-bottom: none;
-        width: 100%;
-        > tbody {
-          > tr {
-            > td {
-              border: 1px solid #eaeaea;
-              height: auto;
-              min-height: 30px;
-              padding: 10px;
-              border-top: none;
-              !*border-bottom: none;*!
-            }
-          }
-        }
-      }
-    }
-    > .title {
-      > table {
-        border: 1px solid #eaeaea;
-        border-top: none;
-        border-bottom: none;
-        width: 100%;
-        > tbody {
-          > tr {
-            > td {
-              border: 1px solid #eaeaea;
-              height: 30px;
-              padding: 10px;
-              border-top: none;
-              !*border-bottom: none;*!
-            }
-          }
-        }
-      }
-    }
-    > .bottom-thead {
-      > table {
-        border: 1px solid #eaeaea;
-        border-top: none;
-        border-bottom: none;
-        width: 100%;
-        > tbody {
-          > tr {
-            > td {
-              border: 1px solid #eaeaea;
-              height: 30px;
-              padding: 10px;
-              border-top: none;
-              !*border-bottom: none;*!
-            }
-          }
-        }
-      }
-    }
-    > .bottom-tbody {
-      > table {
-        border: 1px solid #eaeaea;
-        border-top: none;
-        border-bottom: none;
-        width: 100%;
-        > tbody {
-          > tr {
-            > td {
-              border: 1px solid #eaeaea;
-              height: 30px;
-              border-top: none;
-              padding:10px
-              !*border-bottom: none;*!
-            }
-          }
-        }
-      }
-    }*/
   }
 }
 .top-btn {
   text-align: right;
 }
+  @media print{
+    .content {
+      width: 100%;
+      padding: 20px;
+      box-sizing: border-box;
+      table{
+        width: 100%;
+        margin:20px 0;
+       /* page-break-after: always;*/
+        td{
+          border-collapse: collapse;
+          border-spacing: 0;
+          height: 40px;
+          border: 1px solid #eaeaea;
+          padding: 5px;
+          text-align: center;
+        }
+        .tbTitle{
+          color: #3294e8;
+        }
+        .secondTitle{
+          background-color: #3294e8;
+          color: #fff;
+        }
+        .left{
+          text-align: left;
+        }
+        .right{
+          text-align: right;
+        }
+      }
+    }
+  }
 </style>
 <style>
 #delDialog .el-dialog__body {
