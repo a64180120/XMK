@@ -510,29 +510,6 @@
         data: {},
         subData: [],//审批流获取
       },
-      watch:{
-        checked:function(val){
-          //数组快速修改，方法一
-         this.checkList.forEach((item,index,array)=>{
-            this.checkList[index]=val;
-          })
-          //方法二
-         /* for(var i in this.checkList){
-            this.checkList[i]=val
-          }
-          this.$forceUpdate(this.checkList);*/
-        },
-        searchData:{
-          handler(val){
-            if(val.bmType){
-              this.pageSearch.pageIndex=1;
-              this.getData();
-            }
-          },
-          deep:true
-        },
-        isMe(val){
-          this.getData();
       visible: false,//审批流程
       appDialog: {
         title: '',
@@ -577,6 +554,9 @@
       },
       deep: true
     },
+    isMe(val) {
+      this.getData();
+    }
   },
 
   computed: {
@@ -1192,6 +1172,42 @@
   }
 </style>
 <style lang="scss">
+  .self .el-select__tags{
+    position: absolute;
+    right: 5px;
+    width: 30px;
+    height: 30px;
+    font-size: 12px;
+    top: -4px;
+    background-color: #fff;
+    > i {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      font-size: 35px;
+      top: -10px;
+      right: 2px;
+    }
+  }
+  .showTil {
+    border-bottom: 1px solid #ccc;
+    padding: 0 0 10px 0;
+  }
+  .fullTable {
+    > .rightPanel {
+      right: -280px;
+      transition: all 0.3s linear;
+    }
+    > .formArea {
+      right: 20px;
+      transition: all 0.3s linear;
+    }
+    > .arrowShow {
+      right: 0 !important;
+      transform: rotate(180deg);
+      transition: all 0.3s linear;
+    }
+  }
     .self{
     .btnCon{
       .handle{
@@ -1281,45 +1297,7 @@
     }
   }
 </style>
-<style>
-  .self .el-select__tags{
-    position: absolute;
-    right: 5px;
-    width: 30px;
-    height: 30px;
-    font-size: 12px;
-    top: -4px;
-    background-color: #fff;
-    > i {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      font-size: 35px;
-      top: -10px;
-      right: 2px;
-    }
-  }
-}
-.showTil {
-  border-bottom: 1px solid #ccc;
-  padding: 0 0 10px 0;
-}
-.fullTable {
-  > .rightPanel {
-    right: -280px;
-    transition: all 0.3s linear;
-  }
-  > .formArea {
-    right: 20px;
-    transition: all 0.3s linear;
-  }
-  > .arrowShow {
-    right: 0 !important;
-    transform: rotate(180deg);
-    transition: all 0.3s linear;
-  }
-}
-</style>
+
 <style>
 .self .el-select__tags {
   position: absolute;

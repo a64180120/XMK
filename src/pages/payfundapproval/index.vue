@@ -170,7 +170,6 @@
                 <col width="16%">
               </colgroup>
               <tbody>
-<<<<<<< HEAD
               <tr :class="{trActive:check[idx]}" v-for="(item,idx) in tableData"  :key="idx">
                 <td  @click.self="handleCheckBoxCellClick(item,idx)">
                   <el-checkbox v-model="check[idx]"  >{{idx+1}}</el-checkbox>
@@ -214,56 +213,6 @@
                       <img v-if="item.StopHour<24"   src="../../assets/images/sj2.png" class="img-icon">
                       <img v-else src="../../assets/images/sj1.png" class="img-icon">
                     </el-tooltip>
-                    <!--<el-tooltip v-if="item.BStatus == 0" class="" effect="dark" :content="'已经停留'+item.StopHour +'小时'" placement="bottom-start">
-                      <img  src="../../assets/images/sj2.png" class="img-icon">
-=======
-                <tr :class="{trActive:check[idx]}"
-                    v-for="(item,idx) in tableData"
-                    :key="idx">
-                  <td @click.self="handleCheckBoxCellClick(item,idx)">
-                    <el-checkbox v-model="check[idx]">{{idx+1}}</el-checkbox>
-                  </td>
-                  <td>
-                    <el-tooltip effect="dark"
-                                :content="item.OrgName"
-                                placement="bottom"
-                                popper-class="pay-fund-approval_tooltip">
-                      <p>
-                        {{item.OrgName}}
-                      </p>
->>>>>>> 72cfa2bc1d435f0d18b58fc9e98c50ad2a673a67
-                    </el-tooltip>
-                  </td>
-                  <td @click="handleCellClick(item,idx)"
-                      class="apply-epart cell-click">
-                    {{item.BNum}}
-                  </td>
-                  <td>
-                    <el-tooltip effect="dark"
-                                :content="item.BName"
-                                placement="bottom"
-                                popper-class="pay-fund-approval_tooltip">
-                      <p>
-                        {{item.BName}}
-                      </p>
-                    </el-tooltip>
-                  </td>
-                  <td style="text-align: right">
-                    {{item.BAccount | NumFormat}}
-                  </td>
-                  <td>
-                    <el-tooltip effect="dark"
-                                :content="item.BDate"
-                                placement="bottom"
-                                popper-class="pay-fund-approval_tooltip">
-                      <p>
-                        {{item.BDate}}
-                      </p>
-                    </el-tooltip>
-<<<<<<< HEAD
-                    <el-tooltip v-else-if="item.BStatus == 9" class="" effect="dark" :content="'已经停留'+item.StopHour +'小时'" placement="bottom-start">
-                      <img  src="../../assets/images/sj1.png" class="img-icon">
-                    </el-tooltip>-->
                   </div>
                 </td>
                 <td  style="text-align: left">
@@ -277,74 +226,6 @@
               <tr v-if="tableData.length === 0" :class="{trActive:check[0]}">
                 <td colspan="10">未查询到数据</td>
               </tr>
-=======
-                  </td>
-                  <td>
-                    <span class="cell-click"
-                          v-if="item.BStatus ==0 "
-                          @click.stop="openAuditfollow(item,idx)">未审批</span>
-                    <span class="cell-click"
-                          v-if="item.BStatus ==1 "
-                          @click.stop="openAuditfollow(item,idx)">待审批</span>
-                    <span class="cell-click"
-                          v-if="item.BStatus ==2 "
-                          @click.stop="openAuditfollow(item,idx)">未通过</span>
-                    <span class="cell-click"
-                          v-if="item.BStatus ==9 "
-                          @click.stop="openAuditfollow(item,idx)">审批通过</span>
-                  </td>
-                  <td>
-                    <div>
-                      <el-tooltip v-if="item.BStatus == 0"
-                                  class=""
-                                  effect="dark"
-                                  :content="'已经停留'+item.StopHour +'小时'"
-                                  placement="bottom-start">
-                        <img src="../../assets/images/sj2.png"
-                             class="img-icon">
-                      </el-tooltip>
-                      <el-tooltip v-else-if="item.BStatus == 1"
-                                  class=""
-                                  effect="dark"
-                                  :content="'已经停留'+item.StopHour +'小时'"
-                                  placement="bottom-start">
-                        <img src="../../assets/images/sj2.png"
-                             class="img-icon">
-                      </el-tooltip>
-                      <el-tooltip v-else-if="item.BStatus == 2"
-                                  class=""
-                                  effect="dark"
-                                  :content="'已经停留'+item.StopHour +'小时'"
-                                  placement="bottom-start">
-                        <img src="../../assets/images/sj1.png"
-                             class="img-icon">
-                      </el-tooltip>
-                      <el-tooltip v-else-if="item.BStatus == 9"
-                                  class=""
-                                  effect="dark"
-                                  :content="'已经停留'+item.StopHour +'小时'"
-                                  placement="bottom-start">
-                        <img src="../../assets/images/sj1.png"
-                             class="img-icon">
-                      </el-tooltip>
-                    </div>
-                  </td>
-                  <td style="text-align: left">
-                    <el-tooltip effect="dark"
-                                :content="item.BDescribe"
-                                placement="bottom-start"
-                                popper-class="pay-fund-approval_tooltip">
-                      <p>
-                        {{item.BDescribe}}
-                      </p>
-                    </el-tooltip>
-                  </td>
-                </tr>
-                <tr v-if="tableData.length === 0"
-                    :class="{trActive:check[0]}">
-                  <td colspan="10">未查询到数据</td>
-                </tr>
->>>>>>> 72cfa2bc1d435f0d18b58fc9e98c50ad2a673a67
               </tbody>
             </table>
           </div>
