@@ -169,7 +169,11 @@
                 </td>
                 <td>
                   <div>
-                    <el-tooltip v-if="item.BStatus == 0" class="" effect="dark" :content="'已经停留'+item.StopHour +'小时'" placement="bottom-start">
+                    <el-tooltip class="" effect="dark" :content="'已经停留'+item.StopHour +'小时'" placement="bottom-start">
+                      <img v-if="item.StopHour<24"   src="../../assets/images/sj2.png" class="img-icon">
+                      <img v-else src="../../assets/images/sj1.png" class="img-icon">
+                    </el-tooltip>
+                    <!--<el-tooltip v-if="item.BStatus == 0" class="" effect="dark" :content="'已经停留'+item.StopHour +'小时'" placement="bottom-start">
                       <img  src="../../assets/images/sj2.png" class="img-icon">
                     </el-tooltip>
                     <el-tooltip v-else-if="item.BStatus == 1"  class="" effect="dark" :content="'已经停留'+item.StopHour +'小时'" placement="bottom-start">
@@ -180,7 +184,7 @@
                     </el-tooltip>
                     <el-tooltip v-else-if="item.BStatus == 9" class="" effect="dark" :content="'已经停留'+item.StopHour +'小时'" placement="bottom-start">
                       <img  src="../../assets/images/sj1.png" class="img-icon">
-                    </el-tooltip>
+                    </el-tooltip>-->
                   </div>
                 </td>
                 <td  style="text-align: left">

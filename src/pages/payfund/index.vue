@@ -42,6 +42,11 @@
             <div>
               <ul>
                 <li>
+
+                    <el-checkbox v-model="isMe">标记我的待办</el-checkbox>
+
+                </li>
+                <li>
                   <span>审批状态：</span>
                   <el-select collapse-tags size="small"
                              v-model="searchData.approvalType"
@@ -246,7 +251,7 @@
                 </el-tooltip>
               </td>
               <td class="atype" style="position: relative;overflow: visible" @click.stop="openAuditfollow(item,index)">
-                <div style="color: red;"  class="iconMsg">
+                <div v-if="isMe&&item.IsApprovalNow==1" style="color: red;"  class="iconMsg" @click.stop="approvalSubmit">
                   <i class="el-icon-chat-round"></i>
                   <span>审批</span>
                 </div>
@@ -255,7 +260,7 @@
                 </el-tooltip>
               </td>
               <td style="position: relative;overflow: visible">
-                <div style="color: #20c1ff;" class="iconMsg">
+                <div  v-if="isMe&&item.GkPaymentCode==1" style="color: #20c1ff;" class="iconMsg" @click.stop="paySubmit">
                   <i class="el-icon-chat-round"></i>
                   <span>支付</span>
                 </div>
@@ -289,7 +294,10 @@
           </el-select>
           <!--预算显示区域-->
           <el-card>
-            <div style="font-size: .15rem" @click="rightShow.show1=!rightShow.show1" :class="{showTil:rightShow.show1}">预算支出</div>
+            <div style="font-size: .15rem" @click="rightShow.show1=!rightShow.show1" :class="{showTil:rightShow.show1}">
+              <span>预算支出</span>
+              <i class="el-icon-arrow-up"></i>
+            </div>
             <transition name="el-zoom-in-top">
              <div v-show="rightShow.show1" class="transition-box">
                <div>
@@ -305,11 +313,16 @@
             </transition>
           </el-card>
           <el-card>
-            <div style="font-size: .15rem" @click="rightShow.show2=!rightShow.show2" :class="{showTil:rightShow.show2}">对下补助项目</div>
+            <div style="font-size: .15rem" @click="rightShow.show2=!rightShow.show2" :class="{showTil:rightShow.show2}">
+              <span>对下补助项目</span>
+              <i class="el-icon-arrow-up"></i>
+            </div>
             <transition name="el-zoom-in-top">
               <div v-show="rightShow.show2" class="transition-box">
                 <div style="margin: 10px 0;">
-                  <div style="width: 30px;display:inline-block;font-size: .14rem">名称</div>
+                  <div style="width: 30px;display:inline-block;font-size: .14rem">
+                    <span>名称</span>
+                  </div>
                   <!--部门选择-->
                   <el-select size="small" style="display: inline-block;width: 200px;border-bottom: 1px solid #ccc" :title="apartDataMst[bzType]" v-model="bzType" @change="getChartList">
                     <el-option v-for="item in apartData.Mst"
@@ -333,7 +346,7 @@
         </div>
 
       </div>
-      <div class="pageArea">
+      <div class="pageArea"   style="transition: all .3s linear;">
         <el-pagination
           :current-page="pageSearch.pageIndex"
           :page-sizes="[20,30,50,100]"
@@ -343,10 +356,9 @@
           @size-change="changePagesize"
           @current-change="changePageindex"
         >
-
         </el-pagination>
       </div>
-      <div class="arrowShow" style="position: absolute;right: 285px;top: 47%;font-size: 33px;text-shadow: 0 0 10px #58a5e6;color: #58a5e6;transition: all .3s linear;"><i class="el-icon-d-arrow-right" @click.stop="arrowShow"></i></div>
+      <div class="arrowShow"><i class="el-icon-d-arrow-right" @click.stop="arrowShow"></i></div>
     </div>
 
     <!--申报单弹窗-->
@@ -393,6 +405,9 @@
         name: "index",
       data(){
           return{
+            //选择与我相关的审批和支付
+            isMe:false,
+
             /*右边面板显示隐藏*/
             rightShow:{
               show1:true,
@@ -486,6 +501,9 @@
           },
           deep:true
         },
+        isMe(val){
+          this.getData();
+        }
       },
 
       computed: {
@@ -499,6 +517,15 @@
         })
       },
       methods:{
+          //审批
+        approvalSubmit:function(){
+          alert('审批')
+        },
+        //支付
+        paySubmit:function(){
+          alert('支付')
+        },
+          //打印
         printTables:function(){
           let vm = this;
           printTable(vm);
@@ -705,7 +732,8 @@
           if(!this.apartData['bm'].PhId){
             return;
           }
-          let param={
+          var url='GBK/PaymentMstApi/GetPaymentMstList';
+          let param ={
             PageIndex:this.pageSearch.pageIndex,
             PageSize:this.pageSearch.pageSize,
             FName:this.searchData.searchValue,
@@ -719,7 +747,26 @@
             FDepphid:this.apartData['bm'].PhId,
             FYear:this.year
           }
-          this.getAxios('GBK/PaymentMstApi/GetPaymentMstList',param).then(res=>{
+          if(this.isMe){
+            url='GBK/PaymentMstApi/GetPaymentList';
+            param = {
+              PageIndex: this.pageSearch.pageIndex,
+              PageSize: this.pageSearch.pageSize,
+              FName: this.searchData.searchValue,
+              ApprovalBzs: this.searchData.approvalType,
+              PayBzs: this.searchData.payType,
+              StartDate: this.searchData.date[0]||'',
+              EndDate: this.searchData.date[1]||'',
+              MinAmount: this.money.smoney==0?'':this.money.smoney,
+              MaxAmount: this.money.emoney==0?'':this.money.emoney,
+              FOrgphid: this.orgid,
+              FDepphid: this.apartData['bm'].PhId,
+              FYear: this.year,
+              uid: this.userid
+            }
+          }
+
+          this.getAxios(url,param).then(res=>{
             this.dataList.total=res.totalRows;
             this.dataList.data=res.Record;
             this.getCheckList(res.Record.length);
@@ -1056,6 +1103,17 @@
   overflow: hidden;
   font-size: 0.12rem;
 }
+  .rightPanel .el-icon-arrow-up{
+    transform: rotateZ(180deg);
+    float: right;
+    margin-top: 4px;
+    transition: transform .3s linear;
+    color: #C0C4CC;
+    padding-left: 5px;
+  }
+  .rightPanel .showTil .el-icon-arrow-up{
+    transform: rotatez(0deg);
+  }
   .rightPanel p{
     margin-top: 10px;
     text-shadow: 1px 2px 1px #5302026e;
@@ -1092,6 +1150,7 @@
       font-size: 12px;
       top: -4px;
       background-color: #fff;
+      cursor: pointer;
       >i{
         position: absolute;
         width: 100%;
@@ -1111,7 +1170,7 @@
       right: -280px;
       transition: all .3s linear;
     }
-    >.formArea{
+    >.formArea, .pageArea{
       right:20px;
       transition: all .3s linear;
     }
@@ -1119,6 +1178,37 @@
       right: 0!important;
       transform: rotate(180deg);
       transition: all .3s linear;
+    }
+  }
+  .arrowShow{
+    position: absolute;
+    right: 285px;
+    top: 47%;
+    font-size: 33px;
+    text-shadow: -2px 0 4px red;
+    color: #fff;
+    transition: all .3s linear;
+    animation: ad 1s infinite linear;
+  }
+  .arrowShow:hover{
+    animation: none;
+  }
+  //箭头左右移动动效
+  @keyframes ad {
+    0% {
+      margin-right: 0px;
+    }
+    25% {
+      margin-right: 4px;
+    }
+    50% {
+      margin-right: 8px;
+    }
+    75% {
+      margin-right: 4px;
+    }
+    100% {
+      margin-right: 0px;
     }
   }
 </style>
