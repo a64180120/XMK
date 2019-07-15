@@ -94,7 +94,6 @@
             OrgCode:this.OrgCode,
             Year:this.Year
           }
-          debugger
           // this.getAxios('/GAppvalProc/GetProcTypes',data).then(success=>{
           //     console.log(success);
           //   this.myApproval = success.Data;

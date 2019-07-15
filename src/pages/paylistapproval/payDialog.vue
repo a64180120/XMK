@@ -196,7 +196,6 @@
         formData.append('FBilltype',this.BType);
         formData.append('FApproval',this.isAgree);
         formData.append('FOpinion',this.textare);
-        debugger
         if (this.isAgree === '9') {
           formData.append('NextOperators',JSON.stringify(this.operatorID));
           if(this.FMode == '1'){

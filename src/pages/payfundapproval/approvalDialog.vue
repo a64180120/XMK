@@ -97,7 +97,6 @@
       methods:{
         //根据组织id，单据类型获取所有的审批流程
         getAppvalProc(){
-          debugger
           let data = {
             ProcPhid:this.rowData[0].ProcPhid,
             PostPhid:this.rowData[0].PostPhid,
@@ -227,7 +226,6 @@
               formData.append('files',file.raw);
             }
           }
-          debugger
           this.formAxios('GSP/GAppvalRecord/PostApprovalRecordList',formData).then(res=>{
             if (res.Status == 'success'&&res) {
               this.fileCount = 0
