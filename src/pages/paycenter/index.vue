@@ -78,14 +78,7 @@
                 </li>
                 <li>
                   <span>支付状态</span>
-                  <el-select
-                    collapse-tags
-                    v-model="status"
-                    multiple
-                    placeholder="请选择"
-                    size="small"
-                    @remove-tag="rePageGetData"
-                  >
+                  <el-select collapse-tags v-model="status" multiple placeholder="请选择" size="small">
                     <el-option
                       v-for="item in statusList"
                       :key="item.value"
@@ -807,21 +800,25 @@ export default {
       if (newVal[newVal.length - 1] === '') {
         //点击全选
         this.status = this.statusList.map(i => i.value)
+        return
       } else if (
         arrSame(oldVal, allChoosed) &&
         arrSame(['', ...newVal], allChoosed)
       ) {
         // 点击全部取消全选
         this.status = []
+        return
       } else if (arrSame(oldVal, allChoosed) && newVal[0] === '') {
         // 点击其他取消全选
         newVal.splice(0, 1)
+        return
       } else if (
         newVal.length == allChoosed.length - 1 &&
         newVal.findIndex(i => i === '') == -1
       ) {
         //手动全选
         this.status = allChoosed
+        return
       }
       this.rePageGetData()
     },
