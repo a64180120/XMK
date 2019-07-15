@@ -699,6 +699,7 @@ export default {
             this.detail.Dtls = res.Dtls
             this.account =
               res.Dtls[0].BankPhid == '0' ? '' : parseInt(res.Dtls[0].BankPhid)
+            this.accountChange(this.account); //修改bug 第一次没有把account给子表
           }
           this.allSelected = false
           this.orgName = (() => {
@@ -856,23 +857,23 @@ export default {
     },
     // 获取到新的银行信息
     getBank(data) {
-      if (this.bankChooseData.data[0].choosed) {
-        this.detail.Dtls.forEach(item => {
-          if (item.choosed) {
-            item.FRecAcntname = data.FBankname
-            item.FRecAcnt = data.FAccount
-            item.FRecBankname = data.FOpenAccount
-            item.FRecBankcode = data.FBankcode
-            item.FRecCityname = data.FCity
-          }
-        })
-      } else {
+      // if (this.bankChooseData.data[0].choosed) {
+      //   this.detail.Dtls.forEach(item => {
+      //     if (item.choosed) {
+      //       item.FRecAcntname = data.FBankname
+      //       item.FRecAcnt = data.FAccount
+      //       item.FRecBankname = data.FOpenAccount
+      //       item.FRecBankcode = data.FBankcode
+      //       item.FRecCityname = data.FCity
+      //     }s
+      //   })
+      // } else {
         this.bankChooseData.data[0].FRecAcntname = data.FBankname
         this.bankChooseData.data[0].FRecAcnt = data.FAccount
         this.bankChooseData.data[0].FRecBankname = data.FOpenAccount
         this.bankChooseData.data[0].FRecBankcode = data.FBankcode
         this.bankChooseData.data[0].FRecCityname = data.FCity
-      }
+    // }
     },
     // 获取支付方式
     GetSysSetList() {

@@ -229,6 +229,12 @@ export default {
               this.$msgBox.show(res.Msg)
             }else{
               this.radio=res.Isactive;
+							if(res.Value){
+								this.newPassword='123456';
+							}
+							this.newPasswordCanSee=false;
+							this.oldPasswordCanSee=false;
+							this.confirmPasswordCanSee=false;
             }
           }).catch(err => {
               this.$msgBox.show('获取支付口令失败!')
@@ -236,8 +242,8 @@ export default {
         },
         beforeClose(){
             this.disabled=true;
-            this.newPassword='123456';
-            this.newPasswordCanSee=false;
+            // this.newPassword='123456';
+            
             this.getData();
         }
     }

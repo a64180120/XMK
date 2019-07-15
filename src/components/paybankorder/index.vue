@@ -15,7 +15,7 @@
             :default-expanded-keys="[checkedOrg.OCode?checkedOrg.OCode:1]"
             :data="orgList"
             :expand-on-click-node="false"
-            @node-click="orgChange"
+         
           ></el-tree>
         </div>
         <!-- <p class="bottomBtn">
@@ -38,11 +38,12 @@
               <thead>
                 <tr>
                   <td style="padding: 0 5px;">
-                    <el-checkbox
+                    <!-- <el-checkbox
                       v-model="checked"
                       @change="allChecked"
                       :indeterminate="indeterminate"
-                    >序号</el-checkbox>
+                    >序号</el-checkbox> -->
+                    序号
                   </td>
                   <td>银行账户名称</td>
                   <td>银行账号</td>
@@ -61,7 +62,6 @@
                 <col width="20%" />
                 <col width="15%" />
                 <col width="15%" />
-
                 <col width="15%" />
                 <col v-if="type=='handle'" width="15%" />
                 <col v-if="type=='handle'" width="10%" />
@@ -170,10 +170,10 @@ export default {
   },
   methods: {
     //组织选择
-    orgChange: function(data) {
-      this.checkedOrg = data
-      this.getData()
-    },
+    // orgChange: function(data) {
+    //   this.checkedOrg = data
+    //   this.getData()
+    // },
     getData() {
       let data = {
         OrgPhid: this.checkedOrg.PhId,
@@ -181,46 +181,84 @@ export default {
       }
       BankAccountList(data)
         .then(res => {
+          let count=0;
           if (res.Status == 'error') {
             this.$msgBox.show(res.Msg)
           } else {
             this.accountList = res.Record.filter(i => i.FLifecycle == 1)
+            
             this.checked = false
             this.allChecked(false)
+            if(this.selectitem){
+              
+              this.accountList.map(acc => {
+                if(acc.PhId==this.selectitem.data[0].BankPhid){
+                  acc.checked=true;
+                  this.choosedItem=[acc]
+                  count++;
+                }
+                
+              })
+              
+            }
+            if(this.accountList.length&&count==0){
+              this.accountList[0].checked=true;
+              this.choosedItem=[this.accountList[0]];
+              this.$forceUpdate();
+            }
+            console.log(this.selectitem.data[0].BankPhid, this.accountList)
           }
         })
         .catch(err => {
           this.$msgBox.show('获取银行档案列表失败!')
         })
     },
-    //选择行
+    //单选
     choose(val, index, str) {
-      if (str != 'change') {
-        val.checked = !val.checked
-      }
-      if (val.checked) {
-        this.choosedItem.push(val)
-      } else {
-        this.choosedItem.map((ch, i, arr) => {
-          if (ch.Phid == val.Phid) {
-            this.choosedItem.splice(i, 1)
-          }
+        this.accountList.map(acc => {
+          if(acc!=val){
+              acc.checked=false;
+            }
         })
-      }
-      let allCheck = this.accountList.every(acc => {
-        return acc.checked == true
-      })
-      if (allCheck) {
-        this.checked = true
-        this.indeterminate = false
-      } else {
-        this.checked = false
-        this.indeterminate = false
-        if (this.choosedItem.length > 0) {
-          this.indeterminate = true
+        this.choosedItem=[]
+        if (str != 'change') {
+          val.checked = !val.checked
         }
-      }
+        if(val.checked){
+          this.choosedItem=[val]
+        }
+        
+      
+     
     },
+    // //选择行
+    // choose(val, index, str) {
+    //   if (str != 'change') {
+    //     val.checked = !val.checked
+    //   }
+    //   if (val.checked) {
+    //     this.choosedItem.push(val)
+    //   } else {
+    //     this.choosedItem.map((ch, i, arr) => {
+    //       if (ch.Phid == val.Phid) {
+    //         this.choosedItem.splice(i, 1)
+    //       }
+    //     })
+    //   }
+    //   let allCheck = this.accountList.every(acc => {
+    //     return acc.checked == true
+    //   })
+    //   if (allCheck) {
+    //     this.checked = true
+    //     this.indeterminate = false
+    //   } else {
+    //     this.checked = false
+    //     this.indeterminate = false
+    //     if (this.choosedItem.length > 0) {
+    //       this.indeterminate = true
+    //     }
+    //   }
+    // },
     //全选
     allChecked(val) {
       this.indeterminate = false
@@ -336,5 +374,7 @@ export default {
     height: 20px;
   }
 }
+	
+
 </style>
 
