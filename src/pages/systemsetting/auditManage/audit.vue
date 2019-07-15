@@ -331,7 +331,7 @@ export default {
                     return item.IsSystem==1
                 })
                 if(bo){
-                    this.$msgBox.show('内置流程无法删除,请联系管理员!');
+                    this.$msgBox.show('公有流程无法删除,请联系管理员!');
                     return;
                 }
                 
@@ -411,7 +411,7 @@ export default {
                 return;
             }
             if(val=='update'&&this.ucode!='Admin'&&this.choosedItem[0].IsSystem){
-                this.$msgBox.show('内置流程无法修改,请联系管理员!');
+                this.$msgBox.show('公有流程无法修改,请联系管理员!');
                 return;
             }
             this.auditBtn=val;

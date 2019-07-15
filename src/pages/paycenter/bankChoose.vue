@@ -9,7 +9,7 @@
       class="payCenter"
     >
       <div slot="title" class="dialog-title">
-        <span style="float: left">请选择收款方账户2</span>
+        <span style="float: left">请选择收款方账户</span>
       </div>
       <div class="payCenterDialog">
         <div class="content" style="position:relative">

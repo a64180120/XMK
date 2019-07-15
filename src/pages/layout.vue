@@ -33,7 +33,6 @@ export default {
 
 <style scoped>
 .layout{
-  min-width:1200px;
-  height:100%;
+ 
 }
 </style>
