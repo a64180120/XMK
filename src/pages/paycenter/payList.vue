@@ -1,56 +1,59 @@
 <template>
   <div class="payList">
     <!-- 支付单查看 -->
-    <el-dialog
-      append-to-body
-      :visible.sync="data.openDialog"
-      width="80%"
-      :close-on-click-modal="false"
-      class="payCenter payList"
-      :before-close="payListClose"
-    >
-      <div slot="title" class="dialog-title">
-        <span v-if="!reSetting" style="float: left">支付单查看</span>
-        <span v-else style="float: left">发起重新支付</span>
+    <el-dialog append-to-body
+               :visible.sync="data.openDialog"
+               width="80%"
+               :close-on-click-modal="false"
+               class="payCenter payList"
+               :before-close="payListClose">
+      <div slot="title"
+           class="dialog-title">
+        <span v-if="!reSetting"
+              style="float: left">支付单查看</span>
+        <span v-else
+              style="float: left">发起重新支付</span>
       </div>
       <el-row :gutter="10">
         <el-col :span="24">
           <div class="top-btn"></div>
         </el-col>
       </el-row>
-      <el-row :gutter="10" style="margin-bottom: 20px">
+      <el-row :gutter="10"
+              style="margin-bottom: 20px">
         <el-col :span="24">
-          <span
-            v-if="!reSetting"
-            style="float:left;font-size:0.16rem;line-height:28px;"
-          >支付单号：{{detail.Mst.FCode}}</span>
+          <span v-if="!reSetting"
+                style="float:left;font-size:0.16rem;line-height:28px;">支付单号：{{detail.Mst.FCode}}</span>
           <div class="top-btn">
             <template v-if="detail.Mst.FState == 2&&menubutton.paycenter_catch=='True'">
-              <el-button class="btn" size="mini" @click="save('payErrorHandleData')">异常处理</el-button>
-              <el-button class="btn" size="mini" @click="save('new')">重新支付</el-button>
+              <el-button class="btn"
+                         size="mini"
+                         @click="save('payErrorHandleData')">异常处理</el-button>
+              <el-button class="btn"
+                         size="mini"
+                         @click="save('new')">重新支付</el-button>
             </template>
-            <template
-              v-if="detail.Mst.FState == 3&&detail.Mst.FApproval == 9&&menubutton.paycenter_mergepay=='True'"
-            >
-              <el-button class="btn" size="mini" @click="save('payErrorHandleData')">异常处理</el-button>
+            <template v-if="detail.Mst.FState == 3&&detail.Mst.FApproval == 9&&menubutton.paycenter_mergepay=='True'">
+              <el-button class="btn"
+                         size="mini"
+                         @click="save('payErrorHandleData')">异常处理</el-button>
             </template>
-            <template
-              v-if="(detail.Mst.FApproval == 0||detail.Mst.FApproval == 2)&&menubutton.paycenter_maintain=='True'"
-            >
-              <el-button class="btn" size="mini" @click="save('')">保存</el-button>
-              <el-button
-                class="btn"
-                size="mini"
-                style="padding:0"
-                @click="save('approvalData')"
-              >保存并送审</el-button>
+            <template v-if="(detail.Mst.FApproval == 0||detail.Mst.FApproval == 2)&&menubutton.paycenter_maintain=='True'">
+              <el-button class="btn"
+                         size="mini"
+                         @click="save('')">保存</el-button>
+              <el-button class="btn"
+                         size="mini"
+                         style="padding:0"
+                         @click="save('approvalData')">保存并送审</el-button>
             </template>
-            <template
-              v-if="detail.Mst.FState == 0&&detail.Mst.FApproval == 9&&menubutton.paycenter_mergepay=='True'"
-            >
-              <el-button class="btn" size="mini" @click="save('mergePayData')">支付</el-button>
+            <template v-if="detail.Mst.FState == 0&&detail.Mst.FApproval == 9&&menubutton.paycenter_mergepay=='True'">
+              <el-button class="btn"
+                         size="mini"
+                         @click="save('mergePayData')">支付</el-button>
             </template>
-            <span class="btn btn-large" v-show="false">打印</span>
+            <span class="btn btn-large"
+                  v-show="false">打印</span>
           </div>
         </el-col>
       </el-row>
@@ -66,69 +69,51 @@
                 </li>
                 <li :class="{'my-10':detail.Mst.FApproval == 2 ||detail.Mst.FApproval == 0}">
                   <span>付款账户：</span>
-                  <div
-                    v-if="detail.Mst.FApproval == 2 ||detail.Mst.FApproval == 0"
-                    style="border:0;padding-left:0;"
-                  >
-                    <el-tooltip class="payTooltip" :disabled="!account">
-                      <el-select
-                        popper-class="payList-largeSelects"
-                        v-model="account"
-                        placeholder="请选择"
-                        @change="accountChange"
-                        width="100%"
-                      >
-                        <el-option
-                          v-if="accountList.length>0"
-                          v-for="item in accountList"
-                          :label="item.FBankname"
-                          :value="item.PhId"
-                        ></el-option>
+                  <div v-if="detail.Mst.FApproval == 2 ||detail.Mst.FApproval == 0"
+                       style="border:0;padding-left:0;">
+                    <el-tooltip class="payTooltip"
+                                :disabled="!account">
+                      <el-select popper-class="payList-largeSelects"
+                                 v-model="account"
+                                 placeholder="请选择"
+                                 @change="accountChange"
+                                 width="100%">
+                        <el-option v-if="accountList.length>0"
+                                   v-for="item in accountList"
+                                   :label="item.FBankname"
+                                   :value="item.PhId"></el-option>
                       </el-select>
-                      <span
-                        slot="content"
-                      >{{(accountList.length && account&&account!='0')?(accountList.find(item=>{return item.PhId == account})).FBankname:''}}</span>
+                      <span slot="content">{{(accountList.length && account&&account!='0')?(accountList.find(item=>{return item.PhId == account})).FBankname:''}}</span>
                     </el-tooltip>
                   </div>
                   <div v-else>
                     <el-tooltip class="payTooltip">
-                      <span
-                        slot="content"
-                      >{{(accountList.length && account&&account!='0')?(accountList.find(item=>{return item.PhId == account})).FBankname:''}}</span>
+                      <span slot="content">{{(accountList.length && account&&account!='0')?(accountList.find(item=>{return item.PhId == account})).FBankname:''}}</span>
                       <span>{{(accountList.length && account&&account!='0')?(accountList.find(item=>{return item.PhId == account})).FBankname:''}}</span>
                     </el-tooltip>
                   </div>
                 </li>
                 <li>
                   <span>支付方式：</span>
-                  <div
-                    v-if="detail.Mst.FApproval == 2 ||detail.Mst.FApproval == 0"
-                    style="border:0;padding-left:0;"
-                  >
-                    <el-tooltip class="payTooltip" :disabled="!detail.Mst.FPaymethod">
-                      <el-select
-                        popper-class="payList-largeSelects"
-                        v-model="detail.Mst.FPaymethod"
-                        placeholder="请选择"
-                        width="100%"
-                      >
-                        <el-option
-                          v-for="(item,index) in FPaymethodList"
-                          :label="item.TypeName"
-                          :value="item.PhId.toString()"
-                          :key="index"
-                        ></el-option>
+                  <div v-if="detail.Mst.FApproval == 2 ||detail.Mst.FApproval == 0"
+                       style="border:0;padding-left:0;">
+                    <el-tooltip class="payTooltip"
+                                :disabled="!detail.Mst.FPaymethod">
+                      <el-select popper-class="payList-largeSelects"
+                                 v-model="detail.Mst.FPaymethod"
+                                 placeholder="请选择"
+                                 width="100%">
+                        <el-option v-for="(item,index) in FPaymethodList"
+                                   :label="item.TypeName"
+                                   :value="item.PhId.toString()"
+                                   :key="index"></el-option>
                       </el-select>
-                      <span
-                        slot="content"
-                      >{{detail.Mst.FPaymethod.length==15&&FPaymethodList.length>0?(FPaymethodList.find(item=>item.PhId == detail.Mst.FPaymethod)).TypeName:''}}</span>
+                      <span slot="content">{{detail.Mst.FPaymethod.length==15&&FPaymethodList.length>0?(FPaymethodList.find(item=>item.PhId == detail.Mst.FPaymethod)).TypeName:''}}</span>
                     </el-tooltip>
                   </div>
                   <div v-else>
                     <el-tooltip class="payTooltip">
-                      <span
-                        slot="content"
-                      >{{detail.Mst.FPaymethod.length==15&&FPaymethodList.length>0?(FPaymethodList.find(item=>item.PhId == detail.Mst.FPaymethod)).TypeName:''}}</span>
+                      <span slot="content">{{detail.Mst.FPaymethod.length==15&&FPaymethodList.length>0?(FPaymethodList.find(item=>item.PhId == detail.Mst.FPaymethod)).TypeName:''}}</span>
                       <span>{{detail.Mst.FPaymethod.length==15&&FPaymethodList.length>0?(FPaymethodList.find(item=>item.PhId == detail.Mst.FPaymethod)).TypeName:''}}</span>
                     </el-tooltip>
                   </div>
@@ -138,10 +123,13 @@
           </el-card>
         </el-col>
       </el-row>
-      <el-row class="content" :gutter="10">
-        <el-col :span="24" style="text-align: left">
+      <el-row class="content"
+              :gutter="10">
+        <el-col :span="24"
+                style="text-align: left">
           <el-card class="payText">
-            <div slot="header" style="padding: 0 10px;text-align: left">
+            <div slot="header"
+                 style="padding: 0 10px;text-align: left">
               <span>
                 <span>收款方</span>
               </span>
@@ -150,130 +138,107 @@
               <div class="top">
                 <template v-if="detail.Mst.FApproval == 0 || detail.Mst.FApproval == 2">
                   批量设置转账方式
-                  <el-select
-                    @focus="selectFSamebankFocus"
-                    @visible-change="selectFSamebankBlur"
-                    v-model="bankType"
-                    placeholder="请选择"
-                    ref="selectFSamebank"
-                  >
-                    <el-option
-                      v-for="(item,index) in FSamebankList"
-                      :label="item.label"
-                      :value="item.value"
-                      :key="index"
-                    ></el-option>
+                  <el-select @focus="selectFSamebankFocus"
+                             @visible-change="selectFSamebankBlur"
+                             v-model="bankType"
+                             placeholder="请选择"
+                             ref="selectFSamebank">
+                    <el-option v-for="(item,index) in FSamebankList"
+                               :label="item.label"
+                               :value="item.value"
+                               :key="index"></el-option>
                   </el-select>
                 </template>
               </div>
               <div class="getDetail">
-                <el-table
-                  max-height="350px"
-                  ref="payListTable"
-                  style="margin-top:10px;"
-                  :data="detail.Dtls"
-                  v-if="detail.Dtls.length"
-                  border
-                  :span-method="tabelColspan"
-                  @row-click="rowClick"
-                  @header-click="headerClick"
-                >
+                <el-table max-height="350px"
+                          ref="payListTable"
+                          style="margin-top:10px;"
+                          :data="detail.Dtls"
+                          v-if="detail.Dtls.length"
+                          border
+                          :span-method="tabelColspan"
+                          @row-click="rowClick"
+                          @header-click="headerClick">
                   <!-- 序号列 -->
-                  <el-table-column width="80" header-align="center" align="center">
-                    <template slot="header" slot-scope="scope">
-                      <el-checkbox
-                        @click.stop.native="check"
-                        @change="selectAll"
-                        v-model="allSelected"
-                        label="序号"
-                        v-if="(detail.Mst.FApproval == 0) ||( detail.Mst.FApproval == 2)"
-                      ></el-checkbox>
+                  <el-table-column width="80"
+                                   header-align="center"
+                                   align="center">
+                    <template slot="header"
+                              slot-scope="scope">
+                      <el-checkbox @click.stop.native="check"
+                                   @change="selectAll"
+                                   v-model="allSelected"
+                                   label="序号"
+                                   v-if="(detail.Mst.FApproval == 0) ||( detail.Mst.FApproval == 2)"></el-checkbox>
                       <template v-else>序号</template>
                     </template>
                     <template slot-scope="scope">
-                      <el-checkbox
-                        @click.stop.native="check"
-                        @change="selectOne(scope)"
-                        :label="scope.$index+1"
-                        v-model="scope.row.choosed"
-                        v-if="(detail.Mst.FApproval == 0) ||( detail.Mst.FApproval == 2)"
-                      ></el-checkbox>
+                      <el-checkbox @click.stop.native="check"
+                                   @change="selectOne(scope)"
+                                   :label="scope.$index+1"
+                                   v-model="scope.row.choosed"
+                                   v-if="(detail.Mst.FApproval == 0) ||( detail.Mst.FApproval == 2)"></el-checkbox>
                       <span v-else>{{scope.$index+1}}</span>
                     </template>
                   </el-table-column>
                   <!-- 公共列 -->
-                  <el-table-column
-                    v-for="(item,index) in payHeaders1"
-                    :key="index"
-                    :property="item.name"
-                    :label="item.label"
-                    :width="item.width||''"
-                    :header-align="item.headerAlign||'center'"
-                    :align="item.bodyAlign||'left'"
-                    empty-text="————"
-                  >
+                  <el-table-column v-for="(item,index) in payHeaders1"
+                                   :key="index"
+                                   :property="item.name"
+                                   :label="item.label"
+                                   :width="item.width||''"
+                                   :header-align="item.headerAlign||'center'"
+                                   :align="item.bodyAlign||'left'"
+                                   empty-text="————">
                     <template slot-scope="scope">
                       <!-- 申报金额 -->
-                      <div
-                        v-if="scope.column.property=='FAmount'"
-                        class
-                      >{{scope.row[scope.column.property] | NumFormat}}</div>
+                      <div v-if="scope.column.property=='FAmount'"
+                           class>{{scope.row[scope.column.property] | NumFormat}}</div>
                       <!-- 备注  -->
-                      <div
-                        v-else-if="scope.column.property=='FDescribe'&& (detail.Mst.FApproval == 0 || detail.Mst.FApproval == 2)"
-                        class
-                      >
-                        <el-input v-model="scope.row[scope.column.property]" placeholder></el-input>
+                      <div v-else-if="scope.column.property=='FDescribe'&& (detail.Mst.FApproval == 0 || detail.Mst.FApproval == 2)"
+                           class>
+                        <el-input v-model="scope.row[scope.column.property]"
+                                  placeholder></el-input>
                       </div>
                       <!-- 预算科目  -->
-                      <div v-else-if="scope.column.property=='QtKmdm'" class>
-                        <template
-                          v-if="(detail.Mst.FApproval == 0 || detail.Mst.FApproval == 2)&&kemuList.length>0&&scope.row.QtKmdm"
-                        >
-                          <el-select
-                            v-model="scope.row.QtKmdm"
-                            placeholder="请选择预算科目"
-                            @change="kumuChange(scope.row)"
-                          >
-                            <el-option
-                              v-for="(item,index) in kemuList.filter(item=>scope.row.QtKmdm.slice(0,3)==item.KMDM.slice(0,3))"
-                              :label="item.KMDM+' '+item.KMMC"
-                              :value="item.KMDM"
-                              :disabled="item.KMDM.length==3"
-                            ></el-option>
+                      <div v-else-if="scope.column.property=='QtKmdm'"
+                           class>
+                        <template v-if="(detail.Mst.FApproval == 0 || detail.Mst.FApproval == 2)&&kemuList.length>0&&scope.row.QtKmdm">
+                          <el-select v-model="scope.row.QtKmdm"
+                                     placeholder="请选择预算科目"
+                                     @change="kumuChange(scope.row)">
+                            <el-option v-for="(item,index) in kemuList.filter(item=>scope.row.QtKmdm.slice(0,3)==item.KMDM.slice(0,3))"
+                                       :label="item.KMDM+' '+item.KMMC"
+                                       :value="item.KMDM"
+                                       :disabled="item.KMDM.length==3"></el-option>
                           </el-select>
                         </template>
                         <template v-else>{{scope.row.QtKmdm}} {{scope.row.QtKmmc}}</template>
                       </div>
                       <!-- 支付方式 -->
-                      <div v-else-if="scope.column.property=='FSamebank'" class>
+                      <div v-else-if="scope.column.property=='FSamebank'"
+                           class>
                         <template v-if="(detail.Mst.FApproval == 0 || detail.Mst.FApproval == 2)">
-                          <el-select
-                            v-model="scope.row[scope.column.property]"
-                            placeholder="请选择支付方式"
-                          >
-                            <el-option
-                              v-for="(item,index) in FSamebankList"
-                              :label="item.label"
-                              :value="item.value"
-                              :key="index"
-                            ></el-option>
+                          <el-select v-model="scope.row[scope.column.property]"
+                                     placeholder="请选择支付方式">
+                            <el-option v-for="(item,index) in FSamebankList"
+                                       :label="item.label"
+                                       :value="item.value"
+                                       :key="index"></el-option>
                           </el-select>
                         </template>
-                        <template
-                          v-else
-                        >{{FSamebankList.find(item=>item.value==scope.row[scope.column.property]).label}}</template>
+                        <template v-else>{{FSamebankList.find(item=>item.value==scope.row[scope.column.property]).label}}</template>
                       </div>
                       <!-- 收款方账户名称 -->
-                      <div
-                        v-else-if="scope.column.property=='FRecAcntname'&&(detail.Mst.FApproval == 0 || detail.Mst.FApproval == 2)"
-                        class="atype"
-                        @click="selectBank(scope.row)"
-                      >
+                      <div v-else-if="scope.column.property=='FRecAcntname'&&(detail.Mst.FApproval == 0 || detail.Mst.FApproval == 2)"
+                           class="atype"
+                           @click="selectBank(scope.row)">
                         <span>{{scope.row[scope.column.property]}}</span>
                       </div>
                       <!-- 其他 -->
-                      <div class v-else>
+                      <div class
+                           v-else>
                         <el-tooltip>
                           <p slot="content">{{scope.row[scope.column.property]}}</p>
                           <p class="payTooltip">{{scope.row[scope.column.property]}}</p>
@@ -283,30 +248,22 @@
                   </el-table-column>
                   <!-- 支付状态列 -->
                   <template v-if="detail.Mst.FApproval==9">
-                    <template
-                      v-if="(detail.Dtls.some(item=>item.FNewCode)||detail.Mst.FState==2)&&detail.Mst.FState!=0"
-                    >
-                      <el-table-column
-                        v-for="(item,index) in payHeaders2"
-                        :key="index+20"
-                        :property="item.name"
-                        :label="item.label"
-                        :width="item.width||''"
-                        :header-align="item.headerAlign||'center'"
-                        :align="item.bodyAlign||'left'"
-                      >
+                    <template v-if="(detail.Dtls.some(item=>item.FNewCode)||detail.Mst.FState==2)&&detail.Mst.FState!=0">
+                      <el-table-column v-for="(item,index) in payHeaders2"
+                                       :key="index+20"
+                                       :property="item.name"
+                                       :label="item.label"
+                                       :width="item.width||''"
+                                       :header-align="item.headerAlign||'center'"
+                                       :align="item.bodyAlign||'left'">
                         <template slot-scope="scope">
-                          <template
-                            v-if="scope.column.property=='FState'"
-                          >{{FStateList.find(item=>item.value==scope.row[scope.column.property]).label}}</template>
+                          <template v-if="scope.column.property=='FState'">{{FStateList.find(item=>item.value==scope.row[scope.column.property]).label}}</template>
                           <template v-else-if="scope.column.property=='FNewCodes'">
                             <template v-if="scope.row[scope.column.property]">
-                              <p
-                                class="atype"
-                                style="display:inline-block;position:relative;"
-                                v-for="(item,index) in scope.row[scope.column.property].split(',')"
-                                @click="goNewPayList(scope.row,index)"
-                              >{{item}}</p>
+                              <p class="atype"
+                                 style="display:inline-block;position:relative;"
+                                 v-for="(item,index) in scope.row[scope.column.property].split(',')"
+                                 @click="goNewPayList(scope.row,index)">{{item}}</p>
                             </template>
                             <template v-else>————</template>
                           </template>
@@ -315,19 +272,15 @@
                       </el-table-column>
                     </template>
                     <template v-else>
-                      <el-table-column
-                        v-for="(item,index) in payHeaders3"
-                        :key="index+20"
-                        :property="item.name"
-                        :label="item.label"
-                        :width="item.width||''"
-                        :header-align="item.headerAlign||'center'"
-                        :align="item.bodyAlign||'left'"
-                      >
+                      <el-table-column v-for="(item,index) in payHeaders3"
+                                       :key="index+20"
+                                       :property="item.name"
+                                       :label="item.label"
+                                       :width="item.width||''"
+                                       :header-align="item.headerAlign||'center'"
+                                       :align="item.bodyAlign||'left'">
                         <template slot-scope="scope">
-                          <template
-                            v-if="scope.column.property=='FState'"
-                          >{{FStateList.find(item=>item.value==scope.row[scope.column.property]).label}}</template>
+                          <template v-if="scope.column.property=='FState'">{{FStateList.find(item=>item.value==scope.row[scope.column.property]).label}}</template>
                         </template>
                       </el-table-column>
                     </template>
@@ -340,59 +293,59 @@
       </el-row>
       <el-row :gutter="10">
         <div class="bottom">
-          <span
-            v-if="!reSetting"
-            @click="getAuditfollow"
-          >{{detail.Mst.FApproval!=undefined?FApprovalList.find(item=>item.value==detail.Mst.FApproval).label:''}}</span>
-          <span
-            v-if="!reSetting"
-            :class="{success:detail.Mst.FState==1}"
-          >{{detail.Mst.FState!=undefined?FStateList.find(item=>item.value==detail.Mst.FState).label:''}}</span>
-          <span
-            class="dj"
-            @click="fundDetailData.openDialog = true"
-          >点击查看关联申报单信息（申报编号：{{detail.Mst.RefbillCode}}）</span>
+          <span v-if="!reSetting"
+                @click="getAuditfollow">{{detail.Mst.FApproval!=undefined?FApprovalList.find(item=>item.value==detail.Mst.FApproval).label:''}}</span>
+          <span v-if="!reSetting"
+                :class="{success:detail.Mst.FState==1}">{{detail.Mst.FState!=undefined?FStateList.find(item=>item.value==detail.Mst.FState).label:''}}</span>
+          <span class="dj"
+                @click="fundDetailData.openDialog = true">点击查看关联申报单信息（申报编号：{{detail.Mst.RefbillCode}}）</span>
         </div>
       </el-row>
     </el-dialog>
     <!-- 关联申报单信息查看 -->
-    <el-dialog
-      append-to-body
-      v-if="fundDetailData.openDialog"
-      :visible.sync="fundDetailData.openDialog"
-      width="90%"
-      :close-on-click-modal="false"
-      class="dialog detail-dialog payCenter"
-    >
-      <div slot="title" class="dialog-title">
+    <el-dialog append-to-body
+               v-if="fundDetailData.openDialog"
+               :visible.sync="fundDetailData.openDialog"
+               width="90%"
+               :close-on-click-modal="false"
+               class="dialog detail-dialog payCenter">
+      <div slot="title"
+           class="dialog-title">
         <span style="float: left;">查看申报</span>
       </div>
-      <apply-bill :applyNum="detail.Mst.RefbillPhid.toString()" :subData="[]" @showImg="showImg">
+      <apply-bill :applyNum="detail.Mst.RefbillPhid.toString()"
+                  :subData="[]"
+                  @showImg="showImg">
         <div slot="btn-group">
-          <el-button v-show="false" class="btn" size="mini">打印</el-button>
+          <el-button v-show="false"
+                     class="btn"
+                     size="mini">打印</el-button>
         </div>
       </apply-bill>
     </el-dialog>
     <!-- 合并支付组件 -->
-    <merge-pay v-if="mergePayData.openDialog" :father="data" :data="mergePayData"></merge-pay>
+    <merge-pay v-if="mergePayData.openDialog"
+               :father="data"
+               :data="mergePayData"></merge-pay>
     <!-- 异常处理 -->
-    <pay-error-handle
-      :father="data"
-      v-if="payErrorHandleData.openDialog"
-      :data="payErrorHandleData"
-    ></pay-error-handle>
+    <pay-error-handle :father="data"
+                      v-if="payErrorHandleData.openDialog"
+                      :data="payErrorHandleData"></pay-error-handle>
     <!-- 送审 -->
-    <go-approval
-      :bType="'002'"
-      v-if="approvalData.openDialog"
-      :father="data"
-      :reSetting="reSetting"
-      :data="approvalData"
-    ></go-approval>
+    <go-approval :bType="'002'"
+                 v-if="approvalData.openDialog"
+                 :father="data"
+                 :reSetting="reSetting"
+                 :data="approvalData"></go-approval>
     <!-- 银行档案 -->
-    <bank-choose v-if="bankChooseData.openDialog" :data="bankChooseData" @getBank="getBank"></bank-choose>
-    <auditfollow :auditMsg="auditMsg" :visible="showAuditfollow" @update:visible="closeAuditFollow"></auditfollow>
-    <pay-list v-if="boy.openDialog" :data="boy" />
+    <bank-choose v-if="bankChooseData.openDialog"
+                 :data="bankChooseData"
+                 @getBank="getBank"></bank-choose>
+    <auditfollow :auditMsg="auditMsg"
+                 :visible="showAuditfollow"
+                 @update:visible="closeAuditFollow"></auditfollow>
+    <pay-list v-if="boy.openDialog"
+              :data="boy" />
   </div>
 </template>
 
@@ -434,7 +387,7 @@ export default {
       }
     }
   },
-  data() {
+  data () {
     return {
       boy: {
         openDialog: false,
@@ -530,7 +483,7 @@ export default {
         },
         {
           name: 'FResultmsg',
-          label: '支付异常原因',
+          label: '银行返回状态信息',
           width: '350',
           bodyAlign: 'center'
         },
@@ -643,7 +596,7 @@ export default {
   },
   methods: {
     //拉取审批流数据查看
-    getAuditfollow() {
+    getAuditfollow () {
       let that = this
       this.getAxios('GSP/GAppvalRecord/GetAppvalRecordList', {
         RefbillPhid: this.detail.Mst.PhId,
@@ -662,17 +615,17 @@ export default {
         })
     },
     // 付款账号修改后立即赋值给子表
-    accountChange(phid) {
+    accountChange (phid) {
       this.detail.Dtls.forEach(item => {
         item.BankPhid = phid
       })
     },
     // 预算科目选择
-    kumuChange(e) {
+    kumuChange (e) {
       e.QtKmmc = this.kemuList.find(item => item.KMDM == e.QtKmdm).KMMC
     },
     // 获取支付单详情
-    getData(type, getNewFCode) {
+    getData (type, getNewFCode) {
       getPayment({
         id: type ? this.oldDetail.Mst.PhId : this.detail.Mst.PhId,
         // id: 401190528000001,
@@ -731,7 +684,7 @@ export default {
         })
     },
     // 重新生成支付单-提交新增请求，将返回id保存到旧支付单请求（保存完新的旧支付单请求，原因：两行可能分开重新支付！旧支付单需要更新！），获取新增的支付单最新情况（多次保存，如果有新的Mst.PhId，则为保存）
-    postAddPayList(postAddAppvalRecord) {
+    postAddPayList (postAddAppvalRecord) {
       postAddPayList({
         uid: this.userid, //用户id
         orgid: this.orgid, //组织id
@@ -762,7 +715,7 @@ export default {
         })
     },
     // 保存支付单接口
-    savePayList(data, postAddAppvalRecord) {
+    savePayList (data, postAddAppvalRecord) {
       let saveData = JSON.parse(JSON.stringify(data))
       delete saveData.Mst.checked
       saveData.Mst.PersistentState = 2
@@ -818,7 +771,7 @@ export default {
         })
     },
     // 获取预算科目列表
-    getBudgetAccountsList() {
+    getBudgetAccountsList () {
       getBudgetAccountsList({})
         .then(res => {
           if (res.Status == 'error') {
@@ -834,7 +787,7 @@ export default {
         })
     },
     // 获取付款银行档案
-    getAccountList(data, FApproval) {
+    getAccountList (data, FApproval) {
       BankAccountList(data)
         .then(res => {
           if (res.Status == 'error') {
@@ -856,7 +809,7 @@ export default {
         })
     },
     // 获取到新的银行信息
-    getBank(data) {
+    getBank (data) {
       // if (this.bankChooseData.data[0].choosed) {
       //   this.detail.Dtls.forEach(item => {
       //     if (item.choosed) {
@@ -868,15 +821,15 @@ export default {
       //     }s
       //   })
       // } else {
-        this.bankChooseData.data[0].FRecAcntname = data.FBankname
-        this.bankChooseData.data[0].FRecAcnt = data.FAccount
-        this.bankChooseData.data[0].FRecBankname = data.FOpenAccount
-        this.bankChooseData.data[0].FRecBankcode = data.FBankcode
-        this.bankChooseData.data[0].FRecCityname = data.FCity
-    // }
+      this.bankChooseData.data[0].FRecAcntname = data.FBankname
+      this.bankChooseData.data[0].FRecAcnt = data.FAccount
+      this.bankChooseData.data[0].FRecBankname = data.FOpenAccount
+      this.bankChooseData.data[0].FRecBankcode = data.FBankcode
+      this.bankChooseData.data[0].FRecCityname = data.FCity
+      // }
     },
     // 获取支付方式
-    GetSysSetList() {
+    GetSysSetList () {
       GetSysSetList({
         DicType: 'PayMethod',
         uid: this.userid,
@@ -906,7 +859,7 @@ export default {
         })
     },
     // 支付单 按钮事件
-    save(type) {
+    save (type) {
       switch (type) {
         case '':
           if (this.reSetting && !this.detail.Mst.PhId) {
@@ -969,18 +922,18 @@ export default {
               })
               var now = new Date().getTime().toString()
               let Mst = Object.assign({}, this.detail.Mst, {
-                  PhId: 0,
-                  FCode: 'P' + now,
-                  FAmountTotal: errorArr.reduce(
-                    (prev, cur) => prev + cur.FAmount,
-                    0
-                  ),
-                  FApproval: 0,
-                  FDate: 0,
-                  PersistentState: 1,
-                  FState: 0,
-                  FSubmitdate: null
-                }),
+                PhId: 0,
+                FCode: 'P' + now,
+                FAmountTotal: errorArr.reduce(
+                  (prev, cur) => prev + cur.FAmount,
+                  0
+                ),
+                FApproval: 0,
+                FDate: 0,
+                PersistentState: 1,
+                FState: 0,
+                FSubmitdate: null
+              }),
                 Dtls = errorArr.map(item => {
                   return Object.assign(item, {
                     choosed: false,
@@ -1017,13 +970,13 @@ export default {
       }
     },
     // 批量设置转账方式
-    selectFSamebankFocus() {
+    selectFSamebankFocus () {
       if (this.detail.Dtls.every(item => item.choosed == false)) {
         this.$refs.selectFSamebank.blur()
         this.$msgBox.show('请先选择要设置的项目。')
       }
     },
-    selectFSamebankBlur(visible) {
+    selectFSamebankBlur (visible) {
       if (this.bankType !== '' && !visible) {
         this.detail.Dtls.forEach(item => {
           if (item.choosed) {
@@ -1033,25 +986,25 @@ export default {
       }
     },
     // checkBox所在框选中
-    check(e) {},
-    headerClick(column, event) {
+    check (e) { },
+    headerClick (column, event) {
       if (!column.property) {
         this.allSelected = !this.allSelected
         this.selectAll(this.allSelected)
       }
     },
-    rowClick(row, column, event) {
+    rowClick (row, column, event) {
       if (column && !column.property) {
         row.choosed = !row.choosed
         this.selectOne({ row })
       }
     },
     //打开图片预览
-    showImg(file) {
+    showImg (file) {
       this.imgDialog = true
     },
     // 表格合并方法
-    tabelColspan({ row, column, rowIndex, columnIndex }) {
+    tabelColspan ({ row, column, rowIndex, columnIndex }) {
       if (this.detail.Dtls.length == 0) return
       if (columnIndex === 1 || columnIndex === 2) {
         let count = 1
@@ -1059,7 +1012,7 @@ export default {
           while (
             rowIndex < this.detail.Dtls.length - 1 &&
             this.detail.Dtls[rowIndex][column.property] ==
-              this.detail.Dtls[rowIndex + 1][column.property]
+            this.detail.Dtls[rowIndex + 1][column.property]
           ) {
             count++
             rowIndex++
@@ -1075,7 +1028,7 @@ export default {
             while (
               rowIndex < this.detail.Dtls.length - 1 &&
               this.detail.Dtls[rowIndex][column.property] ==
-                this.detail.Dtls[rowIndex + 1][column.property]
+              this.detail.Dtls[rowIndex + 1][column.property]
             ) {
               count++
               rowIndex++
@@ -1090,11 +1043,11 @@ export default {
       }
     },
     // 关闭审批流程框
-    closeAuditFollow() {
+    closeAuditFollow () {
       this.showAuditfollow = false
     },
     // 关闭支付单弹框
-    payListClose(done) {
+    payListClose (done) {
       if (this.reSetting) {
         this.reSetting = false
         this.detail = this.oldDetail
@@ -1104,7 +1057,7 @@ export default {
       }
     },
     // dialog中的check事件
-    selectOne($scope) {
+    selectOne ($scope) {
       if ($scope.row.choosed) {
         this.allSelected = this.detail.Dtls.every(item => item.choosed)
       } else {
@@ -1112,28 +1065,28 @@ export default {
       }
       this.$forceUpdate()
     },
-    selectAll(choosed) {
+    selectAll (choosed) {
       this.detail.Dtls.forEach(item => {
         item.choosed = choosed
       })
       this.$forceUpdate()
     },
     //  选择银行
-    selectBank(item) {
+    selectBank (item) {
       this.bankChooseData.openDialog = true
       this.bankChooseData.data = item.choosed
         ? this.detail.Dtls.filter(i => i.choosed)
         : [item]
     },
     // 跳转子支付单
-    goNewPayList(row, index) {
+    goNewPayList (row, index) {
       console.log(row, index)
       let phid = row.FNewCodesMstPhid.split(',')[index]
       this.boy.data[0].Mst.PhId = phid
       this.boy.openDialog = true
     }
   },
-  mounted() {
+  mounted () {
     this.allSelected = false
     this.detail.Mst.PhId = this.data.data[0].Mst.PhId
     this.getData()
@@ -1269,7 +1222,7 @@ export default {
         vertical-align: middle;
       }
       &:after {
-        content: '';
+        content: "";
         display: inline-block;
         vertical-align: middle;
         height: 100%;
@@ -1289,7 +1242,7 @@ export default {
         text-decoration: underline;
       }
       &:after {
-        content: '';
+        content: "";
         display: inline-block;
         vertical-align: middle;
         height: 100%;
@@ -1308,9 +1261,9 @@ export default {
       padding-left: 0.3rem;
       text-decoration: underline;
       &::before {
-        content: '';
+        content: "";
         display: inline-block;
-        background-image: url('../../assets/images/yk1.png');
+        background-image: url("../../assets/images/yk1.png");
         background-size: contain;
         background-repeat: no-repeat;
         background-position: 0 center;
@@ -1325,10 +1278,10 @@ export default {
         cursor: auto;
         text-decoration: none;
         &::before {
-          background-image: url('../../assets/images/wzf.png');
+          background-image: url("../../assets/images/wzf.png");
         }
         &.success::before {
-          background-image: url('../../assets/images/zfcg.png');
+          background-image: url("../../assets/images/zfcg.png");
         }
       }
       &:last-of-type {
@@ -1454,7 +1407,7 @@ export default {
         border: 0;
       }
     }
-    tr.el-table__row td:not([rowspan='1']) {
+    tr.el-table__row td:not([rowspan="1"]) {
       .table-item {
         position: relative;
         > p {
@@ -1505,7 +1458,7 @@ export default {
         vertical-align: middle;
       }
       &:after {
-        content: '';
+        content: "";
         display: inline-block;
         vertical-align: middle;
         height: 100%;
@@ -1525,7 +1478,7 @@ export default {
         border: 0;
       }
       &:after {
-        content: '';
+        content: "";
         display: inline-block;
         vertical-align: middle;
         height: 100%;

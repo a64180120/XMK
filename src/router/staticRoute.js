@@ -21,7 +21,7 @@ const staticRoute = [
         //   import(/* webpackChunkName:'home'*/ '../pages/home/index'),
         // meta: { requireAuth: true, type: 'page', name: '首页' }
       },
-      
+
       {
         path: '/paycenter',
         component: () =>
@@ -33,12 +33,12 @@ const staticRoute = [
         component: () =>
           import(/* webpackChunkName:'payfundapproval'*/ '../pages/payfundapproval/index'),
         meta: { requireAuth: true, type: 'page', name: '资金拨付审批' }
-      },{
+      }, {
         path: '/approvalcenter',
         component: () =>
           import(/* webpackChunkName:'approvalcenter'*/ '../pages/approvalcenter/index'),
         meta: { requireAuth: true, type: 'page', name: '审批中心' }
-      },{
+      }, {
         path: '/paylistapproval',
         component: () =>
           import(/* webpackChunkName:'paylistapproval'*/ '../pages/paylistapproval/index'),
@@ -57,14 +57,14 @@ const staticRoute = [
         meta: { requireAuth: true, type: 'page', name: '资金拨付' }
       },
     ]
-  },{
+  }, {
     path: '/setting',
-    component: ()=> import(/* webpackChunkName:'systemsetting'*/ '../pages/systemsetting'),
+    component: () => import(/* webpackChunkName:'systemsetting'*/ '../pages/systemsetting'),
     meta: { keep: true },
     children: [
       {
         path: '',
-        redirect:'audit',
+        redirect: 'audit',
         // component: () =>
         //   import(/* webpackChunkName:'audit'*/ '../pages/systemsetting/auditManage/audit'),
         // meta: { requireAuth: true, type: 'page', name: '审核工作流' }
@@ -80,6 +80,12 @@ const staticRoute = [
         component: () =>
           import(/* webpackChunkName:'systempost'*/ '../pages/systemsetting/auditManage/post'),
         meta: { requireAuth: true, type: 'page', name: '岗位人员设置' }
+      },
+      {
+        path: 'timesetting',
+        component: () =>
+          import(/* webpackChunkName:'timesetting'*/ '../pages/systemsetting/auditManage/timeSetting'),
+        meta: { requireAuth: true, type: 'page', name: '提醒时间设置' }
       },
       {
         path: 'dictionary',
