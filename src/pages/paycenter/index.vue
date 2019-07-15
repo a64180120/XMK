@@ -1,42 +1,42 @@
 <template>
   <div class="payIndex">
-    <top-handle @refresh="getData"
-                title="支付中心在线工作平台">
+    <top-handle @refresh="getData" title="支付中心在线工作平台">
       <div class="navs">
-        <div v-if="menubutton.paycenter_maintain=='True'"
-             class="nav handle"
-             @click="payNav('payListData')"
-             style="margin-left:0;">
-          <img src="../../assets/images/sfk.png"
-               alt />
+        <div
+          v-if="menubutton.paycenter_maintain=='True'"
+          class="nav handle"
+          @click="payNav('payListData')"
+          style="margin-left:0;"
+        >
+          <img src="../../assets/images/sfk.png" alt />
           <div>收付款信息维护</div>
         </div>
-        <div v-if="menubutton.paycenter_mergepay=='True'"
-             class="nav handle"
-             @click="payNav('mergePayData')">
-          <img src="../../assets/images/hb.png"
-               alt />
+        <div
+          v-if="menubutton.paycenter_mergepay=='True'"
+          class="nav handle"
+          @click="payNav('mergePayData')"
+        >
+          <img src="../../assets/images/hb.png" alt />
           <div>合并支付</div>
         </div>
-        <div v-if="menubutton.paycenter_catch=='True'"
-             class="nav handle"
-             @click="payNav('payErrorHandleData')">
-          <img src="../../assets/images/yc.png"
-               alt />
+        <div
+          v-if="menubutton.paycenter_catch=='True'"
+          class="nav handle"
+          @click="payNav('payErrorHandleData')"
+        >
+          <img src="../../assets/images/yc.png" alt />
           <div>支付状态清查</div>
         </div>
-        <div v-if="menubutton.paycenter_check=='True'"
-             class="nav handle"
-             @click="payNav('approvalData')">
-          <img src="../../assets/images/ss.png"
-               alt />
+        <div
+          v-if="menubutton.paycenter_check=='True'"
+          class="nav handle"
+          @click="payNav('approvalData')"
+        >
+          <img src="../../assets/images/ss.png" alt />
           <div>送审</div>
         </div>
-        <div @click.stop="printTables"
-             class="nav handle">
-          <img src="@/assets/images/dy.png"
-               style="width:28px"
-               alt />
+        <div @click.stop="printTables" class="nav handle">
+          <img src="@/assets/images/dy.png" style="width:28px" alt />
           <!-- @click="creatPayItem()"-->
           <div>打印</div>
         </div>
@@ -46,63 +46,72 @@
     <div class="container">
       <div class="formArea">
         <div class="btnArea">
-          <i class="el-icon-d-arrow-left iicon"
-             style="position:absolute;left:0;top: .12rem;"
-             @click.stop="unionStateScroll(false)"></i>
-          <i class="el-icon-d-arrow-right iicon"
-             style="position:absolute;right:275px;top: .12rem;"
-             @click.stop="unionStateScroll(true)"></i>
+          <i
+            class="el-icon-d-arrow-left iicon"
+            style="position:absolute;left:0;top: .12rem;"
+            @click.stop="unionStateScroll(false)"
+          ></i>
+          <i
+            class="el-icon-d-arrow-right iicon"
+            style="position:absolute;right:275px;top: .12rem;"
+            @click.stop="unionStateScroll(true)"
+          ></i>
           <div class="scrollNav">
             <div>
               <ul>
                 <li>
                   <span>支付单据</span>
-                  <el-select @change="selectType"
-                             collapse-tags
-                             v-model="type"
-                             placeholder="请选择"
-                             size="small">
-                    <el-option v-for="item in typeList"
-                               :key="item.value"
-                               :label="item.label"
-                               :value="item.value"></el-option>
+                  <el-select
+                    @change="selectType"
+                    collapse-tags
+                    v-model="type"
+                    placeholder="请选择"
+                    size="small"
+                  >
+                    <el-option
+                      v-for="item in typeList"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value"
+                    ></el-option>
                   </el-select>
                 </li>
                 <li>
                   <span>支付状态</span>
-                  <el-select collapse-tags
-                             v-model="status"
-                             multiple
-                             placeholder="请选择"
-                             size="small"
-                             @remove-tag="rePageGetData">
-                    <el-option v-for="item in statusList"
-                               :key="item.value"
-                               :label="item.label"
-                               :value="item.value"></el-option>
+                  <el-select collapse-tags v-model="status" multiple placeholder="请选择" size="small">
+                    <el-option
+                      v-for="item in statusList"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value"
+                    ></el-option>
                   </el-select>
                 </li>
                 <li>
                   <span>申报日期</span>
-                  <el-date-picker v-model="sbrq"
-                                  type="datetimerange"
-                                  range-separator="至"
-                                  start-placeholder="开始日期"
-                                  end-placeholder="结束日期"
-                                  size="small"
-                                  value-format="yyyy-MM-dd HH:mm:ss"
-                                  @change="rePageGetData"></el-date-picker>
+                  <el-date-picker
+                    v-model="sbrq"
+                    type="datetimerange"
+                    range-separator="至"
+                    start-placeholder="开始日期"
+                    end-placeholder="结束日期"
+                    size="small"
+                    value-format="yyyy-MM-dd HH:mm:ss"
+                    @change="rePageGetData"
+                  ></el-date-picker>
                 </li>
                 <li>
                   <span>支付日期</span>
-                  <el-date-picker v-model="zfrq"
-                                  type="datetimerange"
-                                  range-separator="至"
-                                  start-placeholder="开始日期"
-                                  end-placeholder="结束日期"
-                                  size="small"
-                                  @change="rePageGetData"
-                                  value-format="yyyy-MM-dd HH:mm:ss"></el-date-picker>
+                  <el-date-picker
+                    v-model="zfrq"
+                    type="datetimerange"
+                    range-separator="至"
+                    start-placeholder="开始日期"
+                    end-placeholder="结束日期"
+                    size="small"
+                    @change="rePageGetData"
+                    value-format="yyyy-MM-dd HH:mm:ss"
+                  ></el-date-picker>
                 </li>
               </ul>
             </div>
@@ -110,21 +119,23 @@
           <!-- <label class="searchArea" style="float: right">
             <search-input placeholder="" v-model="search" @btnClick="rePageGetData"></search-input>
           </label>-->
-          <label class="searchArea"
-                 style="float: right">
-            <el-input size="small"
-                      placeholder="支付单编号/申报单编号"
-                      style="border-radius: 5px;width: 250px;overflow: hidden"
-                      v-model="search">
-              <el-button @click="rePageGetData"
-                         slot="append"
-                         size="small"
-                         style="background-color: #3294e8;color: #fff;border-top-left-radius: 0;border-bottom-left-radius: 0">搜索</el-button>
+          <label class="searchArea" style="float: right">
+            <el-input
+              size="small"
+              placeholder="支付单编号/申报单编号"
+              style="border-radius: 5px;width: 250px;overflow: hidden"
+              v-model="search"
+            >
+              <el-button
+                @click="rePageGetData"
+                slot="append"
+                size="small"
+                style="background-color: #3294e8;color: #fff;border-top-left-radius: 0;border-bottom-left-radius: 0"
+              >搜索</el-button>
             </el-input>
           </label>
         </div>
-        <div class="tableHead"
-             style="margin-top:10px;">
+        <div class="tableHead" style="margin-top:10px;">
           <table>
             <colgroup>
               <col width="7%" />
@@ -141,18 +152,14 @@
             </colgroup>
             <thead>
               <tr>
-                <td :class="{trActive:checkAll}"
-                    @click.self="selectAll">
-                  <el-checkbox v-model="checkAll"
-                               @change="handleCheckAll">序号</el-checkbox>
+                <td :class="{trActive:checkAll}" @click.self="selectAll">
+                  <el-checkbox v-model="checkAll" @change="handleCheckAll">序号</el-checkbox>
                 </td>
-                <td v-for="(item,index) in tableHeader"
-                    :key="index">
+                <td v-for="(item,index) in tableHeader" :key="index">
                   <template v-if="item.label == '申报单编号'">
                     {{item.label}}
                     <el-tooltip content="显示全部单据">
-                      <i class="el-icon-refresh refrest-same-follow"
-                         @click="RefbillCode=''"></i>
+                      <i class="el-icon-refresh refrest-same-follow" @click="RefbillCode=''"></i>
                     </el-tooltip>
                   </template>
                   <template v-else>{{item.label}}</template>
@@ -162,8 +169,7 @@
           </table>
         </div>
         <div class="tableBody">
-          <table v-if="tableData.length"
-                 ref="printArea">
+          <table v-if="tableData.length" ref="printArea">
             <colgroup>
               <col width="7%" />
               <col width="15%" />
@@ -178,15 +184,15 @@
               <col width="13%" />
             </colgroup>
             <tbody>
-              <tr :class="{trActive:item.Mst.checked}"
-                  v-for="(item,index) in tableData"
-                  :key="index">
+              <tr
+                :class="{trActive:item.Mst.checked}"
+                v-for="(item,index) in tableData"
+                :key="index"
+              >
                 <td @click.self="selectItem(item)">
-                  <el-checkbox v-model="item.Mst.checked"
-                               @change="handleCheckOne(item)">{{index+1}}</el-checkbox>
+                  <el-checkbox v-model="item.Mst.checked" @change="handleCheckOne(item)">{{index+1}}</el-checkbox>
                 </td>
-                <td @click.stop="payNav('payListData',item)"
-                    class="atype">
+                <td @click.stop="payNav('payListData',item)" class="atype">
                   <span>{{item.Mst.FCode}}</span>
                 </td>
                 <td>
@@ -206,8 +212,10 @@
                   <div>
                     {{item.Mst.RefbillCode}}
                     <el-tooltip content="显示关联单据">
-                      <i class="el-icon-search refrest-same-follow"
-                         @click="RefbillCode=item.Mst.RefbillCode"></i>
+                      <i
+                        class="el-icon-search refrest-same-follow"
+                        @click="RefbillCode=item.Mst.RefbillCode"
+                      ></i>
                     </el-tooltip>
                   </div>
                 </td>
@@ -219,8 +227,7 @@
                     <p>{{item.Mst.NgInsertDt.replace('T',' ')}}</p>
                   </el-tooltip>
                 </td>
-                <td class="atype"
-                    @click="openAuditfollow(item.Mst.PhId)">
+                <td class="atype" @click="openAuditfollow(item.Mst.PhId)">
                   <div v-if="item.Mst.FApproval==0">待送审</div>
                   <div v-else-if="item.Mst.FApproval==1">审批中</div>
                   <div v-else-if="item.Mst.FApproval==2">未通过</div>
@@ -230,31 +237,33 @@
                 <td>
                   <div v-if="item.Mst.FState==0">待支付</div>
                   <div v-else-if="item.Mst.FState==1">支付成功</div>
-                  <div class="dangerText"
-                       v-else-if="item.Mst.FState==2">支付异常</div>
+                  <div class="dangerText" v-else-if="item.Mst.FState==2">支付异常</div>
                   <div v-else-if="item.Mst.FState==3">支付中</div>
                   <div v-else>————</div>
                 </td>
                 <td>
-                  <el-tooltip :content="item.Mst.FSubmitdate?item.Mst.FSubmitdate.replace('T',' '):'————'">
+                  <el-tooltip
+                    :content="item.Mst.FSubmitdate?item.Mst.FSubmitdate.replace('T',' '):'————'"
+                  >
                     <p>{{item.Mst.FSubmitdate?item.Mst.FSubmitdate.replace('T',' '):"————"}}</p>
                   </el-tooltip>
                 </td>
               </tr>
             </tbody>
           </table>
-          <div v-else
-               style="height:40px;font-size:0.16rem;line-height:40px;">暂无数据</div>
+          <div v-else style="height:40px;font-size:0.16rem;line-height:40px;">暂无数据</div>
         </div>
       </div>
       <div class="pages">
-        <el-pagination :current-page.sync="currentPage"
-                       :page-size="pageSize"
-                       @size-change="handleSizeChange"
-                       layout="total,sizes,prev,pager,next,jumper"
-                       @current-change="getData"
-                       :total="total"
-                       :page-sizes="[20,30,50,100]">
+        <el-pagination
+          :current-page.sync="currentPage"
+          :page-size="pageSize"
+          @size-change="handleSizeChange"
+          layout="total,sizes,prev,pager,next,jumper"
+          @current-change="getData"
+          :total="total"
+          :page-sizes="[20,30,50,100]"
+        >
           <!-- <span>当前 第 {{currentPage}} 页</span>
           <span>共 {{Math.ceil(total/pageSize)}} 页</span>
           <span
@@ -277,39 +286,30 @@
       </div>
     </div>
     <!-- 支付单查看 -->
-    <pay-list v-if="payListData.openDialog"
-              :data="payListData"></pay-list>
+    <pay-list v-if="payListData.openDialog" :data="payListData"></pay-list>
     <!-- 合并支付 -->
-    <merge-pay v-if="mergePayData.openDialog"
-               :data="mergePayData"></merge-pay>
+    <merge-pay v-if="mergePayData.openDialog" :data="mergePayData"></merge-pay>
     <!-- 异常处理 -->
-    <pay-error-handle v-if="payErrorHandleData.openDialog"
-                      :data="payErrorHandleData"></pay-error-handle>
+    <pay-error-handle v-if="payErrorHandleData.openDialog" :data="payErrorHandleData"></pay-error-handle>
     <!-- 送审 -->
-    <go-approval v-if="approvalData.openDialog"
-                 :bType="'002'"
-                 :data="approvalData"></go-approval>
+    <go-approval v-if="approvalData.openDialog" :bType="'002'" :data="approvalData"></go-approval>
     <!-- 审批流程 -->
-    <auditfollow :auditMsg="auditMsg"
-                 :visible="showAuditfollow"
-                 @update:visible="closeAuditFollow"></auditfollow>
+    <auditfollow :auditMsg="auditMsg" :visible="showAuditfollow" @update:visible="closeAuditFollow"></auditfollow>
     <!-- 资金拨付单查看 -->
-    <el-dialog append-to-body
-               v-if="fundDetailData.openDialog"
-               :visible.sync="fundDetailData.openDialog"
-               width="80%"
-               :close-on-click-modal="false"
-               class="dialog detail-dialog payCenter">
-      <div slot="title"
-           class="dialog-title">
+    <el-dialog
+      append-to-body
+      v-if="fundDetailData.openDialog"
+      :visible.sync="fundDetailData.openDialog"
+      width="80%"
+      :close-on-click-modal="false"
+      class="dialog detail-dialog payCenter"
+    >
+      <div slot="title" class="dialog-title">
         <span style="float: left;">查看申报</span>
       </div>
-      <apply-bill :applyNum="applyNum"
-                  :subData="[]">
+      <apply-bill :applyNum="applyNum" :subData="[]">
         <div slot="btn-group">
-          <el-button v-show="false"
-                     class="btn"
-                     size="mini">打印</el-button>
+          <el-button v-show="false" class="btn" size="mini">打印</el-button>
         </div>
       </apply-bill>
     </el-dialog>
@@ -339,10 +339,10 @@ export default {
     auditfollow,
     applyBill
   },
-  provide () {
+  provide() {
     return { refreshIndexData: this.getData }
   },
-  data () {
+  data() {
     return {
       applyNum: '',
       auditMsg: [],
@@ -465,27 +465,27 @@ export default {
       RefbillCode: ''
     }
   },
-  created () { },
-  mounted () {
+  created() {},
+  mounted() {
     this.getData()
     this.updateTitle()
   },
   methods: {
     //修改title
-    updateTitle () {
-      let title = document.getElementsByTagName('title')[0];
-      title.innerText = "支付中心在线工作平台";
+    updateTitle() {
+      let title = document.getElementsByTagName('title')[0]
+      title.innerText = '支付中心在线工作平台'
     },
-    rePageGetData () {
+    rePageGetData() {
       this.currentPage = 1
       this.getData()
     },
-    printTables () {
+    printTables() {
       let vm = this
       printTable(vm)
     },
     //滚动
-    unionStateScroll (bool) {
+    unionStateScroll(bool) {
       var union = document.getElementsByClassName('scrollNav')[0]
       var unionStateCon = document.getElementsByClassName('scrollNav')[0]
         .firstElementChild
@@ -530,13 +530,13 @@ export default {
         }
       }
     },
-    openRefbill (code) {
+    openRefbill(code) {
       // this.applyNum = PhId.toString()
       // this.fundDetailData.openDialog = true
       this.RefbillCode = code
       this.rePageGetData()
     },
-    openAuditfollow (PhId) {
+    openAuditfollow(PhId) {
       let that = this
       this.getAxios('GSP/GAppvalRecord/GetAppvalRecordList', {
         RefbillPhid: PhId,
@@ -554,13 +554,13 @@ export default {
           that.$msgBox.show('获取审批流程数据异常')
         })
     },
-    closeAuditFollow () {
+    closeAuditFollow() {
       this.showAuditfollow = false
     },
-    selectItem (item) {
+    selectItem(item) {
       item.Mst.checked = !item.Mst.checked
     },
-    getData () {
+    getData() {
       this.showAuditfollow = false
       let query = {
         'NgInsertDt*date*ge*1': this.sbrq ? this.sbrq[0] || '' : '', //申报日期开始
@@ -581,7 +581,7 @@ export default {
         //   'FState*byte*eq*2': 1
         // }
       }
-      function deleteBlank (obj, father) {
+      function deleteBlank(obj, father) {
         for (let i in obj) {
           if (obj[i] === '') {
             delete obj[i]
@@ -640,22 +640,22 @@ export default {
         })
     },
     // 主体全选事件
-    handleCheckAll (val) {
+    handleCheckAll(val) {
       this.tableData.forEach(item => {
         item.Mst.checked = val
       })
     },
-    selectAll () {
+    selectAll() {
       var tf = !this.checkAll
       this.tableData.forEach(item => {
         item.Mst.checked = tf
       })
     },
-    handleCheckOne (item) {
+    handleCheckOne(item) {
       console.log(item)
     },
     // 导航栏事件
-    payNav (type, item) {
+    payNav(type, item) {
       this.showAuditfollow = false
       if (item) {
       } else {
@@ -679,7 +679,7 @@ export default {
             if (checkedCount != 1) {
               this.$msgBox.error({
                 content: '请选择一条数据进行维护。',
-                fn: () => { }
+                fn: () => {}
               })
               return
             } else if (
@@ -693,7 +693,7 @@ export default {
                   handleitem[0].Mst.FApproval == 1
                     ? '单据正在审批中。'
                     : '单据已经审批通过。',
-                fn: () => { }
+                fn: () => {}
               })
               return
             }
@@ -707,7 +707,7 @@ export default {
               this.$msgBox.error({
                 content:
                   "只有审批状态为“<span class='dangerText'>审批通过</span>”，支付状态为“<span class='dangerText'>待支付</span>”的单据，才可以使用【合并支付】。",
-                fn: () => { }
+                fn: () => {}
               })
               return
             }
@@ -766,27 +766,27 @@ export default {
       this[type].openDialog = true
     },
     // 筛选
-    selectType (cur) {
+    selectType(cur) {
       console.log(cur, this.type)
       this.rePageGetData()
     },
 
     // 分页
-    handleSizeChange (val) {
+    handleSizeChange(val) {
       console.log(`每页 ${val} 条`)
       this.pageSize = val
       this.getData()
     },
-    handleCurrentChange (val) {
+    handleCurrentChange(val) {
       console.log(`当前页: ${val}`)
     },
-    changePage (page) {
+    changePage(page) {
       console.log(page)
       this.currentPage = page
     }
   },
   computed: {
-    checkAll () {
+    checkAll() {
       return this.tableData.every(item => item.Mst.checked)
     },
     ...mapState({
@@ -798,38 +798,42 @@ export default {
     })
   },
   watch: {
-    status (newVal, oldVal) {
-      function arrSame (arr1, arr2) {
+    status(newVal, oldVal) {
+      function arrSame(arr1, arr2) {
         return JSON.stringify(arr1) == JSON.stringify(arr2)
       }
       let allChoosed = this.statusList.map(i => i.value)
       if (newVal[newVal.length - 1] === '') {
         //点击全选
         this.status = this.statusList.map(i => i.value)
+        return
       } else if (
         arrSame(oldVal, allChoosed) &&
         arrSame(['', ...newVal], allChoosed)
       ) {
         // 点击全部取消全选
         this.status = []
+        return
       } else if (arrSame(oldVal, allChoosed) && newVal[0] === '') {
         // 点击其他取消全选
         newVal.splice(0, 1)
+        return
       } else if (
         newVal.length == allChoosed.length - 1 &&
         newVal.findIndex(i => i === '') == -1
       ) {
         //手动全选
         this.status = allChoosed
+        return
       }
       this.rePageGetData()
     },
-    RefbillCode () {
+    RefbillCode() {
       this.rePageGetData()
     }
   },
-  beforeDestroy () {
-    window.onresize = function () { }
+  beforeDestroy() {
+    window.onresize = function() {}
   }
 }
 </script>
@@ -919,7 +923,7 @@ export default {
     font-size: 0.14rem;
   }
   .el-pagination button,
-  .el-pagination span:not([class*="suffix"]) {
+  .el-pagination span:not([class*='suffix']) {
     font-size: 0.14rem;
   }
   .pages slot > span.changePage {
