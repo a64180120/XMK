@@ -293,7 +293,7 @@
                 </el-tooltip>
               </td>
               <td style="position: relative;overflow: visible">
-                  <div  v-if="isMe&&item.GkPaymentCode==1" style="color: #20c1ff;" class="iconMsg" @click.stop="paySubmit(item.PhId)">
+                  <div  v-if="isMe&&item.GkPaymentCode==1" style="color: #20c1ff;" class="iconMsg" @click.stop="paySubmit(item.FCode)">
                   <i class="el-icon-chat-round"></i>
                   <span>支付</span>
                 </div>
