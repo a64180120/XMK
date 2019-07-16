@@ -280,7 +280,7 @@
                 </el-tooltip>
               </td>
               <td class="atype" style="position: relative;overflow: visible" @click.stop="openAuditfollow(item,index)">
-                <div v-if="isMe&&item.IsApprovalNow==1" style="color: red;"  class="iconMsg" @click.stop="approvalSubmit">
+                <div v-if="isMe&&item.IsApprovalNow==1" style="color: red;"  class="iconMsg" @click.stop="approvalSubmit(item)">
                   <i class="el-icon-chat-round"></i>
                   <span>审批</span>
                 </div>
@@ -403,7 +403,6 @@
     </div>
 
     <!--申报单弹窗-->
-
     <el-dialog v-if="applyType"
                class="applydialog"
                title="查看申报"
@@ -434,10 +433,11 @@
                      ref="approvalDialog"
                      :title="appDialog.title"
                      :btn-group="appDialog.btnGroup"
-                     :data="approvalData"></approval-dialog>
+                     :rowData="approvalData.data"></approval-dialog>
     <!--查看审批流程-->
     <auditfollow :visible.sync="visible"
                  :auditMsg="auditMsg"></auditfollow>
+
   </div>
 </template>
 
@@ -514,11 +514,13 @@
       appDialog: {
         title: '',
         btnGroup: {
-          cancelName: "",
-          onfirmName: ""
+          cancelName: "取消",
+          onfirmName: "确认"
         }
       },
       approvalData: {
+        openDialog:false,
+        data:{}
       },
       apartData: { bm: {}, Mst: [], Amount: '0', subData: [] },//选择部门后获取的项目信息
       apartDataMst: {},//部门数组，通过phid绑值，用于显示title
@@ -1130,6 +1132,17 @@
     arrowShow: function () {
       let cls = this.$refs.container.className;
       this.$refs.container.className = (cls == 'container' ? 'container fullTable' : 'container')
+    },
+/*当前页面审批*/
+    approvalSubmit: function(val){
+      this.approvalData={
+        openDialog:true,
+        data:val
+      }
+    },
+    /*支付单审批，直接跳转页面*/
+    paySubmit:function(){
+      this.$router.push('/paycenter')
     }
   }
 }
@@ -1172,7 +1185,7 @@
   }
 </style>
 <style lang="scss">
-  .self .el-select__tags{
+ /* .self .el-select__tags{
     position: absolute;
     right: 5px;
     width: 30px;
@@ -1207,7 +1220,7 @@
       transform: rotate(180deg);
       transition: all 0.3s linear;
     }
-  }
+  }*/
     .self{
     .btnCon{
       .handle{
