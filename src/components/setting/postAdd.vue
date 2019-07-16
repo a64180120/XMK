@@ -182,7 +182,7 @@ export default {
                 })
             })
             let data={
-                Ucode:'Admin',
+                Ucode:this.$store.state.user.usercode,
                 GAppvalPost:this.info,
                 GAppvalPost4Opers:info2
             }
