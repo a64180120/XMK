@@ -805,7 +805,7 @@
         }
         this.orgDetailType=true;
 
-        //this.getProDetail(f);
+        this.getProDetail(f);
 
         this.choosedPro=[f,s];
       },

@@ -400,7 +400,7 @@
                        style="width: 120px"
                        @click="creatPayItem">审批并生成支付单</el-button>
 
-            <!--              <el-button class="btn" size="mini">打印</el-button>-->
+                          <el-button class="btn" size="mini">打印</el-button>
           </div>
         </applybill>
       </el-dialog>
