@@ -142,8 +142,8 @@ export default {
     getData () {
       let data = {
         orgid: this.$store.state.user.orgid,
-        //uid: this.$store.state.user.userid,
-        uid: 266190618000001,
+        uid: this.$store.state.user.userid,
+        //uid: 266190618000001,
         DicType: 'StayTime'
       }
       GetSysSetList(data).then(res => {
@@ -184,8 +184,8 @@ export default {
       let arr = this.typeInfoList.concat(this.deleteList);
       let data = {
         orgid: this.$store.state.user.orgid,
-        //uid: this.$store.state.user.userid,
-        uid: 266190618000001,
+        uid: this.$store.state.user.userid,
+        //uid: 266190618000001,
         infoData: arr
       }
       dictionarySave(data).then(res => {

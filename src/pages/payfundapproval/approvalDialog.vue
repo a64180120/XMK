@@ -150,7 +150,8 @@ export default {
     },
     //开启或关闭弹框
     changeDialog () {
-      this.openDialog = true
+      this.openDialog = true;
+      console.log(this.rowData);
       this.getAppvalProc()
     },
     //表头样式回调

@@ -182,7 +182,7 @@
     </div>
 
     <!--送审-->
-    <go-approval :data="approvalDataS" @delete="handleDelete"></go-approval>
+    <go-approval v-if="approvalDataS.openDialog" :data="approvalDataS" @delete="handleDelete"></go-approval>
     <!--生成支付单-->
     <approval-dialog
       ref="approvalDialog"

@@ -459,7 +459,7 @@
       //保存0，保存并送审1，区别：是否调用送审组件
       save:function(type){
 
-        this.PaymentMst.FDate=new Date();
+        this.PaymentMst.FDate=this.PaymentMst.FDate==''?new Date():this.PaymentMst.FDate;
         for(var m in this.PaymentXmDtl){
           for(var p in this.PaymentXmDtl[m].PaymentDtls){
             // QtKmdm: '', //（预算项目编码）QtKmmc: '' , //（预算项目名称） XmProjcode: '', //（项目编码）XmProjname: '', //（项目名称）
@@ -529,7 +529,7 @@
               fn: () => {
 
                 if(type==1){
-                  if(this.approvalDataS.subData.length==0){
+                  if(!this.approvalDataS.subData||this.approvalDataS.subData.length==0){
                     this.$msgBox.show({
                       content: '当前部门未创建审批流，无法送审。'
                     })

@@ -194,7 +194,6 @@ export default {
     })
   },
   mounted() {
-    console.log(this.data)
     this.param.RefbillPhidList = this.data.data
     this.getAppvalProc()
   },
@@ -214,6 +213,7 @@ export default {
       }
       this.getAxios('GSP/GAppvalProc/GetAppvalProcList', param)
         .then(res => {
+          console.log(res)
           this.subDataNew = res.Data
           this.param.ProcPhid = res.Data[0].PhId
           this.$refs.content.setCurrentRow(res.Data[0])
