@@ -36,7 +36,12 @@
         <upload @submit="submitFn"></upload>
       </el-dialog>
     </el-dialog>
+    <!--回退右侧弹窗-->
     <back-approval v-if="visible" :visible.sync="visible" :auditMsg="backData" @getBackPeople="getBackPeople" @closeBack="closeBack"></back-approval>
+    <!--审批流程弹出-->
+    <!--查看审批流-->
+    <auditfollow :visible.sync="auditVisible"
+                 :auditMsg="auditMsg"></auditfollow>
   </section>
 </template>
 
@@ -44,9 +49,10 @@
   import ApprovalBill from "../../components/approvalBill/approvalBill";
   import BackApproval from "../../components/backApproval/backApproval";
   import Upload from "../../components/upload/index";
+  import Auditfollow from "../../components/auditFollow/auditfollow";
   export default {
     name: "paylistDialog",
-    components: {Upload, BackApproval, ApprovalBill},
+    components: {Auditfollow, Upload, BackApproval, ApprovalBill},
     props:{
       rowData:{
         type:Array,
@@ -69,7 +75,7 @@
         approvalFollow:[],
         nextApprovaler:[],
         backPost:[],//获取回退的审批人岗位
-        FMode:'',
+        FMode:100,
         isAgree:'', //保存是否同意审批
         backPersonnel:[],//回退审批人集合
         backData:[],//回退的审批人岗位集合
@@ -77,7 +83,10 @@
         isApproval:Boolean,
         disabled:false,
         fileList:[],//文件列表
-        fileCount:0
+        fileCount:0,
+
+        auditMsg:[],
+        auditVisible:false
       }
     },
     methods:{
@@ -312,7 +321,27 @@
       },
       //查看详细流程
       searchFlow(row){
-        this.$emit("dialogFlow",row)
+        // this.$emit("dialogFlow",row)
+        this.auditVisible = true
+        let data = {
+          RefbillPhid: this.rowData[0].RefbillPhid,
+          FBilltype: '001'
+        }
+        this.getAuditfollow(data)
+      },
+      //拉去审批流数据查看
+      getAuditfollow (data) {
+        let that = this
+        this.getAxios("/GAppvalRecord/GetAppvalRecordList", data).then(res => {
+          if (res && res.Status === "success") {
+            that.auditMsg = res.Data
+            console.log(res.Data)
+          } else {
+            that.$msgBox.show(res.Msg)
+          }
+        }).catch(err => {
+          that.$msgBox.show("数据获取异常")
+        })
       },
       //拉去回退时,获取之前的所有岗位,包括发起人(岗位id为0)
       getBackApprovalPost(){

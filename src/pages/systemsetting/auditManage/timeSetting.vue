@@ -34,6 +34,7 @@
 
         <div>
           <el-input :disabled="disabled"
+                    @keyup.native="clearNoNum('Value')"
                     placeholder="请输入提醒时间(小时)"
                     v-model="Value"></el-input>
         </div>
@@ -49,7 +50,7 @@
         </div>
         <div class="list listBodyCon">
           <div class="listBody">
-            <div @click.stop="addCodeInfo(0)"
+            <div @click.stop="addCode(0)"
                  v-if="typeInfoList.length==0"
                  style="cursor:pointer">请添加组织+</div>
             <ul :class="{update:!disabled}"
@@ -104,11 +105,11 @@
 import Orgtree from "@/components/orgtree/index"
 import { mapState } from 'vuex'
 import topHandle from '@/components/topNav/topHandle'
+import { GetSysSetList, dictionarySave } from '@/api/systemSetting/dataSafe'
 export default {
   name: 'timesetting',
   data () {
     return {
-      codeList: [],//admin对下补助代码
       // ucode:'Admin',
       // orglist:[],//组织树
       orgIndex: '',//当前选中的组织切换
@@ -127,17 +128,99 @@ export default {
       orglist: state => state.user.orglist,
       orgid: state => state.user.orgid,
       ucode: state => state.user.usercode
+
     })
+  },
+  mounted () {
+    this.getData();
   },
   methods: {
     refresh () {
       this.disabled = true;
       this.getData();
     },
+    getData () {
+      let data = {
+        orgid: this.$store.state.user.orgid,
+        uid: this.$store.state.user.userid,
+        //uid: 266190618000001,
+        DicType: 'StayTime'
+      }
+      GetSysSetList(data).then(res => {
+        if (res.Status == 'error') {
+          this.$msgBox.show(res.Msg)
+        } else {
+          this.typeInfoList = res.Record;
+          if (this.ucode != 'Admin') {
+            if (res.Record.length) {
+              this.Value = res.Record[0].Value;
+            } else {
+              this.Value = ''
+            }
+          }
+          this.typeInfoList.map(info => info.PersistentState = 2)
+          this.deleteList = [];
+        }
+      }).catch(err => {
+        console.log(err)
+        this.$msgBox.show('获取数据失败!')
+      })
+    },
+    update () {
+      if (this.ucode != 'Admin') {
+        if (this.typeInfoList.length) {
+          this.typeInfoList[0].Value = this.Value;
+          this.typeInfoList[0].OrgList = [{
+            PhId: this.$store.state.user.orgid,
+            OCode: this.$store.state.user.orgcode,
+            OName: this.$store.state.user.orgname
+          }]
+        } else {
+          this.typeInfoList = []
+        }
+
+      }
+
+      let arr = this.typeInfoList.concat(this.deleteList);
+      let data = {
+        orgid: this.$store.state.user.orgid,
+        uid: this.$store.state.user.userid,
+        //uid: 266190618000001,
+        infoData: arr
+      }
+      dictionarySave(data).then(res => {
+        if (res.Status == 'error') {
+          this.$msgBox.error(res.Msg)
+        } else {
+          this.$msgBox.show(res.Msg)
+          this.disabled = true;
+          this.getData();
+        }
+      }).catch(err => {
+        this.$msgBox.show('修改失败!')
+      })
+    },
     //输入框限定***
-    clearNoNum (val) {
-      val.Value = val.Value.replace(/[^0-9]/g, "");
-      //清除“数字”和“.”以外的字符  
+    clearNoNum (obj) {
+      var val = '';
+      if (obj.Value) {
+        val = obj.Value;
+      } else if (typeof obj == 'string') {
+        val = this[obj];
+      }
+
+      val = val.replace(/[^\d.]/g, "");  //清除“数字”和“.”以外的字符  
+      val = val.replace(/\.{2,}/g, "."); //只保留第一个. 清除多余的  
+      val = val.replace(".", "$#$").replace(/\./g, "").replace("$#$", ".");
+      val = val.replace(/^(\-)*(\d+)\.(\d\d).*$/, '$1$2.$3');//只能输入两个小数  
+      if (val.indexOf(".") < 0 && val != "") {//以上已经过滤，此处控制的是如果没有小数点，首位不能为类似于 01、02的金额 
+        val = parseFloat(val);
+      }
+      if (obj.Value) {
+        obj.Value = val.toString();
+      } else {
+        this[obj] = val.toString();
+      }
     },
     //code信息新增
     addCode (index) {
@@ -148,39 +231,20 @@ export default {
         index + 1,
         0,
         {
-          DicType: "DxbzCode",
+          DicType: "StayTime",
           Isactive: 0,
           PersistentState: 1,
-          DicName: '对下补助代码维护',
+          DicName: '停留时长提醒设置',
           Orgid: this.$store.state.user.orgid,
           Orgcode: this.$store.state.user.orgcode,
           OrgList: []
         }
       )
     },
-    //类型信息新增
-    addInfo (index) {
-      if (index == 0) {
-        this.disabled = false;
-      }
-      this.typeInfoList.splice(
-        index + 1,
-        0,
-        {
-          DicType: "PayMethod",
-          Isactive: 0,
-          PersistentState: 1,
-          DicName: '支付方式',
-          Orgid: this.$store.state.user.orgid,
-          Orgcode: this.$store.state.user.orgcode,
-          OrgList: [{ PhId: this.$store.state.user.orgid, OCode: this.$store.state.user.orgcode, OName: this.$store.state.user.orgname }]
-        }
-      )
-    },
-    //类型信息删除
+    //信息删除
     deleteInfo (index, item) {
       if (item.Issystem == 1) {
-        this.$msgBox.error('系统内置类型不能删除!')
+        this.$msgBox.error('系统内置信息不能删除!')
         return;
       }
       if (item.PhId) {
@@ -447,3 +511,12 @@ export default {
 }
 </style>
 
+<style>
+.timesetting .listBody input {
+  border: none;
+  height: 100%;
+}
+.timesetting .listBody ul.update input {
+  text-align: center;
+}
+</style>

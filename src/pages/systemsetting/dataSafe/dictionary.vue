@@ -134,6 +134,7 @@
           <div>
             <el-input :disabled="disabled"
                       placeholder="请输入补助代码"
+                      @keyup.native="clearNoNum('Value')"
                       v-model="Value"></el-input>
           </div>
         </div>
@@ -148,7 +149,7 @@
           </div>
           <div class="list listBodyCon">
             <div class="listBody">
-              <div @click.stop="addCodeInfo(0)"
+              <div @click.stop="addCode(0)"
                    v-if="typeInfoList.length==0"
                    style="cursor:pointer">请添加组织+</div>
               <ul :class="{update:!disabled}"
@@ -210,7 +211,7 @@ export default {
   name: 'dictionary',
   data () {
     return {
-      codeList: [],//admin对下补助代码
+
       // ucode:'Admin',
       // orglist:[],//组织树
       orgIndex: '',//当前选中的组织切换
@@ -326,9 +327,16 @@ export default {
     },
     //输入框限定***
     clearNoNum (val) {
-      val.Value = val.Value.replace(/[^0-9]/g, "");
+
+      if (val.Value) {
+        val.Value = val.Value.replace(/[^0-9]/g, "");
+      } else if (typeof obj == 'string') {
+        this[val] = this[val].replace(/[^0-9]/g, "");
+      }
+
       //清除“数字”和“.”以外的字符  
     },
+
     //code信息新增
     addCode (index) {
       if (index == 0) {
@@ -438,6 +446,8 @@ export default {
     }
   },
 }
+
+
 </script>
 
 <style lang="scss" scoped>
@@ -702,4 +712,6 @@ export default {
   text-align: center;
 }
 </style>
+
+
 

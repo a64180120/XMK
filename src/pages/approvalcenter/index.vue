@@ -3,7 +3,7 @@
     <div>
       <el-row>
         <el-col :span="24">
-          <top-handle title="审批中心在线工作平台"></top-handle>
+          <top-handle title="审批中心在线工作平台" type="approval"></top-handle>
         </el-col>
       </el-row>
       <div style="clear:both"></div>

@@ -1,5 +1,6 @@
 <template>
-  <div class="handleBtnCon msFixed" style="z-index: 9;">
+  <div class="handleBtnCon msFixed"
+       style="z-index: 9;">
     <!-- <div style="z-index:9" v-show="orgTreeShow" class="model" @click.stop="orgTreeShow=false"> -->
 
     <!-- </div> -->
@@ -7,54 +8,71 @@
       <p>{{title}}</p>
       <div class="btnContainer">
         <ul class="rightBtn">
-          <li >
-            <el-popover width="270" placement="bottom" :popper-class="'topElpop'"  trigger="click">
-              
+          <li>
+            <el-popover width="270"
+                        placement="bottom"
+                        :popper-class="'topElpop'"
+                        trigger="click">
+
               <ul class="fastNav">
-                <li v-if="menuButton.fund=='True'" @click.stop="navPage('/fund')">
+                <li v-if="menuButton.fund=='True'"
+                    @click.stop="navPage('/fund')">
                   <div>
-                    <img src="@/assets/images/zjbf.png" alt>
+                    <img src="@/assets/images/zjbf.png"
+                         alt>
                   </div>
                   <span>资金拨付</span>
                 </li>
-                <li v-if="menuButton.approvalcenter=='True'" @click.stop="navPage('/approvalcenter')">
+                <li v-if="menuButton.approvalcenter=='True'"
+                    @click.stop="navPage('/approvalcenter')">
                   <div>
-                    <img src="@/assets/images/zj6.png" alt>
+                    <img src="@/assets/images/zj6.png"
+                         alt>
                   </div>
                   <span>审批中心</span>
                 </li>
-                <li v-if="menuButton.paycenter=='True'" @click.stop="navPage('/paycenter')">
+                <li v-if="menuButton.paycenter=='True'"
+                    @click.stop="navPage('/paycenter')">
                   <div>
-                    <img src="@/assets/images/zfcg.png" alt>
+                    <img src="@/assets/images/zfcg.png"
+                         alt>
                   </div>
                   <span>支付中心</span>
                 </li>
-                
-                <li v-if="menuButton.bankaccount=='True'" @click.stop="navPage('/bankaccount')">
+
+                <li v-if="menuButton.bankaccount=='True'"
+                    @click.stop="navPage('/bankaccount')">
                   <div>
-                    <img src="@/assets/images/yhda.png" alt>
+                    <img src="@/assets/images/yhda.png"
+                         alt>
                   </div>
                   <span>银行档案</span>
                 </li>
-                <li v-if="menuButton.sysSetting=='True'" @click.stop="navPage('/setting')">
+                <li v-if="menuButton.sysSetting=='True'"
+                    @click.stop="navPage('/setting')">
                   <div>
-                    <img src="@/assets/images/navsetting.png" alt>
+                    <img src="@/assets/images/navsetting.png"
+                         alt>
                   </div>
                   <span>系统设置</span>
                 </li>
               </ul>
-              
-              <div  slot="reference" class=" navIcon">
+
+              <div slot="reference"
+                   class=" navIcon">
                 <div>
-                  <img style="margin:4px 0;height:24px" src="@/assets/images/nav.svg" alt>
+                  <img style="margin:4px 0;height:24px"
+                       src="@/assets/images/nav.svg"
+                       alt>
                 </div>
                 <span>导航</span>
               </div>
-          </el-popover>
+            </el-popover>
           </li>
           <li @click.stop="refresh">
             <div>
-              <img  src="@/assets/images/sx.png" alt>
+              <img src="@/assets/images/sx.png"
+                   alt>
             </div>
             <span>刷新</span>
           </li>
@@ -69,38 +87,46 @@
       </div>
     </div>
     <div class="orgInfo">
-      <div v-if="countBtn" class="count">
-        <img src="@/assets/images/3_03.png" alt>
+      <div v-if="countBtn"
+           class="count">
+        <img src="@/assets/images/3_03.png"
+             alt>
         <span>当前在线人数:</span>
         <span class="num">23</span>
       </div>
       <div>
         <span class="mr-2">年度:</span>
-        <el-select style="width:100px" @change="yearChange" v-model="year" placeholder="请选择">
-          <el-option
-            v-for="item in options"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          ></el-option>
+        <el-select style="width:100px"
+                   @change="yearChange"
+                   v-model="year"
+                   placeholder="请选择">
+          <el-option v-for="item in options"
+                     :key="item.value"
+                     :label="item.label"
+                     :value="item.value"></el-option>
         </el-select>
       </div>
-      <div class="orgSelect clear">
+      <div v-if="type!='approval'"
+           class="orgSelect clear">
         <span class="fl mr-2">单位:</span>
-        <div @click.stop="orgTreeShow" class="fl">
-          <el-popover @show="arrow=true" @hide="arrow=false" width="300" placement="bottom" :popper-class="'maxH topElpop'" trigger="click">
-            <el-tree
-              ref="orgtree"
-              node-key="OCode"
-              :highlight-current="true"
-              :props="defaultProps"
-              
-              :default-expanded-keys="[org.OCode]"
-              :data="orgList"
-              :expand-on-click-node="false"
-              @node-click="orgChange"
-            ></el-tree>
-            <p  slot="reference" class="orgName">{{orgname}}</p>
+        <div @click.stop="orgTreeShow"
+             class="fl">
+          <el-popover @show="arrow=true"
+                      @hide="arrow=false"
+                      width="300"
+                      placement="bottom"
+                      :popper-class="'maxH topElpop'"
+                      trigger="click">
+            <el-tree ref="orgtree"
+                     node-key="OCode"
+                     :highlight-current="true"
+                     :props="defaultProps"
+                     :default-expanded-keys="[org.OCode]"
+                     :data="orgList"
+                     :expand-on-click-node="false"
+                     @node-click="orgChange"></el-tree>
+            <p slot="reference"
+               class="orgName">{{orgname}}</p>
           </el-popover>
           <!-- <p @click="orgTreeInit" class="orgName">{{orgName}}</p>
           <div v-show="orgTreeShow" class="treeCon" style="z-index:9;">
@@ -115,7 +141,8 @@
           </el-tree>-->
           <!-- </div> -->
         </div>
-        <div class="arrow" :class="{turnArr:arrow}">
+        <div class="arrow"
+             :class="{turnArr:arrow}">
         </div>
       </div>
     </div>
@@ -123,89 +150,89 @@
 </template>
 
 <script>
-    import  {organizeTree} from '@/api/organize'
-    import {mapState} from 'Vuex'
-    export default {
-        name: "topHandle",
-        props:{
-            auditBtn:{ //审批中心
-              type:Boolean,
-              default:false
-            },
-            countBtn:{  //在线人数
-              type:Boolean,
-              default:false
-            },
-            title:{
-              type:String,
-              default:'资金拨付在线工作平台'
-            },
+import { organizeTree } from '@/api/organize'
+import { mapState } from 'Vuex'
+export default {
+  name: "topHandle",
+  props: {
+    type: { //审批中心
+      type: String,
+      default: ''
+    },
+    countBtn: {  //在线人数
+      type: Boolean,
+      default: false
+    },
+    title: {
+      type: String,
+      default: '资金拨付在线工作平台'
+    },
 
-        },
-        data(){
-          return {
-            arrow:false,//组织箭头样式
-            options: [],//年度列表    
-            year: '',//年度
-            org:{ //当前组织
-               "OCode": "101",
-               "OName": "浙江省总本级",
-            },
-            defaultProps: {
-              children: 'children',
-              label: 'OName'
-            }
-          }
-        },
-        computed:{
-            ...mapState({
-                  orgList: state=>state.user.orglist,
-                  orgcode: state=>state.user.orgcode,
-                  orgname: state=>state.user.orgname,
-                  menuButton: state => state.user.menubutton
-            })
-        },
-        mounted(){   
-            //this.getOrganize();
-             this.setyearList();
-        },
-        methods:{
-          orgTreeShow(){//组织树显示
-            this.$refs.orgtree.setCurrentNode({OCode:this.orgcode});
-          },
-          goHome(){  //回首页
-            window.open('/g6h/web','_self')
-          },
-          setyearList(){ //年度列表
-            this.year=this.$store.state.user.year;//当前默认选中的年份
-            for(let y=2019;y<=new Date().getFullYear();y++){
-              this.options.unshift({label:y,value:y})
-            }
-          },
-          orgChange(val){ //组织改变
-            if(val.WeChatId=='false'){
-              this.$msgBox.error('当前组织没有操作权限,请联系管理员!')
-              return;
-            }
-            this.$store.commit('user/setOrganize',val);
-            
-            let p = document.querySelector('.handleBtnCon .orgName');
-            p.click();
-            this.refresh();
-          },
-           yearChange(val){  //年度改变
-            this.$store.commit('user/setYear',val)
-            this.refresh();
-          },
-          navPage(url){  //导航页面
-            this.$router.push(url)
-          },
-          refresh(){ //刷新
-            this.$emit('refresh');
-          },
-          
-        }
+  },
+  data () {
+    return {
+      arrow: false,//组织箭头样式
+      options: [],//年度列表    
+      year: '',//年度
+      org: { //当前组织
+        "OCode": "101",
+        "OName": "浙江省总本级",
+      },
+      defaultProps: {
+        children: 'children',
+        label: 'OName'
+      }
     }
+  },
+  computed: {
+    ...mapState({
+      orgList: state => state.user.orglist,
+      orgcode: state => state.user.orgcode,
+      orgname: state => state.user.orgname,
+      menuButton: state => state.user.menubutton
+    })
+  },
+  mounted () {
+    //this.getOrganize();
+    this.setyearList();
+  },
+  methods: {
+    orgTreeShow () {//组织树显示
+      this.$refs.orgtree.setCurrentNode({ OCode: this.orgcode });
+    },
+    goHome () {  //回首页
+      window.open('/g6h/web', '_self')
+    },
+    setyearList () { //年度列表
+      this.year = this.$store.state.user.year;//当前默认选中的年份
+      for (let y = 2019; y <= new Date().getFullYear(); y++) {
+        this.options.unshift({ label: y, value: y })
+      }
+    },
+    orgChange (val) { //组织改变
+      if (val.WeChatId == 'false') {
+        this.$msgBox.error('当前组织没有操作权限,请联系管理员!')
+        return;
+      }
+      this.$store.commit('user/setOrganize', val);
+
+      let p = document.querySelector('.handleBtnCon .orgName');
+      p.click();
+      this.refresh();
+    },
+    yearChange (val) {  //年度改变
+      this.$store.commit('user/setYear', val)
+      this.refresh();
+    },
+    navPage (url) {  //导航页面
+      this.$router.push(url)
+    },
+    refresh () { //刷新
+      this.$emit('refresh');
+    },
+
+  }
+}
 </script>
 
 <style lang="scss" scoped>
@@ -236,7 +263,7 @@
     width: 100%;
     height: 60px;
     font-size: 0.14rem;
-    margin-top:10px;
+    margin-top: 10px;
     position: relative;
     > div {
       margin: 0 auto;
@@ -247,7 +274,7 @@
       position: absolute;
       right: 20px;
       top: -2px;
-      .navIcon, 
+      .navIcon,
       > li {
         float: left;
         width: 60px;
@@ -263,7 +290,7 @@
           > img {
             width: 28px;
             height: 28px;
-            margin:2px 0 ;
+            margin: 2px 0;
           }
         }
 
@@ -277,7 +304,7 @@
   height: 50px;
   padding: 10px 23px;
   font-size: 0.16rem;
-	color:#666;
+  color: #666;
   .count {
     float: left;
     img {
@@ -306,28 +333,27 @@
   .orgSelect {
     height: 100%;
     margin-right: 30px;
-    >div.arrow{
+    > div.arrow {
       position: absolute;
       right: -15px;
       -webkit-transform: rotate(45deg);
-       -ms-transform: rotate(45deg);
-        -o-transform: rotate(45deg);
-         -moz-transform: rotate(45deg);
+      -ms-transform: rotate(45deg);
+      -o-transform: rotate(45deg);
+      -moz-transform: rotate(45deg);
       top: 8px;
       width: 8px;
       height: 8px;
-      cursor:pointer;
+      cursor: pointer;
       border: 1px solid #ccc;
       border-width: 0 1px 1px 0;
       transition: all 0.3s linear;
     }
-    >div.turnArr{
-      
-      -webkit-transform: rotate(-135deg); 
+    > div.turnArr {
+      -webkit-transform: rotate(-135deg);
       -ms-transform: rotate(-135deg);
       -o-transform: rotate(-135deg);
       -moz-transform: rotate(-135deg);
-      top: 11px; 
+      top: 11px;
     }
     .fl {
       line-height: 30px;
@@ -345,7 +371,6 @@
       }
     }
     .orgName {
-			
       cursor: pointer;
       max-width: 400px;
       overflow: hidden;
@@ -366,47 +391,46 @@
   bottom: 0;
   background: none;
 }
-.fastNav{
+.fastNav {
   overflow: hidden;
-  >li{
-    float:left;
-    width:60px;
-    height:60px;
+  > li {
+    float: left;
+    width: 60px;
+    height: 60px;
     cursor: pointer;
     text-align: center;
-    padding-top:10px;
+    padding-top: 10px;
     img {
-            width: 28px;
-            height: 28px;
+      width: 28px;
+      height: 28px;
     }
-    &:hover{
+    &:hover {
       background: #ddd;
     }
   }
 }
 </style>
 <style>
-.handleBtnCon .btnContainer{
-    font-size:0.14rem;
-  }
+.handleBtnCon .btnContainer {
+  font-size: 0.14rem;
+}
 
 .orgInfo .el-input--suffix .el-input__inner {
   height: 30px;
   line-height: 30px;
-  border:0;
+  border: 0;
 }
 .orgInfo .el-input__icon {
   line-height: 30px;
 }
 .maxH {
   height: 70%;
-  
 }
-.maxH .el-tree{
-    overflow-y: auto;
-    height:100%;
-  }
-.topElpop{
+.maxH .el-tree {
+  overflow-y: auto;
+  height: 100%;
+}
+.topElpop {
   box-shadow: 0 2px 12px 0 rgba(98, 172, 252, 0.63) !important;
 }
 </style>
