@@ -2,7 +2,8 @@
   <section>
     <handle-btn title="审批中心在线工作平台"
                 @refresh="refresh()"
-                :auditBtn="true">
+                :auditBtn="true"
+                type="approval">
       <div class="top">
         <ul v-if="isApproval">
           <!--v-if="MenuButton.approvalcenter_approval"-->
@@ -57,8 +58,16 @@
             <el-form :inline="true">
               <el-form-item label="申报部门"
                             class="top-form-left">
-                <el-input size="mini"
-                          v-model="searchForm.OrgName"
+                <el-tooltip v-if="applyDeportTop !=='' "  :content="applyDeportTop">
+                  <el-input size="mini"
+                            v-model="applyDeportTop"
+                            @focus="openOrg()"
+                            @change="changeInput()"
+                            style="width: 120px"
+                            placeholder="全部"></el-input>
+                </el-tooltip>
+                <el-input v-else size="mini"
+                          v-model="applyDeportTop"
                           @focus="openOrg()"
                           @change="changeInput()"
                           style="width: 120px"
@@ -388,7 +397,8 @@
         <applybill v-if="detailDialog"
                    @showImg="showImg"
                    :applyNum="applyNum"
-                   @delete="handleDelete">
+                   @delete="handleDelete"
+                    ref="applybill">
           <div slot="btn-group">
             <el-button v-if="isApproval"
                        class="btn"
@@ -400,7 +410,7 @@
                        style="width: 120px"
                        @click="creatPayItem">审批并生成支付单</el-button>
 
-                          <el-button class="btn" size="mini">打印</el-button>
+            <el-button class="btn" size="mini" @click="printTable">打印</el-button>
           </div>
         </applybill>
       </el-dialog>
@@ -408,14 +418,12 @@
       <approval-dialog ref="approvalDialog"
                        :rowData="selection"
                        @refresh="loadData"
-                       @dialogFlow="childrenAuditfollow"
                        @subSuc="plSubSuc()"></approval-dialog>
       <!--生成支付单弹框-->
       <paylist-dialog ref="paylistDialog"
                       :rowData="selection"
                       @refresh="loadData"
                       :isApproval="Approval"
-                      @dialogFlow="childrenAuditfollow"
                       @subSuc="plSubSuc()"></paylist-dialog>
       <!--查看审批流程-->
       <auditfollow :visible.sync="visible"
@@ -459,7 +467,8 @@ export default {
         StopHour: '',//停留时长
         OrgCode: "",//组织编码
         OrgName: '',//组织名称
-        OrgPhId: ''
+        OrgPhId: '',
+        OrgIds:[]
       },
       checkedAll: false, //是否全选
       IsIndeterminate: false, //列表中是否有选中的值并且不是全选
@@ -496,6 +505,8 @@ export default {
       applyNum: "",//当前查看申报单的编号
       SplxPhid: "",
       Approval: Boolean,
+      applyDeportTop:''
+
     }
   },
 
@@ -566,6 +577,7 @@ export default {
         BStartDate: this.searchForm.BDate === null ? '' : this.searchForm.BDate[0],
         BEndTime: this.searchForm.BDate === null ? '' : this.searchForm.BDate[1],
         Splx_Phid: this.SplxPhid,
+        OrgIds:this.searchForm.OrgIds
       }
 
       let that = this
@@ -707,15 +719,6 @@ export default {
         })
       }
     },
-    //子组件审批流查看
-    childrenAuditfollow (item, idx) {
-      this.visible = true
-      let data = {
-        RefbillPhid: this.selection[0].RefbillPhid,
-        FBilltype: this.BType
-      }
-      this.getAuditfollow(data)
-    },
     //审批流查看
     openAuditfollow (item, idx) {
       this.visible = true
@@ -747,11 +750,24 @@ export default {
     },
     //获取组织树
     getOrg (e) {
-      this.searchForm.OrgName = e[0].OName
-      this.searchForm.OrgCode = e[0].OCode
-      console.log(this.searchForm)
-      this.searchForm.OrgPhId = e[0].PhId
+      this.searchForm.OrgIds = []
+      this.applyDeportTop = ''
+      this.searchForm.OrgName = e.map( item => item.OName);
+      this.searchForm.OrgName.forEach((item,idx)=>{
+        if(idx !== this.searchForm.OrgName.length - 1){
+          this.applyDeportTop = this.applyDeportTop + item +'、'
+        }else {
+          this.applyDeportTop = this.applyDeportTop + item
+        }
+      })
+      for (let key in e){
+        this.searchForm.OrgIds[key] = e[key].PhId
+      }
       this.loadData()
+      // this.searchForm.OrgName = e[0].OName
+      // this.searchForm.OrgCode = e[0].OCode
+      // this.searchForm.OrgPhId = e[0].PhId
+      // this.loadData()
     },
     //打开组织树
     openOrg () {
@@ -801,6 +817,9 @@ export default {
       this.page.pageSize = 20;
       this.loadData()
     },
+    printTable(){
+      this.$refs.applybill.printTable()
+    }
   }
 }
 </script>
