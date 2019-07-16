@@ -40,11 +40,15 @@
         <upload @submit="submitFn"></upload>
       </el-dialog>
     </el-dialog>
+    <!--右侧回退人员-->
     <back-approval v-if="visible"
                    :visible.sync="visible"
                    :auditMsg="backData"
                    @getBackPeople="getBackPeople"
                    @closeBack="closeBack"></back-approval>
+    <!--查看审批流-->
+    <auditfollow :visible.sync="auditVisible"
+                 :auditMsg="auditMsg"></auditfollow>
   </section>
 </template>
 
@@ -52,9 +56,10 @@
 import ApprovalBill from "../../components/approvalBill/approvalBill";
 import BackApproval from "../../components/backApproval/backApproval";
 import Upload from "../../components/upload/index";
+import Auditfollow from "../../components/auditFollow/auditfollow";
 export default {
   name: "approvalDialog",
-  components: { Upload, BackApproval, ApprovalBill },
+  components: {Auditfollow, Upload, BackApproval, ApprovalBill },
   props: {
     rowData: {
       type: Array,
@@ -84,7 +89,9 @@ export default {
       operatorID: [], //操作人员集合
       row: this.rowData[0],
       fileList: [],//文件列表
-      fileCount: 0
+      fileCount: 0,
+      auditMsg:[],
+      auditVisible:false
     }
   },
   mounted () {
@@ -152,7 +159,28 @@ export default {
     },
     //查看详细流程
     searchFlow (row) {
-      this.$emit("dialogFlow", row)
+      // this.$emit("dialogFlow", row)
+
+      this.auditVisible = true
+      let data = {
+        RefbillPhid: this.rowData[0].RefbillPhid,
+        FBilltype: this.BType
+      }
+      this.getAuditfollow(data)
+    },
+    //拉去审批流数据查看
+    getAuditfollow (data) {
+      let that = this
+      this.getAxios("/GAppvalRecord/GetAppvalRecordList", data).then(res => {
+        if (res && res.Status === "success") {
+          that.auditMsg = res.Data
+          // console.log(res.Data)
+        } else {
+          that.$msgBox.show(res.Msg)
+        }
+      }).catch(err => {
+        that.$msgBox.show("数据获取异常")
+      })
     },
     //取消
     cancel () {

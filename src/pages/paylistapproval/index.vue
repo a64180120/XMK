@@ -2,7 +2,8 @@
   <section>
     <handle-btn title="审批中心在线工作平台"
                 :auditBtn="true"
-                @refresh="refresh()">
+                @refresh="refresh()"
+                type="approval">
       <div class="top"
            v-if="isApproval">
         <ul>
@@ -47,8 +48,16 @@
             <el-form :inline="true">
               <el-form-item label="申报部门"
                             class="top-form-left">
-                <el-input size="mini"
-                          v-model="searchForm.OrgName"
+                <el-tooltip v-if="applyDeportTop !=='' "  :content="applyDeportTop">
+                  <el-input size="mini"
+                            v-model="applyDeportTop"
+                            @focus="openOrg()"
+                            @change="changeInput()"
+                            style="width: 120px"
+                            placeholder="全部"></el-input>
+                </el-tooltip>
+                <el-input v-else size="mini"
+                          v-model="applyDeportTop"
                           @focus="openOrg()"
                           @change="changeInput()"
                           style="width: 120px"
@@ -520,7 +529,8 @@ export default {
         StopHour: '',//停留时长
         OrgCode: "",//组织编码
         OrgName: '',//组织名称
-        OrgPhId: ''
+        OrgPhId: '',
+        OrgIds:[]
       },
       tableData: [],//模拟表格数据
       page: {
@@ -553,7 +563,10 @@ export default {
       //支付单相同数据的编号
       sameFollowNum: '',
 
-      showSearchIconIdx: ''
+      showSearchIconIdx: '',
+
+
+      applyDeportTop:''
     }
   },
   computed: {
@@ -624,6 +637,7 @@ export default {
         BStartDate: this.searchForm.BDate === null ? '' : this.searchForm.BDate[0],
         BEndTime: this.searchForm.BDate === null ? '' : this.searchForm.BDate[1],
         Splx_Phid: this.SplxPhid,
+        OrgIds:this.searchForm.OrgIds
       }
       let that = this
       if (eval(this.isApproval)) {
@@ -762,10 +776,26 @@ export default {
     },
     //获取组织树
     getOrg (e) {
-      this.searchForm.OrgName = e[0].OName;
-      this.searchForm.OrgCode = e[0].OCode;
-      this.searchForm.OrgPhId = e[0].PhId;
-      this.loadData(e)
+
+      this.searchForm.OrgIds = []
+      this.applyDeportTop = ''
+      this.searchForm.OrgName = e.map( item => item.OName);
+      this.searchForm.OrgName.forEach((item,idx)=>{
+        if(idx !== this.searchForm.OrgName.length - 1){
+          this.applyDeportTop = this.applyDeportTop + item +'、'
+        }else {
+          this.applyDeportTop = this.applyDeportTop + item
+        }
+      })
+      for (let key in e){
+        this.searchForm.OrgIds[key] = e[key].PhId
+      }
+      this.loadData()
+
+      // this.searchForm.OrgName = e[0].OName;
+      // this.searchForm.OrgCode = e[0].OCode;
+      // this.searchForm.OrgPhId = e[0].PhId;
+      // this.loadData(e)
     },
     //子组件审批流查看
     childrenAuditfollow (item, idx) {
