@@ -219,7 +219,7 @@
                 <td>
                   <div>
                     <el-tooltip class="" effect="dark" :content="'已经停留'+item.StopHour +'小时'" placement="bottom-start">
-                      <img v-if="item.StopHour<24"   src="../../assets/images/sj2.png" class="img-icon">
+                      <img v-if="item.StopHour<timeValue"   src="../../assets/images/sj2.png" class="img-icon">
                       <img v-else src="../../assets/images/sj1.png" class="img-icon">
                     </el-tooltip>
                   </div>
@@ -451,6 +451,7 @@ import ImgView from "../../components/imgView/imgView";
 import PaylistDialog from "./paylistDialog";
 import { mapState } from 'vuex';
 import { printTable } from '@/api/upload'
+import { GetSysSetList } from '@/api/systemSetting/dataSafe'
 export default {
   name: "index",
   components: {
@@ -505,7 +506,8 @@ export default {
       applyNum: "",//当前查看申报单的编号
       SplxPhid: "",
       Approval: Boolean,
-      applyDeportTop:''
+      applyDeportTop:'',
+      timeValue:''
 
     }
   },
@@ -518,6 +520,8 @@ export default {
     // this.testData()
     this.loadData()
     this.getOrgList()
+
+    this.setTimeValue()
   },
   watch: {
     check (val, oldval) {
@@ -551,6 +555,31 @@ export default {
     })
   },
   methods: {
+    //设置停留时长
+    setTimeValue(){
+      let data = {
+        orgid: this.$store.state.user.orgid,
+        uid: this.$store.state.user.userid,
+        DicType: 'StayTime'
+      }
+      GetSysSetList(data).then(res => {
+        if (res.Status == 'error') {
+          this.$msgBox.show(res.Msg)
+        } else {
+          if (this.ucode != 'Admin') {
+            if (res.Record.length) {
+              this.timeValue = res.Record[0].Value;
+              console.log(this.timeValue)
+            } else {
+              this.timeValue = ''
+            }
+          }
+        }
+      }).catch(err => {
+        console.log(err)
+        this.$msgBox.show('获取数据失败!')
+      })
+    },
     //修改title
     updateTitle () {
       let title = document.getElementsByTagName('title')[0];
