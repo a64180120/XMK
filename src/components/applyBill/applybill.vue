@@ -98,8 +98,11 @@
                 </li>
               </ul>
             </div>
+
+
+
             <div class="content">
-              <div class="top-tbody">
+              <!--<div class="top-tbody">
                 <table>
                   <colgroup>
                     <col width="16%">
@@ -182,23 +185,102 @@
                   <tbody>
                     <template v-for="(item) in record.PaymentXmDtl" v-if="record.PaymentXmDtl">
                       <tr v-for="(xm,idx) in item.PaymentDtls" v-if="item.PaymentDtls">
-                        <td
-                          :rowspan="item.PaymentDtls.length"
+                        <td class="left"
+                            :rowspan="item.PaymentDtls.length"
                           v-if="idx%item.PaymentDtls.length==0"
                         >{{item.PaymentXm.XmProjcode}}</td>
-                        <td
-                          :rowspan="item.PaymentDtls.length"
+                        <td class="left"
+                            :rowspan="item.PaymentDtls.length"
                           v-if="idx%item.PaymentDtls.length==0"
                         >{{item.PaymentXm.XmProjname}}</td>
-                        <td>{{xm.FDepartmentname}}</td>
-                        <td>{{xm.BudgetdtlName}}</td>
-                        <td style="text-align: right">{{xm.FAmount | NumFormat}}</td>
+                        <td class="left" >{{xm.FDepartmentname}}</td>
+                        <td  class="left" >{{xm.BudgetdtlName}}</td>
+                        <td class="right">{{xm.FAmount | NumFormat}}</td>
                         <td class="left" >{{xm.FRemarks}}</td>
                       </tr>
                     </template>
                   </tbody>
                 </table>
-              </div>
+              </div>-->
+              <table>
+                <colgroup>
+                  <col width="15%"/>
+                  <col width="15%"/>
+                  <col width="15%"/>
+                  <col width="15%"/>
+                  <col width="15%"/>
+                  <col width="20%"/>
+                </colgroup>
+                <tr>
+                  <td colspan="1" class="tbTitle" style="letter-spacing: 9px;padding-left: 14px;">申报单号</td>
+                  <td colspan="5">{{record.PaymentMst.FCode}}</td>
+                </tr>
+                <tr>
+                  <td colspan="1" class="tbTitle" >申报单位名称</td>
+                  <td colspan="5">{{record.PaymentMst.FOrgname+'-'+record.PaymentMst.FDepname}}</td>
+                </tr>
+                <tr>
+                  <td colspan="1" class="tbTitle" style="letter-spacing: 9px;padding-left: 14px;">申报说明</td>
+                  <td colspan="3">{{record.PaymentMst.FDescribe}}</td>
+                  <td class="tbTitle">申报金额合计(元)</td>
+                  <td class="right">{{record.PaymentMst.FAmountTotal | NumFormat}}</td>
+                </tr>
+              </table>
+              <table style="display: none">
+                <colgroup>
+                  <col width="15%"/>
+                  <col width="20%"/>
+                  <col width="40%"/>
+                  <col width="25%"/>
+                </colgroup>
+                <tr>
+                  <td></td>
+                  <td>审批人</td>
+                  <td>审批意见</td>
+                  <td>审批时间</td>
+                </tr>
+                <tr v-for="(item,index) in auditMsg">
+                  <td v-if="index==0" :rowspan="auditMsg.length">审批流程</td>
+                  <td>{{item.OperaName}}</td>
+                  <td>{{item.FOpinion}}</td>
+                  <td>{{item.FDate}}</td>
+                </tr>
+              </table>
+              <table>
+                <colgroup>
+                  <col width="15%"/>
+                  <col width="15%"/>
+                  <col width="15%"/>
+                  <col width="15%"/>
+                  <col width="15%"/>
+                  <col width="20%"/>
+                </colgroup>
+                <tr><td colspan="6" class="secondTitle">申报拨付明细</td></tr>
+                <tr class="tbTitle">
+                  <td>项目编码</td>
+                  <td>项目名称</td>
+                  <td>补助单位/部门</td>
+                  <td>明细项目名称</td>
+                  <td>申报金额(元)</td>
+                  <td>备注</td>
+                </tr>
+                <template v-for="(item) in record.PaymentXmDtl" v-if="record.PaymentXmDtl">
+                  <tr v-for="(xm,idx) in item.PaymentDtls" v-if="item.PaymentDtls">
+                    <td class="left"
+                        :rowspan="item.PaymentDtls.length"
+                        v-if="idx%item.PaymentDtls.length==0"
+                    >{{item.PaymentXm.XmProjcode}}</td>
+                    <td class="left"
+                        :rowspan="item.PaymentDtls.length"
+                        v-if="idx%item.PaymentDtls.length==0"
+                    >{{item.PaymentXm.XmProjname}}</td>
+                    <td class="left" >{{xm.FDepartmentname}}</td>
+                    <td  class="left" >{{xm.BudgetdtlName}}</td>
+                    <td class="right">{{xm.FAmount | NumFormat}}</td>
+                    <td class="left" >{{xm.FRemarks}}</td>
+                  </tr>
+                </template>
+              </table>
             </div>
           </div>
         </el-col>
@@ -323,8 +405,9 @@ export default {
 
   mounted() {
     this.getApply()
-    this.approvalDataS.data = [this.applyNum]
-    this.approvalDataS.subData = this.subData
+    this.approvalDataS.data = [this.applyNum];
+    this.approvalDataS.subData = this.subData;
+
   },
   methods: {
     //申报单查看
@@ -338,15 +421,14 @@ export default {
             let pxd = res.PaymentXmDtl[i]
             for (var j in pxd.QtAttachments) {
               let img = {
-                path:
-                  baseURL.replace('/api', '') + pxd.QtAttachments[j].BUrlpath,
+                path: baseURL.replace('/api', '') + pxd.QtAttachments[j].BUrlpath,
                 name: pxd.QtAttachments[j].BName
               }
               this.imgList.push(img)
             }
           }
-          console.log(this.imgList)
-          console.log(res)
+          //这里进行审批流获取，用作审批流查看以及打印使用
+          this.getAuditfollow();
         })
         .catch(err => {
           console.log(err)
@@ -483,26 +565,30 @@ export default {
       }else{
         /*审批流查看*/
         this.visible = true;
-        let data = {
-          RefbillPhid:this.applyNum,
-          FBilltype:'001' //单据类型（"001":资金拨付单,"002":支付单）
-        }
-        this.getAuditfollow(data)
       }
 
     },
-    //拉去审批流数据查看
-    getAuditfollow(data){
-      this.getAxios("GSP/GAppvalRecord/GetAppvalRecordList",data).then(res =>{
-        console.log(res)
-        if (res && res.Status === "success") {
-          this.auditMsg = res.Data
-        }else {
-          this.$msgBox.show(res.Msg)
+    //拉取审批流数据查看  也为打印做准备
+    getAuditfollow(){
+      //判断是否已送审，未送审则取消审批流获取
+      if(this.record.PaymentMst.FApproval==0) {
+        return;
+      }else{
+        let data = {
+          RefbillPhid: this.applyNum,
+          FBilltype: '001' //单据类型（"001":资金拨付单,"002":支付单）
         }
-      }).catch(err =>{
-        this.$msgBox.show("数据获取异常")
-      })
+        this.getAxios("GSP/GAppvalRecord/GetAppvalRecordList", data).then(res => {
+          console.log(res)
+          if (res && res.Status === "success") {
+            this.auditMsg = res.Data
+          } else {
+            this.$msgBox.show(res.Msg)
+          }
+        }).catch(err => {
+          this.$msgBox.show("数据获取异常")
+        })
+      }
     },
   }
 }
@@ -618,7 +704,9 @@ export default {
   height: auto;
   overflow: auto;
   width: 100%;
-
+  box-shadow: 0 0 10px #c7c7c7;
+  border-radius: 5px;
+  padding-bottom: 10px;
   > .title {
     background-color: #3294e8;
     border-radius: 6px 6px 0 0;
@@ -663,7 +751,31 @@ export default {
   > .content {
     width: 98%;
     margin-left: 1%;
-    > .top-tbody {
+    table{
+      width: 100%;
+      td{
+        border-collapse: collapse;
+        border-spacing: 0;
+        height: 40px;
+        border: 1px solid #eaeaea;
+        padding: 5px;
+        text-align: center;
+      }
+      .tbTitle{
+        color: #3294e8;
+      }
+      .secondTitle{
+        background-color: #3294e8;
+        color: #fff;
+      }
+      .left{
+        text-align: left;
+      }
+      .right{
+        text-align: right;
+      }
+    }
+/*    > .top-tbody {
       > table {
         border: 1px solid #eaeaea;
         width: 100%;
@@ -692,7 +804,7 @@ export default {
               min-height: 30px;
               padding: 10px;
               border-top: none;
-              /*border-bottom: none;*/
+              !*border-bottom: none;*!
             }
           }
         }
@@ -711,7 +823,7 @@ export default {
               height: 30px;
               padding: 10px;
               border-top: none;
-              /*border-bottom: none;*/
+              !*border-bottom: none;*!
             }
           }
         }
@@ -730,7 +842,7 @@ export default {
               height: 30px;
               padding: 10px;
               border-top: none;
-              /*border-bottom: none;*/
+              !*border-bottom: none;*!
             }
           }
         }
@@ -749,12 +861,12 @@ export default {
               height: 30px;
               border-top: none;
               padding:10px
-              /*border-bottom: none;*/
+              !*border-bottom: none;*!
             }
           }
         }
       }
-    }
+    }*/
   }
 }
 .top-btn {

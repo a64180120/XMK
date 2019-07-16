@@ -4,7 +4,7 @@
       <search placeholder="银行账户名称/账号" v-model="searchVal" @btnClick="getData"></search>
     </div>
     <div class="content clear">
-      <div class="orgList fl">
+      <div class="orgList fl" :class="{disabled:type!='handle'}">
         <p>组织列表</p>
         <div v-if="orgList.length>0">
           <el-tree
@@ -35,7 +35,7 @@
                 <col v-if="type=='handle'" width="15%">
                 <col v-if="type=='handle'" width="10%">
               </colgroup>
-              <thead>
+              <thead style="    text-align: center;">
                 <tr>
                   <td style="padding: 0 5px;">
                     <el-checkbox
@@ -55,7 +55,7 @@
             </table>
           </div>
           <div class="tableBody">
-            <table>
+            <table style="    text-align: left;">
               <colgroup>
                 <col width="10%">
                 <col width="20%">
@@ -66,7 +66,7 @@
                 <col v-if="type=='handle'" width="15%">
                 <col v-if="type=='handle'" width="10%">
               </colgroup>
-              <thead>
+              <thead >
                 <tr
                   :class="{trActive:item.checked}"
                   v-for="(item,index) in accountList"
@@ -107,7 +107,7 @@
                       <p>{{item.FCity}}</p>
                     </el-tooltip>
                   </td>
-                  <td class="enable" v-if="type=='handle'">
+                  <td style="text-align:center" class="enable" v-if="type=='handle'">
                     <img v-if="item.FLifecycle=='1'" src="@/assets/images/gou.svg" alt>
                     <img v-else src="@/assets/images/cha.svg" alt>
                   </td>
@@ -338,6 +338,20 @@ export default {
   > img {
     height: 20px;
   }
+}
+	
+.content >.disabled{
+	position: relative;
+	&:after{
+		content:"";
+		position: absolute;
+		left:0;
+		right:0;
+		top:0;
+		bottom:0;
+		z-index:9;
+		background: none;
+	}
 }
 </style>
 

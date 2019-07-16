@@ -33,6 +33,6 @@ export default {
 
 <style scoped>
 .layout{
-
+ 
 }
 </style>

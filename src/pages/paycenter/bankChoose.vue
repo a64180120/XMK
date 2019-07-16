@@ -114,6 +114,7 @@ export default {
     .btns {
       text-align: right;
       padding-top: 10px;
+			padding-right: 1%;
       .btn {
         border: 1px solid $btnColor;
         cursor: pointer;

@@ -26,9 +26,9 @@
                         <div class="tableHead " style="border-right:1px solid #fff;" >
                             <table>
                             <colgroup>
-                                <col width="30%">
+                                <col width="20%">
                                 <col width="40%">
-                                <col width="30%">
+                                <col width="40%">
                             </colgroup>
                             <thead>
                                 <tr>
@@ -50,9 +50,9 @@
                         <div class="tableBody">
                             <table>
                                 <colgroup>
-                                    <col width="30%">
+                                    <col width="20%">
                                     <col width="40%">
-                                    <col width="30%">
+                                    <col width="40%">
                                 
                                 </colgroup>
                                 <thead>
@@ -150,7 +150,7 @@
                                         </td>
                                         <td>
                                             <el-tooltip :content="audit.FName">
-                                                <p> {{audit.FName}}</p>
+                                                <p> {{audit.FName+(audit.IsSystem?'(公有)':'')}}</p>
                                             </el-tooltip>
                                         </td>
                                         <td class="enable">
@@ -263,7 +263,8 @@ export default {
     computed:{
         ...mapState({
             menuButton: state => state.user.menubutton,
-            orgid: state => state.user.orgid
+            orgid: state => state.user.orgid,
+            ucode: state => state.user.usercode
         })
     },
     watch:{
@@ -298,6 +299,7 @@ export default {
         getData(val){
             let data={
                 orgid:this.$store.state.user.orgid,
+                Ucode: this.$store.state.user.usercode,
                 ApprovalTypeId:val.PhId,
                 BillType:val.Value,
                 PageIndex:this.pageIndex,
@@ -323,6 +325,17 @@ export default {
             })
         },
         deleteAudit(){  //流程删除
+            if(this.ucode!='Admin'){
+                let bo;
+                bo=this.choosedItem.some(item => {
+                    return item.IsSystem==1
+                })
+                if(bo){
+                    this.$msgBox.show('公有流程无法删除,请联系管理员!');
+                    return;
+                }
+                
+            }
             this.$confirm('此操作将永久删除该流程, 是否继续?', '提示', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
@@ -350,6 +363,7 @@ export default {
                     //     infoData:delArr
                     // }
                     let data={
+                        Ucode:this.$store.state.user.usercode,
                         ProcModels:this.choosedItem
                     }
                     PostDeleteProcs(data).then(res => {
@@ -394,6 +408,10 @@ export default {
             }
             if(val=='update'&&this.choosedItem.length==0){
                 this.$msgBox.show('请选择一行流程信息!');
+                return;
+            }
+            if(val=='update'&&this.ucode!='Admin'&&this.choosedItem[0].IsSystem){
+                this.$msgBox.show('公有流程无法修改,请联系管理员!');
                 return;
             }
             this.auditBtn=val;
