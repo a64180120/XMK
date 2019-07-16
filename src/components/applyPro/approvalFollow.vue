@@ -1,24 +1,26 @@
 <template>
   <div class="approvalfollowContainer">
     <div>
-      <div @click="changeShow"
-           :title="!showAuditfollow?'显示送审流程详情':'隐藏送审流程详情'"
-           style="width: 37px;height: 19px;border: 1px solid #ccc;border-bottom: 0;padding: 3px 6px 2px 6px;margin: auto;position: relative;background: #fff;z-index: 1;border-top-left-radius: 5px;border-top-right-radius: 5px;cursor:pointer;">
-        <img :class="{'rotate180':showAuditfollow}"
-             style="width:100%;height:100%;"
-             src="@/assets/images/ad.png" />
+      <div
+        @click="changeShow"
+        :title="!showAuditfollow?'显示送审流程详情':'隐藏送审流程详情'"
+        style="width: 37px;height: 19px;border: 1px solid #ccc;border-bottom: 0;padding: 3px 6px 2px 6px;margin: auto;position: relative;background: #fff;z-index: 1;border-top-left-radius: 5px;border-top-right-radius: 5px;cursor:pointer;"
+      >
+        <img
+          :class="{'rotate180':showAuditfollow}"
+          style="width:100%;height:100%;"
+          src="@/assets/images/ad.png"
+        />
       </div>
     </div>
-    <div :class="{approvalfollow:true,show:!showAuditfollow}"
-         :style="showAuditfollow?(auditMsg.length?'height:'+(auditMsg.length*40+15)+'px':'height:30px'):''">
+    <div
+      :class="{approvalfollow:true,show:!showAuditfollow}"
+      :style="showAuditfollow?(auditMsg.length?'height:'+(auditMsg.length*40+15)+'px':'height:30px'):'height:0px'"
+    >
       <template v-if="auditMsg.length">
-        <auditmsg v-for="(item,index) in auditMsg"
-                  :info="item"
-                  :index="index+1"
-                  :isApproval="true"></auditmsg>
+        <auditmsg v-for="(item,index) in auditMsg" :info="item" :index="index+1" :isApproval="true"></auditmsg>
       </template>
-      <div v-else
-           style="padding-right:20px;line-height:30px;">暂无数据</div>
+      <div v-else style="padding-right:20px;line-height:30px;">暂无数据</div>
     </div>
   </div>
 </template>
@@ -38,15 +40,15 @@ export default {
       default: []
     }
   },
-  data () {
+  data() {
     return {}
   },
   methods: {
-    changeShow () {
+    changeShow() {
       this.$emit('update:showAuditfollow', !this.showAuditfollow)
     }
   },
-  mounted () {
+  mounted() {
     this.$emit('update:showAuditfollow', true)
   }
 }
@@ -59,7 +61,6 @@ export default {
 .approvalfollow {
   border-top: 1px solid $borderColor_ccc;
   padding-left: 20px;
-  height: 0;
   overflow: hidden;
   position: relative;
   top: -1px;
