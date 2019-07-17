@@ -55,6 +55,11 @@ const staticRoute = [
         component: () =>
           import(/* webpackChunkName:'payfund'*/ '../pages/payfund/index'),
         meta: { requireAuth: true, type: 'page', name: '资金拨付' }
+      },{
+        path: '/preBuildProject',
+        component: () =>
+          import(/* webpackChunkName:'payfund'*/ '../pages/preproject/preBuildProject'),
+        meta: { requireAuth: true, type: 'page', name: '预立项' }
       },
     ]
   }, {
