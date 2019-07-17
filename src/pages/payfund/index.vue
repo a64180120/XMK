@@ -28,12 +28,24 @@
                    alt=""></div><!-- @click.stop="approvalDataS.openDialog=true"-->
             送审
           </div>
+          <div @click.stop="showAuditAdd('QXSS')"
+               class="handle">
+            <div class="topIcon"><img src="@/assets/images/sp.png"
+                                      alt=""></div><!-- @click.stop="approvalDataS.openDialog=true"-->
+            取消送审
+          </div>
           <div @click.stop="showAuditAdd('SC')"
                class="handle"
                style="width: 80px;">
             <div class="topIcon"><img src="@/assets/images/sc.png"
                    alt=""></div><!-- @click="creatPayItem()"-->
             生成支付单
+          </div>
+          <div @click.stop="showAuditAdd('ZF')"
+               class="handle">
+            <div class="topIcon"><img src="@/assets/images/sp.png"
+                                      alt=""></div><!-- @click.stop="approvalDataS.openDialog=true"-->
+            作废
           </div>
           <div @click.stop="printTables"
                class="handle"
@@ -53,20 +65,19 @@
       <div class="formArea"
            style="transition: all .3s linear;">
         <div class="btnArea">
+          <div style="height: 100%;width: 130px;display: inline-block;vertical-align: middle;line-height: 30px;">
+            <el-checkbox v-model="isMe">标记我的待办</el-checkbox>
+          </div>
+
           <i class="el-icon-d-arrow-left iicon"
-             style="position:absolute;left:0;top: .12rem;"
+             style="position:absolute;left:130px;top: .12rem;"
              @click.stop="unionStateScroll(false)"></i>
           <i class="el-icon-d-arrow-right iicon"
              style="position:absolute;right:275px;top: .12rem;"
              @click.stop="unionStateScroll(true)"></i>
-          <div class="scrollNav">
+          <div class="scrollNav" style="left: 160px;">
             <div>
               <ul>
-                <li>
-
-                    <el-checkbox v-model="isMe">标记我的待办</el-checkbox>
-
-                </li>
                 <li>
                   <span>审批状态：</span>
                   <el-select collapse-tags
@@ -333,7 +344,7 @@
           </el-select>
           <!--预算显示区域-->
           <el-card>
-            <div style="font-size: .15rem" @click="rightShow.show1=!rightShow.show1" :class="{showTil:rightShow.show1}">
+            <div style="font-size: .15rem;cursor: pointer;" @click="rightShow.show1=!rightShow.show1" :class="{showTil:rightShow.show1}">
               <span>预算支出</span>
               <i class="el-icon-arrow-up"></i>
             </div>
@@ -354,7 +365,7 @@
             </transition>
           </el-card>
           <el-card>
-            <div style="font-size: .15rem" @click="rightShow.show2=!rightShow.show2" :class="{showTil:rightShow.show2}">
+            <div style="font-size: .15rem;cursor: pointer;" @click="rightShow.show2=!rightShow.show2" :class="{showTil:rightShow.show2}">
               <span>对下补助项目</span>
               <i class="el-icon-arrow-up"></i>
             </div>
@@ -456,7 +467,7 @@
   import Applypro from "../../components/applyPro/applyPro";
   import goApproval from '../../components/applyPro/goApproval';
   import Auditfollow from "../../components/auditFollow/auditfollow";
-  import ApprovalDialog from "../payfundapproval/approvalDialog";
+  import ApprovalDialog from "../../components/applyPro/approval";
   import {mapState} from 'vuex'
   import {printTable}  from '@/api/upload'
     export default {
@@ -817,7 +828,7 @@
               this.bzType = res.Mst[0].PhId;
               this.getChartList(res.Mst[0].PhId);
             }
-
+            this.apartData.Mst.unshift({PhId:'',FProjName:'全部'})
           }).catch(err => {
             console.log(err);
           })
@@ -920,155 +931,243 @@
         showOrg () {
           this.orgType = true;
         },
-
-        //
-        showAuditAdd (val) {
-
-          switch (val) {
-            case 'add':
-              if (this.apartData.Mst.length == 0) {
-                this.$msgBox.error('当前部门无预算支出项目，无法发起资金拨付申报。')
-                return;
-              }
-              this.isAdd = true;
+        //申报
+        SB:function (){
+          if (this.apartData.Mst.length == 0) {
+            this.$msgBox.error('当前部门无预算支出项目，无法发起资金拨付申报。')
+            return;
+          }
+          this.isAdd = true;
+          this.$forceUpdate(this.isAdd);
+          this.applyproTitle = '新增申报';
+          this.applyproType = true;
+        },
+        //修改
+        Update: function (checkedList){
+          if (checkedList.length == 0) {
+            this.$msgBox.show({
+              content: '请选择要修改的单据。'
+            })
+          } else if (checkedList.length > 1) {
+            this.$msgBox.show({
+              content: '一次只允许修改一条单据。'
+            })
+          } else {
+            if (checkedList[0].FApproval != 0 && checkedList[0].FApproval != 2) {
+              this.$msgBox.show({
+                content: '只允许修改待送审及未通过项目。'
+              })
+            } else {
+              this.applyNum = checkedList[0].PhId + '';
+              this.isAdd = false;
               this.$forceUpdate(this.isAdd);
-              this.applyproTitle = '新增申报';
+              this.applyproTitle = '修改申报';
               this.applyproType = true;
-              break;
-            case 'update':
-              let upList = this.getCheckedList();
-              if (upList.length == 0) {
+            }
+          }
+        },
+        //删除
+        Delete: function (checkedList){
+          if (checkedList.length == 0) {
+            this.$msgBox.show({
+              content: '请选择要删除的单据。'
+            })
+          } else {
+            let phidList = [];
+            for (var i in checkedList) {
+              if (checkedList[i].FApproval != 0 && checkedList[i].FApproval != 2) {
                 this.$msgBox.show({
-                  content: '请选择要修改的数据。'
-                })
-              } else if (upList.length > 1) {
-                this.$msgBox.show({
-                  content: '一次只允许修改一条数据。'
-                })
-              } else {
-                if (upList[0].FApproval != 0 && upList[0].FApproval != 2) {
-                  this.$msgBox.show({
-                    content: '只允许修改待送审及未通过项目。'
-                  })
-                } else {
-                  this.applyNum = upList[0].PhId + '';
-                  this.isAdd = false;
-                  this.$forceUpdate(this.isAdd);
-                  this.applyproTitle = '修改申报';
-                  this.applyproType = true;
-                }
-              }
-
-              break;
-            case 'delete':
-              let delList = this.getCheckedList();
-              if (delList.length == 0) {
-                this.$msgBox.show({
-                  content: '请选择要删除的数据。'
-                })
-              } else {
-                let phidList = [];
-                for (var i in delList) {
-                  if (delList[i].FApproval != 0 && delList[i].FApproval != 2) {
-                    this.$msgBox.show({
-                      content: '审批中及审批通过的单据不允许删除。'
-                    });
-                    return;
-                  }
-                  phidList.push(delList[i].PhId);
-                }
-                let param = {
-                  fPhIdList: phidList
-                }
-                this.postAxios('GBK/PaymentMstApi/PostDelete', param).then(res => {
-                  if (res.Status == 'success') {
-                    this.$msgBox.show({
-                      content: '删除成功。'
-                    });
-                    this.getData();
-                    this.checkList = [];
-                  } else {
-                    this.$msgBox.show({
-                      content: '删除失败，请稍后重试。'
-                    })
-                  }
-
-                }).catch(err => {
-                  console.log(err);
-                })
-
-              }
-              break;
-            case 'SS':
-              //this.applyproTitle='修改申报';
-              let ssList = this.getCheckedList();
-              if (ssList.length == 0) {
-                this.$msgBox.show({
-                  content: '请选择要送审的数据。'
-                })
-              } else {
-                if (this.approvalDataS.subData.length == 0) {
-                  this.$confirm('当前部门未创建审批流，无法送审。是否直接生成支付单', '提示', {
-                    confirmButtonText: '确定',
-                    cancelBtnText: '取消',
-                    type: 'warning'
-                  }).then(() => {
-                    this.showAuditAdd('SC')
-                  }).catch(() => { })
-                } else {
-                  let data = [];
-                  for (var i in ssList) {
-                    if (ssList[i].FApproval != 0 && ssList[i].FApproval != 2) {
-                      this.$msgBox.show({
-                        content: '只允许送审待送审及未通过项目。'
-                      })
-                      return;
-                    } else {
-                      data.push(ssList[i].PhId)
-                    }
-                  }
-                  this.approvalDataS.openDialog = true;
-                  this.approvalDataS.data = data;
-
-                }
-              }
-              break;
-            case 'SC':
-              if (this.approvalDataS.subData.length != 0) {
-                this.$msgBox.show({
-                  content: '当前部门已创建审批流，请送审后在审批页面进行生成支付单操作。'
+                  content: '审批中及审批通过的单据不允许删除。'
                 });
                 return;
               }
-              let data = [], zfList = this.getCheckedList(), mCount = 0;
-              if (zfList.length == 0) {
+              phidList.push(checkedList[i].PhId);
+            }
+            let param = {
+              fPhIdList: phidList
+            }
+            this.postAxios('GBK/PaymentMstApi/PostDelete', param).then(res => {
+              if (res.Status == 'success') {
                 this.$msgBox.show({
-                  content: '请选择要生成支付单的单据（可多选）。'
+                  content: '删除成功。'
+                });
+                this.getData();
+                this.checkList = [];
+              } else {
+                this.$msgBox.show({
+                  content: '删除失败，请稍后重试。'
                 })
-                return;
               }
-              for (var i in zfList) {
-                if (zfList[i].FApproval != 0) {
-                  this.$msgBox.show({
-                    content: '只允许待送审项目生成支付单。'
-                  })
-                  return;
-                } else {
-                  mCount += Math.floor(zfList[i].FAmountTotal * 100);
-                  data.push(zfList[i].PhId)
-                }
-              }
-              this.$confirm('合计支付' + (mCount / 100) + '元，确定生成支付单？', '提示', {
+
+            }).catch(err => {
+              console.log(err);
+            })
+
+          }
+        },
+        //送审方法
+        SS:function(checkedList){
+          if (checkedList.length == 0) {
+            this.$msgBox.show({
+              content: '请选择要送审的单据。'
+            })
+          } else {
+            if (this.approvalDataS.subData.length == 0) {
+              this.$confirm('当前部门未创建审批流，无法送审。是否直接生成支付单', '提示', {
                 confirmButtonText: '确定',
                 cancelBtnText: '取消',
                 type: 'warning'
               }).then(() => {
-                this.postBill(data);
-              }).catch(() => {
-                this.approvalDataS.openDialog = false;
-                this.$emit('delete', { flag: true, type: 'applyBill' })
-              })
+                this.showAuditAdd('SC')
+              }).catch(() => { })
+            } else {
+              let data = [];
+              for (var i in checkedList) {
+                if (checkedList[i].FApproval != 0 && checkedList[i].FApproval != 2) {
+                  this.$msgBox.show({
+                    content: '只允许送审待送审及未通过项目。'
+                  })
+                  return;
+                } else {
+                  data.push(checkedList[i].PhId)
+                }
+              }
+              this.approvalDataS.openDialog = true;
+              this.approvalDataS.data = data;
 
+            }
+          }
+        },
+        //取消送审
+        QXSS: function(checkedList) {
+          console.log(checkedList);
+
+          if (checkedList.length == 0) {
+            this.$msgBox.show({
+              content: '请选择要取消送审的单据。'
+            })
+          } else {
+            let checkedListPhId = [];
+            checkedList.forEach((item, index, array) => {
+              if (item) {
+                checkedListPhId.push(item.PhId)
+              }
+            })
+            let param={
+              FBilltype:'0001',
+              RefbillPhidList: checkedListPhId
+            };
+            this.postAxios('GBK/GAppvalRecord/PostCancelAppvalRecord', param).then(res => {
+              if (res.Status == 'success') {
+                this.$msgBox.show({
+                  content: '取消送审成功。'
+                });
+                this.getData();
+                this.checkList = [];
+              } else {
+                this.$msgBox.show({
+                  content: '取消送审失败，请稍后重试。'
+                })
+              }
+            }).catch(err => {
+              console.log(err);
+            })
+          }
+        },
+        //生成支付单
+        SC: function(checkedList) {
+          if (this.approvalDataS.subData.length != 0) {
+            this.$msgBox.show({
+              content: '当前部门已创建审批流，请送审后在审批页面进行生成支付单操作。'
+            });
+            return;
+          }
+          let data = [], mCount = 0;
+          if (checkedList.length == 0) {
+            this.$msgBox.show({
+              content: '请选择要生成支付单的单据（可多选）。'
+            })
+            return;
+          }
+          for (var i in checkedList) {
+            if (checkedList[i].FApproval != 0) {
+              this.$msgBox.show({
+                content: '只允许待送审项目生成支付单。'
+              })
+              return;
+            } else {
+              mCount += Math.floor(checkedList[i].FAmountTotal * 100);
+              data.push(checkedList[i].PhId)
+            }
+          }
+          this.$confirm('合计支付' + (mCount / 100) + '元，确定生成支付单？', '提示', {
+            confirmButtonText: '确定',
+            cancelBtnText: '取消',
+            type: 'warning'
+          }).then(() => {
+            this.postBill(data);
+          }).catch(() => {
+            this.approvalDataS.openDialog = false;
+            this.$emit('delete', { flag: true, type: 'applyBill' })
+          })
+        },
+        //单据作废
+        ZF: function(checkedList) {
+          if (checkedList.length == 0) {
+            this.$msgBox.show({
+              content: '请选择要作废的单据。'
+            })
+          } else {
+            let checkedListPhId = [];
+            checkedList.forEach((item, index, array) => {
+              if (item) {
+                checkedListPhId.push(item.PhId)
+              }
+            })
+            let param={
+              fPhIdList: checkedListPhId
+            };
+            this.postAxios('GBK/PaymentMstApi/PostCancetPaymentList', param).then(res => {
+              if (res.Status == 'success') {
+                this.$msgBox.show({
+                  content: '单据作废成功。'
+                });
+                this.getData();
+                this.checkList = [];
+              } else {
+                this.$msgBox.show({
+                  content: res.Msg?res.Msg:'单据作废失败，请稍后重试。'
+                })
+              }
+            }).catch(err => {
+              console.log(err);
+            })
+          }
+        },
+        //
+        showAuditAdd (val) {
+          let checkedList = this.getCheckedList();
+          switch (val) {
+            case 'add':
+              this.SB();
+              break;
+            case 'update':
+              this.Update(checkedList);
+              break;
+            case 'delete':
+             this.Delete(checkedList);
+              break;
+            case 'SS':
+             this.SS(checkedList);
+              break;
+            case 'QXSS':
+              this.QXSS(checkedList);
+              break;
+            case 'SC':
+              this.SC(checkedList);
+              break;
+            case 'ZF':
+              this.ZF(checkedList);
               break;
             default:
               break;
@@ -1228,12 +1327,14 @@
   font-size: 0.12rem;
 }
   .rightPanel .el-icon-arrow-up{
-    transform: rotateZ(180deg);
+    transform: rotate(180deg);
     float: right;
     margin-top: 4px;
     transition: transform .3s linear;
     color: #C0C4CC;
-    padding-left: 5px;
+    position: absolute;
+    right: 20px;
+    cursor: pointer;
   }
   .rightPanel .showTil .el-icon-arrow-up{
     transform: rotatez(0deg);
