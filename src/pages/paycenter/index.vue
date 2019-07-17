@@ -344,6 +344,7 @@ export default {
   },
   data() {
     return {
+      aheight: 5,
       applyNum: '',
       auditMsg: [],
       showAuditfollow: false,
@@ -467,7 +468,9 @@ export default {
   },
   created() {},
   mounted() {
-    this.getData()
+    this.$route.query.phid
+      ? (this.RefbillCode = this.$route.query.phid)
+      : this.getData()
     this.updateTitle()
   },
   methods: {
