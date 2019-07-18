@@ -6,6 +6,7 @@
           <div class="top-btn">
             <slot name="btn-group">
               <el-button
+                v-if="applyBillType!=1"
                 class="btn"
                 size="mini"
                 style="padding: 0;"
@@ -13,6 +14,7 @@
                 :disabled="!(record.PaymentMst.FApproval==0&&approvalDataS.subData.length==0)"
               >生成支付单</el-button>
               <el-button
+                v-if="applyBillType!=1"
                 class="btn"
                 size="mini"
                 @click="postApply"
@@ -226,6 +228,7 @@ export default {
       type: String,
       default: ''
     },
+    applyBillType:Number,
     subData: {
       type: Array,
       default: function() {
