@@ -55,17 +55,40 @@ const staticRoute = [
         component: () =>
           import(/* webpackChunkName:'payfund'*/ '../pages/payfund/index'),
         meta: { requireAuth: true, type: 'page', name: '资金拨付' }
-      },{
+      }, {
+        path: '/projectManage',
+        component: () =>
+          import(/* webpackChunkName:'projectManage'*/ '../pages/projectManage'),
+        meta: { requireAuth: true, type: 'page', name: '项目管理' }
+      },
+      {
         path: '/preBuildProject',
         component: () =>
-          import(/* webpackChunkName:'payfund'*/ '../pages/preproject/preBuildProject'),
+          import(/* webpackChunkName:'preBuildProject'*/ '../pages/preproject/preBuildProject'),
         meta: { requireAuth: true, type: 'page', name: '预立项' }
+      }, {
+        path: '/projectList',
+        component: () =>
+          import(/* webpackChunkName:'projectList'*/ '../pages/preproject/projectList'),
+        meta: { requireAuth: true, type: 'page', name: '项目查询' }
+      }, {
+        path: '/yearreport',
+        component: () =>
+          import(/* webpackChunkName:'yearreport'*/ '../pages/budget/report'),
+        meta: { requireAuth: true, type: 'page', name: '年初申报' }
+      }, {
+        path: '/progresscontrol',
+        component: () =>
+          import(/* webpackChunkName:'progresscontrol'*/ '../pages/budget/progresscontrol'),
+        meta: { requireAuth: true, type: 'page', name: '进度控制' }
       },
+
+
     ]
   }, {
     path: '/setting',
     component: () => import(/* webpackChunkName:'systemsetting'*/ '../pages/systemsetting'),
-    meta: { keep: true },
+    meta: { keep: true, type: 'page', name: '系统设置' },
     children: [
       {
         path: '',
@@ -78,7 +101,7 @@ const staticRoute = [
         path: 'audit',
         component: () =>
           import(/* webpackChunkName:'systemaudit'*/ '../pages/systemsetting/auditManage/audit'),
-        meta: { requireAuth: true, type: 'page', name: '审核工作流' }
+        meta: { requireAuth: true, type: 'page', name: '审批流管理' }
       },
       {
         path: 'post',
@@ -105,7 +128,8 @@ const staticRoute = [
         meta: { requireAuth: true, type: 'page', name: '支付口令设置' }
       },
     ]
-  }
+  },
+
 
 ]
 

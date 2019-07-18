@@ -4,6 +4,7 @@
       <el-row :gutter="10" style="margin-bottom: 20px">
         <el-col :span="24">
           <div class="top-btn">
+
             <el-button :disabled="PaymentXmDtl.length==0" class="btn" size="mini" @click="save(0)">保存</el-button>
             <el-button :disabled="PaymentXmDtl.length==0" class="btn" size="mini" @click="save(1)" style="padding: 0">保存并送审</el-button>
             <el-button class="btn" size="mini" @click="add">增加项目</el-button>
@@ -11,9 +12,9 @@
           </div>
         </el-col>
       </el-row>
-      <el-row :gutter="20">
+      <el-row :gutter="20"  style="position: relative;height: 225px;">
          <el-col :span="24">
-           <el-card class="payText">
+           <el-card class="payText" style="position: absolute;z-index: 99;">
              <!--<div slot="header" style="padding: 0 10px;text-align: left;background-color: transparent;border: 1px solid #9acefb">
               <span>
                   基本信息
@@ -60,9 +61,14 @@
            </el-card>
          </el-col>
       </el-row>
-      <el-row class="content" :gutter="10">
+      <div  v-if="PaymentXmDtl.length>0" class="copyPanle">
+        <div> <el-checkbox v-model="lineCopy">复制行</el-checkbox></div>
+      </div>
+
+
+      <el-row class="content" :gutter="10" style="padding-top: 5px">
         <el-col :span="24" style="text-align: left">
-          <el-card class="payText" v-for="(item,pindex) in PaymentXmDtl">
+          <el-card class="payText" v-for="(item,pindex) in PaymentXmDtl" >
             <div slot="header" style="padding: 0 10px;text-align: left">
               <span>
                  <el-checkbox v-model="xmCheckList[pindex]"></el-checkbox>
@@ -84,7 +90,7 @@
                 <span>项目名称：</span>
                 <span>
                   <el-select size="small" v-model="item.PaymentXm.XmProjcode" @change="changePro(pindex)">
-                    <el-option v-for="pro in prodata.Mst"
+                    <el-option v-for="(pro,index) in prodata.Mst" v-if="index>1 "
                                :label="pro.FProjName"
                                :key="pro.FProjCode"
                                :value="pro.FProjCode"
@@ -264,6 +270,7 @@
     },
     data(){
       return {
+        lineCopy:false,//行复制，选中时，新增行可把数据带下去
         len:0,//输入长度
         uploadVis:false,//文件上传弹窗
 
@@ -373,6 +380,7 @@
       for(var i in this.prodata.Mst){
         this.prodata.Mst[i].checked=false;
       }
+
       if(!this.isAdd){
         this.getApply();
       }else{
@@ -597,8 +605,17 @@
       delPro(index){
         let ds=index;
         if(typeof ds=="number"){
-          this.PaymentXmDtl.splice(ds,1);
-          this.xmDisable()
+          this.$confirm('确认删除项目?', '提示', {
+            confirmButtonText: '确定',
+            cancelBtnText: '取消',
+            type: 'warning'
+          }).then(() => {
+            this.PaymentXmDtl.splice(ds,1);
+            this.xmDisable()
+            this.$msgBox.show({
+              content: '删除成功。'
+            })
+          }).catch(() => { })
         }else{
           let delList=[];
           for(var i in this.xmCheckList){
@@ -611,19 +628,25 @@
               content: '请选择要删除的项目。'
             })
           }else{
-            for(var i=delList.length-1;i>=0;i--){
-              this.PaymentXmDtl.splice(delList[i],1);
-            }
-            for(var i in this.xmCheckList){
-              this.xmCheckList[i]=false;
-            }
-            this.xmCheckList.splice(this.xmCheckList.length-delList.length,this.xmCheckList.length-delList.length);
-            this.$msgBox.show({
-              content: '删除成功。',
-              fn:() => {
-                this.xmDisable()
+            this.$confirm('确认删除项目?', '提示', {
+              confirmButtonText: '确定',
+              cancelBtnText: '取消',
+              type: 'warning'
+            }).then(() => {
+              for(var i=delList.length-1;i>=0;i--){
+                this.PaymentXmDtl.splice(delList[i],1);
               }
-            })
+              for(var i in this.xmCheckList){
+                this.xmCheckList[i]=false;
+              }
+              this.xmCheckList.splice(this.xmCheckList.length-delList.length,this.xmCheckList.length-delList.length);
+              this.$msgBox.show({
+                content: '删除成功。',
+                fn:() => {
+                  this.xmDisable()
+                }
+              })
+            }).catch(() => { })
           }
 
         }
@@ -643,7 +666,15 @@
           FPayment:'', //(支付状态：0-待支付 1-支付异常  9-支付成功)
           FPaymentdate:'' //（支付日期）
         };
+        if(this.lineCopy){
+          dtl=JSON.parse(JSON.stringify(this.PaymentXmDtl[pindex].PaymentDtls[index]));
+        }
         this.PaymentXmDtl[pindex].PaymentDtls.splice(index+1,0,dtl);
+        if(this.lineCopy){
+          this.$nextTick( () => {
+            this.moneyChange(pindex,Number(index)+1);
+          } )
+        }
         if(this.prodataList.length==1){
           this.$nextTick(()=>{
             this.choosedProject=this.prodataList[0];
@@ -914,6 +945,47 @@
 </script>
 
 <style scoped lang="scss">
+  @keyframes fb {
+    0%,25%,50%,75%,100%{
+      transform-origin: 0% 0% ;
+    }
+    0% {
+      transform: rotateX(0deg) ;
+    }
+    25% {
+      transform: rotateX(20deg) ;
+    }
+    50% {
+      transform: rotateX(0deg) ;
+    }
+    75% {
+      transform: rotateX(-15deg) ;
+    }
+    100% {
+      transform: rotateX(0deg) ;
+    }
+  }
+  .copyPanle{
+    position: relative;
+    margin-top: -10px;
+    text-align: right;
+    background-image: url("../../assets/images/til.jpg");
+    background-position: right;
+    background-repeat: no-repeat;
+    background-size: contain;
+    height: 50px;
+    /*animation: 4s fb linear  infinite;*/
+    >div{
+      display: inline-block;
+      margin-top: 17px;
+      height: 30px;
+      line-height: 30px;
+      background-color: #ffffff42;
+      padding: 0 16px;
+      color: #fff;
+
+    }
+  }
   thead td{
     text-align: center;
   }

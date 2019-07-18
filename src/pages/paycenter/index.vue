@@ -35,6 +35,14 @@
           <img src="../../assets/images/ss.png" alt />
           <div>送审</div>
         </div>
+        <div class="nav handle" @click="payNav('cancelApproval')">
+          <img src="@/assets/images/ss_d.png" alt />
+          <div>取消送审</div>
+        </div>
+        <div class="nav handle" @click="payNav('fiveBill')">
+          <img src="@/assets/images/zf.png" alt />
+          <div>作废</div>
+        </div>
         <div @click.stop="printTables" class="nav handle">
           <img src="@/assets/images/dy.png" style="width:28px" alt />
           <!-- @click="creatPayItem()"-->
@@ -46,9 +54,14 @@
     <div class="container">
       <div class="formArea">
         <div class="btnArea">
+          <div
+            style="height: 100%;width: 130px;display: inline-block;vertical-align: middle;line-height: 30px;"
+          >
+            <el-checkbox v-model="isMe">标记我的待办</el-checkbox>
+          </div>
           <i
             class="el-icon-d-arrow-left iicon"
-            style="position:absolute;left:0;top: .12rem;"
+            style="position:absolute;left:130px;top: .12rem;"
             @click.stop="unionStateScroll(false)"
           ></i>
           <i
@@ -56,7 +69,7 @@
             style="position:absolute;right:275px;top: .12rem;"
             @click.stop="unionStateScroll(true)"
           ></i>
-          <div class="scrollNav">
+          <div class="scrollNav" style="left: 160px;">
             <div>
               <ul>
                 <li>
@@ -185,7 +198,7 @@
             </colgroup>
             <tbody>
               <tr
-                :class="{trActive:item.Mst.checked}"
+                :class="{trActive:item.Mst.checked,deleteRow:item.Mst.FDelete}"
                 v-for="(item,index) in tableData"
                 :key="index"
               >
@@ -227,12 +240,25 @@
                     <p>{{item.Mst.NgInsertDt.replace('T',' ')}}</p>
                   </el-tooltip>
                 </td>
-                <td class="atype" @click="openAuditfollow(item.Mst.PhId)">
+                <td
+                  class="atype"
+                  style="position: relative;overflow: visible"
+                  @click="openAuditfollow(item.Mst.PhId)"
+                >
                   <div v-if="item.Mst.FApproval==0">待送审</div>
                   <div v-else-if="item.Mst.FApproval==1">审批中</div>
                   <div v-else-if="item.Mst.FApproval==2">未通过</div>
                   <div v-else-if="item.Mst.FApproval==9">审批通过</div>
                   <div v-else>————</div>
+                  <div
+                    v-if="isMe&&item.Mst.IsApprovalNow"
+                    style="color: red;"
+                    class="iconMsg"
+                    @click.stop="approvalSubmit(item)"
+                  >
+                    <i class="el-icon-chat-round"></i>
+                    <span>审批</span>
+                  </div>
                 </td>
                 <td>
                   <div v-if="item.Mst.FState==0">待支付</div>
@@ -287,6 +313,15 @@
     </div>
     <!-- 支付单查看 -->
     <pay-list v-if="payListData.openDialog" :data="payListData"></pay-list>
+    <!-- 当前页面审批 -->
+    <approval-dialog
+      ref="approvalDialog"
+      :title="appDialog.title"
+      :btn-group="appDialog.btnGroup"
+      :rowData="myapprovalData"
+      BType="002"
+      @refresh="getData"
+    ></approval-dialog>
     <!-- 合并支付 -->
     <merge-pay v-if="mergePayData.openDialog" :data="mergePayData"></merge-pay>
     <!-- 异常处理 -->
@@ -325,8 +360,10 @@ import payList from './payList.vue'
 import mergePay from './mergePay.vue'
 import payErrorHandle from './payErrorHandle.vue'
 import goApproval from './goApproval.vue'
+import ApprovalDialog from '../../components/applyPro/approval'
 import { mapState } from 'vuex'
 import { printTable } from '@/api/upload'
+import { PostCancelAppvalRecord, PostCancetPaymentList } from '@/api/paycenter'
 export default {
   name: 'pay',
   components: {
@@ -337,14 +374,17 @@ export default {
     goApproval,
     searchInput,
     auditfollow,
-    applyBill
+    applyBill,
+    ApprovalDialog
   },
+
   provide() {
     return { refreshIndexData: this.getData }
   },
   data() {
     return {
-      aheight: 5,
+      myapprovalData: [],
+      isMe: false,
       applyNum: '',
       auditMsg: [],
       showAuditfollow: false,
@@ -364,6 +404,13 @@ export default {
       approvalData: {
         openDialog: false,
         data: {}
+      },
+      appDialog: {
+        title: '',
+        btnGroup: {
+          cancelName: '取消',
+          onfirmName: '确认'
+        }
       },
       radio: '',
       itemType: '',
@@ -468,21 +515,32 @@ export default {
   },
   created() {},
   mounted() {
-    this.$route.query.phid
-      ? (this.RefbillCode = this.$route.query.phid)
+    console.log(this.$route)
+    this.$route.params.phid
+      ? (this.RefbillCode = this.$route.params.phid)
       : this.getData()
     this.updateTitle()
   },
   methods: {
+    // 当前页面审批
+    approvalSubmit: function(val) {
+      console.log(val)
+      this.myapprovalData = [val.Mst]
+      this.$nextTick(() => {
+        this.$refs.approvalDialog.changeDialog()
+      })
+    },
     //修改title
     updateTitle() {
       let title = document.getElementsByTagName('title')[0]
       title.innerText = '支付中心在线工作平台'
     },
+    // 刷新页面，并将页码为1
     rePageGetData() {
       this.currentPage = 1
       this.getData()
     },
+    // 打印
     printTables() {
       let vm = this
       printTable(vm)
@@ -617,14 +675,19 @@ export default {
       deleteBlank(query)
       console.log(query)
       // this.getAxios('GGK/GKPaymentMstApi/GetPaymentList', {
-      this.getAxios('GGK/GKPaymentMstApi/GetPaymentList4Zjbf', {
-        queryfilter: JSON.stringify(query),
-        PageIndex: this.currentPage - 1, //当前第几页，从0开始
-        PageSize: this.pageSize, //每页显示行数
-        uid: this.userid || 488181024000001, //用户id
-        orgid: this.orgid, //组织id
-        ryear: this.year || '2019'
-      })
+      this.getAxios(
+        this.isMe
+          ? 'GGK/GKPaymentMstApi/GetPaymentList4Zjbf2'
+          : 'GGK/GKPaymentMstApi/GetPaymentList4Zjbf',
+        {
+          queryfilter: JSON.stringify(query),
+          PageIndex: this.currentPage - 1, //当前第几页，从0开始
+          PageSize: this.pageSize, //每页显示行数
+          uid: this.userid || 488181024000001, //用户id
+          orgid: this.orgid, //组织id
+          ryear: this.year || '2019'
+        }
+      )
         .then(res => {
           console.log(res)
           if (res.Status == 'error') {
@@ -670,10 +733,7 @@ export default {
         console.log(handleitem)
         if (handleitem.length < 1) {
           this.$msgBox.error({
-            content: '请至少选择一条数据进行操作。',
-            fn: () => {
-              console.log('test fn')
-            }
+            content: '请至少选择一条数据进行操作。'
           })
           return
         }
@@ -681,22 +741,21 @@ export default {
           case 'payListData':
             if (checkedCount != 1) {
               this.$msgBox.error({
-                content: '请选择一条数据进行维护。',
-                fn: () => {}
+                content: '请选择一条数据进行维护。'
               })
               return
+            } else if (handleitem[0].Mst.FDelete) {
+              this.$msgBox.error('该单据已作废，无法修改！')
+              return
             } else if (
-              handleitem[0].Mst.FApproval == 0 ||
-              handleitem[0].Mst.FApproval == 2
+              handleitem[0].Mst.FApproval == 1 ||
+              handleitem[0].Mst.FApproval == 9
             ) {
-              this.payListData.itemType = 'notApprove'
-            } else {
               this.$msgBox.error({
                 content:
                   handleitem[0].Mst.FApproval == 1
                     ? '单据正在审批中。'
-                    : '单据已经审批通过。',
-                fn: () => {}
+                    : '单据已经审批通过。'
               })
               return
             }
@@ -709,8 +768,7 @@ export default {
             ) {
               this.$msgBox.error({
                 content:
-                  "只有审批状态为“<span class='dangerText'>审批通过</span>”，支付状态为“<span class='dangerText'>待支付</span>”的单据，才可以使用【合并支付】。",
-                fn: () => {}
+                  "只有审批状态为“<span class='dangerText'>审批通过</span>”，支付状态为“<span class='dangerText'>待支付</span>”的单据，才可以使用【合并支付】。"
               })
               return
             }
@@ -741,12 +799,16 @@ export default {
             }
             break
           case 'approvalData':
+            if (handleitem.some(i => i.Mst.FDelete)) {
+              this.$msgBox.error('已作废单据无法送审！')
+              return
+            }
             if (
               !handleitem.every(item => {
                 return item.Mst.FApproval == 0 || item.Mst.FApproval == 2
               })
             ) {
-              this.$msgBox.error('只能对待送审的单据进行处理。')
+              this.$msgBox.error('只能对待送审的单据进行送审。')
               return
             }
             if (
@@ -762,6 +824,76 @@ export default {
               this.$msgBox.error('请先维护收付款信息！')
               return
             }
+
+            break
+          case 'cancelApproval':
+            if (!handleitem.every(i => i.Mst.FApproval == 1)) {
+              this.$msgBox.error('只能对审批中单据取消送审！')
+              return
+            }
+            this.$confirm('确定要取消送审所选支付单', '提示', {
+              type: 'warning'
+            })
+              .then(() => {
+                PostCancelAppvalRecord({
+                  FBilltype: '002',
+                  RefbillPhidList: (item ? [item] : handleitem).map(
+                    i => i.Mst.PhId
+                  )
+                })
+                  .then(res => {
+                    if (res.Status == 'error') {
+                      this.$msgBox.error(res.Msg)
+                      return
+                    }
+                    this.$msgBox.show('取消送审成功!')
+                    this.getData()
+                    console.log(res)
+                  })
+                  .catch(err => {
+                    this.$msgBox.error(err.message || '取消送审失败！')
+                    return
+                  })
+              })
+              .catch(err => {
+                console.log(err)
+              })
+            return
+            break
+          case 'fiveBill':
+            if (
+              !handleitem.every(
+                i => i.Mst.FApproval == 0 || i.Mst.FApproval == 2
+              )
+            ) {
+              this.$msgBox.error('只能对待送审和未送审的单据进行作废！')
+              return
+            } else if (handleitem.some(i => i.Mst.FDelete)) {
+              this.$msgBox.error('存在已作废单据，请检查！')
+              return
+            }
+            this.$confirm('确定要作废所选支付单？', '提示', { type: 'warning' })
+              .then(() => {
+                PostCancetPaymentList({
+                  fPhIdList: (item ? [item] : handleitem).map(i => i.Mst.PhId)
+                })
+                  .then(res => {
+                    if (res.Status == 'error') {
+                      this.$msgBox.error(res.Msg)
+                      return
+                    }
+                    this.$msgBox.show('单据作废成功!')
+                    console.log(res)
+                  })
+                  .catch(err => {
+                    this.$msgBox.error(err.message || '作废单据失败！')
+                    return
+                  })
+              })
+              .catch(err => {
+                console.log(err)
+              })
+            return
             break
         }
       }
@@ -833,6 +965,9 @@ export default {
     },
     RefbillCode() {
       this.rePageGetData()
+    },
+    isMe() {
+      this.rePageGetData()
     }
   },
   beforeDestroy() {
@@ -892,6 +1027,29 @@ export default {
   }
   td.refbillitem:hover .refrest-same-follow {
     display: inline-block;
+  }
+  .iconMsg {
+    position: absolute;
+    right: 5px;
+    width: 30px;
+    height: 30px;
+    font-size: 0.12rem;
+    top: -4px;
+    background-color: #fff;
+    cursor: pointer;
+    > i {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      font-size: 0.35rem;
+      top: -10px;
+      right: 2px;
+    }
+  }
+  .deleteRow,
+  .deleteRow .atype {
+    cursor: not-allowed;
+    color: #ccc !important;
   }
 }
 </style>
