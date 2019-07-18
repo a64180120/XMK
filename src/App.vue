@@ -7,16 +7,16 @@
 
 <script>
 import { baseURL } from "@/utils/config.js";
-import  {organizeTree} from '@/api/organize'
+import { organizeTree } from '@/api/organize'
 import { mapState } from "vuex";
-import {GetLogininfo} from '@/api/login'
+import { GetLogininfo } from '@/api/login'
 export default {
   name: "App",
-  beforeRouteEnter(to, from, next) {
+  beforeRouteEnter (to, from, next) {
     console.log(to, from, next);
     next();
   },
-  data() {
+  data () {
     return {
       isLoading: ""
     };
@@ -27,16 +27,16 @@ export default {
       auditfollow: state => state.auditfollow.auditfollow
     })
   },
-   
-  created() {
-   
+
+  created () {
+
   },
   // TODO: 全局状态加载及变更。请根据实际情况改写
-  beforeMount() {
+  beforeMount () {
 
   },
   // 初次加载时，可通过接口获取用户的主题信息，或者通过按钮触发，或者直接加载默认主题
-  mounted() {
+  mounted () {
     this.getData();
     this.getOrganize();
     this.$nextTick(() => {
@@ -44,67 +44,67 @@ export default {
     });
     let that = this;
     let _body = document.querySelector('body')
-    _body.addEventListener("click",this.closeAuditFollow)
+    _body.addEventListener("click", this.closeAuditFollow)
   },
   methods: {
-    getOrganize(){ //获取组织树 
-          let data = {
-            UserId:this.$store.state.user.userid
-          };     
-          organizeTree(data).then(res=>{
-						console.log(res.Record)
-              if(res.Status=='error'){
-                  this.$msgBox.show(res.Msg);
-              }else{
-                  this.$store.commit('user/setOrglist',res.Record);
-                  if(!this.$store.state.user.orgcode){
-                    this.$store.commit('user/setOrganize',res.Record[0]);
-                  }
-                  if(!this.$store.state.user.year){
-                    this.$store.commit('user/setYear',new Date().getFullYear());
-                  }  
-              }
-          }).catch(err=>{
-                this.$msgBox.show('获取组织列表失败!');
-          })
-      },
-  
-    
+    getOrganize () { //获取组织树 
+      let data = {
+        UserId: this.$store.state.user.userid
+      };
+      organizeTree(data).then(res => {
+
+        if (res.Status == 'error') {
+          this.$msgBox.show(res.Msg);
+        } else {
+          this.$store.commit('user/setOrglist', JSON.parse(JSON.stringify(res.Record)));
+
+          if (!this.$store.state.user.orgcode) {
+            this.$store.commit('user/setOrganize', res.Record[0]);
+          }
+          if (!this.$store.state.user.year) {
+            this.$store.commit('user/setYear', new Date().getFullYear());
+          }
+        }
+      }).catch(err => {
+        console.log(err)
+        this.$msgBox.show('获取组织列表失败!');
+      })
+    },
+
+
     //完整信息
-    getData(){
-      let param={
-        uid:this.$store.state.user.userid,
-        orgid:this.$store.state.user.orgid,
+    getData () {
+      let param = {
+        uid: this.$store.state.user.userid,
+        orgid: this.$store.state.user.orgid,
       }
       GetLogininfo(param).then(res => {
-        if(res.Status=='error'){
+        if (res.Status == 'error') {
           this.$msgBox.error(res.Msg)
-        }else{
-          this.$store.commit('user/setLoginInfo',res)
+        } else {
+          this.$store.commit('user/setLoginInfo', res)
         }
-        
+
       }).catch(err => {
-          this.$msgBox.show('获取用户组织数据失败!');
+        this.$msgBox.show('获取用户组织数据失败!');
       })
     },
     //点击其他地方关闭审批流程
-    closeAuditFollow(){
-      this.$store.commit('setAuditfollow',true)
+    closeAuditFollow () {
+      this.$store.commit('setAuditfollow', true)
     }
-  },  
+  },
 };
 </script>
 
 <style lang="scss">
-
-
 #app {
-  font-family:"PingFang", "songti", "Avenir", Helvetica, Arial, sans-serif;
+  font-family: "PingFang", "songti", "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
   overflow: auto;
-  height:100%;
+  height: 100%;
 }
 </style>
