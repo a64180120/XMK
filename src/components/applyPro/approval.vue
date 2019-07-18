@@ -241,18 +241,7 @@ export default {
       }
       //同意数据 单条
       let formData = new FormData()
-      console.log(this.textare)
-      let data = {
-        PhId: this.rowData[0].PhId, //单据ID
-        ProcPhid: this.rowData[0].ProcPhid, //审批流程id
-        PostPhid: this.rowData[0].PostPhid, //审批岗位id
-        RefbillPhid: this.rowData[0].RefbillPhid, //单据id
-        FBilltype: this.BType, //单据类型
-        FApproval: this.isAgree, //审批意见(0- 未审批 1-待审批 2- 未通过 9-审批通过)
-        NextOperators: '', //下一岗位审批人id的集合
-        FOpinion: this.textare //审批备注
-      }
-      formData.append('PhId', this.rowData[0].PhId)
+      formData.append('PhId', this.rowData[0].AppvalPhid)
       formData.append('ProcPhid', this.rowData[0].ProcPhid)
       formData.append('PostPhid', this.rowData[0].PostPhid)
       formData.append('RefbillPhid', this.rowData[0].RefbillPhid)
@@ -330,7 +319,7 @@ export default {
         RefbillPhid: this.rowData[0].RefbillPhid
       }
       let that = this
-      this.postAxios('/GAppvalRecord/PostAddPayMent', data)
+      this.postAxios('GSP/GAppvalRecord/PostAddPayMent', data)
         .then(res => {
           if (res && res.Status == 'success') {
             this.$msgBox.show({
