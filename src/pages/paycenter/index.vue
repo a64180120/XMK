@@ -36,13 +36,13 @@
           <div>送审</div>
         </div>
         <div class="nav handle" @click="payNav('cancelApproval')">
-          <img src="../../assets/images/ss.png" alt />
+          <img src="@/assets/images/ss_d.png" alt />
           <div>取消送审</div>
         </div>
-        <!-- <div class="nav handle" @click="payNav('fiveBill')">
-          <img src="../../assets/images/ss.png" alt />
+        <div class="nav handle" @click="payNav('fiveBill')">
+          <img src="@/assets/images/zf.png" alt />
           <div>作废</div>
-        </div>-->
+        </div>
         <div @click.stop="printTables" class="nav handle">
           <img src="@/assets/images/dy.png" style="width:28px" alt />
           <!-- @click="creatPayItem()"-->
@@ -198,7 +198,7 @@
             </colgroup>
             <tbody>
               <tr
-                :class="{trActive:item.Mst.checked}"
+                :class="{trActive:item.Mst.checked,deleteRow:item.Mst.FDelete}"
                 v-for="(item,index) in tableData"
                 :key="index"
               >
@@ -733,10 +733,7 @@ export default {
         console.log(handleitem)
         if (handleitem.length < 1) {
           this.$msgBox.error({
-            content: '请至少选择一条数据进行操作。',
-            fn: () => {
-              console.log('test fn')
-            }
+            content: '请至少选择一条数据进行操作。'
           })
           return
         }
@@ -744,22 +741,21 @@ export default {
           case 'payListData':
             if (checkedCount != 1) {
               this.$msgBox.error({
-                content: '请选择一条数据进行维护。',
-                fn: () => {}
+                content: '请选择一条数据进行维护。'
               })
               return
+            } else if (handleitem[0].Mst.FDelete) {
+              this.$msgBox.error('该单据已作废，无法修改！')
+              return
             } else if (
-              handleitem[0].Mst.FApproval == 0 ||
-              handleitem[0].Mst.FApproval == 2
+              handleitem[0].Mst.FApproval == 1 ||
+              handleitem[0].Mst.FApproval == 9
             ) {
-              this.payListData.itemType = 'notApprove'
-            } else {
               this.$msgBox.error({
                 content:
                   handleitem[0].Mst.FApproval == 1
                     ? '单据正在审批中。'
-                    : '单据已经审批通过。',
-                fn: () => {}
+                    : '单据已经审批通过。'
               })
               return
             }
@@ -772,8 +768,7 @@ export default {
             ) {
               this.$msgBox.error({
                 content:
-                  "只有审批状态为“<span class='dangerText'>审批通过</span>”，支付状态为“<span class='dangerText'>待支付</span>”的单据，才可以使用【合并支付】。",
-                fn: () => {}
+                  "只有审批状态为“<span class='dangerText'>审批通过</span>”，支付状态为“<span class='dangerText'>待支付</span>”的单据，才可以使用【合并支付】。"
               })
               return
             }
@@ -804,12 +799,16 @@ export default {
             }
             break
           case 'approvalData':
+            if (handleitem.some(i => i.Mst.FDelete)) {
+              this.$msgBox.error('已作废单据无法送审！')
+              return
+            }
             if (
               !handleitem.every(item => {
                 return item.Mst.FApproval == 0 || item.Mst.FApproval == 2
               })
             ) {
-              this.$msgBox.error('只能对待送审的单据进行处理。')
+              this.$msgBox.error('只能对待送审的单据进行送审。')
               return
             }
             if (
@@ -825,9 +824,16 @@ export default {
               this.$msgBox.error('请先维护收付款信息！')
               return
             }
+
             break
           case 'cancelApproval':
-            this.$confirm('是否要取消送审', '提示')
+            if (!handleitem.every(i => i.Mst.FApproval == 1)) {
+              this.$msgBox.error('只能对审批中单据取消送审！')
+              return
+            }
+            this.$confirm('确定要取消送审所选支付单', '提示', {
+              type: 'warning'
+            })
               .then(() => {
                 PostCancelAppvalRecord({
                   FBilltype: '002',
@@ -849,11 +855,24 @@ export default {
                     return
                   })
               })
-              .catch()
+              .catch(err => {
+                console.log(err)
+              })
             return
             break
           case 'fiveBill':
-            this.$confirm('是否要作废所选单据', '提示')
+            if (
+              !handleitem.every(
+                i => i.Mst.FApproval == 0 || i.Mst.FApproval == 2
+              )
+            ) {
+              this.$msgBox.error('只能对待送审和未送审的单据进行作废！')
+              return
+            } else if (handleitem.some(i => i.Mst.FDelete)) {
+              this.$msgBox.error('存在已作废单据，请检查！')
+              return
+            }
+            this.$confirm('确定要作废所选支付单？', '提示', { type: 'warning' })
               .then(() => {
                 PostCancetPaymentList({
                   fPhIdList: (item ? [item] : handleitem).map(i => i.Mst.PhId)
@@ -871,7 +890,9 @@ export default {
                     return
                   })
               })
-              .catch()
+              .catch(err => {
+                console.log(err)
+              })
             return
             break
         }
@@ -1024,6 +1045,11 @@ export default {
       top: -10px;
       right: 2px;
     }
+  }
+  .deleteRow,
+  .deleteRow .atype {
+    cursor: not-allowed;
+    color: #ccc !important;
   }
 }
 </style>
