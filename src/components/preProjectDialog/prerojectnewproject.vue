@@ -24,7 +24,7 @@
           </li>
           <li>
             <span>申报部门：</span>
-            <el-select size="small" placeholder="必选">
+            <el-select v-model="inp" size="small" placeholder="必选">
               <el-option label="123" value="123"></el-option>
               <el-option label="456" value="456"></el-option>
               <el-option label="1123" value="1123"></el-option>
@@ -89,7 +89,13 @@
                     <el-input v-model="item.name" placeholder />
                   </li>
                   <li>
-                    <el-input class="money" v-model="item.money" placeholder />
+                    <el-input
+                      @keyup.native="clearNum(index,$event)"
+                      @blur="filterMoney(item)"
+                      class="money"
+                      v-model="item.money"
+                      placeholder
+                    />
                   </li>
                   <li>
                     <el-input v-model="item.get" placeholder />
@@ -151,6 +157,52 @@ export default {
     },
     del(index) {
       this.budgetdetail.splice(index, 1)
+    },
+    clearNum(index, e) {
+      console.log(index, obj)
+      let obj = e.target
+      obj.value = obj.value.replace(/[^\d.]/g, '') //清除“数字”和“.”以外的字符
+      obj.value = obj.value.replace(/\.{2,}/g, '.') //只保留第一个. 清除多余的
+      obj.value = obj.value
+        .replace('.', '$#$')
+        .replace(/\./g, '')
+        .replace('$#$', '.')
+      obj.value = obj.value.replace(/^(\-)*(\d+)\.(\d\d).*$/, '$1$2.$3') //只能输入两个小数
+      if (obj.value.indexOf('.') < 0 && obj.value != '') {
+        //以上已经过滤，此处控制的是如果没有小数点，首位不能为类似于 01、02的金额
+        obj.value = parseFloat(obj.value)
+      }
+    },
+    filterMoney(item) {
+      console.log(value)
+      item.money = (function(
+        value = item.money,
+        decimals = 2,
+        decPoint = '.',
+        thousandsSep = ','
+      ) {
+        if (!value) return '0.00'
+        value = (value + '').replace(/[^0-9+-Ee.]/g, '')
+        let n = !isFinite(+value) ? 0 : +value
+        let prec = !isFinite(+decimals) ? 0 : Math.abs(decimals)
+        let sep = typeof thousandsSep === 'undefined' ? ',' : thousandsSep
+        let dec = typeof decPoint === 'undefined' ? '.' : decPoint
+        let s = ''
+
+        let toFixedFix = function(n, prec) {
+          return '' + n.toFixed(2)
+        }
+        s = (prec ? toFixedFix(n, prec) : '' + n).split('.')
+        let re = /(-?\d+)(\d{3})/
+        while (re.test(s[0])) {
+          s[0] = s[0].replace(re, '$1' + sep + '$2')
+        }
+        if ((s[1] || '').length < prec) {
+          s[1] = s[1] || ''
+          s[1] += new Array(prec - s[1].length + 1).join('0')
+        }
+        return s.join(dec)
+      })()
     }
   }
 }

@@ -39,10 +39,10 @@
           <img src="../../assets/images/ss.png" alt />
           <div>取消送审</div>
         </div>
-        <div class="nav handle" @click="payNav('fiveBill')">
+        <!-- <div class="nav handle" @click="payNav('fiveBill')">
           <img src="../../assets/images/ss.png" alt />
           <div>作废</div>
-        </div>
+        </div>-->
         <div @click.stop="printTables" class="nav handle">
           <img src="@/assets/images/dy.png" style="width:28px" alt />
           <!-- @click="creatPayItem()"-->
