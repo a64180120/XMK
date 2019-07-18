@@ -276,7 +276,7 @@ fPhIdList：（申请单主键集合）
 // 单据作废
 export function PostCancetPaymentList(param) {
   return Vue.prototype.postAxios(
-    'GGk/PaymentMstApi/PostCancetPaymentList',
+    'GGk/GKPaymentMstApi/PostCancetGkPaymentList',
     param
   )
 }

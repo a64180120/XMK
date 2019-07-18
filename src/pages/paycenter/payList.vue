@@ -30,7 +30,7 @@
               <el-button class="btn" size="mini" @click="save('payErrorHandleData')">异常处理</el-button>
             </template>
             <template
-              v-if="(detail.Mst.FApproval == 0||detail.Mst.FApproval == 2)&&menubutton.paycenter_maintain=='True'"
+              v-if="!detail.Mst.FDelete&&(detail.Mst.FApproval == 0||detail.Mst.FApproval == 2)&&menubutton.paycenter_maintain=='True'"
             >
               <el-button class="btn" size="mini" @click="save('')">保存</el-button>
               <el-button
@@ -57,7 +57,7 @@
               <ul>
                 <li>
                   <span>付款单位：</span>
-                  <div style>{{orgName}}</div>
+                  <div style>{{detail.Mst.FOrgname}}</div>
                 </li>
                 <li :class="{'my-10':detail.Mst.FApproval == 2 ||detail.Mst.FApproval == 0}">
                   <span>付款账户：</span>
@@ -418,8 +418,8 @@
         </colgroup>
         <tr>
           <td colspan="2" class="left" style="border: 0;">
-            <span style="color: #3294e8;">付款单位：</span>
-            {{detail.Mst.FDepname}}
+            <span style="color: #3294e8;">申报单位/部门：</span>
+            {{detail.Mst.fdepname}}
           </td>
           <td colspan="2" style="border: 0;">
             <span style="color: #3294e8;">申报日期：</span>
@@ -432,11 +432,11 @@
         </tr>
         <tr>
           <td colspan="1" class="tbTitle" style="letter-spacing: 9px;padding-left: 14px;">申报单号</td>
-          <td colspan="5">{{detail.Mst.FCode}}</td>
+          <td colspan="5">{{detail.Mst.RefbillCode}}</td>
         </tr>
         <tr>
           <td colspan="1" class="tbTitle">申报单位名称</td>
-          <td colspan="5">{{orgName}}</td>
+          <td colspan="5">{{detail.Mst.FOrgname}}-{{detail.Mst.fdepname}}</td>
         </tr>
         <tr>
           <td colspan="1" class="tbTitle" style="letter-spacing: 9px;padding-left: 14px;">申报说明</td>
@@ -777,7 +777,6 @@ export default {
           .then(res => {
             if (res && res.Status === 'success') {
               that.auditMsg = res.Data
-              debugger
               that.$nextTick(() => {
                 prints()
               })
@@ -852,16 +851,16 @@ export default {
             this.accountChange(this.account) //修改bug 第一次没有把account给子表
           }
           this.allSelected = false
-          this.orgName = (() => {
-            let orgListJson = JSON.stringify(this.orglist)
-            let phidIndex = orgListJson.indexOf(this.detail.Mst.OrgPhid)
-            let nameIndex = orgListJson.indexOf('OName', phidIndex) + 8
-            let nameEndIndex = orgListJson.indexOf('"', nameIndex)
-            if (phidIndex == -1 || nameIndex == -1 || nameEndIndex == -1) {
-              return ''
-            }
-            return orgListJson.slice(nameIndex, nameEndIndex)
-          })()
+          // this.orgName = (() => {
+          //   let orgListJson = JSON.stringify(this.orglist)
+          //   let phidIndex = orgListJson.indexOf(this.detail.Mst.OrgPhid)
+          //   let nameIndex = orgListJson.indexOf('OName', phidIndex) + 8
+          //   let nameEndIndex = orgListJson.indexOf('"', nameIndex)
+          //   if (phidIndex == -1 || nameIndex == -1 || nameEndIndex == -1) {
+          //     return ''
+          //   }
+          //   return orgListJson.slice(nameIndex, nameEndIndex)
+          // })()
           if (res.Mst.FPaymethod == 0) {
             this.detail.Mst.FPaymethod = ''
           }
@@ -1007,23 +1006,11 @@ export default {
     },
     // 获取到新的银行信息
     getBank(data) {
-      // if (this.bankChooseData.data[0].choosed) {
-      //   this.detail.Dtls.forEach(item => {
-      //     if (item.choosed) {
-      //       item.FRecAcntname = data.FBankname
-      //       item.FRecAcnt = data.FAccount
-      //       item.FRecBankname = data.FOpenAccount
-      //       item.FRecBankcode = data.FBankcode
-      //       item.FRecCityname = data.FCity
-      //     }s
-      //   })
-      // } else {
       this.bankChooseData.data[0].FRecAcntname = data.FBankname
       this.bankChooseData.data[0].FRecAcnt = data.FAccount
       this.bankChooseData.data[0].FRecBankname = data.FOpenAccount
       this.bankChooseData.data[0].FRecBankcode = data.FBankcode
       this.bankChooseData.data[0].FRecCityname = data.FCity
-      // }
     },
     // 获取支付方式
     GetSysSetList() {
