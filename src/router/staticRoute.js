@@ -16,13 +16,14 @@ const staticRoute = [
     children: [
       {
         path: '',
-        redirect: '/fund',//测试
+        redirect: '/fund' //测试
         // component: () =>
         //   import(/* webpackChunkName:'home'*/ '../pages/home/index'),
         // meta: { requireAuth: true, type: 'page', name: '首页' }
       },
 
       {
+        name: 'paycenter',
         path: '/paycenter',
         component: () =>
           import(/* webpackChunkName:'paycenter'*/ '../pages/paycenter/index'),
@@ -33,12 +34,14 @@ const staticRoute = [
         component: () =>
           import(/* webpackChunkName:'payfundapproval'*/ '../pages/payfundapproval/index'),
         meta: { requireAuth: true, type: 'page', name: '资金拨付审批' }
-      }, {
+      },
+      {
         path: '/approvalcenter',
         component: () =>
           import(/* webpackChunkName:'approvalcenter'*/ '../pages/approvalcenter/index'),
         meta: { requireAuth: true, type: 'page', name: '审批中心' }
-      }, {
+      },
+      {
         path: '/paylistapproval',
         component: () =>
           import(/* webpackChunkName:'paylistapproval'*/ '../pages/paylistapproval/index'),
@@ -55,21 +58,24 @@ const staticRoute = [
         component: () =>
           import(/* webpackChunkName:'payfund'*/ '../pages/payfund/index'),
         meta: { requireAuth: true, type: 'page', name: '资金拨付' }
-      },{
+      },
+      {
         path: '/preBuildProject',
         component: () =>
           import(/* webpackChunkName:'payfund'*/ '../pages/preproject/preBuildProject'),
         meta: { requireAuth: true, type: 'page', name: '预立项' }
-      },
+      }
     ]
-  }, {
+  },
+  {
     path: '/setting',
-    component: () => import(/* webpackChunkName:'systemsetting'*/ '../pages/systemsetting'),
+    component: () =>
+      import(/* webpackChunkName:'systemsetting'*/ '../pages/systemsetting'),
     meta: { keep: true },
     children: [
       {
         path: '',
-        redirect: 'audit',
+        redirect: 'audit'
         // component: () =>
         //   import(/* webpackChunkName:'audit'*/ '../pages/systemsetting/auditManage/audit'),
         // meta: { requireAuth: true, type: 'page', name: '审核工作流' }
@@ -103,10 +109,9 @@ const staticRoute = [
         component: () =>
           import(/* webpackChunkName:'paypassword'*/ '../pages/systemsetting/dataSafe/paypassword'),
         meta: { requireAuth: true, type: 'page', name: '支付口令设置' }
-      },
+      }
     ]
   }
-
 ]
 
 export default staticRoute

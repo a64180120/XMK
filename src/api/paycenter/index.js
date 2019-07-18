@@ -255,3 +255,28 @@ export function SearchUSB() {
   //    document.all["TB_SecCode"].setAttribute("value", secCode);
   //}
 }
+
+/*
+参数：
+FBilltype  （单据类型）
+RefbillPhidList （单据主键集合）
+*/
+// 取消送审
+export function PostCancelAppvalRecord(param) {
+  return Vue.prototype.postAxios(
+    'GSP/GAppvalRecord/PostCancelAppvalRecord',
+    param
+  )
+}
+
+/*
+参数：
+fPhIdList：（申请单主键集合）
+*/
+// 单据作废
+export function PostCancetPaymentList(param) {
+  return Vue.prototype.postAxios(
+    'GGk/PaymentMstApi/PostCancetPaymentList',
+    param
+  )
+}
