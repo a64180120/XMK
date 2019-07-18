@@ -976,7 +976,7 @@
               })
             }else if (checkedList[0].FDelete==1){
               this.$msgBox.show({
-                content: '改项目已作废，无法修改。'
+                content: '该项目已作废，无法修改。'
               })
             } else {
               this.applyNum = checkedList[0].PhId + '';

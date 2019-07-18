@@ -4,7 +4,7 @@
       <el-row :gutter="10" style="margin-bottom: 20px">
         <el-col :span="24">
           <div class="top-btn">
-            <el-checkbox v-if="PaymentXmDtl.length>0" v-model="lineCopy">复制行</el-checkbox>
+
             <el-button :disabled="PaymentXmDtl.length==0" class="btn" size="mini" @click="save(0)">保存</el-button>
             <el-button :disabled="PaymentXmDtl.length==0" class="btn" size="mini" @click="save(1)" style="padding: 0">保存并送审</el-button>
             <el-button class="btn" size="mini" @click="add">增加项目</el-button>
@@ -12,9 +12,9 @@
           </div>
         </el-col>
       </el-row>
-      <el-row :gutter="20">
+      <el-row :gutter="20"  style="position: relative;height: 225px;">
          <el-col :span="24">
-           <el-card class="payText">
+           <el-card class="payText" style="position: absolute;z-index: 99;">
              <!--<div slot="header" style="padding: 0 10px;text-align: left;background-color: transparent;border: 1px solid #9acefb">
               <span>
                   基本信息
@@ -61,9 +61,14 @@
            </el-card>
          </el-col>
       </el-row>
-      <el-row class="content" :gutter="10">
+      <div  v-if="PaymentXmDtl.length>0" class="copyPanle">
+        <div> <el-checkbox v-model="lineCopy">复制行</el-checkbox></div>
+      </div>
+
+
+      <el-row class="content" :gutter="10" style="padding-top: 5px">
         <el-col :span="24" style="text-align: left">
-          <el-card class="payText" v-for="(item,pindex) in PaymentXmDtl">
+          <el-card class="payText" v-for="(item,pindex) in PaymentXmDtl" >
             <div slot="header" style="padding: 0 10px;text-align: left">
               <span>
                  <el-checkbox v-model="xmCheckList[pindex]"></el-checkbox>
@@ -940,6 +945,47 @@
 </script>
 
 <style scoped lang="scss">
+  @keyframes fb {
+    0%,25%,50%,75%,100%{
+      transform-origin: 0% 0% ;
+    }
+    0% {
+      transform: rotateX(0deg) ;
+    }
+    25% {
+      transform: rotateX(20deg) ;
+    }
+    50% {
+      transform: rotateX(0deg) ;
+    }
+    75% {
+      transform: rotateX(-15deg) ;
+    }
+    100% {
+      transform: rotateX(0deg) ;
+    }
+  }
+  .copyPanle{
+    position: relative;
+    margin-top: -10px;
+    text-align: right;
+    background-image: url("../../assets/images/til.jpg");
+    background-position: right;
+    background-repeat: no-repeat;
+    background-size: contain;
+    height: 50px;
+    /*animation: 4s fb linear  infinite;*/
+    >div{
+      display: inline-block;
+      margin-top: 17px;
+      height: 30px;
+      line-height: 30px;
+      background-color: #ffffff42;
+      padding: 0 16px;
+      color: #fff;
+
+    }
+  }
   thead td{
     text-align: center;
   }
