@@ -14,9 +14,11 @@
             <!--表格区域-->
             <el-table
               :data="tableData"
-              row-class-name="row-class-name"
+              :row-class-name="rowClassName"
               :cell-class-name="cellClassName"
               :header-cell-class-name="handerCellClassName"
+              @current-change=""
+              :highlight-current-row="highlightCurrentRow"
               >
               <el-table-column
                 prop="id"
@@ -75,10 +77,15 @@
               name:'alice',
               age:'20',
               job:'web'
-            }]
+            }],
+            highlightCurrentRow:true
           }
       },
       methods:{
+        //表格行样式回调
+        rowClassName({row,rowIndex}){
+          return 'row-class-name'
+        },
         //单元格样式回调
         cellClassName({row,column,rowIndex,columnIndex}){
           if (columnIndex === 0){
@@ -113,13 +120,17 @@
     border-radius: 8px;
   }
   .row-class-name:hover{
-    background-color: #00b7ee !important;
+    box-shadow: 0 0px 9px #409eff;
   }
-  .row-class-name:active{
-    background-color: #00b7ee !important;
+  .el-table__row:hover>td{
+    border-top: 1px solid  #00b7ee !important;
+    border-bottom: 1px solid  #00b7ee !important;
   }
-  .el-table__row:hover{
-    background-color: #00b7ee !important;
+  .el-table__row:hover>.frist-column{
+    border-left: 1px solid #00b7ee !important;
+  }
+  .el-table__row:hover>.last-column{
+    border-right: 1px solid #00b7ee !important;
   }
   .row-class-name td{
     border-bottom: none!important;
@@ -151,8 +162,11 @@
   }
   /*表头单元格*/
   .thead-cell{
-      border-bottom: none !important;
+    border-bottom: none !important;
     background-color: #CACACA !important;
     border-right: 1px solid #ffffff !important;
+  }
+  .current-row td{
+    background-color: #409eff !important;
   }
 </style>
