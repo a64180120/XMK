@@ -4,7 +4,7 @@
       <el-row :gutter="10" style="margin-bottom: 20px">
         <el-col :span="24">
           <div class="top-btn">
-            <el-checkbox v-model="lineCopy">行复制</el-checkbox>
+            <el-checkbox v-if="PaymentXmDtl.length>0" v-model="lineCopy">复制行</el-checkbox>
             <el-button :disabled="PaymentXmDtl.length==0" class="btn" size="mini" @click="save(0)">保存</el-button>
             <el-button :disabled="PaymentXmDtl.length==0" class="btn" size="mini" @click="save(1)" style="padding: 0">保存并送审</el-button>
             <el-button class="btn" size="mini" @click="add">增加项目</el-button>
@@ -600,8 +600,17 @@
       delPro(index){
         let ds=index;
         if(typeof ds=="number"){
-          this.PaymentXmDtl.splice(ds,1);
-          this.xmDisable()
+          this.$confirm('确认删除项目?', '提示', {
+            confirmButtonText: '确定',
+            cancelBtnText: '取消',
+            type: 'warning'
+          }).then(() => {
+            this.PaymentXmDtl.splice(ds,1);
+            this.xmDisable()
+            this.$msgBox.show({
+              content: '删除成功。'
+            })
+          }).catch(() => { })
         }else{
           let delList=[];
           for(var i in this.xmCheckList){
@@ -614,19 +623,25 @@
               content: '请选择要删除的项目。'
             })
           }else{
-            for(var i=delList.length-1;i>=0;i--){
-              this.PaymentXmDtl.splice(delList[i],1);
-            }
-            for(var i in this.xmCheckList){
-              this.xmCheckList[i]=false;
-            }
-            this.xmCheckList.splice(this.xmCheckList.length-delList.length,this.xmCheckList.length-delList.length);
-            this.$msgBox.show({
-              content: '删除成功。',
-              fn:() => {
-                this.xmDisable()
+            this.$confirm('确认删除项目?', '提示', {
+              confirmButtonText: '确定',
+              cancelBtnText: '取消',
+              type: 'warning'
+            }).then(() => {
+              for(var i=delList.length-1;i>=0;i--){
+                this.PaymentXmDtl.splice(delList[i],1);
               }
-            })
+              for(var i in this.xmCheckList){
+                this.xmCheckList[i]=false;
+              }
+              this.xmCheckList.splice(this.xmCheckList.length-delList.length,this.xmCheckList.length-delList.length);
+              this.$msgBox.show({
+                content: '删除成功。',
+                fn:() => {
+                  this.xmDisable()
+                }
+              })
+            }).catch(() => { })
           }
 
         }

@@ -279,7 +279,7 @@
                 <td style="text-align: right;padding-right: .5rem" @click.self="item.FDelete==1?'':changeCheck(index)">
                   <el-checkbox v-model="checkList[index]">{{index+1}}</el-checkbox>
                 </td>
-                <td @click="item.FDelete==1?'':showApply(item.PhId)" class="atype">
+                <td @click="showApply(item.PhId,item.FDelete)" class="atype">
                   <el-tooltip :content="item.FCode" popper-class="tooltipCla" placement="bottom-start">
                     <p>{{item.FCode}}</p>
                   </el-tooltip>
@@ -314,7 +314,7 @@
                   </el-tooltip>
                 </td>
                 <td style="position: relative;overflow: visible">
-                  <div  v-if="isMe&&item.GkPaymentCode==1&&item.FDelete!=1" style="color: #20c1ff;" class="iconMsg" @click.stop="paySubmit(item.FCode)">
+                  <div  v-if="isMe&&pay&&item.FApproval==9" style="color: #20c1ff;" class="iconMsg" @click.stop="paySubmit(item.FCode)">
                     <i class="el-icon-chat-round"></i>
                     <span>支付</span>
                   </div>
@@ -437,6 +437,7 @@
                :close-on-click-modal="false"
                :before-close="handleClose">
       <applybill :applyNum="applyNum"
+                 :applyBillType="applyBillType"
                  :subData="approvalDataS.subData"
                  @delete="handleDelete"></applybill>
     </el-dialog>
@@ -531,6 +532,7 @@
             },//图表数据
             applyType: false,//是否显示查看申报弹窗
             applyNum: '',//当前查看申报单的编号
+            applyBillType:0,//查看申报单是否已作废（1作废）
             applyproType: false,//显示项目新增修改弹窗
             applyproTitle: '',
             approvalDataS: {
@@ -559,6 +561,7 @@
         this.getDataC();
         this.updateTitle()
         //this.getCheckList(this.dataList.total);
+        console.log(this.pay);
       },
       watch: {
         checked: function (val) {
@@ -650,7 +653,8 @@
           orgname: state => state.user.orgname,//名称
           year: state => state.user.year,//年份
           userid: state => state.user.userid,
-          usercode: state => state.user.usercode
+          usercode: state => state.user.usercode,
+          pay: state => state.user.menubutton.paycenter_mergepay//权限按钮
         })
       },
       methods: {
@@ -764,7 +768,7 @@
         },
         //q切换右侧项目是进行并状态数据切换
         getChartList: function (val) {
-          let param = { xmPhid: val, PhId: 0 };
+          let param = { xmPhid: val, PhId: 0,FOrgphid: this.orgid,FDepphid: this.apartData['bm'].PhId, FYear: this.year };
           this.getAxios('GBK/PaymentMstApi/GetAmountOfMoney', param).then(res => {
             this.chartData.chart = [{ name: '可申报', value: res.Sum }, { name: '冻结', value: res.Frozen }, { name: '已使用', value: res.Use }];
             let maxNum = 0;
@@ -922,9 +926,10 @@
             this.applyType=false;
         },
         //查看申报弹窗
-        showApply:function(num){
+        showApply:function(num,type){
           this.applyType=true;
           this.applyNum=num+'';
+          this.applyBillType=type;
         },
         //删除事件
         handleDelete:function(val){
