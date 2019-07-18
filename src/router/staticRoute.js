@@ -23,6 +23,7 @@ const staticRoute = [
       },
 
       {
+        name:'paycenter',
         path: '/paycenter',
         component: () =>
           import(/* webpackChunkName:'paycenter'*/ '../pages/paycenter/index'),

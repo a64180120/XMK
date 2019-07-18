@@ -1357,7 +1357,7 @@
         },
         /*支付单审批，直接跳转页面*/
         paySubmit:function(val){
-          this.$router.push({path: '/paycenter',query: { phid: val } })
+          this.$router.push({ name: 'paycenter', params: { phid: val } })
         }
       }
     }
