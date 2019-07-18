@@ -30,7 +30,7 @@
           </div>
           <div @click.stop="showAuditAdd('QXSS')"
                class="handle">
-            <div class="topIcon"><img src="@/assets/images/sp.png"
+            <div class="topIcon"><img src="@/assets/images/ss_d.png"
                                       alt=""></div><!-- @click.stop="approvalDataS.openDialog=true"-->
             取消送审
           </div>
@@ -43,7 +43,7 @@
           </div>
           <div @click.stop="showAuditAdd('ZF')"
                class="handle">
-            <div class="topIcon"><img src="@/assets/images/sp.png"
+            <div class="topIcon"><img src="@/assets/images/zf.png"
                                       alt=""></div><!-- @click.stop="approvalDataS.openDialog=true"-->
             作废
           </div>
@@ -60,6 +60,7 @@
       </tophandle>
     </div>
 
+    <!--列表主体-->
     <div ref="container"
          class="container fullTable">
       <div class="formArea"
@@ -219,11 +220,12 @@
             <colgroup>
               <col width="7%">
               <col width="13%">
-              <col width="15%">
-              <col width="15%">
-              <col width="15%">
-              <col width="10%">
-              <col width="10%">
+              <col width="13%">
+              <col width="13%">
+              <col width="13%">
+              <col width="7%">
+              <col width="12%">
+              <col width="7%">
               <col width="15%">
             </colgroup>
             <thead>
@@ -247,6 +249,7 @@
                 <td title="审批状态">
                   审批状态
                 </td>
+                <td title="支付单编号">支付单编号</td>
                 <td title="支付状态">
                   支付状态
                 </td>
@@ -262,64 +265,73 @@
             <colgroup>
               <col width="7%">
               <col width="13%">
-              <col width="15%">
-              <col width="15%">
-              <col width="15%">
-              <col width="10%">
-              <col width="10%">
+              <col width="13%">
+              <col width="13%">
+              <col width="13%">
+              <col width="7%">
+              <col width="12%">
+              <col width="7%">
               <col width="15%">
             </colgroup>
             <tbody>
-            <tr :class="{trActive:checkList[index]}" v-for="(item,index) in dataList.data">
-              <td style="text-align: right;padding-right: .5rem" @click.self="changeCheck(index)">
-                <el-checkbox v-model="checkList[index]">{{index+1}}</el-checkbox>
-              </td>
-              <td @click="showApply(item.PhId)" class="atype">
-                <el-tooltip :content="item.FCode" popper-class="tooltipCla" placement="bottom-start">
-                  <p>{{item.FCode}}</p>
-                </el-tooltip>
-              </td>
-              <td>
-                <el-tooltip :content="item.FName" popper-class="tooltipCla" placement="bottom-start">
-                  <p>{{item.FName}}</p>
-                </el-tooltip>
-              </td>
-              <td class="right">
-                <el-tooltip :content="item.FAmountTotal| NumFormat" popper-class="tooltipCla" placement="bottom-start">
-                  <p>{{item.FAmountTotal| NumFormat}}</p>
-                </el-tooltip>
-              </td>
-              <td>
-                <el-tooltip :content="(item.FDate.substring(0,19)).replace('T',' ')" popper-class="tooltipCla" placement="bottom-start">
-                  <p>{{(item.FDate.substring(0,19)).replace('T',' ')}}</p>
-                </el-tooltip>
-              </td>
-              <td class="atype" style="position: relative;overflow: visible" @click.stop="openAuditfollow(item,index)">
-                <div v-if="isMe&&item.IsApprovalNow==1" style="color: red;"  class="iconMsg" @click.stop="approvalSubmit(item)">
-                  <i class="el-icon-chat-round"></i>
-                  <span>审批</span>
-                </div>
-                <el-tooltip :content="spTypeList[item.FApproval]" popper-class="tooltipCla" placement="bottom-start">
-                  <p>{{spTypeList[item.FApproval]}}</p>
-                </el-tooltip>
-              </td>
-              <td style="position: relative;overflow: visible">
-                  <div  v-if="isMe&&item.GkPaymentCode==1" style="color: #20c1ff;" class="iconMsg" @click.stop="paySubmit(item.FCode)">
-                  <i class="el-icon-chat-round"></i>
-                  <span>支付</span>
-                </div>
-                <el-tooltip :content="item.FApproval==9?payTypeList[item.IsPay]:'-'" popper-class="tooltipCla" placement="bottom-start">
-                  <p>{{item.FApproval==9?payTypeList[item.IsPay]:'-'}}</p>
-                </el-tooltip>
-              </td>
-              <td class="left">
-                <el-tooltip :content="item.FDescribe" popper-class="tooltipCla" placement="bottom-start">
-                  <p>{{item.FDescribe}}</p>
-                </el-tooltip>
+            <template  v-for="(item,index) in dataList.data">
+              <tr :class="{trActive:checkList[index], deleteRow:item.FDelete==1}">
+                <td style="text-align: right;padding-right: .5rem" @click.self="item.FDelete==1?'':changeCheck(index)">
+                  <el-checkbox v-model="checkList[index]">{{index+1}}</el-checkbox>
+                </td>
+                <td @click="item.FDelete==1?'':showApply(item.PhId)" class="atype">
+                  <el-tooltip :content="item.FCode" popper-class="tooltipCla" placement="bottom-start">
+                    <p>{{item.FCode}}</p>
+                  </el-tooltip>
+                </td>
+                <td>
+                  <el-tooltip :content="item.FName" popper-class="tooltipCla" placement="bottom-start">
+                    <p>{{item.FName}}</p>
+                  </el-tooltip>
+                </td>
+                <td class="right">
+                  <el-tooltip :content="item.FAmountTotal| NumFormat" popper-class="tooltipCla" placement="bottom-start">
+                    <p>{{item.FAmountTotal| NumFormat}}</p>
+                  </el-tooltip>
+                </td>
+                <td>
+                  <el-tooltip :content="(item.FDate.substring(0,19)).replace('T',' ')" popper-class="tooltipCla" placement="bottom-start">
+                    <p>{{(item.FDate.substring(0,19)).replace('T',' ')}}</p>
+                  </el-tooltip>
+                </td>
+                <td class="atype" style="position: relative;overflow: visible" @click.stop="item.FDelete==1?'':openAuditfollow(item,index)">
+                  <div v-if="isMe&&item.IsApprovalNow==1&&item.FDelete!=1" style="color: red;"  class="iconMsg" @click.stop="item.FDelete==1?'':approvalSubmit(item)">
+                    <i class="el-icon-chat-round"></i>
+                    <span>审批</span>
+                  </div>
+                  <el-tooltip :content="spTypeList[item.FApproval]" popper-class="tooltipCla" placement="bottom-start">
+                    <p>{{spTypeList[item.FApproval]}}</p>
+                  </el-tooltip>
+                </td>
+                <td>
+                  <el-tooltip :disabled="!item.GkPaymentCode" :content="item.GkPaymentCode?item.GkPaymentCode:'-'" popper-class="tooltipCla" placement="bottom-start">
+                    <p>{{item.GkPaymentCode?item.GkPaymentCode:'-'}}</p>
+                  </el-tooltip>
+                </td>
+                <td style="position: relative;overflow: visible">
+                  <div  v-if="isMe&&item.GkPaymentCode==1&&item.FDelete!=1" style="color: #20c1ff;" class="iconMsg" @click.stop="paySubmit(item.FCode)">
+                    <i class="el-icon-chat-round"></i>
+                    <span>支付</span>
+                  </div>
+                  <el-tooltip :content="item.FApproval==9?payTypeList[item.IsPay]:'-'" popper-class="tooltipCla" placement="bottom-start">
+                    <p>{{item.FApproval==9?payTypeList[item.IsPay]:'-'}}</p>
+                  </el-tooltip>
+                </td>
+                <td class="left">
+                  <el-tooltip :content="item.FDescribe" popper-class="tooltipCla" placement="bottom-start">
+                    <p>{{item.FDescribe}}</p>
+                  </el-tooltip>
 
                 </td>
               </tr>
-              <tr v-if="dataList.data.length==0">
+            </template>
+
+            <tr v-if="dataList.data.length==0">
                 <td colspan="8">未查询到数据</td>
               </tr>
             </tbody>
@@ -825,10 +837,10 @@
                 this.apartDataMst[res.Mst[i].PhId] = res.Mst[i].FProjName;
               }
               this.apartData.Amount = res.FAmount;
-              this.bzType = res.Mst[0].PhId;
-              this.getChartList(res.Mst[0].PhId);
             }
-            this.apartData.Mst.unshift({PhId:'',FProjName:'全部'})
+            this.apartData.Mst.unshift({PhId:'',FProjName:'全部'});
+
+            this.getChartList('');//初始已全部进行查询
           }).catch(err => {
             console.log(err);
           })
@@ -957,6 +969,10 @@
               this.$msgBox.show({
                 content: '只允许修改待送审及未通过项目。'
               })
+            }else if (checkedList[0].FDelete==1){
+              this.$msgBox.show({
+                content: '改项目已作废，无法修改。'
+              })
             } else {
               this.applyNum = checkedList[0].PhId + '';
               this.isAdd = false;
@@ -983,27 +999,36 @@
               }
               phidList.push(checkedList[i].PhId);
             }
-            let param = {
-              fPhIdList: phidList
-            }
-            this.postAxios('GBK/PaymentMstApi/PostDelete', param).then(res => {
-              if (res.Status == 'success') {
-                this.$msgBox.show({
-                  content: '删除成功。'
-                });
-                this.getData();
-                this.checkList = [];
-              } else {
-                this.$msgBox.show({
-                  content: '删除失败，请稍后重试。'
-                })
-              }
-
-            }).catch(err => {
-              console.log(err);
-            })
-
+            this.$confirm('确认删除该资金拨付申报单?', '提示', {
+              confirmButtonText: '确定',
+              cancelBtnText: '取消',
+              type: 'warning'
+            }).then(() => {
+              this.deleteJk(phidList)
+            }).catch(() => { })
           }
+        },
+        //删除接口
+        deleteJk:function(phidList){
+          let param = {
+            fPhIdList: phidList
+          }
+          this.postAxios('GBK/PaymentMstApi/PostDelete', param).then(res => {
+            if (res.Status == 'success') {
+              this.$msgBox.show({
+                content: '删除成功。'
+              });
+              this.getData();
+              this.checkList = [];
+            } else {
+              this.$msgBox.show({
+                content: '删除失败，请稍后重试。'
+              })
+            }
+
+          }).catch(err => {
+            console.log(err);
+          })
         },
         //送审方法
         SS:function(checkedList){
@@ -1025,10 +1050,15 @@
               for (var i in checkedList) {
                 if (checkedList[i].FApproval != 0 && checkedList[i].FApproval != 2) {
                   this.$msgBox.show({
-                    content: '只允许送审待送审及未通过项目。'
+                    content: '只允许送审待送审及未通过单据。'
                   })
                   return;
-                } else {
+                }else if (checkedList[0].FDelete==1){
+                  this.$msgBox.show({
+                    content: '已作废单据无法送审。'
+                  })
+                  return;
+                }  else {
                   data.push(checkedList[i].PhId)
                 }
               }
@@ -1048,13 +1078,17 @@
             })
           } else {
             let checkedListPhId = [];
-            checkedList.forEach((item, index, array) => {
-              if (item) {
-                checkedListPhId.push(item.PhId)
+            for(let i in checkedList){
+              if (checkedList[i].FDelete==1){
+                this.$msgBox.show({
+                  content: '已作废单据，无法取消送审。'
+                });
+                return;
               }
-            })
+              checkedListPhId.push(checkedList[i].PhId)
+            }
             let param={
-              FBilltype:'0001',
+              FBilltype:'001',
               RefbillPhidList: checkedListPhId
             };
             this.postAxios('GBK/GAppvalRecord/PostCancelAppvalRecord', param).then(res => {
@@ -1092,7 +1126,7 @@
           for (var i in checkedList) {
             if (checkedList[i].FApproval != 0) {
               this.$msgBox.show({
-                content: '只允许待送审项目生成支付单。'
+                content: '只允许待送审单据生成支付单。'
               })
               return;
             } else {
@@ -1119,30 +1153,45 @@
             })
           } else {
             let checkedListPhId = [];
-            checkedList.forEach((item, index, array) => {
-              if (item) {
-                checkedListPhId.push(item.PhId)
-              }
-            })
-            let param={
-              fPhIdList: checkedListPhId
-            };
-            this.postAxios('GBK/PaymentMstApi/PostCancetPaymentList', param).then(res => {
-              if (res.Status == 'success') {
+            for(let i in checkedList){
+              if (checkedList[i].FDelete==1){
                 this.$msgBox.show({
-                  content: '单据作废成功。'
+                  content: '存在已作废单据，请检查。'
                 });
-                this.getData();
-                this.checkList = [];
-              } else {
-                this.$msgBox.show({
-                  content: res.Msg?res.Msg:'单据作废失败，请稍后重试。'
-                })
+                return;
               }
-            }).catch(err => {
-              console.log(err);
-            })
+              checkedListPhId.push(checkedList[i].PhId)
+            }
+            this.$confirm('确认作废该资金拨付申报单?', '提示', {
+              confirmButtonText: '确定',
+              cancelBtnText: '取消',
+              type: 'warning'
+            }).then(() => {
+              this.zuofei(checkedListPhId)
+            }).catch(() => { })
+
           }
+        },
+        //作废接口
+        zuofei: function(checkedListPhId) {
+          let param={
+            fPhIdList: checkedListPhId
+          };
+          this.postAxios('GBK/PaymentMstApi/PostCancetPaymentList', param).then(res => {
+            if (res.Status == 'success') {
+              this.$msgBox.show({
+                content: '单据作废成功。'
+              });
+              this.getData();
+              this.checkList = [];
+            } else {
+              this.$msgBox.show({
+                content: res.Msg?res.Msg:'单据作废失败，请稍后重试。'
+              })
+            }
+          }).catch(err => {
+            console.log(err);
+          })
         },
         //
         showAuditAdd (val) {
@@ -1314,6 +1363,10 @@
 .pageArea {
   right: 300px;
 }
+.deleteRow, .deleteRow .atype{
+  cursor: not-allowed;
+  color: #ccc !important;
+}
 .rightPanel {
   width: 270px;
   position: absolute;
@@ -1439,6 +1492,7 @@
       right: 0!important;
       transform: rotate(180deg);
       transition: all .3s linear;
+      cursor: pointer;
     }
   }
   .arrowShow{
@@ -1450,6 +1504,7 @@
     color: #fff;
     transition: all .3s linear;
     animation: ad 1s infinite linear;
+    cursor: pointer;
   }
   .arrowShow:hover{
     animation: none;

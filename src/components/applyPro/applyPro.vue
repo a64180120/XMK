@@ -4,6 +4,7 @@
       <el-row :gutter="10" style="margin-bottom: 20px">
         <el-col :span="24">
           <div class="top-btn">
+            <el-checkbox v-model="lineCopy">行复制</el-checkbox>
             <el-button :disabled="PaymentXmDtl.length==0" class="btn" size="mini" @click="save(0)">保存</el-button>
             <el-button :disabled="PaymentXmDtl.length==0" class="btn" size="mini" @click="save(1)" style="padding: 0">保存并送审</el-button>
             <el-button class="btn" size="mini" @click="add">增加项目</el-button>
@@ -84,7 +85,7 @@
                 <span>项目名称：</span>
                 <span>
                   <el-select size="small" v-model="item.PaymentXm.XmProjcode" @change="changePro(pindex)">
-                    <el-option v-for="pro in prodata.Mst"
+                    <el-option v-for="(pro,index) in prodata.Mst" v-if="index>1 "
                                :label="pro.FProjName"
                                :key="pro.FProjCode"
                                :value="pro.FProjCode"
@@ -264,6 +265,7 @@
     },
     data(){
       return {
+        lineCopy:false,//行复制，选中时，新增行可把数据带下去
         len:0,//输入长度
         uploadVis:false,//文件上传弹窗
 
@@ -373,6 +375,7 @@
       for(var i in this.prodata.Mst){
         this.prodata.Mst[i].checked=false;
       }
+
       if(!this.isAdd){
         this.getApply();
       }else{
@@ -643,7 +646,15 @@
           FPayment:'', //(支付状态：0-待支付 1-支付异常  9-支付成功)
           FPaymentdate:'' //（支付日期）
         };
+        if(this.lineCopy){
+          dtl=JSON.parse(JSON.stringify(this.PaymentXmDtl[pindex].PaymentDtls[index]));
+        }
         this.PaymentXmDtl[pindex].PaymentDtls.splice(index+1,0,dtl);
+        if(this.lineCopy){
+          this.$nextTick( () => {
+            this.moneyChange(pindex,Number(index)+1);
+          } )
+        }
         if(this.prodataList.length==1){
           this.$nextTick(()=>{
             this.choosedProject=this.prodataList[0];
