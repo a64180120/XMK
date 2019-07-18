@@ -7,6 +7,16 @@
     <div class="handleBtn">
       <p>{{title}}</p>
       <div class="btnContainer">
+        <div class="leftBtn">
+          <el-breadcrumb separator-class="el-icon-arrow-right">
+            <el-breadcrumb-item></el-breadcrumb-item>
+            <el-breadcrumb-item v-if="item.meta.name"
+                                :to="{path:item.path}"
+                                v-for="(item,n) of $route.matched"
+                                :key="n">{{item.meta.name}}</el-breadcrumb-item>
+
+          </el-breadcrumb>
+        </div>
         <ul class="rightBtn">
           <li>
             <el-popover width="270"
@@ -193,9 +203,9 @@ export default {
     })
   },
   mounted () {
-    //this.getOrganize();
     this.setyearList();
   },
+
   methods: {
     orgTreeShow () {//组织树显示
       this.$refs.orgtree.setCurrentNode({ OCode: this.orgcode });
@@ -269,7 +279,6 @@ export default {
       margin: 0 auto;
     }
     .rightBtn {
-      float: right;
       overflow: hidden;
       position: absolute;
       right: 20px;
@@ -297,6 +306,12 @@ export default {
         > span {
         }
       }
+    }
+    .leftBtn {
+      position: absolute;
+      left: 20px;
+      bottom: 13px;
+      color: #fff;
     }
   }
 }
@@ -432,6 +447,12 @@ export default {
 }
 .topElpop {
   box-shadow: 0 2px 12px 0 rgba(98, 172, 252, 0.63) !important;
+}
+.handleBtnCon .el-breadcrumb__inner,
+.handleBtnCon .el-breadcrumb__inner:hover,
+.handleBtnCon .el-breadcrumb__item:last-child .el-breadcrumb__inner,
+.handleBtnCon .el-breadcrumb__inner.is-link {
+  color: #fff !important;
 }
 </style>
 

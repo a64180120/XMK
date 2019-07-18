@@ -1,5 +1,5 @@
 <template>
-  <div class="layout"> 
+  <div class="layout">
     <router-view></router-view>
   </div>
 </template>
@@ -9,7 +9,7 @@
 import { mapState, mapActions } from "vuex";
 export default {
   components: {},
-  data() {
+  data () {
     return {
     };
   },
@@ -19,20 +19,27 @@ export default {
     })
   },
   watch: {
-    isLogin: function(newvalue, oldvalue) {}
+    isLogin: function (newvalue, oldvalue) { },
+
+    $route: {
+      handler () {
+        console.log(111111)
+      },
+      deep: true
+    }
+
   },
-  created() {},
-  mounted() {
+  created () { },
+  mounted () {
   },
   methods: {
   },
-  components:{
+  components: {
   }
 };
 </script>
 
 <style scoped>
-.layout{
- 
+.layout {
 }
 </style>
