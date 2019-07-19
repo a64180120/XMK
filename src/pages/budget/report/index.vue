@@ -3,7 +3,7 @@
     <div style="position: relative">
       <tophandle title="预算中心" @refresh="getData">
         <div class="btnCon">
-          <div @click.stop="printTables" class="handle" style="width: 80px;">
+          <div @click.stop="printTables" class="handle">
             <div class="topIcon">
               <img src="@/assets/images/dy.png" alt="">
             </div>
@@ -23,10 +23,13 @@
           </template>
         </ul>
       </div>
+      <div class="rightArea">
+        <section v-if="navActive==0">
+          <budget></budget>
+        </section>
+      </div>
     </div>
-    <div class="rightArea">
 
-    </div>
   </section>
 
 </template>
@@ -103,6 +106,9 @@
           }
 
         }
+      }
+      >.rightArea{
+        padding: 10px 10px 10px 50px;
       }
     }
   }

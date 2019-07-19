@@ -113,11 +113,13 @@
                 <li>
                   <span>申报日期</span>
                   <el-date-picker size="small"
-                                  v-model="searchData.date"
+                                  v-model="date"
                                   type="daterange"
                                   range-separator="至"
                                   start-placeholder="开始日期"
-                                  end-placeholder="结束日期">
+                                  end-placeholder="结束日期"
+                                  @change="getData"
+                                  >
                   </el-date-picker>
                 </li>
                 <li>
@@ -517,9 +519,8 @@
             searchData:{
               bmType:0,
               searchValue: '',
-              date: [],
-
             },
+            date: [],
             approvalType:['',0,1,2,9],
             payType:['',0,1,9],
             approvalList: [{ value: '', label: '全部' }, { value: 0, label: '待送审' }, { value: 1, label: '审批中' }, { value: 2, label: '审批未通过' }, { value: 9, label: '审批通过' }],
@@ -880,8 +881,8 @@
             FName:this.searchData.searchValue,
             ApprovalBzs:this.approvalType,
             PayBzs:this.payType,
-            StartDate:this.searchData.date?this.searchData.date[0]:'',
-            EndDate:this.searchData.date?this.searchData.date[1]:'',
+            StartDate:this.date?this.date[0]:'',
+            EndDate:this.date?this.date[1]:'',
             MinAmount:this.money.smoney==0?'':this.money.smoney,
             MaxAmount:this.money.emoney==0?'':this.money.emoney,
             FOrgphid:this.orgid,
@@ -896,8 +897,8 @@
               FName: this.searchData.searchValue,
               ApprovalBzs: this.approvalType,
               PayBzs: this.payType,
-              StartDate: this.searchData.date[0]||'',
-              EndDate: this.searchData.date[1]||'',
+              StartDate: this.date[0]||'',
+              EndDate: this.date[1]||'',
               MinAmount: this.money.smoney==0?'':this.money.smoney,
               MaxAmount: this.money.emoney==0?'':this.money.emoney,
               FOrgphid: this.orgid,
