@@ -271,7 +271,7 @@
     },
     data(){
       return {
-        lineCopy:[false],//行复制，选中时，新增行可把数据带下去
+        lineCopy:[],//行复制，选中时，新增行可把数据带下去
         len:0,//输入长度
         uploadVis:false,//文件上传弹窗
 
@@ -656,6 +656,10 @@
       },
       //新增项目明细
       addDtl:function(pindex,index){
+        if(!this.PaymentXmDtl[pindex].PaymentXm.XmMstPhid){
+          this.$msgBox.error('请先选择项目');
+          return;
+        }
         let dtl={
           XmMstPhid: '', //（预算项目主表主键）
           BudgetdtlPhid: '', //（预算明细主键）
@@ -689,6 +693,10 @@
       },
       //删除项目明细
       delDtl:function(pindex,index){
+        if(!this.PaymentXmDtl[pindex].PaymentXm.XmMstPhid){
+          this.$msgBox.error('请先选择项目');
+          return;
+        }
         this.PaymentXmDtl[pindex].PaymentDtls.splice(index,1)
         if(this.PaymentXmDtl[pindex].PaymentDtls.length==0){
           this.addDtl(pindex,0)
