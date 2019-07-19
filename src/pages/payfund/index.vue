@@ -1105,7 +1105,7 @@
                 this.checkList = [];
               } else {
                 this.$msgBox.show({
-                  content: '取消送审失败，请稍后重试。'
+                  content: res.Msg
                 })
               }
             }).catch(err => {
