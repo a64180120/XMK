@@ -525,7 +525,9 @@ export default {
     // 当前页面审批
     approvalSubmit: function(val) {
       console.log(val)
-      this.myapprovalData = [val.Mst]
+      let newObj = Object.assign({}, val.Mst)
+      newObj.RefbillPhid = newObj.PhId
+      this.myapprovalData = [newObj]
       this.$nextTick(() => {
         this.$refs.approvalDialog.changeDialog()
       })
