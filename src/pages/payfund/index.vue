@@ -327,7 +327,9 @@
                     <el-tooltip :content="item.FDescribe" popper-class="tooltipCla" placement="bottom-start">
                       <p>{{item.FDescribe}}</p>
                     </el-tooltip>
-
+                    <div v-if="item.FDelete==1" style="position: absolute;right: 90px;margin-top: -15px;">
+                      <img height="30px" src="../../assets/images/zhang_zf.png">
+                    </div>
                   </td>
                 </tr>
               </template>
