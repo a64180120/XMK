@@ -48,8 +48,7 @@
             作废
           </div>
           <div @click.stop="printTables"
-               class="handle"
-               style="width: 80px;">
+               class="handle">
             <div class="topIcon"><img src="@/assets/images/dy.png"
                    alt=""></div><!-- @click="creatPayItem()"-->
             打印
@@ -114,11 +113,13 @@
                 <li>
                   <span>申报日期</span>
                   <el-date-picker size="small"
-                                  v-model="searchData.date"
+                                  v-model="date"
                                   type="daterange"
                                   range-separator="至"
                                   start-placeholder="开始日期"
-                                  end-placeholder="结束日期">
+                                  end-placeholder="结束日期"
+                                  @change="getData"
+                                  >
                   </el-date-picker>
                 </li>
                 <li>
@@ -369,7 +370,7 @@
               <div v-show="rightShow.show1"
                    class="transition-box">
                 <div>
-                  <p style="color: #3294e8;font-size: .4rem">{{apartData.Mst.length}}</p>
+                  <p style="color: #3294e8;font-size: .4rem">{{apartData.Mst.length-1}}</p>
                   <div>项目总数</div>
                 </div>
                 <div>
@@ -518,17 +519,16 @@
             searchData:{
               bmType:0,
               searchValue: '',
-              date: [],
-
             },
+            date: [],
             approvalType:['',0,1,2,9],
             payType:['',0,1,9],
             approvalList: [{ value: '', label: '全部' }, { value: 0, label: '待送审' }, { value: 1, label: '审批中' }, { value: 2, label: '审批未通过' }, { value: 9, label: '审批通过' }],
-            payList: [{ value: '', label: '全部' }, { value: 0, label: '待支付' }, { value: 1, label: '支付异常' }, { value: 9, label: '支付成功' }],
+            payList: [{ value: '', label: '全部' }, { value: 0, label: '待支付' }, { value: 1, label: '支付异常' },{ value: 2, label: '支付中' }, { value: 9, label: '支付成功' }],
             bmList: [],//部门列表
             bzList: [{ value: 0, label: '全部' }, { value: 1, label: '救灾补助项目' }, { value: 2, label: '送温暖项目' }],
             spTypeList: { '0': '待送审', '1': '审批中', '2': '未通过', '9': '审批通过' },
-            payTypeList: { '0': '待支付', '1': '支付异常', '9': '支付成功' },
+            payTypeList: { '0': '待支付', '1': '支付异常','2':'支付中', '9': '支付成功' },
             visiable: false,//高级搜索框显示隐藏
             chartData: {
               chart: [{ name: '可申报', value: 13210 }, { name: '冻结', value: 1200 }, { name: '已使用', value: 2301 }],
@@ -881,8 +881,8 @@
             FName:this.searchData.searchValue,
             ApprovalBzs:this.approvalType,
             PayBzs:this.payType,
-            StartDate:this.searchData.date[0]||'',
-            EndDate:this.searchData.date[1]||'',
+            StartDate:this.date?this.date[0]:'',
+            EndDate:this.date?this.date[1]:'',
             MinAmount:this.money.smoney==0?'':this.money.smoney,
             MaxAmount:this.money.emoney==0?'':this.money.emoney,
             FOrgphid:this.orgid,
@@ -897,8 +897,8 @@
               FName: this.searchData.searchValue,
               ApprovalBzs: this.approvalType,
               PayBzs: this.payType,
-              StartDate: this.searchData.date[0]||'',
-              EndDate: this.searchData.date[1]||'',
+              StartDate: this.date?this.date[0]:'',
+              EndDate: this.date?this.date[1]:'',
               MinAmount: this.money.smoney==0?'':this.money.smoney,
               MaxAmount: this.money.emoney==0?'':this.money.emoney,
               FOrgphid: this.orgid,
@@ -1080,8 +1080,6 @@
         },
         //取消送审
         QXSS: function(checkedList) {
-          console.log(checkedList);
-
           if (checkedList.length == 0) {
             this.$msgBox.show({
               content: '请选择要取消送审的单据。'
@@ -1099,7 +1097,8 @@
             }
             let param={
               FBilltype:'001',
-              RefbillPhidList: checkedListPhId
+              RefbillPhidList: checkedListPhId,
+              OperaPhid:this.userid
             };
             this.postAxios('GBK/GAppvalRecord/PostCancelAppvalRecord', param).then(res => {
               if (res.Status == 'success') {
