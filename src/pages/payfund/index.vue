@@ -370,7 +370,7 @@
               <div v-show="rightShow.show1"
                    class="transition-box">
                 <div>
-                  <p style="color: #3294e8;font-size: .4rem">{{apartData.Mst.length}}</p>
+                  <p style="color: #3294e8;font-size: .4rem">{{apartData.Mst.length-1}}</p>
                   <div>项目总数</div>
                 </div>
                 <div>
@@ -524,11 +524,11 @@
             approvalType:['',0,1,2,9],
             payType:['',0,1,9],
             approvalList: [{ value: '', label: '全部' }, { value: 0, label: '待送审' }, { value: 1, label: '审批中' }, { value: 2, label: '审批未通过' }, { value: 9, label: '审批通过' }],
-            payList: [{ value: '', label: '全部' }, { value: 0, label: '待支付' }, { value: 1, label: '支付异常' }, { value: 9, label: '支付成功' }],
+            payList: [{ value: '', label: '全部' }, { value: 0, label: '待支付' }, { value: 1, label: '支付异常' },{ value: 2, label: '支付中' }, { value: 9, label: '支付成功' }],
             bmList: [],//部门列表
             bzList: [{ value: 0, label: '全部' }, { value: 1, label: '救灾补助项目' }, { value: 2, label: '送温暖项目' }],
             spTypeList: { '0': '待送审', '1': '审批中', '2': '未通过', '9': '审批通过' },
-            payTypeList: { '0': '待支付', '1': '支付异常', '9': '支付成功' },
+            payTypeList: { '0': '待支付', '1': '支付异常','2':'支付中', '9': '支付成功' },
             visiable: false,//高级搜索框显示隐藏
             chartData: {
               chart: [{ name: '可申报', value: 13210 }, { name: '冻结', value: 1200 }, { name: '已使用', value: 2301 }],
@@ -897,8 +897,8 @@
               FName: this.searchData.searchValue,
               ApprovalBzs: this.approvalType,
               PayBzs: this.payType,
-              StartDate: this.date[0]||'',
-              EndDate: this.date[1]||'',
+              StartDate: this.date?this.date[0]:'',
+              EndDate: this.date?this.date[1]:'',
               MinAmount: this.money.smoney==0?'':this.money.smoney,
               MaxAmount: this.money.emoney==0?'':this.money.emoney,
               FOrgphid: this.orgid,

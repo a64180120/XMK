@@ -90,7 +90,7 @@
                 <span>项目名称：</span>
                 <span>
                   <el-select size="small" v-model="item.PaymentXm.XmProjcode" @change="changePro(pindex)">
-                    <el-option v-for="(pro,index) in prodata.Mst" v-if="index>1 "
+                    <el-option v-for="(pro,index) in prodata.Mst" v-if="index>0 "
                                :label="pro.FProjName"
                                :key="pro.FProjCode"
                                :value="pro.FProjCode"
