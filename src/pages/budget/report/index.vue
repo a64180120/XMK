@@ -24,12 +24,16 @@
         </ul>
       </div>
     </div>
+    <div class="rightArea">
+
+    </div>
   </section>
 
 </template>
 
 <script>
   import tophandle from '@/components/topNav/topHandle'
+  import budget from './budget'
   export default {
     name: "yearreport",
     data(){
@@ -46,7 +50,7 @@
       }
     },
 
-    components:{tophandle},
+    components:{tophandle,budget},
   }
 </script>
 <style lang="scss" >
@@ -78,13 +82,13 @@
           >li{
             background-color: #cccccc;
             box-sizing: border-box;
-            border-bottom: 1px solid #fff;
+            border-bottom: 1px solid #949494;
             text-align: center;
-            box-shadow: inset 0px 0px 10px 0px #bbb;
+           /* box-shadow: inset 0px 0px 10px 0px #bbb;*/
             &.active{
               background-color: #00B8EE;
               color: #fff;
-              box-shadow: inset 0px 0px 10px 0px #f6fdff;
+             /* box-shadow: inset 0px 0px 10px 0px #f6fdff;*/
             }
             &:before{
               content: '';

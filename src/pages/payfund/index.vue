@@ -48,8 +48,7 @@
             作废
           </div>
           <div @click.stop="printTables"
-               class="handle"
-               style="width: 80px;">
+               class="handle">
             <div class="topIcon"><img src="@/assets/images/dy.png"
                    alt=""></div><!-- @click="creatPayItem()"-->
             打印
@@ -881,8 +880,8 @@
             FName:this.searchData.searchValue,
             ApprovalBzs:this.approvalType,
             PayBzs:this.payType,
-            StartDate:this.searchData.date[0]||'',
-            EndDate:this.searchData.date[1]||'',
+            StartDate:this.searchData.date?this.searchData.date[0]:'',
+            EndDate:this.searchData.date?this.searchData.date[1]:'',
             MinAmount:this.money.smoney==0?'':this.money.smoney,
             MaxAmount:this.money.emoney==0?'':this.money.emoney,
             FOrgphid:this.orgid,
@@ -1080,8 +1079,6 @@
         },
         //取消送审
         QXSS: function(checkedList) {
-          console.log(checkedList);
-
           if (checkedList.length == 0) {
             this.$msgBox.show({
               content: '请选择要取消送审的单据。'
@@ -1099,7 +1096,8 @@
             }
             let param={
               FBilltype:'001',
-              RefbillPhidList: checkedListPhId
+              RefbillPhidList: checkedListPhId,
+              OperaPhid:this.userid
             };
             this.postAxios('GBK/GAppvalRecord/PostCancelAppvalRecord', param).then(res => {
               if (res.Status == 'success') {
