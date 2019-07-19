@@ -8,27 +8,50 @@
             <!--搜索栏-->
             <div class="btnArea" style="margin-bottom: 15px">
               <el-form :inline="true">
-                <el-form-item label="年度:">
-                  <el-input size="mini"></el-input>
+                <el-form-item label="部门申报/部门审批：">
+                  <el-select v-model="formList.type" size="mini">
+                    <el-option value="1" label="主业类">主业类</el-option>
+                    <el-option value="2" label="企事业类">企事业类</el-option>
+                    <el-option value="3" label="机关行政类">机关行政类</el-option>
+                  </el-select>
                 </el-form-item>
-                <el-form-item label="an钮">
-                  <el-button size="mini" @click="fn()">按钮</el-button>
+                <el-form-item label="单位：">
+                  <el-select v-model="formList.year" size="mini">
+                    <el-option value="2" label="万元">万元</el-option>
+                    <el-option value="1" label="元">元</el-option>
+                  </el-select>
                 </el-form-item>
-                <el-form-item>
-                  <el-button size="mini" @click="fn1()">按钮</el-button>
+                <el-form-item label="支出类别：">
+                  <el-select v-model="formList.type" size="mini">
+                    <el-option value="1" label="主业类">主业类</el-option>
+                    <el-option value="2" label="企事业类">企事业类</el-option>
+                    <el-option value="3" label="机关行政类">机关行政类</el-option>
+                  </el-select>
+                </el-form-item>
+                <el-form-item label="审批状态：">
+                  <el-select v-model="formList.status" size="mini">
+                    <el-option value="1" label="待上报">待上报</el-option>
+                    <el-option value="2" label="审批中">审批中</el-option>
+                    <el-option value="3" label="审批通过">审批通过</el-option>
+                    <el-option value="3" label="未通过">未通过</el-option>
+                  </el-select>
+                </el-form-item> 
+                <el-form-item style="float: right">
+                    <search-input v-model="search"></search-input>
                 </el-form-item>
               </el-form>
             </div>
             <!--表格区域-->
-<!--            <div>-->
-<!--              <data-table-->
-<!--                :data="table.tableData"-->
-<!--                :column="table.colum"-->
-<!--                :selection="table.selection"></data-table>-->
-<!--            </div>-->
-            <div>
+            <div v-if="watchTable" class="table-main">
+              <data-table
+                :data="table.tableData"
+                :column="table.colum"
+                :selection="table.selection"></data-table>
+            </div>
+            <div v-else class="table-main">
               <item-table
-                :data="table1.tableData"></item-table>
+                :data="table1.tableData"
+                :monetaryUnit="formList.year"></item-table>
             </div>
           </div>
         </div>
@@ -40,84 +63,48 @@
     import TopHandle from "../../components/topNav/topHandle";
     import DataTable from "../../components/dataTable/dataTable";
     import ItemTable from "../../components/itemTable/itemTable";
+    import SearchInput from "../../components/searchInput/searchInput";
     export default {
         name: "preBuildProject",
-      components: {ItemTable, DataTable, TopHandle},
+      components: {SearchInput, ItemTable, DataTable, TopHandle},
       data(){
           return{
             table:{
-              tableData:[
-                {
-                  id:'001',
-                  name:'alice',
-                  age:'20',
-                  job:'web',
-                  end:"lhasflasdaafasfasfasfsfasfasfasfasfasfasfasfasfasvasasfgasgasgasfasgasfasfkj"
-                },{
-                  id:'001',
-                  name:'alice',
-                  age:'20',
-                  job:'web',
-                  end:"lhasflkj"
-                },{
-                  id:'001',
-                  name:'alice',
-                  age:'20',
-                  job:'web',
-                  end:"lhasflkj"
-                },{
-                  id:'001',
-                  name:'alice',
-                  age:'20',
-                  job:'web',
-                  end:"lhasflkj"
-                },{
-                  id:'001',
-                  name:'alice',
-                  age:'20',
-                  job:'web',
-                  end:"lhasflkj"
-                },{
-                  id:'001',
-                  name:'alice',
-                  age:'20',
-                  job:'web',
-                  end:"lhasflkj"
-                }],
+              tableData:[],
               colum:[
                 {
-                prop:'id',
+                prop:'name1',
                 label:'申报部门',
                 align:'left'
               },{
-                prop:'name',
+                prop:'name2',
                 label:'预算部门',
               },{
-                prop:'age',
+                prop:'name3',
                 label:'项目编码',
                 align:'center'
               },{
-                prop:'job',
+                prop:'name4',
                 label:'项目名称',
                 align:'center'
               },{
-                  prop:'job',
+                  prop:'name5',
                   label:'项目金额',
                   align:'center'
                 },{
-                  prop:'job',
+                  prop:'name6',
                   label:'支持类别',
                   align:'center'
                 },{
-                  prop:'job',
+                  prop:'name7',
                   label:'起止日期',
                   align:'center'
                 },{
-                  prop:'job',
+                  prop:'name8',
                   label:'申报日期',
                   align:'center'
                 },{
-                  prop:'job',
+                  prop:'name9',
                   label:'审批状态',
                   align:'center'
                 }],
@@ -125,7 +112,15 @@
             },
             table1:{
               tableData:[]
-            }
+            },
+            watchTable:false,
+            formList:{
+              year:"1",
+              type:'',
+              status:'',
+              search:''
+            },
+            search:''
           }
       },
       created(){
@@ -146,9 +141,22 @@
           },
           status:'审批中'
         }
-        for (let i =0;i<6;i++){
-          this.table1.tableData.push(a)
+        let b ={
+          name1:'实业中心',
+          name2:'实业中心',
+          name3:'20190000001',
+          name4:'广东劳模疗养基地5年',
+          name5:"27.68",
+          name6:"主业类",
+          name7:"2019.01.01-2019.12.31",
+          name8:"27.68",
+          name9:"待送审",
         }
+        for (let i =0;i<10;i++){
+          this.table1.tableData.push(a)
+          this.table.tableData.push(b)
+        }
+
       },
       mounted(){
 
@@ -185,7 +193,7 @@
           })
         },
         fn1(){
-
+          this.watchTable = false
         }
       }
     }
@@ -195,6 +203,10 @@
   .row-class-name{
     margin-top: 10px;
     padding:0 20px;
+  }
+  .table-main{
+    width: 97%;
+    overflow-x: auto;
   }
 </style>
 <style>

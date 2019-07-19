@@ -1,5 +1,5 @@
 <template>
-  <section>
+  <section class="itemTable">
     <el-table
       :data="data"
       :row-class-name="rowClassName"
@@ -7,20 +7,21 @@
       :header-cell-class-name="handerCellClassName"
       @current-change=""
       :highlight-current-row="highlightCurrentRow"
-      height="600"
+      style="overflow: visible;position: static;padding-top: 50px"
     >
       <el-table-column type="selection"></el-table-column>
       <el-table-column
         prop="item"
         align="center"
         label="预立项项目信息">
-        <template   slot-scope="scope" style="">
+        <template   slot-scope="scope">
           <div>
             <div class="top-content">
               <div class="top-left">项目编码：{{scope.row.item.projectCode}}</div>
               <div class="top-center">项目名称：{{scope.row.item.projectName}}</div>
               <div class="top-right">
-                <div class="card">{{scope.row.item.projectMoney | NumFormat}}</div>
+                <div class="card" v-if="monetaryUnit == '1'">{{scope.row.item.projectMoney | NumFormat}}</div>
+                <div class="card" v-if="monetaryUnit == '2'">{{scope.row.item.projectMoney/10000}}万元</div>
               </div>
             </div>
             <div class="context">
@@ -85,6 +86,10 @@
             return []
           }
         },
+        monetaryUnit:{
+          type:String,
+          default:'1'
+        }
       },
       data(){
         return{
@@ -109,9 +114,10 @@
         },
         //表头单元格回调
         handerCellClassName({row,column,rowIndex,columnIndex}){
-          return 'thead-cell'
-          if (columnIndex === 0){
-
+          if (columnIndex === 2){
+            return 'thead-last-cell'
+          }else {
+            return 'thead-cell'
           }
         }
       }
@@ -182,68 +188,118 @@
       width: 50px;
       height: 50px;
       display: inline-block;
-      border: 2px solid #39b49b;
+      border: 2px solid #3495E8;
       border-radius: 25px;
       line-height: 50px;
+      color:#3495E8 ;
     }
+  }
+  .itemTable{
+    padding: 0 30px 0 50px;
+    overflow-y: auto;
+    height: 630px;
+    position: static;
+    /*overflow-x: hidden;*/
+    top: 10px;
+    margin-right: -18px;
   }
 </style>
 <style>
   /*表格每一行样式*/
-  .row-class-name{
+  .itemTable .row-class-name{
     box-shadow: 0 0px 8px #cbcbcb;
     border-radius: 8px;
   }
-  .row-class-name:hover{
+  .itemTable .row-class-name:hover{
     box-shadow: 0 0px 9px #409eff;
   }
-  .el-table__row:hover>td{
+  .itemTable .el-table__row:hover>td{
     border-top: 1px solid  #00b7ee !important;
     border-bottom: 1px solid  #00b7ee !important;
   }
-  .el-table__row:hover>.frist-column{
+  .itemTable .el-table__row:hover>.frist-column{
     border-left: 1px solid #00b7ee !important;
   }
-  .el-table__row:hover>.last-column{
+  .itemTable .el-table__row:hover>.last-column{
     border-right: 1px solid #00b7ee !important;
   }
-  .row-class-name td{
+  .itemTable .row-class-name td{
     border-bottom: none!important;
     border-top: 1px solid #e3e3e3 !important;
     border-bottom: 1px solid #e3e3e3 !important;
     border-right: 1px solid #e3e3e3 !important;
     padding: 5px 0;
   }
-  .row-class-name td .cell{
+  .itemTable .row-class-name td .cell{
     width: 100%;;overflow: hidden;word-wrap: break-word;word-break: break-all
   }
   /*调整表格每一行间距*/
-  .el-table__body{
+  .itemTable .el-table__body{
     border-collapse: separate;
     border-spacing:0px 10px ;
   }
   /*第一列数据*/
-  .frist-column{
+  .itemTable .frist-column{
     width: 150px !important;
     border-left: 1px solid #e3e3e3 !important;
     border-top-left-radius: 8px;
     border-bottom-left-radius: 8px;
   }
   /*最后一列数据*/
-  .last-column{
+  .itemTable .last-column{
     border-top-right-radius: 8px;
     border-bottom-right-radius: 8px;
   }
   /*表头单元格*/
-  .thead-cell{
+  .itemTable .thead-cell{
     border-bottom: none !important;
     background-color: #CACACA !important;
     border-right: 1px solid #ffffff !important;
   }
-  .current-row td{
+  /*表头单元格*/
+  .itemTable .thead-last-cell{
+    border-bottom: none !important;
+    background-color: #CACACA !important;
+    border-right: 1px solid #CACACA !important;
+  }
+  .itemTable .current-row td{
     /*background-color: #409eff !important;*/
   }
-  .gutter{
+  .itemTable .gutter{
     background-color: #CACACA !important;
+  }
+  .itemTable .el-table__body-wrapper{
+    overflow: visible;
+  }
+  .itemTable .el-table__header-wrapper{
+    /*position:relative;*/
+    overflow:visible;
+    position: absolute;
+    z-index: 2;
+    width: 92%;
+    top: 54px;
+
+  }
+  .itemTable .el-table__header-wrapper:before{
+
+    width: calc(6% + 20px);
+    background-color: #CACACA;
+    height: 47px;
+    content:"";
+    position:absolute;
+    left:95%;
+    top:0;
+  }
+  .itemTable .el-table__header-wrapper:after{
+    width: 50px;
+    background-color: #CACACA;
+    height: 47px;
+    content:"";
+    position:absolute;
+    left:-30px;
+    top:0;
+  }
+  .dataTable .el-table__header-wrapper:before{
+    left:100%;
   }
 </style>

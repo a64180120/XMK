@@ -1,5 +1,5 @@
 <template>
-    <section>
+    <section class="dataTable">
       <el-table
         :data="data"
         :row-class-name="rowClassName"
@@ -7,7 +7,7 @@
         :header-cell-class-name="handerCellClassName"
         @current-change=""
         :highlight-current-row="highlightCurrentRow"
-        height="400"
+        style="overflow: visible;position: static;padding-top: 50px"
       >
         <el-table-column v-if="selection" type="selection"></el-table-column>
         <el-table-column
@@ -73,73 +73,122 @@
         },
         //表头单元格回调
         handerCellClassName({row,column,rowIndex,columnIndex}){
-          return 'thead-cell'
-          if (columnIndex === 0){
-
+          if (columnIndex === this.column.length){
+            return 'thead-last-cell'
+          }else {
+            return 'thead-cell'
           }
-        }
+        },
       }
     }
 </script>
-<style scoped>
-
+<style scoped lang="scss">
+  .dataTable{
+    padding: 0 20px 0 50px;
+    overflow-y: auto;
+    height: 630px;
+    position: static;
+    /*overflow-x: hidden;*/
+    top: 10px;
+    margin-right: -17px;
+  }
 </style>
 <style>
   /*表格每一行样式*/
-  .row-class-name{
+  .dataTable .row-class-name{
     box-shadow: 0 0px 8px #cbcbcb;
     border-radius: 8px;
   }
-  .row-class-name:hover{
+  .dataTable .row-class-name:hover{
     box-shadow: 0 0px 9px #409eff;
   }
-  .el-table__row:hover>td{
+  .dataTable .el-table__row:hover>td{
     border-top: 1px solid  #00b7ee !important;
     border-bottom: 1px solid  #00b7ee !important;
   }
-  .el-table__row:hover>.frist-column{
+  .dataTable .el-table__row:hover>.frist-column{
     border-left: 1px solid #00b7ee !important;
   }
-  .el-table__row:hover>.last-column{
+  .dataTable .el-table__row:hover>.last-column{
     border-right: 1px solid #00b7ee !important;
   }
-  .row-class-name td{
+  .dataTable .row-class-name td{
     border-bottom: none!important;
     border-top: 1px solid #e3e3e3 !important;
     border-bottom: 1px solid #e3e3e3 !important;
     border-right: 1px solid #e3e3e3 !important;
     padding: 5px 0;
   }
-  .row-class-name td .cell{
+  .dataTable .row-class-name td .cell{
     width: 100%;;overflow: hidden;word-wrap: break-word;word-break: break-all
   }
   /*调整表格每一行间距*/
-  .el-table__body{
+  .dataTable .el-table__body{
     border-collapse: separate;
     border-spacing:0px 10px ;
   }
   /*第一列数据*/
-  .frist-column{
+  .dataTable .frist-column{
     width: 150px !important;
     border-left: 1px solid #e3e3e3 !important;
     border-top-left-radius: 8px;
     border-bottom-left-radius: 8px;
   }
   /*最后一列数据*/
-  .last-column{
+  .dataTable .last-column{
     border-top-right-radius: 8px;
     border-bottom-right-radius: 8px;
   }
   /*表头单元格*/
-  .thead-cell{
+  .dataTable .thead-cell{
     border-bottom: none !important;
     background-color: #CACACA !important;
     border-right: 1px solid #ffffff !important;
   }
-  .current-row td{
+  /*表头单元格*/
+  .dataTable .thead-last-cell{
+    border-bottom: none !important;
+    background-color: #CACACA !important;
+    border-right: 1px solid #CACACA !important;
+  }
+  .dataTable .current-row td{
     /*background-color: #409eff !important;*/
   }
-  .gutter{
+  .dataTable .gutter{
     background-color: #CACACA !important;
+  }
+  .dataTable .el-table__body-wrapper{
+    overflow: visible;
+  }
+  .dataTable .el-table__header-wrapper{
+    /*position:relative;*/
+    overflow:visible;
+    position: absolute;
+    z-index: 2;
+    width: 90%;
+    top: 56px;
+
+  }
+  .dataTable .el-table__header-wrapper:before{
+
+    width: calc(5% + 20px);
+    background-color: #CACACA;
+    height: 47px;
+    content:"";
+    position:absolute;
+    left:95%;
+    top:0;
+  }
+  .dataTable .el-table__header-wrapper:after{
+    width: 50px;
+    background-color: #CACACA;
+    height: 47px;
+    content:"";
+    position:absolute;
+    left:-30px;
+    top:0;
+  }
+  .dataTable .el-table__header-wrapper:before{
+    left:100%;
   }
 </style>
