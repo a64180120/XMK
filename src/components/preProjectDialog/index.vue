@@ -1,5 +1,8 @@
 <template>
-  <section>
+  <!-- <el-dialog
+      append-to-body :visible="true" width="80%" :close-on-click-modal="false"
+  ></el-dialog>-->
+  <section class="prerojectnewproject">
     <div slot="title" class="dialog-title">
       <span style="float: left">新增项目</span>
     </div>
@@ -41,9 +44,17 @@
               end-placeholder="结束日期"
             ></el-date-picker>
           </li>
+          <li>
+            <span>绩效评价：</span>
+            <el-select v-model="inp" size="small" placeholder="必选">
+              <el-option label="是" value="1"></el-option>
+              <el-option label="否" value="0"></el-option>
+            </el-select>
+          </li>
         </ul>
       </div>
       <div class="right-box">
+        <!-- tabs -->
         <ul>
           <li
             v-for="(i,index) in tabsList"
@@ -53,7 +64,9 @@
             @click="tabindex = index"
           ></li>
         </ul>
+        <!-- 选项卡内容 -->
         <div class="right-box-container">
+          <!-- 项目科研 -->
           <ul v-show="tabindex == 0" class="textareas">
             <li v-for="i in 4">
               <span>部门职能概述：</span>
@@ -67,15 +80,19 @@
               ></el-input>
             </li>
           </ul>
+          <!-- 预算明细 -->
           <div v-show="tabindex == 1" class="budgetdetail">
+            <div style="text-align:left;">
+              <el-checkbox v-model="copyLine">复制行</el-checkbox>
+            </div>
             <div class="list">
               <div class="listHead">
                 <ul>
                   <li>序号</li>
                   <li>明细项目名称（必填）</li>
                   <li>金额（必填）</li>
-                  <li>资金来源（必填）</li>
-                  <li>支付方式（必填）</li>
+                  <li>资金来源（必选）</li>
+                  <li>支付方式（必选）</li>
                   <li>测算过程及其他说明事项（必填）</li>
                 </ul>
               </div>
@@ -90,6 +107,7 @@
                   </li>
                   <li>
                     <el-input
+                      @focus="clearNum(index,$event)"
                       @keyup.native="clearNum(index,$event)"
                       @blur="filterMoney(item)"
                       class="money"
@@ -98,16 +116,24 @@
                     />
                   </li>
                   <li>
-                    <el-input v-model="item.get" placeholder />
+                    <el-select v-model="item.get" size="small" placeholder="必选">
+                      <el-option label="123" value="123"></el-option>
+                      <el-option label="456" value="456"></el-option>
+                      <el-option label="1123" value="1123"></el-option>
+                    </el-select>
                   </li>
                   <li>
-                    <el-input v-model="item.method" placeholder />
+                    <el-select v-model="item.method" size="small" placeholder="必选">
+                      <el-option label="123" value="123"></el-option>
+                      <el-option label="456" value="456"></el-option>
+                      <el-option label="1123" value="1123"></el-option>
+                    </el-select>
                   </li>
                   <li class="enable">
                     <el-input v-model="item.remark" placeholder />
                     <div class="icon active">
                       <div>
-                        <img @click="add(index)" src="@/assets/images/jia.png" alt />
+                        <img @click="add(item)" src="@/assets/images/jia.png" alt />
                       </div>
                       <div>
                         <img @click="del(index)" src="@/assets/images/jian.png" alt />
@@ -118,6 +144,136 @@
               </div>
             </div>
           </div>
+          <!-- 实施计划 -->
+          <div v-show="tabindex == 2" class="budgetdetail">
+            <div style="text-align:left;">
+              <el-checkbox v-model="copyLine">复制行</el-checkbox>
+            </div>
+            <div class="list plan">
+              <div class="listHead">
+                <ul>
+                  <li>序号</li>
+                  <li>实施内容（必填）</li>
+                  <li>开始日期（必填）</li>
+                  <li>结束日期（必填）</li>
+                </ul>
+              </div>
+            </div>
+            <div class="list plan listBodyCon">
+              <div class="listBody">
+                <div style="cursor:pointer" v-if="!budgetdetail.length">请添加明细</div>
+                <ul v-else v-for="(item,index) in budgetdetail" :key="index">
+                  <li>{{index+1}}</li>
+                  <li>
+                    <el-input v-model="item.name" placeholder />
+                  </li>
+                  <li>
+                    <el-date-picker v-model="value1" type="date" placeholder="选择日期"></el-date-picker>
+                  </li>
+
+                  <li class="enable">
+                    <el-date-picker v-model="value1" type="date" placeholder="选择日期"></el-date-picker>
+                    <div class="icon active">
+                      <div>
+                        <img @click="add(item)" src="@/assets/images/jia.png" alt />
+                      </div>
+                      <div>
+                        <img @click="del(index)" src="@/assets/images/jian.png" alt />
+                      </div>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <!--  绩效目标 -->
+          <div v-show="tabindex == 3" class="jxtarget">
+            <div class="line1">
+              <div>
+                <span>年度绩效目标：</span>
+                <el-input
+                  type="textarea"
+                  show-word-limit
+                  maxlength="600"
+                  :rows="6"
+                  placeholder="至少20字以上，限600字以内（必填）"
+                  v-model="textarea"
+                ></el-input>
+              </div>
+              <div>
+                <span>长期绩效目标：</span>
+                <el-input
+                  type="textarea"
+                  show-word-limit
+                  maxlength="600"
+                  :rows="6"
+                  placeholder="至少20字以上，限600字以内（必填）"
+                  v-model="textarea"
+                ></el-input>
+              </div>
+            </div>
+            <div class="line2">
+              <span>绩效指标类别：</span>
+              <el-select v-model="type" size="small">
+                <el-option label="123" value="123"></el-option>
+                <el-option label="456" value="456"></el-option>
+                <el-option label="1123" value="1123"></el-option>
+              </el-select>
+            </div>
+            <div class="line3">
+              <div class="tableHead">
+                <table>
+                  <colgroup>
+                    <col width="10%" />
+                    <col width="10%" />
+                    <col width="10%" />
+                    <col width="15%" />
+                    <col width="15%" />
+                    <col width="15%" />
+                    <col width="15%" />
+                  </colgroup>
+                  <thead>
+                    <tr>
+                      <th>行号</th>
+                      <th colspan="2">指标类别</th>
+                      <th>指标名称</th>
+                      <th>指标值</th>
+                      <th>指标权重</th>
+                      <th>指标描述</th>
+                    </tr>
+                  </thead>
+                </table>
+              </div>
+              <div class="tableBody">
+                <table>
+                  <colgroup>
+                    <col width="10%" />
+                    <col width="10%" />
+                    <col width="10%" />
+                    <col width="15%" />
+                    <col width="15%" />
+                    <col width="15%" />
+                    <col width="15%" />
+                  </colgroup>
+                  <tbody>
+                    <tr v-for="i in 10">
+                      <td>{{i}}</td>
+                      <td style="padding:4px" v-if="i==1" rowspan="10">
+                        <add-br :value="'行少竖多咋办行少竖多咋办行少竖多咋办行少竖多咋办1行少竖多咋办'"></add-br>
+                      </td>
+                      <td style="padding:4px" v-if="i==6||i==1" rowspan="5">
+                        <add-br :value="'竖高会把行撑高'"></add-br>
+                      </td>
+                      <td>2</td>
+                      <td>2</td>
+                      <td>2</td>
+                      <td>2</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </el-row>
@@ -125,15 +281,19 @@
 </template>
 
 <script>
+import addBr from './addBr'
 export default {
   name: 'prerojectnewproject',
+  components: { addBr },
   data() {
     return {
       inp: '',
       value1: '',
       textarea: '',
-      tabindex: 1,
-      tabsList: ['项目可研', '预算明细', '实施计划', '绩效目标'],
+      type: '',
+      tabindex: 3,
+      copyLine: false,
+      tabsList: ['项目科研', '预算明细', '实施计划', '绩效目标'],
       budgetdetail: [
         {
           name: '',
@@ -146,14 +306,20 @@ export default {
     }
   },
   methods: {
-    add(index) {
-      this.budgetdetail.push({
-        name: '',
-        money: '',
-        get: '',
-        method: '',
-        remark: ''
-      })
+    add(item) {
+      let newItem = Object.assign(
+        {},
+        this.copyLine
+          ? item
+          : {
+              name: '',
+              money: '',
+              get: '',
+              method: '',
+              remark: ''
+            }
+      )
+      this.budgetdetail.push(newItem)
     },
     del(index) {
       this.budgetdetail.splice(index, 1)
@@ -174,13 +340,7 @@ export default {
       }
     },
     filterMoney(item) {
-      console.log(value)
-      item.money = (function(
-        value = item.money,
-        decimals = 2,
-        decPoint = '.',
-        thousandsSep = ','
-      ) {
+      function fil(value, decimals = 2, decPoint = '.', thousandsSep = ',') {
         if (!value) return '0.00'
         value = (value + '').replace(/[^0-9+-Ee.]/g, '')
         let n = !isFinite(+value) ? 0 : +value
@@ -202,7 +362,14 @@ export default {
           s[1] += new Array(prec - s[1].length + 1).join('0')
         }
         return s.join(dec)
-      })()
+      }
+      item.money = fil(item.money)
+    }
+  },
+  filters: {
+    rtc(val) {
+      console.log(val)
+      return val.split('').join('<br/>')
     }
   }
 }
@@ -322,6 +489,7 @@ export default {
       right: 0;
       bottom: 0;
       box-shadow: 0px 2px 6px #26659b80;
+      overflow: hidden;
       > ul.textareas {
         height: 100%;
         li {
@@ -344,10 +512,13 @@ export default {
         }
       }
       > div.budgetdetail {
-        height: 100%;
+        position: absolute;
+        top: 5px;
+        bottom: 10px;
+        left: 10px;
+        right: -22px;
         .list {
           position: relative;
-          padding-left: 17px;
           width: 100%;
           &:after {
             position: absolute;
@@ -402,6 +573,17 @@ export default {
               }
             }
           }
+          &.plan ul li {
+            &:nth-of-type(2) {
+              width: 40%;
+            }
+            &:nth-of-type(3) {
+              width: 25%;
+            }
+            &:nth-of-type(4) {
+              width: 25%;
+            }
+          }
         }
         .listBodyCon {
           height: 100%;
@@ -450,39 +632,111 @@ export default {
           }
         }
       }
+      > div.jxtarget {
+        > .line1 {
+          text-align: left;
+          &::after {
+            content: '';
+            display: block;
+            clear: both;
+          }
+          > div:first-of-type {
+            width: 48%;
+            float: left;
+          }
+          > div:nth-of-type(2) {
+            width: 48%;
+            float: right;
+          }
+        }
+        > .line2 {
+          text-align: left;
+          padding-left: 100px;
+          border-bottom: 1px solid $borderColor_ccc;
+          margin-top: 10px;
+          padding-bottom: 3px;
+          > span {
+            position: relative;
+            left: -100px;
+            float: left;
+            width: 100px;
+            line-height: 32px;
+          }
+          > div {
+            margin-left: -100px;
+            width: 100%;
+          }
+        }
+        > .line3 {
+          position: absolute;
+          bottom: 0;
+          top: 220px;
+          left: 10px;
+          right: 10px;
+          overflow: hidden;
+          .tableHead {
+            th {
+              color: #fff;
+              height: 48px;
+              border-right: 1px solid #fff;
+              background: $btnColor;
+            }
+          }
+          .tableBody {
+            top: 48px;
+            bottom: 10px;
+            table {
+              border: 1px solid $borderColor_ccc;
+            }
+            td {
+              border-radius: 0;
+              border-bottom: 1px solid $borderColor_ccc;
+              border-left-color: $borderColor_ccc;
+            }
+          }
+        }
+      }
     }
   }
 }
 </style>
 <style lang="stylus">
 .prerojectnewproject
-  .el-dialog__body
-    padding-top 0
-    padding-bottom 20px
-    .left-box
-      .el-input__inner
-        border 0
-      .el-date-editor.el-range-editor.el-input__inner
-        width 100%
-        padding 0
-        input, i, span
-          font-size 0.14rem
-          line-height 32px
-          height 32px
-        .el-input__icon.el-range__icon.el-icon-date
-          display none
-          background-color #000
-    .right-box
-      ul.textareas li
-        .el-textarea .el-textarea__inner
-          padding-top 0.2rem
-      div.budgetdetail
-        .listBody
-          .el-input__inner
-            border 0
-            background-color transparent
-          .money .el-input__inner
-            text-align right
+  .left-box
+    .el-input__inner
+      border 0
+    .el-date-editor.el-range-editor.el-input__inner
+      width 100%
+      padding 0
+      input, i, span
+        font-size 0.14rem
+        line-height 32px
+        height 32px
+      .el-input__icon.el-range__icon.el-icon-date
+        display none
+        background-color #000
+  .right-box
+    ul.textareas li
+      .el-textarea .el-textarea__inner
+        padding-top 0.2rem
+    div.budgetdetail
+      .list
+        &.plan .listBody li .el-date-editor
+          width 100%
+          >input
+            text-align center
+          .el-input__prefix
+            display none
+      .listBody
+        .el-input__inner
+          border 0
+          background-color transparent
+        .money .el-input__inner
+          text-align right
+    div.jxtarget
+      .line2
+        .el-input__inner
+          border 0
 </style>
 
 
