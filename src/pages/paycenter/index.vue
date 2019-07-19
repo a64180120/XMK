@@ -104,12 +104,12 @@
                   <span>申报日期</span>
                   <el-date-picker
                     v-model="sbrq"
-                    type="datetimerange"
+                    type="daterange"
                     range-separator="至"
                     start-placeholder="开始日期"
                     end-placeholder="结束日期"
                     size="small"
-                    value-format="yyyy-MM-dd HH:mm:ss"
+                    value-format="yyyy-MM-dd"
                     @change="rePageGetData"
                   ></el-date-picker>
                 </li>
@@ -117,13 +117,13 @@
                   <span>支付日期</span>
                   <el-date-picker
                     v-model="zfrq"
-                    type="datetimerange"
+                    type="daterange"
                     range-separator="至"
                     start-placeholder="开始日期"
                     end-placeholder="结束日期"
                     size="small"
                     @change="rePageGetData"
-                    value-format="yyyy-MM-dd HH:mm:ss"
+                    value-format="yyyy-MM-dd"
                   ></el-date-picker>
                 </li>
               </ul>
@@ -525,7 +525,9 @@ export default {
     // 当前页面审批
     approvalSubmit: function(val) {
       console.log(val)
-      this.myapprovalData = [val.Mst]
+      let newObj = Object.assign({}, val.Mst)
+      newObj.RefbillPhid = newObj.PhId
+      this.myapprovalData = [newObj]
       this.$nextTick(() => {
         this.$refs.approvalDialog.changeDialog()
       })
@@ -836,6 +838,7 @@ export default {
             })
               .then(() => {
                 PostCancelAppvalRecord({
+                  OperaPhid: this.userid,
                   FBilltype: '002',
                   RefbillPhidList: (item ? [item] : handleitem).map(
                     i => i.Mst.PhId
