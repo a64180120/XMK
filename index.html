@@ -30,15 +30,18 @@
 </head>
 
 <body>
-  <iframe id="desktopMsgClient" src="" style="display:none"></iframe>
+  <!-- <iframe id="desktopMsgClient" src="" style="display:none"></iframe> -->
   <div id="app"></div>
   <script>
-    window.onload = function () {
-      document.getElementById('desktopMsgClient').src = window.global.baseUrl.replace('/custom2/api', '') + "/desktopMsgServer/MsgSubscriber.htm";
-    }
-    window.onmessage = function (e) {
-      console.log(e, 'websocket')
-    }
+    // window.onload = function () {
+    //   var frame = document.getElementById('desktopMsgClient')
+    //   frame.src = window.global.baseUrl.replace('/custom2/api', '') + "/desktopMsgServer/MsgSubscriber.htm";
+    //   frame.contentWindow.postMessage($appinfo, '*');
+    // }
+    // window.onmessage = function (e) {
+    //   console.log(e, 'websocket')
+
+    // }
   </script>
 </body>
 

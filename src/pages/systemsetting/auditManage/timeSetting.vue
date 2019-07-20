@@ -176,7 +176,15 @@ export default {
             OName: this.$store.state.user.orgname
           }]
         } else {
-          this.typeInfoList = []
+          this.typeInfoList = [{
+            DicType: 'StayTime',
+            Value: this.Value,
+            OrgList: [{
+              PhId: this.$store.state.user.orgid,
+              OCode: this.$store.state.user.orgcode,
+              OName: this.$store.state.user.orgname
+            }]
+          }]
         }
 
       }

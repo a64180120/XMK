@@ -45,6 +45,18 @@ export default {
     let that = this;
     let _body = document.querySelector('body')
     _body.addEventListener("click", this.closeAuditFollow)
+    // debugger;
+    // //消息推送
+    // console.log('111sss')
+
+    // document.getElementById('desktopMsgClient').src = window.global.baseUrl.replace('/custom2/api', '') + "/desktopMsgServer/MsgSubscriber.htm";
+    // console.log('2222sss')
+    // let vm = this;
+    // window.onmessage = function (e) {
+    //   vm.$msgBox.show(e, 'websocket')
+
+    // }
+    // console.log('333sss')
   },
   methods: {
     getOrganize () { //获取组织树 
