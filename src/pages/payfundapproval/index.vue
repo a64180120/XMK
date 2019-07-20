@@ -1,31 +1,28 @@
 <template>
   <section>
-    <handle-btn title="审批中心在线工作平台"
-                @refresh="refresh()"
-                :auditBtn="true"
-                type="approval">
+    <handle-btn title="审批中心在线工作平台" @refresh="refresh()" :auditBtn="true" type="approval">
       <div class="top">
         <ul v-if="isApproval">
           <!--v-if="MenuButton.approvalcenter_approval"-->
           <li @click="aprovalItem()">
             <div>
-              <img src="../../assets/images/sp.png">
+              <img src="../../assets/images/sp.png" />
             </div>
             <span>审批</span>
           </li>
           <!--v-if="MenuButton.approvalcenter_approvalpay"-->
           <li @click="creatPayItem()">
             <div>
-              <img src="../../assets/images/sc.png">
+              <img src="../../assets/images/sc.png" />
             </div>
             <span>审批并生成支付单</span>
           </li>
           <li>
-            <div @click.stop="printTables"
-                 class="handle"
-                 style="width: 80px;">
-              <div class="topIcon"><img src="@/assets/images/dy.png"
-                     alt=""></div><!-- @click="creatPayItem()"-->
+            <div @click.stop="printTables" class="handle" style="width: 80px;">
+              <div class="topIcon">
+                <img src="@/assets/images/dy.png" alt />
+              </div>
+              <!-- @click="creatPayItem()"-->
               打印
             </div>
           </li>
@@ -34,16 +31,16 @@
           <!-- v-if="MenuButton.approvalcenter_approvalpay"-->
           <li @click="creatPayList()">
             <div>
-              <img src="../../assets/images/sc.png">
+              <img src="../../assets/images/sc.png" />
             </div>
             <span>生成支付单</span>
           </li>
           <li>
-            <div @click.stop="printTables"
-                 class="handle"
-                 style="width: 80px;">
-              <div class="topIcon"><img src="@/assets/images/dy.png"
-                     alt=""></div><!-- @click="creatPayItem()"-->
+            <div @click.stop="printTables" class="handle" style="width: 80px;">
+              <div class="topIcon">
+                <img src="@/assets/images/dy.png" alt />
+              </div>
+              <!-- @click="creatPayItem()"-->
               打印
             </div>
           </li>
@@ -56,318 +53,332 @@
           <!--搜索栏-->
           <div class="btnArea">
             <el-form :inline="true">
-              <el-form-item label="申报部门"
-                            class="top-form-left">
-                <el-tooltip v-if="applyDeportTop !=='' "  :content="applyDeportTop">
-                  <el-input size="mini"
-                            v-model="applyDeportTop"
-                            @focus="openOrg()"
-                            @change="changeInput()"
-                            style="width: 120px"
-                            placeholder="全部"></el-input>
+              <el-form-item label="申报部门" class="top-form-left">
+                <el-tooltip v-if="applyDeportTop !=='' " :content="applyDeportTop">
+                  <el-input
+                    size="mini"
+                    v-model="applyDeportTop"
+                    @focus="openOrg()"
+                    @change="changeInput()"
+                    style="width: 120px"
+                    placeholder="全部"
+                  ></el-input>
                 </el-tooltip>
-                <el-input v-else size="mini"
-                          v-model="applyDeportTop"
-                          @focus="openOrg()"
-                          @change="changeInput()"
-                          style="width: 120px"
-                          placeholder="全部"></el-input>
+                <el-input
+                  v-else
+                  size="mini"
+                  v-model="applyDeportTop"
+                  @focus="openOrg()"
+                  @change="changeInput()"
+                  style="width: 120px"
+                  placeholder="全部"
+                ></el-input>
               </el-form-item>
-              <el-form-item label="停留时长"
-                            class="top-form-left">
-                <el-input size="mini"
-                          v-model="searchForm.StopHour"
-                          style="vertical-align:middle !important; width: 200px;margin-top: -1px"
-                          placeholder="请输入停留时长"
-                          @change="changeInput()">
-                  <el-select v-model="searchForm.Operator"
-                             slot="prepend"
-                             placeholder="类型"
-                             class="select-input"
-                             style="width: 75px"
-                             @change="changeInput('operator')">
-                    <el-option label="等于"
-                               value="1"></el-option>
-                    <el-option label="大于"
-                               value="2"></el-option>
-                    <el-option label="小于"
-                               value="3"></el-option>
+              <el-form-item label="停留时长" class="top-form-left">
+                <el-input
+                  size="mini"
+                  v-model="searchForm.StopHour"
+                  style="vertical-align:middle !important; width: 200px;margin-top: -1px"
+                  placeholder="请输入停留时长"
+                  @change="changeInput()"
+                >
+                  <el-select
+                    v-model="searchForm.Operator"
+                    slot="prepend"
+                    placeholder="类型"
+                    class="select-input"
+                    style="width: 75px"
+                    @change="changeInput('operator')"
+                  >
+                    <el-option label="等于" value="1"></el-option>
+                    <el-option label="大于" value="2"></el-option>
+                    <el-option label="小于" value="3"></el-option>
                   </el-select>
                 </el-input>
               </el-form-item>
-              <el-form-item label="申报日期"
-                            class="top-form-left">
-                <el-date-picker v-model="searchForm.BDate"
-                                @change="changeInput()"
-                                style="width: 240px"
-                                size="mini"
-                                type="daterange"
-                                start-placeholder="开始时间"
-                                end-placeholder="开始时间"></el-date-picker>
+              <el-form-item label="申报日期" class="top-form-left">
+                <el-date-picker
+                  v-model="searchForm.BDate"
+                  @change="changeInput()"
+                  style="width: 240px"
+                  size="mini"
+                  type="daterange"
+                  start-placeholder="开始时间"
+                  end-placeholder="开始时间"
+                  value-format="yyyy-MM-dd"
+                ></el-date-picker>
               </el-form-item>
-              <el-form-item label=""
-                            class="top-form-right">
-                <search-input @btnClick="search()"
-                              placeholder="申报单名称/编号"
-                              v-model="searchForm.BName"></search-input>
+              <el-form-item label class="top-form-right">
+                <search-input
+                  @btnClick="search()"
+                  placeholder="申报单名称/编号"
+                  v-model="searchForm.BName"
+                ></search-input>
               </el-form-item>
             </el-form>
           </div>
           <!--未审批表格-->
-          <div v-if="isApproval"
-               class="tableHead">
+          <div v-if="isApproval" class="tableHead">
             <table>
               <colgroup>
-                <col width="7%">
-                <col width="10%">
-                <col width="10%">
-                <col width="15%">
-                <col width="10%">
-                <col width="15%">
-                <col width="10%">
-                <col width="7%">
-                <col width="16%">
+                <col width="7%" />
+                <col width="10%" />
+                <col width="10%" />
+                <col width="15%" />
+                <col width="10%" />
+                <col width="15%" />
+                <col width="10%" />
+                <col width="7%" />
+                <col width="16%" />
               </colgroup>
               <thead>
                 <tr>
                   <td>
-                    <el-checkbox v-model="checkedAll"
-                                 :indeterminate="IsIndeterminate">序号</el-checkbox>
+                    <el-checkbox v-model="checkedAll" :indeterminate="IsIndeterminate">序号</el-checkbox>
                   </td>
-                  <td>
-                    申报部门
-                  </td>
-                  <td>
-                    申报单编号
-                  </td>
-                  <td>
-                    申报单名称
-                  </td>
-                  <td>
-                    申报金额(元)
-                  </td>
-                  <td>
-                    申报日期
-                  </td>
-                  <td>
-                    审批状态
-                  </td>
+                  <td>申报部门</td>
+                  <td>申报单编号</td>
+                  <td>申报单名称</td>
+                  <td>申报金额(元)</td>
+                  <td>申报日期</td>
+                  <td>审批状态</td>
                   <td>
                     <el-tooltip content="停留时长">
                       <span>停留时长</span>
                     </el-tooltip>
                   </td>
-                  <td>
-                    申报说明
-                  </td>
+                  <td>申报说明</td>
                 </tr>
               </thead>
             </table>
           </div>
-          <div v-if="isApproval"
-               class="tableBody">
+          <div v-if="isApproval" class="tableBody">
             <table ref="printArea">
               <colgroup>
-                <col width="7%">
-                <col width="10%">
-                <col width="10%">
-                <col width="15%">
-                <col width="10%">
-                <col width="15%">
-                <col width="10%">
-                <col width="7%">
-                <col width="16%">
+                <col width="7%" />
+                <col width="10%" />
+                <col width="10%" />
+                <col width="15%" />
+                <col width="10%" />
+                <col width="15%" />
+                <col width="10%" />
+                <col width="7%" />
+                <col width="16%" />
               </colgroup>
               <tbody>
-              <tr :class="{trActive:check[idx]}" v-for="(item,idx) in tableData"  :key="idx">
-                <td  @click.self="handleCheckBoxCellClick(item,idx)">
-                  <el-checkbox v-model="check[idx]"  >{{idx+1}}</el-checkbox>
-                </td>
-                <td>
-                  <el-tooltip  effect="dark" :content="item.OrgName" placement="bottom" popper-class="pay-fund-approval_tooltip">
-                    <p>
-                      {{item.OrgName}}
-                    </p>
-                  </el-tooltip>
-                </td>
-                <td @click="handleCellClick(item,idx)" class="apply-epart cell-click">
-                  {{item.BNum}}
-                </td>
-                <td>
-                  <el-tooltip  effect="dark" :content="item.BName" placement="bottom" popper-class="pay-fund-approval_tooltip">
-                    <p>
-                      {{item.BName}}
-                    </p>
-                  </el-tooltip>
-                </td>
-                <td style="text-align: right">
-                  {{item.BAccount | NumFormat}}
-                </td>
-                <td>
-                  <el-tooltip  effect="dark" :content="item.BDate" placement="bottom" popper-class="pay-fund-approval_tooltip">
-                    <p >
-                      {{item.BDate}}
-                    </p>
-                  </el-tooltip>
-                </td>
-                <td>
-                  <span class="cell-click" v-if="item.BStatus ==0 " @click.stop="openAuditfollow(item,idx)">未审批</span>
-                  <span class="cell-click" v-if="item.BStatus ==1 " @click.stop="openAuditfollow(item,idx)">待审批</span>
-                  <span class="cell-click" v-if="item.BStatus ==2 " @click.stop="openAuditfollow(item,idx)">未通过</span>
-                  <span class="cell-click" v-if="item.BStatus ==9 " @click.stop="openAuditfollow(item,idx)">审批通过</span>
-                </td>
-                <td>
-                  <div>
-                    <el-tooltip class="" effect="dark" :content="'已经停留'+item.StopHour +'小时'" placement="bottom-start">
-                      <img v-if="item.StopHour<timeValue"   src="../../assets/images/sj2.png" class="img-icon">
-                      <img v-else src="../../assets/images/sj1.png" class="img-icon">
+                <tr :class="{trActive:check[idx]}" v-for="(item,idx) in tableData" :key="idx">
+                  <td @click.self="handleCheckBoxCellClick(item,idx)">
+                    <el-checkbox v-model="check[idx]">{{idx+1}}</el-checkbox>
+                  </td>
+                  <td>
+                    <el-tooltip
+                      effect="dark"
+                      :content="item.OrgName"
+                      placement="bottom"
+                      popper-class="pay-fund-approval_tooltip"
+                    >
+                      <p>{{item.OrgName}}</p>
                     </el-tooltip>
-                  </div>
-                </td>
-                <td  style="text-align: left">
-                  <el-tooltip  effect="dark" :content="item.BDescribe" placement="bottom-start" popper-class="pay-fund-approval_tooltip">
-                    <p >
-                      {{item.BDescribe}}
-                    </p>
-                  </el-tooltip>
-                </td>
-              </tr>
-              <tr v-if="tableData.length === 0" :class="{trActive:check[0]}">
-                <td colspan="10">未查询到数据</td>
-              </tr>
+                  </td>
+                  <td
+                    @click="handleCellClick(item,idx)"
+                    class="apply-epart cell-click"
+                  >{{item.BNum}}</td>
+                  <td>
+                    <el-tooltip
+                      effect="dark"
+                      :content="item.BName"
+                      placement="bottom"
+                      popper-class="pay-fund-approval_tooltip"
+                    >
+                      <p>{{item.BName}}</p>
+                    </el-tooltip>
+                  </td>
+                  <td style="text-align: right">{{item.BAccount | NumFormat}}</td>
+                  <td>
+                    <el-tooltip
+                      effect="dark"
+                      :content="item.BDate"
+                      placement="bottom"
+                      popper-class="pay-fund-approval_tooltip"
+                    >
+                      <p>{{item.BDate}}</p>
+                    </el-tooltip>
+                  </td>
+                  <td>
+                    <span
+                      class="cell-click"
+                      v-if="item.BStatus ==0 "
+                      @click.stop="openAuditfollow(item,idx)"
+                    >未审批</span>
+                    <span
+                      class="cell-click"
+                      v-if="item.BStatus ==1 "
+                      @click.stop="openAuditfollow(item,idx)"
+                    >审批中</span>
+                    <span
+                      class="cell-click"
+                      v-if="item.BStatus ==2 "
+                      @click.stop="openAuditfollow(item,idx)"
+                    >未通过</span>
+                    <span
+                      class="cell-click"
+                      v-if="item.BStatus ==9 "
+                      @click.stop="openAuditfollow(item,idx)"
+                    >审批通过</span>
+                  </td>
+                  <td>
+                    <div>
+                      <el-tooltip
+                        class
+                        effect="dark"
+                        :content="'已经停留'+item.StopHour +'小时'"
+                        placement="bottom-start"
+                      >
+                        <img
+                          v-if="item.StopHour<timeValue"
+                          src="../../assets/images/sj2.png"
+                          class="img-icon"
+                        />
+                        <img v-else src="../../assets/images/sj1.png" class="img-icon" />
+                      </el-tooltip>
+                    </div>
+                  </td>
+                  <td style="text-align: left">
+                    <el-tooltip
+                      effect="dark"
+                      :content="item.BDescribe"
+                      placement="bottom-start"
+                      popper-class="pay-fund-approval_tooltip"
+                    >
+                      <p>{{item.BDescribe}}</p>
+                    </el-tooltip>
+                  </td>
+                </tr>
+                <tr v-if="tableData.length === 0" :class="{trActive:check[0]}">
+                  <td colspan="10">未查询到数据</td>
+                </tr>
               </tbody>
             </table>
           </div>
           <!--已审批表格-->
-          <div v-if="!isApproval"
-               class="tableHead">
+          <div v-if="!isApproval" class="tableHead">
             <table>
               <colgroup>
-                <col width="5%">
-                <col width="10%">
-                <col width="10%">
-                <col width="17%">
-                <col width="10%">
-                <col width="13%">
-                <col width="10%">
-                <col width="25%">
+                <col width="5%" />
+                <col width="10%" />
+                <col width="10%" />
+                <col width="17%" />
+                <col width="10%" />
+                <col width="13%" />
+                <col width="10%" />
+                <col width="25%" />
               </colgroup>
               <thead>
                 <tr>
                   <td>
-                    <el-checkbox v-model="checkedAll"
-                                 :indeterminate="IsIndeterminate">序号</el-checkbox>
+                    <el-checkbox v-model="checkedAll" :indeterminate="IsIndeterminate">序号</el-checkbox>
                   </td>
-                  <td>
-                    申报部门/单位
-                  </td>
-                  <td>
-                    申报单编号
-                  </td>
-                  <td>
-                    申报单名称
-                  </td>
-                  <td>
-                    申报金额(元)
-                  </td>
-                  <td>
-                    申报日期
-                  </td>
-                  <td>
-                    审批状态
-                  </td>
-                  <td>
-                    申报说明
-                  </td>
+                  <td>申报部门/单位</td>
+                  <td>申报单编号</td>
+                  <td>申报单名称</td>
+                  <td>申报金额(元)</td>
+                  <td>申报日期</td>
+                  <td>审批状态</td>
+                  <td>申报说明</td>
                 </tr>
               </thead>
             </table>
           </div>
-          <div v-if="!isApproval"
-               class="tableBody">
+          <div v-if="!isApproval" class="tableBody">
             <table ref="printArea">
               <colgroup>
-                <col width="5%">
-                <col width="10%">
-                <col width="10%">
-                <col width="17%">
-                <col width="10%">
-                <col width="13%">
-                <col width="10%">
-                <col width="25%">
+                <col width="5%" />
+                <col width="10%" />
+                <col width="10%" />
+                <col width="17%" />
+                <col width="10%" />
+                <col width="13%" />
+                <col width="10%" />
+                <col width="25%" />
               </colgroup>
               <tbody>
-                <tr :class="{trActive:check[idx]}"
-                    v-for="(item,idx) in tableData"
-                    :key="idx">
+                <tr :class="{trActive:check[idx]}" v-for="(item,idx) in tableData" :key="idx">
                   <td @click.self="handleCheckBoxCellClick(item,idx)">
-                    <el-checkbox v-model="check[idx]"
-                                 @click="handleCheckBoxCellClick(item,idx)">{{idx+1}}</el-checkbox>
+                    <el-checkbox
+                      v-model="check[idx]"
+                      @click="handleCheckBoxCellClick(item,idx)"
+                    >{{idx+1}}</el-checkbox>
                   </td>
                   <td>
-                    <el-tooltip effect="dark"
-                                :content="item.OrgName"
-                                placement="bottom"
-                                popper-class="pay-fund-approval_tooltip">
-                      <p>
-                        {{item.OrgName}}
-                      </p>
+                    <el-tooltip
+                      effect="dark"
+                      :content="item.OrgName"
+                      placement="bottom"
+                      popper-class="pay-fund-approval_tooltip"
+                    >
+                      <p>{{item.OrgName}}</p>
                     </el-tooltip>
                   </td>
-                  <td @click="handleCellClick(item,idx)"
-                      class="apply-epart cell-click">
-                    {{item.BNum}}
-                  </td>
+                  <td
+                    @click="handleCellClick(item,idx)"
+                    class="apply-epart cell-click"
+                  >{{item.BNum}}</td>
                   <td>
-                    <el-tooltip effect="dark"
-                                :content="item.BName"
-                                placement="bottom"
-                                popper-class="pay-fund-approval_tooltip">
-                      <p>
-                        {{item.BName}}
-                      </p>
+                    <el-tooltip
+                      effect="dark"
+                      :content="item.BName"
+                      placement="bottom"
+                      popper-class="pay-fund-approval_tooltip"
+                    >
+                      <p>{{item.BName}}</p>
                     </el-tooltip>
                   </td>
-                  <td style="text-align: right">
-                    {{item.BAccount | NumFormat}}
-                  </td>
+                  <td style="text-align: right">{{item.BAccount | NumFormat}}</td>
                   <td>
-                    <el-tooltip effect="dark"
-                                :content="item.BDate"
-                                placement="bottom"
-                                popper-class="pay-fund-approval_tooltip">
-                      <p>
-                        {{item.BDate}}
-                      </p>
+                    <el-tooltip
+                      effect="dark"
+                      :content="item.BDate"
+                      placement="bottom"
+                      popper-class="pay-fund-approval_tooltip"
+                    >
+                      <p>{{item.BDate}}</p>
                     </el-tooltip>
                   </td>
                   <td>
-                    <span class="cell-click"
-                          v-if="item.BStatus ==0 "
-                          @click.stop="openAuditfollow(item,idx)">未审批</span>
-                    <span class="cell-click"
-                          v-if="item.BStatus ==1 "
-                          @click.stop="openAuditfollow(item,idx)">审批中</span>
-                    <span class="cell-click"
-                          v-if="item.BStatus ==2 "
-                          @click.stop="openAuditfollow(item,idx)">未通过</span>
-                    <span class="cell-click"
-                          v-if="item.BStatus ==9 "
-                          @click.stop="openAuditfollow(item,idx)">审批通过</span>
+                    <span
+                      class="cell-click"
+                      v-if="item.BStatus ==0 "
+                      @click.stop="openAuditfollow(item,idx)"
+                    >未审批</span>
+                    <span
+                      class="cell-click"
+                      v-if="item.BStatus ==1 "
+                      @click.stop="openAuditfollow(item,idx)"
+                    >审批中</span>
+                    <span
+                      class="cell-click"
+                      v-if="item.BStatus ==2 "
+                      @click.stop="openAuditfollow(item,idx)"
+                    >未通过</span>
+                    <span
+                      class="cell-click"
+                      v-if="item.BStatus ==9 "
+                      @click.stop="openAuditfollow(item,idx)"
+                    >审批通过</span>
                   </td>
                   <td style="text-align: left">
-                    <el-tooltip effect="dark"
-                                :content="item.BDescribe"
-                                placement="bottom-start"
-                                popper-class="pay-fund-approval_tooltip">
-                      <p>
-                        {{item.BDescribe}}
-                      </p>
+                    <el-tooltip
+                      effect="dark"
+                      :content="item.BDescribe"
+                      placement="bottom-start"
+                      popper-class="pay-fund-approval_tooltip"
+                    >
+                      <p>{{item.BDescribe}}</p>
                     </el-tooltip>
                   </td>
                 </tr>
-                <tr v-if="tableData.length === 0"
-                    :class="{trActive:check[0]}">
+                <tr v-if="tableData.length === 0" :class="{trActive:check[0]}">
                   <td colspan="10">未查询到数据</td>
                 </tr>
               </tbody>
@@ -375,145 +386,159 @@
           </div>
         </div>
         <div class="pageArea">
-          <el-pagination class="pagination"
-                         @size-change="handleSizeChange"
-                         @current-change="handleCurrentChange"
-                         :current-page="page.currentPage"
-                         :page-sizes="page.pageSizes"
-                         layout="total,sizes,prev,pager,next,jumper"
-                         :total="page.total"></el-pagination>
+          <el-pagination
+            class="pagination"
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            :current-page="page.currentPage"
+            :page-sizes="page.pageSizes"
+            layout="total,sizes,prev,pager,next,jumper"
+            :total="page.total"
+          ></el-pagination>
         </div>
       </div>
       <!--详情弹框-->
-      <el-dialog class="dialog detail-dialog"
-                 @close="closeDetailDialog"
-                 :visible.sync="detailDialog"
-                 :close-on-click-modal="false"
-                 width="1300px">
-        <div slot="title"
-             class="dialog-title">
+      <el-dialog
+        class="dialog detail-dialog"
+        @close="closeDetailDialog"
+        :visible.sync="detailDialog"
+        :close-on-click-modal="false"
+        width="1300px"
+      >
+        <div slot="title" class="dialog-title">
           <span style="float: left">查看申报</span>
         </div>
-        <applybill v-if="detailDialog"
-                   @showImg="showImg"
-                   :applyNum="applyNum"
-                   @delete="handleDelete"
-                    ref="applybill">
+        <applybill
+          v-if="detailDialog"
+          @showImg="showImg"
+          :applyNum="applyNum"
+          @delete="handleDelete"
+          ref="applybill"
+        >
           <div slot="btn-group">
-            <el-button v-if="isApproval"
-                       class="btn"
-                       size="mini"
-                       @click="aprovalItem">审批</el-button>
-            <el-button v-if="isApproval"
-                       class="btn"
-                       size="mini"
-                       style="width: 120px"
-                       @click="creatPayItem">审批并生成支付单</el-button>
+            <el-button v-if="isApproval" class="btn" size="mini" @click="aprovalItem">审批</el-button>
+            <el-button
+              v-if="isApproval"
+              class="btn"
+              size="mini"
+              style="width: 120px"
+              @click="creatPayItem"
+            >审批并生成支付单</el-button>
 
             <el-button class="btn" size="mini" @click="printTable">打印</el-button>
           </div>
         </applybill>
       </el-dialog>
       <!--审批弹框-->
-      <approval-dialog ref="approvalDialog"
-                       :rowData="selection"
-                       @refresh="loadData"
-                       @subSuc="plSubSuc()"></approval-dialog>
+      <approval-dialog
+        ref="approvalDialog"
+        :rowData="selection"
+        @refresh="loadData"
+        @subSuc="plSubSuc()"
+      ></approval-dialog>
       <!--生成支付单弹框-->
-      <paylist-dialog ref="paylistDialog"
-                      :rowData="selection"
-                      @refresh="loadData"
-                      :isApproval="Approval"
-                      @subSuc="plSubSuc()"></paylist-dialog>
+      <paylist-dialog
+        ref="paylistDialog"
+        :rowData="selection"
+        @refresh="loadData"
+        :isApproval="Approval"
+        @subSuc="plSubSuc()"
+      ></paylist-dialog>
       <!--查看审批流程-->
-      <auditfollow :visible.sync="visible"
-                   :auditMsg="auditMsg"></auditfollow>
+      <auditfollow :visible.sync="visible" :auditMsg="auditMsg"></auditfollow>
       <!--组织树-->
-      <orgtree :data="orgtreeData"
-               :checkedOrg="checkedOrg"
-               :visible.sync="orgType"
-               @confirm="getOrg"></orgtree>
+      <orgtree
+        :data="orgtreeData"
+        :checkedOrg="checkedOrg"
+        :visible.sync="orgType"
+        @confirm="getOrg"
+      ></orgtree>
     </div>
-
   </section>
 </template>
 
 <script>
-import FundDetail from "./fundDetail";
-import HandleBtn from "../../components/topNav/topHandle";
-import SearchInput from "../../components/searchInput/searchInput";
-import ApprovalDialog from "./approvalDialog";
-import Auditfollow from "../../components/auditFollow/auditfollow";
-import Applybill from "../../components/applyBill/applybill";
-import Orgtree from "../../components/orgtree/index";
-import { selection } from "./selection";
-import ImgView from "../../components/imgView/imgView";
-import PaylistDialog from "./paylistDialog";
-import { mapState } from 'vuex';
+import FundDetail from './fundDetail'
+import HandleBtn from '../../components/topNav/topHandle'
+import SearchInput from '../../components/searchInput/searchInput'
+import ApprovalDialog from './approvalDialog'
+import Auditfollow from '../../components/auditFollow/auditfollow'
+import Applybill from '../../components/applyBill/applybill'
+import Orgtree from '../../components/orgtree/index'
+import { selection } from './selection'
+import ImgView from '../../components/imgView/imgView'
+import PaylistDialog from './paylistDialog'
+import { mapState } from 'vuex'
 import { printTable } from '@/api/upload'
 import { GetSysSetList } from '@/api/systemSetting/dataSafe'
 export default {
-  name: "index",
+  name: 'index',
   components: {
     PaylistDialog,
-    ImgView, Orgtree, Applybill, Auditfollow, ApprovalDialog, SearchInput, HandleBtn, FundDetail  },
-  data () {
+    ImgView,
+    Orgtree,
+    Applybill,
+    Auditfollow,
+    ApprovalDialog,
+    SearchInput,
+    HandleBtn,
+    FundDetail
+  },
+  data() {
     return {
-
-      BType: "001", //单据类型 资金拨付 001  申报单 002
+      BType: '001', //单据类型 资金拨付 001  申报单 002
       searchForm: {
-        BName: '',//申报单名称或编号查询内容
-        BDate: [],//申报时间段
-        Operator: "",//停留时长的判断条件(1:等于,2:大于,3:小于)
-        StopHour: '',//停留时长
-        OrgCode: "",//组织编码
-        OrgName: '',//组织名称
+        BName: '', //申报单名称或编号查询内容
+        BDate: [], //申报时间段
+        Operator: '', //停留时长的判断条件(1:等于,2:大于,3:小于)
+        StopHour: '', //停留时长
+        OrgCode: '', //组织编码
+        OrgName: '', //组织名称
         OrgPhId: '',
-        OrgIds:[]
+        OrgIds: []
       },
       checkedAll: false, //是否全选
       IsIndeterminate: false, //列表中是否有选中的值并且不是全选
-      check: [],//列表所有选中状态
-      selection: [],//选中后的值
-      auditMsg: [],//审批流程 数据
+      check: [], //列表所有选中状态
+      selection: [], //选中后的值
+      auditMsg: [], //审批流程 数据
 
       orgtreeData: [], //工会组织列表
-      checkedOrg: [],//设置组织树默认选中项
-      orgType: false,//控制组织树的展示与隐藏
+      checkedOrg: [], //设置组织树默认选中项
+      orgType: false, //控制组织树的展示与隐藏
       approvalData: {},
       openApprovalDialog: false,
       checked: '',
-      tableData: [],//模拟表格数据
+      tableData: [], //模拟表格数据
       page: {
-        currentPage: 1,//当前页
+        currentPage: 1, //当前页
         pageSizes: [20, 30, 50, 100], //每页显示多少条
-        total: 0,//总条数
-        pageSize: 20,//当前每页显示多少条
-      },//分页
+        total: 0, //总条数
+        pageSize: 20 //当前每页显示多少条
+      }, //分页
       visible: false,
       appDialog: {
         title: '',
         btnGroup: {
-          cancelName: "",
-          onfirmName: ""
+          cancelName: '',
+          onfirmName: ''
         }
       },
-      detailDialog: false,//打开详情弹框
-      openInnerDialog: false,//打开详情内层弹框
+      detailDialog: false, //打开详情弹框
+      openInnerDialog: false, //打开详情内层弹框
 
       //判断显示为已审批页面还是未审批页面
       isApproval: true,
-      applyNum: "",//当前查看申报单的编号
-      SplxPhid: "",
+      applyNum: '', //当前查看申报单的编号
+      SplxPhid: '',
       Approval: Boolean,
-      applyDeportTop:'',
-      timeValue:''
-
+      applyDeportTop: '',
+      timeValue: ''
     }
   },
 
-  mounted () {
-    this.updateTitle();
+  mounted() {
+    this.updateTitle()
     this.selection = []
     this.isApproval = eval(this.$route.query.approval)
     this.SplxPhid = this.$route.query.SplxPhid
@@ -524,9 +549,12 @@ export default {
     this.setTimeValue()
   },
   watch: {
-    check (val, oldval) {
+    check(val, oldval) {
       this.selection = selection(this.check, this.tableData)
-      if (this.selection.length !== 0 && this.selection.length !== this.tableData.length) {
+      if (
+        this.selection.length !== 0 &&
+        this.selection.length !== this.tableData.length
+      ) {
         this.IsIndeterminate = true
       } else if (this.selection.length === this.tableData.length) {
         this.IsIndeterminate = false
@@ -536,14 +564,14 @@ export default {
         this.checkedAll = false
       }
     },
-    checkedAll (val, ovlval) {
+    checkedAll(val, ovlval) {
       this.IsIndeterminate = false
       if (val) {
         this.check = this.check.map((item, index, array) => true)
       } else {
         this.check = this.check.map((item, index, array) => false)
       }
-    },
+    }
   },
   computed: {
     ...mapState({
@@ -556,46 +584,51 @@ export default {
   },
   methods: {
     //设置停留时长
-    setTimeValue(){
+    setTimeValue() {
       let data = {
         orgid: this.$store.state.user.orgid,
         uid: this.$store.state.user.userid,
         DicType: 'StayTime'
       }
-      GetSysSetList(data).then(res => {
-        if (res.Status == 'error') {
-          this.$msgBox.show(res.Msg)
-        } else {
-          if (this.ucode != 'Admin') {
-            if (res.Record.length) {
-              this.timeValue = res.Record[0].Value;
-              console.log(this.timeValue)
-            } else {
-              this.timeValue = ''
+      GetSysSetList(data)
+        .then(res => {
+          if (res.Status == 'error') {
+            this.$msgBox.show(res.Msg)
+          } else {
+            if (this.ucode != 'Admin') {
+              if (res.Record.length) {
+                this.timeValue = res.Record[0].Value
+                console.log(this.timeValue)
+              } else {
+                this.timeValue = ''
+              }
             }
           }
-        }
-      }).catch(err => {
-        console.log(err)
-        this.$msgBox.show('获取数据失败!')
-      })
+        })
+        .catch(err => {
+          console.log(err)
+          this.$msgBox.show('获取数据失败!')
+        })
     },
     //修改title
-    updateTitle () {
-      let title = document.getElementsByTagName('title')[0];
-      title.innerText = "审批中心在线工作平台";
+    updateTitle() {
+      let title = document.getElementsByTagName('title')[0]
+      title.innerText = '审批中心在线工作平台'
     },
-    printTables: function () {
-      let vm = this;
-      printTable(vm);
+    printTables: function() {
+      let vm = this
+      printTable(vm)
     },
     //拉取列表数据
-    loadData () {
-
+    loadData() {
       let data = {
         Uid: this.UserId,
-        OrgCode: this.searchForm.OrgCode == '' ? this.OrgCode : this.searchForm.OrgCode,
-        Orgid: this.searchForm.OrgPhId == '' ? this.Orgid : this.searchForm.OrgPhId,
+        OrgCode:
+          this.searchForm.OrgCode == ''
+            ? this.OrgCode
+            : this.searchForm.OrgCode,
+        Orgid:
+          this.searchForm.OrgPhId == '' ? this.Orgid : this.searchForm.OrgPhId,
         Year: this.Year,
         PageIndex: this.page.currentPage,
         PageSize: this.page.pageSize,
@@ -603,65 +636,74 @@ export default {
         BName: this.searchForm.BName.trim(),
         Operator: this.searchForm.Operator,
         StopHour: this.searchForm.StopHour,
-        BStartDate: this.searchForm.BDate === null ? '' : this.searchForm.BDate[0],
-        BEndTime: this.searchForm.BDate === null ? '' : this.searchForm.BDate[1],
+        BStartDate:
+          this.searchForm.BDate === null ? '' : this.searchForm.BDate[0],
+        BEndTime:
+          this.searchForm.BDate === null
+            ? ''
+            : this.searchForm.BDate[1] + ' 23:59:59',
         Splx_Phid: this.SplxPhid,
-        OrgIds:this.searchForm.OrgIds
+        OrgIds: this.searchForm.OrgIds
       }
 
       let that = this
       if (eval(this.isApproval)) {
-        this.getAxios('/GAppvalRecord/GetUnDoRecordList', data).then(res => {
-          console.log(res)
-          if (res && res.Status === "success") {
-            that.tableData = res.Data
-            that.page.total = res.Total
-            // this.page.total = 100
-            for (let i in res.Data) {
-              that.check.push(false)
+        this.getAxios('/GAppvalRecord/GetUnDoRecordList', data)
+          .then(res => {
+            console.log(res)
+            if (res && res.Status === 'success') {
+              that.tableData = res.Data
+              that.page.total = res.Total
+              // this.page.total = 100
+              for (let i in res.Data) {
+                that.check.push(false)
+              }
+            } else {
+              this.$msgBox.show(res.Msg)
             }
-          } else {
-            this.$msgBox.show(res.Msg)
-          }
-          this.check = this.check.map((item, index, array) => false)
-        }).catch(err => {
-          that.$msgBox.show("数据获取异常")
-          this.check = this.check.map((item, index, array) => false)
-        })
+            this.check = this.check.map((item, index, array) => false)
+          })
+          .catch(err => {
+            that.$msgBox.show('数据获取异常')
+            this.check = this.check.map((item, index, array) => false)
+          })
       } else {
-        this.getAxios('/GAppvalRecord/GetDoneRecordList', data).then(res => {
-          if (res && res.Status === "success") {
-            that.tableData = res.Data
-            that.page.total = res.Total
-            // this.page.total = 100
-            for (let i in res.Data) {
-              that.check.push(false)
+        this.getAxios('/GAppvalRecord/GetDoneRecordList', data)
+          .then(res => {
+            if (res && res.Status === 'success') {
+              that.tableData = res.Data
+              that.page.total = res.Total
+              // this.page.total = 100
+              for (let i in res.Data) {
+                that.check.push(false)
+              }
+            } else {
+              this.$msgBox.show(res.Msg)
             }
-          } else {
-            this.$msgBox.show(res.Msg)
-          }
-          this.check = this.check.map((item, index, array) => false)
-        }).catch(err => {
-          that.$msgBox.show("数据获取异常")
-          this.check = this.check.map((item, index, array) => false)
-        })
+            this.check = this.check.map((item, index, array) => false)
+          })
+          .catch(err => {
+            that.$msgBox.show('数据获取异常')
+            this.check = this.check.map((item, index, array) => false)
+          })
       }
     },
     //拉取组织树
-    getOrgList () {
-      this.getAxios('GQT/CorrespondenceSettingsApi/GetALLOrgTree').then(res => {
-        this.orgtreeData = res.Record;
-      }).catch(err => {
-      })
+    getOrgList() {
+      this.getAxios('GQT/CorrespondenceSettingsApi/GetALLOrgTree')
+        .then(res => {
+          this.orgtreeData = res.Record
+        })
+        .catch(err => {})
     },
     //搜索框事件
-    search () {
-      this.page.pageSize = 20;
-      this.page.currentPage = 1;
+    search() {
+      this.page.pageSize = 20
+      this.page.currentPage = 1
       this.loadData()
     },
     //当前单元格点击事件
-    handleCellClick (row, idx) {
+    handleCellClick(row, idx) {
       // this.$refs.fundDetail.changeDialog()
       this.applyNum = row.RefbillPhid
       this.detailDialog = true
@@ -669,7 +711,7 @@ export default {
       this.selection[0] = row
     },
     //点击checkBox单元格事件
-    handleCheckBoxCellClick (row, idx) {
+    handleCheckBoxCellClick(row, idx) {
       for (let key in this.check) {
         if (idx === parseInt(key)) {
           if (this.check[key] === true) {
@@ -681,17 +723,17 @@ export default {
       }
     },
     //当前页显示多少条数据
-    handleSizeChange (val) {
+    handleSizeChange(val) {
       this.page.pageSize = val
       this.loadData()
     },
     //调到第几页
-    handleCurrentChange (val) {
+    handleCurrentChange(val) {
       this.page.currentPage = val
       this.loadData()
     },
     //打开审批弹框
-    aprovalItem () {
+    aprovalItem() {
       if (this.selection.length === 0) {
         this.$msgBox.error('请选择需要审批的单据')
       } else {
@@ -702,7 +744,7 @@ export default {
       }
     },
     //生成支付单弹框
-    creatPayItem () {
+    creatPayItem() {
       if (this.selection.length === 0) {
         this.$msgBox.error('请选择需要生成支付单的单据')
       } else {
@@ -715,7 +757,7 @@ export default {
       }
     },
     //生成审批完成的支付单
-    creatPayList () {
+    creatPayList() {
       if (this.selection.length === 0) {
         this.$msgBox.show('请选择需要生成支付单的单据')
       } else {
@@ -727,69 +769,69 @@ export default {
         }
         console.log(data)
         let that = this
-        this.postAxios('/GAppvalRecord/PostAddPayMents', data).then(res => {
-          if (res && res.Status == 'success') {
-            this.$msgBox.show({
-              content: '生成支付单成功',
-              fn: function () {
-
-              }
-            })
-          } else {
-            this.$msgBox.error({
-              content: res.Msg,
-              fn: function () {
-
-              }
-            })
-          }
-        }).catch(err => {
-          this.$msgBox.error('请求失败')
-        })
+        this.postAxios('/GAppvalRecord/PostAddPayMents', data)
+          .then(res => {
+            if (res && res.Status == 'success') {
+              this.$msgBox.show({
+                content: '生成支付单成功',
+                fn: function() {}
+              })
+            } else {
+              this.$msgBox.error({
+                content: res.Msg,
+                fn: function() {}
+              })
+            }
+          })
+          .catch(err => {
+            this.$msgBox.error('请求失败')
+          })
       }
     },
     //审批流查看
-    openAuditfollow (item, idx) {
+    openAuditfollow(item, idx) {
       this.visible = true
       let data = {
         RefbillPhid: item.RefbillPhid,
-        FBilltype: this.BType,
+        FBilltype: this.BType
       }
       this.getAuditfollow(data)
     },
     //拉去审批流数据查看
-    getAuditfollow (data) {
+    getAuditfollow(data) {
       let that = this
-      this.getAxios("/GAppvalRecord/GetAppvalRecordList", data).then(res => {
-        console.log(res)
-        if (res && res.Status === "success") {
-          that.auditMsg = res.Data
-          console.log(res.Data)
-        } else {
-          that.$msgBox.show(res.Msg)
-        }
-      }).catch(err => {
-        that.$msgBox.show("数据获取异常")
-      })
+      this.getAxios('/GAppvalRecord/GetAppvalRecordList', data)
+        .then(res => {
+          console.log(res)
+          if (res && res.Status === 'success') {
+            that.auditMsg = res.Data
+            console.log(res.Data)
+          } else {
+            that.$msgBox.show(res.Msg)
+          }
+        })
+        .catch(err => {
+          that.$msgBox.show('数据获取异常')
+        })
     },
     //确认按钮
-    confirmOrg () {
+    confirmOrg() {
       this.searchForm.OrgLabel = this.orgName.label
       this.orgType = false
     },
     //获取组织树
-    getOrg (e) {
+    getOrg(e) {
       this.searchForm.OrgIds = []
       this.applyDeportTop = ''
-      this.searchForm.OrgName = e.map( item => item.OName);
-      this.searchForm.OrgName.forEach((item,idx)=>{
-        if(idx !== this.searchForm.OrgName.length - 1){
-          this.applyDeportTop = this.applyDeportTop + item +'、'
-        }else {
+      this.searchForm.OrgName = e.map(item => item.OName)
+      this.searchForm.OrgName.forEach((item, idx) => {
+        if (idx !== this.searchForm.OrgName.length - 1) {
+          this.applyDeportTop = this.applyDeportTop + item + '、'
+        } else {
           this.applyDeportTop = this.applyDeportTop + item
         }
       })
-      for (let key in e){
+      for (let key in e) {
         this.searchForm.OrgIds[key] = e[key].PhId
       }
       this.loadData()
@@ -799,54 +841,52 @@ export default {
       // this.loadData()
     },
     //打开组织树
-    openOrg () {
+    openOrg() {
       this.orgType = true
     },
     //打开图片预览
-    showImg (file) {
+    showImg(file) {
       // console.log(file)
       // // this.imgDialog= true
     },
     //生成支付单成功
-    plSubSuc () {
+    plSubSuc() {
       this.detailDialog = false
     },
     //输入框值改变
-    changeInput (e) {
-      this.page.pageSize = 20;
-      this.page.currentPage = 1;
+    changeInput(e) {
+      this.page.pageSize = 20
+      this.page.currentPage = 1
       if (e === 'operator') {
         if (this.searchForm.StopHour !== '') {
           this.loadData()
           return
         } else {
-          return;
+          return
         }
       }
       this.loadData()
     },
     // 关闭详情弹框事件
-    closeDetailDialog () {
-      this.selection = [];
+    closeDetailDialog() {
+      this.selection = []
 
       this.check = this.check.map((item, index, array) => false)
     },
     //删除
-    handleDelete () {
-
-    },
+    handleDelete() {},
     //刷新
-    refresh () {
-      this.searchForm.BName = '';
-      this.searchForm.BDate = [];
-      this.searchForm.Operator = [];
-      this.searchForm.StopHour = '';
-      this.searchForm.OrgName = '';
-      this.page.currentPage = 1;
-      this.page.pageSize = 20;
+    refresh() {
+      this.searchForm.BName = ''
+      this.searchForm.BDate = []
+      this.searchForm.Operator = []
+      this.searchForm.StopHour = ''
+      this.searchForm.OrgName = ''
+      this.page.currentPage = 1
+      this.page.pageSize = 20
       this.loadData()
     },
-    printTable(){
+    printTable() {
       this.$refs.applybill.printTable()
     }
   }
