@@ -48,8 +48,7 @@
             作废
           </div>
           <div @click.stop="printTables"
-               class="handle"
-               style="width: 80px;">
+               class="handle">
             <div class="topIcon"><img src="@/assets/images/dy.png"
                    alt=""></div><!-- @click="creatPayItem()"-->
             打印
@@ -114,11 +113,13 @@
                 <li>
                   <span>申报日期</span>
                   <el-date-picker size="small"
-                                  v-model="searchData.date"
+                                  v-model="date"
                                   type="daterange"
                                   range-separator="至"
                                   start-placeholder="开始日期"
-                                  end-placeholder="结束日期">
+                                  end-placeholder="结束日期"
+                                  @change="getData"
+                                  >
                   </el-date-picker>
                 </li>
                 <li>
@@ -215,20 +216,21 @@
           </div>-->
 
         </div>
-        <div class="tableHead">
-          <table>
-            <colgroup>
-              <col width="7%">
-              <col width="13%">
-              <col width="13%">
-              <col width="13%">
-              <col width="13%">
-              <col width="7%">
-              <col width="12%">
-              <col width="7%">
-              <col width="15%">
-            </colgroup>
-            <thead>
+        <div class="tableArea">
+          <div class="tableHead">
+            <table>
+              <colgroup>
+                <col width="7%">
+                <col width="13%">
+                <col width="13%">
+                <col width="13%">
+                <col width="13%">
+                <col width="7%">
+                <col width="12%">
+                <col width="7%">
+                <col width="15%">
+              </colgroup>
+              <thead>
               <tr>
                 <td title="序号"
                     style="text-align: right;padding-right: .5rem">
@@ -257,86 +259,90 @@
                   申报说明
                 </td>
               </tr>
-            </thead>
-          </table>
-        </div>
-        <div class="tableBody">
-          <table ref="printArea">
-            <colgroup>
-              <col width="7%">
-              <col width="13%">
-              <col width="13%">
-              <col width="13%">
-              <col width="13%">
-              <col width="7%">
-              <col width="12%">
-              <col width="7%">
-              <col width="15%">
-            </colgroup>
-            <tbody>
-            <template  v-for="(item,index) in dataList.data">
-              <tr :class="{trActive:checkList[index], deleteRow:item.FDelete==1}">
-                <td style="text-align: right;padding-right: .5rem" @click.self="item.FDelete==1?'':changeCheck(index)">
-                  <el-checkbox v-model="checkList[index]">{{index+1}}</el-checkbox>
-                </td>
-                <td @click="showApply(item.PhId,item.FDelete)" class="atype">
-                  <el-tooltip :content="item.FCode" popper-class="tooltipCla" placement="bottom-start">
-                    <p>{{item.FCode}}</p>
-                  </el-tooltip>
-                </td>
-                <td>
-                  <el-tooltip :content="item.FName" popper-class="tooltipCla" placement="bottom-start">
-                    <p>{{item.FName}}</p>
-                  </el-tooltip>
-                </td>
-                <td class="right">
-                  <el-tooltip :content="item.FAmountTotal| NumFormat" popper-class="tooltipCla" placement="bottom-start">
-                    <p>{{item.FAmountTotal| NumFormat}}</p>
-                  </el-tooltip>
-                </td>
-                <td>
-                  <el-tooltip :content="(item.FDate.substring(0,19)).replace('T',' ')" popper-class="tooltipCla" placement="bottom-start">
-                    <p>{{(item.FDate.substring(0,19)).replace('T',' ')}}</p>
-                  </el-tooltip>
-                </td>
-                <td class="atype" style="position: relative;overflow: visible" @click.stop="item.FDelete==1?'':openAuditfollow(item,index)">
-                  <div v-if="isMe&&item.IsApprovalNow==1&&item.FDelete!=1" style="color: red;"  class="iconMsg" @click.stop="item.FDelete==1?'':approvalSubmit(item)">
-                    <i class="el-icon-chat-round"></i>
-                    <span>审批</span>
-                  </div>
-                  <el-tooltip :content="spTypeList[item.FApproval]" popper-class="tooltipCla" placement="bottom-start">
-                    <p>{{spTypeList[item.FApproval]}}</p>
-                  </el-tooltip>
-                </td>
-                <td>
-                  <el-tooltip :disabled="!item.GkPaymentCode" :content="item.GkPaymentCode?item.GkPaymentCode:'-'" popper-class="tooltipCla" placement="bottom-start">
-                    <p>{{item.GkPaymentCode?item.GkPaymentCode:'-'}}</p>
-                  </el-tooltip>
-                </td>
-                <td style="position: relative;overflow: visible">
-                  <div  v-if="isMe&&pay&&item.FApproval==9" style="color: #20c1ff;" class="iconMsg" @click.stop="paySubmit(item.FCode)">
-                    <i class="el-icon-chat-round"></i>
-                    <span>支付</span>
-                  </div>
-                  <el-tooltip :content="item.FApproval==9?payTypeList[item.IsPay]:'-'" popper-class="tooltipCla" placement="bottom-start">
-                    <p>{{item.FApproval==9?payTypeList[item.IsPay]:'-'}}</p>
-                  </el-tooltip>
-                </td>
-                <td class="left">
-                  <el-tooltip :content="item.FDescribe" popper-class="tooltipCla" placement="bottom-start">
-                    <p>{{item.FDescribe}}</p>
-                  </el-tooltip>
+              </thead>
+            </table>
+          </div>
+          <div class="tableBody">
+            <table ref="printArea">
+              <colgroup>
+                <col width="7%">
+                <col width="13%">
+                <col width="13%">
+                <col width="13%">
+                <col width="13%">
+                <col width="7%">
+                <col width="12%">
+                <col width="7%">
+                <col width="15%">
+              </colgroup>
+              <tbody>
+              <template  v-for="(item,index) in dataList.data">
+                <tr :class="{trActive:checkList[index], deleteRow:item.FDelete==1}">
+                  <td style="text-align: right;padding-right: .5rem" @click.self="item.FDelete==1?'':changeCheck(index)">
+                    <el-checkbox v-model="checkList[index]">{{index+1}}</el-checkbox>
+                  </td>
+                  <td @click="showApply(item.PhId,item.FDelete)" class="atype">
+                    <el-tooltip :content="item.FCode" popper-class="tooltipCla" placement="bottom-start">
+                      <p>{{item.FCode}}</p>
+                    </el-tooltip>
+                  </td>
+                  <td>
+                    <el-tooltip :content="item.FName" popper-class="tooltipCla" placement="bottom-start">
+                      <p>{{item.FName}}</p>
+                    </el-tooltip>
+                  </td>
+                  <td class="right">
+                    <el-tooltip :content="item.FAmountTotal| NumFormat" popper-class="tooltipCla" placement="bottom-start">
+                      <p>{{item.FAmountTotal| NumFormat}}</p>
+                    </el-tooltip>
+                  </td>
+                  <td>
+                    <el-tooltip :content="(item.FDate.substring(0,19)).replace('T',' ')" popper-class="tooltipCla" placement="bottom-start">
+                      <p>{{(item.FDate.substring(0,19)).replace('T',' ')}}</p>
+                    </el-tooltip>
+                  </td>
+                  <td class="atype" style="position: relative;overflow: visible" @click.stop="item.FDelete==1?'':openAuditfollow(item,index)">
+                    <div v-if="isMe&&item.IsApprovalNow==1&&item.FDelete!=1" style="color: red;"  class="iconMsg" @click.stop="item.FDelete==1?'':approvalSubmit(item)">
+                      <i class="el-icon-chat-round"></i>
+                      <span>审批</span>
+                    </div>
+                    <el-tooltip :content="spTypeList[item.FApproval]" popper-class="tooltipCla" placement="bottom-start">
+                      <p>{{spTypeList[item.FApproval]}}</p>
+                    </el-tooltip>
+                  </td>
+                  <td>
+                    <el-tooltip :disabled="!item.GkPaymentCode" :content="item.GkPaymentCode?item.GkPaymentCode:'-'" popper-class="tooltipCla" placement="bottom-start">
+                      <p>{{item.GkPaymentCode?item.GkPaymentCode:'-'}}</p>
+                    </el-tooltip>
+                  </td>
+                  <td style="position: relative;overflow: visible">
+                    <div  v-if="isMe&&pay&&item.FApproval==9" style="color: #20c1ff;" class="iconMsg" @click.stop="paySubmit(item.FCode)">
+                      <i class="el-icon-chat-round"></i>
+                      <span>支付</span>
+                    </div>
+                    <el-tooltip :content="item.FApproval==9?payTypeList[item.IsPay]:'-'" popper-class="tooltipCla" placement="bottom-start">
+                      <p>{{item.FApproval==9?payTypeList[item.IsPay]:'-'}}</p>
+                    </el-tooltip>
+                  </td>
+                  <td class="left">
+                    <el-tooltip :content="item.FDescribe" popper-class="tooltipCla" placement="bottom-start">
+                      <p>{{item.FDescribe}}</p>
+                    </el-tooltip>
+                    <div v-if="item.FDelete==1" style="position: absolute;right: 90px;margin-top: -15px;">
+                      <img height="30px" src="../../assets/images/zhang_zf.png">
+                    </div>
+                  </td>
+                </tr>
+              </template>
 
-                </td>
-              </tr>
-            </template>
-
-            <tr v-if="dataList.data.length==0">
+              <tr v-if="dataList.data.length==0">
                 <td colspan="8">未查询到数据</td>
               </tr>
-            </tbody>
-          </table>
+              </tbody>
+            </table>
+          </div>
         </div>
+
       </div>
       <div class="rightPanel"
            style="transition: all .3s linear;">
@@ -364,7 +370,7 @@
               <div v-show="rightShow.show1"
                    class="transition-box">
                 <div>
-                  <p style="color: #3294e8;font-size: .4rem">{{apartData.Mst.length}}</p>
+                  <p style="color: #3294e8;font-size: .4rem">{{apartData.Mst.length-1}}</p>
                   <div>项目总数</div>
                 </div>
                 <div>
@@ -513,17 +519,16 @@
             searchData:{
               bmType:0,
               searchValue: '',
-              date: [],
-
             },
+            date: [],
             approvalType:['',0,1,2,9],
             payType:['',0,1,9],
             approvalList: [{ value: '', label: '全部' }, { value: 0, label: '待送审' }, { value: 1, label: '审批中' }, { value: 2, label: '审批未通过' }, { value: 9, label: '审批通过' }],
-            payList: [{ value: '', label: '全部' }, { value: 0, label: '待支付' }, { value: 1, label: '支付异常' }, { value: 9, label: '支付成功' }],
+            payList: [{ value: '', label: '全部' }, { value: 0, label: '待支付' }, { value: 1, label: '支付异常' },{ value: 2, label: '支付中' }, { value: 9, label: '支付成功' }],
             bmList: [],//部门列表
             bzList: [{ value: 0, label: '全部' }, { value: 1, label: '救灾补助项目' }, { value: 2, label: '送温暖项目' }],
             spTypeList: { '0': '待送审', '1': '审批中', '2': '未通过', '9': '审批通过' },
-            payTypeList: { '0': '待支付', '1': '支付异常', '9': '支付成功' },
+            payTypeList: { '0': '待支付', '1': '支付异常','2':'支付中', '9': '支付成功' },
             visiable: false,//高级搜索框显示隐藏
             chartData: {
               chart: [{ name: '可申报', value: 13210 }, { name: '冻结', value: 1200 }, { name: '已使用', value: 2301 }],
@@ -876,8 +881,8 @@
             FName:this.searchData.searchValue,
             ApprovalBzs:this.approvalType,
             PayBzs:this.payType,
-            StartDate:this.searchData.date[0]||'',
-            EndDate:this.searchData.date[1]||'',
+            StartDate:this.date?this.date[0]:'',
+            EndDate:this.date?this.date[1]:'',
             MinAmount:this.money.smoney==0?'':this.money.smoney,
             MaxAmount:this.money.emoney==0?'':this.money.emoney,
             FOrgphid:this.orgid,
@@ -892,8 +897,8 @@
               FName: this.searchData.searchValue,
               ApprovalBzs: this.approvalType,
               PayBzs: this.payType,
-              StartDate: this.searchData.date[0]||'',
-              EndDate: this.searchData.date[1]||'',
+              StartDate: this.date?this.date[0]:'',
+              EndDate: this.date?this.date[1]:'',
               MinAmount: this.money.smoney==0?'':this.money.smoney,
               MaxAmount: this.money.emoney==0?'':this.money.emoney,
               FOrgphid: this.orgid,
@@ -1075,8 +1080,6 @@
         },
         //取消送审
         QXSS: function(checkedList) {
-          console.log(checkedList);
-
           if (checkedList.length == 0) {
             this.$msgBox.show({
               content: '请选择要取消送审的单据。'
@@ -1094,7 +1097,8 @@
             }
             let param={
               FBilltype:'001',
-              RefbillPhidList: checkedListPhId
+              RefbillPhidList: checkedListPhId,
+              OperaPhid:this.userid
             };
             this.postAxios('GBK/GAppvalRecord/PostCancelAppvalRecord', param).then(res => {
               if (res.Status == 'success') {
@@ -1105,7 +1109,7 @@
                 this.checkList = [];
               } else {
                 this.$msgBox.show({
-                  content: '取消送审失败，请稍后重试。'
+                  content: res.Msg
                 })
               }
             }).catch(err => {
@@ -1532,6 +1536,11 @@
       margin-right: 0px;
     }
   }
+
+ .container{
+   min-width: 1366px;
+ }
+
 </style>
 
 <style>

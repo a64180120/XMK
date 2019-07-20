@@ -61,9 +61,9 @@
            </el-card>
          </el-col>
       </el-row>
-      <div  v-if="PaymentXmDtl.length>0" class="copyPanle">
+      <!--<div  v-if="PaymentXmDtl.length>0" class="copyPanle">
         <div> <el-checkbox v-model="lineCopy">复制行</el-checkbox></div>
-      </div>
+      </div>-->
 
 
       <el-row class="content" :gutter="10" style="padding-top: 5px">
@@ -90,7 +90,7 @@
                 <span>项目名称：</span>
                 <span>
                   <el-select size="small" v-model="item.PaymentXm.XmProjcode" @change="changePro(pindex)">
-                    <el-option v-for="(pro,index) in prodata.Mst" v-if="index>1 "
+                    <el-option v-for="(pro,index) in prodata.Mst" v-if="index>0 "
                                :label="pro.FProjName"
                                :key="pro.FProjCode"
                                :value="pro.FProjCode"
@@ -109,6 +109,7 @@
               <!--frozen: 0 sum: 660000 surplus: 660000 use: 0-->
               <div style="height: 40px;line-height: 40px;background-color: #d7d7d7;padding:0 10px;margin-top: 10px;">
                 <span>预算总额 （{{item.PaymentXm.Sum | NumFormat}}元）- 实际已使用 （{{item.PaymentXm.Use | NumFormat}}元） - 冻结 （{{item.PaymentXm.Frozen | NumFormat}}元） = </span><span style="color: red;">本次可申报 （{{item.PaymentXm.Surplus | NumFormat}}元）</span>
+                <span style="float: right;margin-right: 10px"><el-checkbox v-model="lineCopy[pindex]">复制行</el-checkbox></span>
               </div>
             </div>
 
@@ -270,7 +271,7 @@
     },
     data(){
       return {
-        lineCopy:false,//行复制，选中时，新增行可把数据带下去
+        lineCopy:[],//行复制，选中时，新增行可把数据带下去
         len:0,//输入长度
         uploadVis:false,//文件上传弹窗
 
@@ -600,6 +601,7 @@
         }
         this.PaymentXmDtl.push(obj);
         this.xmCheckList.push(false);
+        this.lineCopy.push(false);
       },
       /*删除项目*/
       delPro(index){
@@ -611,6 +613,7 @@
             type: 'warning'
           }).then(() => {
             this.PaymentXmDtl.splice(ds,1);
+            this.lineCopy.splice(ds,1);
             this.xmDisable()
             this.$msgBox.show({
               content: '删除成功。'
@@ -653,6 +656,10 @@
       },
       //新增项目明细
       addDtl:function(pindex,index){
+        if(!this.PaymentXmDtl[pindex].PaymentXm.XmMstPhid){
+          this.$msgBox.error('请先选择项目');
+          return;
+        }
         let dtl={
           XmMstPhid: '', //（预算项目主表主键）
           BudgetdtlPhid: '', //（预算明细主键）
@@ -666,11 +673,11 @@
           FPayment:'', //(支付状态：0-待支付 1-支付异常  9-支付成功)
           FPaymentdate:'' //（支付日期）
         };
-        if(this.lineCopy){
+        if(this.lineCopy[pindex]){
           dtl=JSON.parse(JSON.stringify(this.PaymentXmDtl[pindex].PaymentDtls[index]));
         }
         this.PaymentXmDtl[pindex].PaymentDtls.splice(index+1,0,dtl);
-        if(this.lineCopy){
+        if(this.lineCopy[pindex]){
           this.$nextTick( () => {
             this.moneyChange(pindex,Number(index)+1);
           } )
@@ -686,6 +693,10 @@
       },
       //删除项目明细
       delDtl:function(pindex,index){
+        if(!this.PaymentXmDtl[pindex].PaymentXm.XmMstPhid){
+          this.$msgBox.error('请先选择项目');
+          return;
+        }
         this.PaymentXmDtl[pindex].PaymentDtls.splice(index,1)
         if(this.PaymentXmDtl[pindex].PaymentDtls.length==0){
           this.addDtl(pindex,0)
