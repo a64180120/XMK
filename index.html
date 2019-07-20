@@ -16,9 +16,9 @@
   <link rel="shortcut icon" type="image/x-icon" href="favicon.ico" rel="external nofollow" />
   <script type="text/javascript">
     var $appinfo = {
-      logid: '9999', username: '省总管理员', ocode: '101',
-      userID: '488181024000001', orgID: '488181024000002',
-      dbServer: 'MTAuMC4xMy4xNTY6MTUyMS9vcmNs', uCode: '0001'
+      // logid: '9999', username: '省总管理员', ocode: '101',
+      // userID: '488181024000001', orgID: '488181024000002',
+      // dbServer: 'MTAuMC4xMy4xNjg6MTUyMS9uM25q', uCode: '0006'
     }
     window.global = {
       baseUrl: 'http://127.0.0.1/custom2/api',
@@ -30,16 +30,25 @@
 </head>
 
 <body>
-  <!-- <iframe id="desktopMsgClient" src="" style="display:none"></iframe> -->
+  <iframe id="desktopMsgClient" src="" style="display:none"></iframe>
   <div id="app"></div>
   <script>
     // window.onload = function () {
     //   var frame = document.getElementById('desktopMsgClient')
     //   frame.src = window.global.baseUrl.replace('/custom2/api', '') + "/desktopMsgServer/MsgSubscriber.htm";
-    //   frame.contentWindow.postMessage($appinfo, '*');
+    //   frame.onload = function () {
+    //     frame.contentWindow.postMessage($appinfo, '*');
+    //   }
     // }
+
     // window.onmessage = function (e) {
-    //   console.log(e, 'websocket')
+    //   if (JSON.parse(e.data).ID == 'KillLoginUser') {
+
+    //     alert('TTTTTT');
+    //     window.open(window.global.baseUrl.replace('/custom2/api', '/G6H/web'));
+    //     window.close();
+    //   }
+
 
     // }
   </script>
