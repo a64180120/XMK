@@ -6,7 +6,7 @@
           <div class="top-btn">
             <slot name="btn-group">
               <el-button
-                v-if="applyBillType!=1"
+                v-if="applyBillType!=1&&menu['fund_createpay']"
                 class="btn"
                 size="mini"
                 style="padding: 0;"
@@ -14,13 +14,14 @@
                 :disabled="!(record.PaymentMst.FApproval==0&&approvalDataS.subData.length==0)"
               >生成支付单</el-button>
               <el-button
-                v-if="applyBillType!=1"
+                v-if="applyBillType!=1&&menu['fund_check']"
                 class="btn"
                 size="mini"
                 @click="postApply"
                 :disabled="!(record.PaymentMst.FApproval==0||record.PaymentMst.FApproval==2)"
               >送审</el-button>
               <el-button
+                v-if="menu['fund_delete']"
                 class="btn"
                 size="mini"
                 @click="deleteApply"
@@ -220,6 +221,7 @@ import goApproval from '../applyPro/goApproval.vue'
 import ImgView from '../imgView/imgView'
 import { baseURL } from '@/utils/config.js'
 import Auditfollow from "../../components/auditFollow/auditfollow";
+import { mapState } from 'vuex'
 export default {
   name: 'applybill',
   components: { ApprovalDialog, goApproval, ImgView ,Auditfollow},
@@ -288,17 +290,11 @@ export default {
       activeIdx:0
     }
   },
-  /*watch:{
-      applyNum(val){
-        this.getApply();
-        this.approvalDataS.data=[val]
-      },
-      subData:{
-        handler(val) {
-          this.approvalDataS.subData=val;
-        }
-      }
-    },*/
+  computed: {
+    ...mapState({
+      menu: state => state.user.menubutton //权限按钮
+    })
+  },
 
   mounted() {
     this.getApply()

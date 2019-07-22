@@ -18,6 +18,12 @@
   text-align: left;
   overflow: hidden;
 }
+.container .btnArea .iicon{
+  top: .09rem;
+}
+.container .btnArea .el-select{
+  vertical-align: middle;
+}
 .container .btnArea ul li {
   margin-right: 15px;
   display: inline-block;
@@ -29,8 +35,20 @@
   position: relative;
   right: 0;
 }
+.container .btnArea .searchArea .el-input{
+  border-radius: 28px 0px 0px 28px;
+  width: 250px;
+  overflow: hidden;
+}
+.container .btnArea .searchArea .el-input .el-input-group__append button{
+  background-color: #3294e8;
+  color: #fff;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  border:1px solid rgb(50,148,232)
+}
 .container .btnArea .searchArea .el-input__inner {
-  border-radius: 5px 0 0 5px;
+  border-radius: 28px 0 0 28px;
 }
 .container .pageArea {
   position: absolute;

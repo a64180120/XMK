@@ -69,12 +69,12 @@
           </div>
           <i
             class="el-icon-d-arrow-left iicon"
-            style="position:absolute;left:130px;top: .12rem;"
+            style="position:absolute;left:130px;"
             @click.stop="unionStateScroll(false)"
           ></i>
           <i
             class="el-icon-d-arrow-right iicon"
-            style="position:absolute;right:275px;top: .12rem;"
+            style="position:absolute;right:275px;"
             @click.stop="unionStateScroll(true)"
           ></i>
           <div class="scrollNav" style="left: 160px;">
@@ -87,7 +87,7 @@
                     collapse-tags
                     v-model="type"
                     placeholder="请选择"
-                    size="small"
+                    size="mini"
                   >
                     <el-option
                       v-for="item in typeList"
@@ -99,7 +99,7 @@
                 </li>
                 <li>
                   <span>支付状态</span>
-                  <el-select collapse-tags v-model="status" multiple placeholder="请选择" size="small">
+                  <el-select collapse-tags v-model="status" multiple placeholder="请选择" size="mini">
                     <el-option
                       v-for="item in statusList"
                       :key="item.value"
@@ -116,7 +116,7 @@
                     range-separator="至"
                     start-placeholder="开始日期"
                     end-placeholder="结束日期"
-                    size="small"
+                    size="mini"
                     value-format="yyyy-MM-dd"
                     @change="rePageGetData"
                   ></el-date-picker>
@@ -129,7 +129,7 @@
                     range-separator="至"
                     start-placeholder="开始日期"
                     end-placeholder="结束日期"
-                    size="small"
+                    size="mini"
                     @change="rePageGetData"
                     value-format="yyyy-MM-dd"
                   ></el-date-picker>
@@ -140,19 +140,22 @@
           <!-- <label class="searchArea" style="float: right">
             <search-input placeholder="" v-model="search" @btnClick="rePageGetData"></search-input>
           </label>-->
-          <label class="searchArea" style="float: right">
+          <!-- <label class="searchArea" style="float: right">
             <el-input
-              size="small"
+              size="mini"
               placeholder="支付单编号/申报单编号"
-              style="border-radius: 5px;width: 250px;overflow: hidden"
               v-model="search"
             >
               <el-button
                 @click="rePageGetData"
                 slot="append"
-                size="small"
-                style="background-color: #3294e8;color: #fff;border-top-left-radius: 0;border-bottom-left-radius: 0"
+                size="mini"
               >搜索</el-button>
+            </el-input>
+          </label>-->
+          <label class="searchArea" style="float: right">
+            <el-input size="mini" placeholder="支付单编号/申报单编号" v-model="search">
+              <el-button slot="append" size="mini" @click="rePageGetData">搜索</el-button>
             </el-input>
           </label>
         </div>
@@ -997,7 +1000,7 @@ export default {
 <style lang="scss" scoped>
 .payIndex {
   color: #333;
-  font-size: 0.16rem;
+  font-size: 0.14rem;
   .navs {
     height: 60px;
     > .nav {
@@ -1085,7 +1088,7 @@ export default {
     position: absolute;
     left: 0;
   }
-  .el-input__inner.el-date-editor--datetimerange.el-range-editor--small {
+  .el-input__inner.el-date-editor--datetimerange.el-range-editor--mini {
     position: relative;
     top: 1px;
   }

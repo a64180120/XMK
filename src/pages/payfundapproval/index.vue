@@ -134,7 +134,7 @@
               <thead>
                 <tr>
                   <td>
-                    <el-checkbox v-model="checkedAll" :indeterminate="IsIndeterminate">序号</el-checkbox>
+                   序号
                   </td>
                   <td>申报部门</td>
                   <td>申报单编号</td>
@@ -168,7 +168,7 @@
               <tbody>
                 <tr :class="{trActive:check[idx]}" v-for="(item,idx) in tableData" :key="idx">
                   <td @click.self="handleCheckBoxCellClick(item,idx)">
-                    <el-checkbox v-model="check[idx]">{{idx+1}}</el-checkbox>
+                    <el-checkbox v-model="check[idx]" @change="fn(item,idx)">{{idx+1}}</el-checkbox>
                   </td>
                   <td>
                     <el-tooltip
@@ -712,6 +712,10 @@ export default {
     },
     //点击checkBox单元格事件
     handleCheckBoxCellClick(row, idx) {
+      if (this.isApproval){
+          this.fn(row, idx)
+        return
+      }
       for (let key in this.check) {
         if (idx === parseInt(key)) {
           if (this.check[key] === true) {
@@ -888,6 +892,31 @@ export default {
     },
     printTable() {
       this.$refs.applybill.printTable()
+    },
+    // 表格单选
+    fn(item,idx){
+      this.check = this.check.map((item, index, array) => false)
+      for (let key in this.check){
+        this.$set(this.check, idx, true)
+      }
+      // let status = false
+      // for (let key in this.check){
+      //   if(this.check[key]){
+      //       console.log(this.check[key])
+      //     status = true
+      //   }
+      // }
+      // if (!status) {
+      //   this.check = this.check.map((item, index, array) => false)
+      //   for (let key in this.check){
+      //     this.$set(this.check, idx, true)
+      //   }
+      // }else {
+      //   this.check = this.check.map((item, index, array) => false)
+      //   for (let key in this.check){
+      //     this.$set(this.check, idx, true)
+      //   }
+      // }
     }
   }
 }

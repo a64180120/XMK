@@ -1,7 +1,68 @@
 <template>
     <section>
       <top-handle title="项目管理在线工作平台"
-                  @refresh="refresh()"></top-handle>
+                  @refresh="refresh()">
+        <div class="top">
+          <ul >
+            <li @click="aprovalItem()">
+              <div>
+                <img src="@/assets/images/xz.png">
+              </div>
+              <span>新增</span>
+            </li>
+            <li @click="aprovalItem()">
+              <div>
+                <img src="@/assets/images/zj2.png">
+              </div>
+              <span>修改</span>
+            </li>
+            <li @click="aprovalItem()">
+              <div>
+                <img src="@/assets/images/zj3.png">
+              </div>
+              <span>删除</span>
+            </li>
+            <li @click="aprovalItem()">
+              <div>
+                <img src="@/assets/images/xz.png">
+              </div>
+              <span>复制</span>
+            </li>
+            <li @click="aprovalItem()">
+              <div>
+                <img src="@/assets/images/xz.png">
+              </div>
+              <span>转立项</span>
+            </li>
+            <li @click="aprovalItem()">
+              <div>
+                <img src="@/assets/images/sp.png">
+              </div>
+              <span>送审</span>
+            </li>
+            <li @click="aprovalItem()">
+              <div>
+                <img src="@/assets/images/ss_d.png">
+              </div>
+              <span>取消送审</span>
+            </li>
+            <li @click="aprovalItem()">
+              <div>
+                <img src="@/assets/images/xz.png">
+              </div>
+              <span>申请表打印</span>
+            </li>
+            <li @click="aprovalItem()">
+              <div>
+                <img src="@/assets/images/xz.png">
+              </div>
+              <span>汇总表打印</span>
+            </li>
+          </ul>
+
+        </div>
+      </top-handle>
+
       <div>
         <div class="container content-body">
           <div class="formArea">
@@ -35,7 +96,10 @@
                     <el-option value="3" label="审批通过">审批通过</el-option>
                     <el-option value="3" label="未通过">未通过</el-option>
                   </el-select>
-                </el-form-item> 
+                </el-form-item>
+                <el-form-item>
+                  <el-button size="mini" @click="fn1">部门申报</el-button>
+                </el-form-item>
                 <el-form-item style="float: right">
                     <search-input v-model="search"></search-input>
                 </el-form-item>
@@ -152,7 +216,7 @@
           name8:"27.68",
           name9:"待送审",
         }
-        for (let i =0;i<10;i++){
+        for (let i =0;i<3;i++){
           this.table1.tableData.push(a)
           this.table.tableData.push(b)
         }
@@ -193,7 +257,11 @@
           })
         },
         fn1(){
-          this.watchTable = false
+          if (this.watchTable){
+            this.watchTable = false
+          } else {
+            this.watchTable = true
+          }
         }
       }
     }
@@ -207,6 +275,23 @@
   .table-main{
     width: 97%;
     overflow-x: auto;
+  }
+  .top {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin: 0 !important;
+    transform: translate(-50%, -50%);
+  }
+  .top ul li {
+    float: left;
+    width: 75px;
+  }
+  .top ul li:hover {
+    cursor: pointer;
+  }
+  .top ul li div img {
+    width: 30px;
   }
 </style>
 <style>
