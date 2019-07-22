@@ -454,7 +454,7 @@ export default {
       position: absolute;
       width: 0.2rem;
       font-size: 0.14rem;
-      left: 0.1rem;
+      left: 0.2rem;
       text-align: justify;
       margin-top: 10px;
       > li.tab {
