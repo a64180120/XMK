@@ -45,6 +45,8 @@ export default {
     let that = this;
     let _body = document.querySelector('body')
     _body.addEventListener("click", this.closeAuditFollow)
+
+
   },
   methods: {
     getOrganize () { //获取组织树 
@@ -74,6 +76,7 @@ export default {
 
     //完整信息
     getData () {
+      let that = this;
       let param = {
         uid: this.$store.state.user.userid,
         orgid: this.$store.state.user.orgid,
@@ -82,7 +85,26 @@ export default {
         if (res.Status == 'error') {
           this.$msgBox.error(res.Msg)
         } else {
-          this.$store.commit('user/setLoginInfo', res)
+          this.$store.commit('user/setLoginInfo', res);
+          $appinfo = res.appinfo;
+          //消息推送
+          var frame = document.getElementById('desktopMsgClient')
+          frame.src = window.global.baseUrl.replace('/custom2/api', '') + "/desktopMsgServer/MsgSubscriber.htm";
+          frame.onload = function () {
+            frame.contentWindow.postMessage($appinfo, '*');
+          }
+          window.onmessage = function (e) {
+            if (JSON.parse(e.data).ID == 'KillLoginUser') {
+              this.$msgBox.show({
+                content: '当前登录被强制注销，点击确定后将取消当前登录！',
+                timeout: 10,
+                fn: function () {
+                  window.open(window.global.baseUrl.replace('/custom2/api', '/G6H/web'), '_self');
+
+                }
+              })
+            }
+          }
         }
 
       }).catch(err => {

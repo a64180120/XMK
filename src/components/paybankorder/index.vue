@@ -15,7 +15,6 @@
             :default-expanded-keys="[checkedOrg.OCode?checkedOrg.OCode:1]"
             :data="orgList"
             :expand-on-click-node="false"
-         
           ></el-tree>
         </div>
         <!-- <p class="bottomBtn">
@@ -42,7 +41,7 @@
                       v-model="checked"
                       @change="allChecked"
                       :indeterminate="indeterminate"
-                    >序号</el-checkbox> -->
+                    >序号</el-checkbox>-->
                     序号
                   </td>
                   <td>银行账户名称</td>
@@ -181,30 +180,18 @@ export default {
       }
       BankAccountList(data)
         .then(res => {
-          let count=0;
           if (res.Status == 'error') {
             this.$msgBox.show(res.Msg)
           } else {
             this.accountList = res.Record.filter(i => i.FLifecycle == 1)
-            
+
             this.checked = false
             this.allChecked(false)
-            if(this.selectitem){
-              
-              this.accountList.map(acc => {
-                if(acc.PhId==this.selectitem.data[0].BankPhid){
-                  acc.checked=true;
-                  this.choosedItem=[acc]
-                  count++;
-                }
-                
-              })
-              
-            }
-            if(this.accountList.length&&count==0){
-              this.accountList[0].checked=true;
-              this.choosedItem=[this.accountList[0]];
-              this.$forceUpdate();
+
+            if (this.accountList.length) {
+              this.accountList[0].checked = true
+              this.choosedItem = [this.accountList[0]]
+              this.$forceUpdate()
             }
             console.log(this.selectitem.data[0].BankPhid, this.accountList)
           }
@@ -215,21 +202,18 @@ export default {
     },
     //单选
     choose(val, index, str) {
-        this.accountList.map(acc => {
-          if(acc!=val){
-              acc.checked=false;
-            }
-        })
-        this.choosedItem=[]
-        if (str != 'change') {
-          val.checked = !val.checked
+      this.accountList.map(acc => {
+        if (acc != val) {
+          acc.checked = false
         }
-        if(val.checked){
-          this.choosedItem=[val]
-        }
-        
-      
-     
+      })
+      this.choosedItem = []
+      if (str != 'change') {
+        val.checked = !val.checked
+      }
+      if (val.checked) {
+        this.choosedItem = [val]
+      }
     },
     // //选择行
     // choose(val, index, str) {
@@ -374,7 +358,5 @@ export default {
     height: 20px;
   }
 }
-	
-
 </style>
 

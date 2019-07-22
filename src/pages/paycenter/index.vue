@@ -35,11 +35,19 @@
           <img src="../../assets/images/ss.png" alt />
           <div>送审</div>
         </div>
-        <div class="nav handle" @click="payNav('cancelApproval')">
+        <div
+          v-if="menubutton.paycenter_uncheck=='True'"
+          class="nav handle"
+          @click="payNav('cancelApproval')"
+        >
           <img src="@/assets/images/ss_d.png" alt />
           <div>取消送审</div>
         </div>
-        <div class="nav handle" @click="payNav('fiveBill')">
+        <div
+          v-if="menubutton.paycenter_cancel=='True'"
+          class="nav handle"
+          @click="payNav('fiveBill')"
+        >
           <img src="@/assets/images/zf.png" alt />
           <div>作废</div>
         </div>
@@ -267,8 +275,15 @@
                   <div v-else-if="item.Mst.FState==3">支付中</div>
                   <div v-else>————</div>
                 </td>
-                <td>
+                <td style="position: relative;">
+                  <div
+                    v-if="item.Mst.FDelete==1"
+                    style="width:60px;height:30px;position: absolute;top:50%;left:50%;margin-top:-15px;margin-left:-30px;"
+                  >
+                    <img style="width:60px;height:30px;" src="../../assets/images/zhang_zf.png" />
+                  </div>
                   <el-tooltip
+                    v-else
                     :content="item.Mst.FSubmitdate?item.Mst.FSubmitdate.replace('T',' '):'————'"
                   >
                     <p>{{item.Mst.FSubmitdate?item.Mst.FSubmitdate.replace('T',' '):"————"}}</p>
@@ -626,8 +641,12 @@ export default {
     getData() {
       this.showAuditfollow = false
       let query = {
-        'NgInsertDt*date*ge*1': this.sbrq ? this.sbrq[0] || '' : '', //申报日期开始
-        'NgInsertDt*date*le*1': this.sbrq ? this.sbrq[1] || '' : '', //申报日期结束
+        'NgInsertDt*date*ge*1':
+          this.sbrq && this.sbrq.length ? this.sbrq[0] || '' : '', //申报日期开始
+        'NgInsertDt*date*le*1':
+          this.sbrq && this.sbrq.length
+            ? this.sbrq[1].toString() + ' 23:59:59' || ''
+            : '', //申报日期结束
         'FDate*date*ge*1': this.zfrq ? this.zfrq[0] || '' : '', //支付日期开始
         'FDate*date*le*1': this.zfrq ? this.zfrq[1] || '' : '', //支付日期结束
         'FApproval*byte*eq*1': '', //审批状态0- 待送审 1-待审批 2- 未通过 9-审批通过
@@ -829,10 +848,6 @@ export default {
 
             break
           case 'cancelApproval':
-            if (!handleitem.every(i => i.Mst.FApproval == 1)) {
-              this.$msgBox.error('只能对审批中单据取消送审！')
-              return
-            }
             this.$confirm('确定要取消送审所选支付单', '提示', {
               type: 'warning'
             })
@@ -886,6 +901,7 @@ export default {
                       return
                     }
                     this.$msgBox.show('单据作废成功!')
+                    this.getData()
                     console.log(res)
                   })
                   .catch(err => {
