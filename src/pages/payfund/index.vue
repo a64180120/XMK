@@ -69,111 +69,92 @@
             <el-checkbox v-model="isMe">标记我的待办</el-checkbox>
           </div>
 
-          <i
-            class="el-icon-d-arrow-left iicon"
-            style="position:absolute;left:130px;top: .12rem;"
-            @click.stop="unionStateScroll(false)"
-          ></i>
-          <i
-            class="el-icon-d-arrow-right iicon"
-            style="position:absolute;right:275px;top: .12rem;"
-            @click.stop="unionStateScroll(true)"
-          ></i>
+          <i class="el-icon-d-arrow-left iicon"
+             style="position:absolute;left:130px;"
+             @click.stop="unionStateScroll(false)"></i>
+          <i class="el-icon-d-arrow-right iicon"
+             style="position:absolute;right:275px;"
+             @click.stop="unionStateScroll(true)"></i>
           <div class="scrollNav" style="left: 160px;">
             <div>
               <ul>
                 <li>
                   <span>审批状态：</span>
-                  <el-select
-                    collapse-tags
-                    size="small"
-                    v-model="approvalType"
-                    multiple
-                    placeholder="请选择"
-                    @remove-tag="getData"
-                    ref="sp"
-                  >
-                    <el-option
-                      v-for="item in approvalList"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value"
-                    ></el-option>
+                  <el-select collapse-tags
+                             size="mini"
+                             v-model="approvalType"
+                             multiple
+                             placeholder="请选择"
+                             @remove-tag="getData"
+                             ref="sp">
+                    <el-option v-for="item in approvalList"
+                               :key="item.value"
+                               :label="item.label"
+                               :value="item.value">
+                    </el-option>
                   </el-select>
                 </li>
                 <li>
                   <span>支付状态：</span>
-                  <el-select
-                    collapse-tags
-                    size="small"
-                    v-model="payType"
-                    multiple
-                    placeholder="请选择"
-                    @remove-tag="getData"
-                    ref="zf"
-                  >
-                    <el-option
-                      v-for="item in payList"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value"
-                    ></el-option>
+                  <el-select collapse-tags
+                             size="mini"
+                             v-model="payType"
+                             multiple
+                             placeholder="请选择"
+                             @remove-tag="getData"
+                             ref="zf">
+                    <el-option v-for="item in payList"
+                               :key="item.value"
+                               :label="item.label"
+                               :value="item.value">
+                    </el-option>
                   </el-select>
                 </li>
                 <li>
                   <span>申报日期</span>
-                  <el-date-picker
-                    size="small"
-                    v-model="date"
-                    type="daterange"
-                    range-separator="至"
-                    start-placeholder="开始日期"
-                    end-placeholder="结束日期"
-                    @change="getData"
-                  ></el-date-picker>
+                  <el-date-picker size="mini"
+                                  v-model="date"
+                                  type="daterange"
+                                  range-separator="至"
+                                  start-placeholder="开始日期"
+                                  end-placeholder="结束日期"
+                                  @change="getData"
+                                  >
+                  </el-date-picker>
                 </li>
                 <li>
                   <span>申报金额</span>
-                  <input
-                    style="width:auto;height: 32px;"
-                    class="el-input__inner"
-                    :precision="2"
-                    :controls="false"
-                    v-model="money.smoney"
-                    @keydown="clearZero(0)"
-                    @keyup="clearNum(0)"
-                    @blur="moneyChange"
-                  />
+                  <input style="width:auto;height: 28px;"
+                         class="el-input__inner"
+                         :precision="2"
+                         :controls="false"
+                         v-model="money.smoney"
+                         @keydown="clearZero(0)"
+                         @keyup="clearNum(0)"
+                         @blur="moneyChange" />
                   <span>至</span>
-                  <input
-                    style="width:auto;height: 32px;"
-                    class="el-input__inner"
-                    :precision="2"
-                    :controls="false"
-                    v-model="money.emoney"
-                    @keydown="clearZero(1)"
-                    @keyup="clearNum(1)"
-                    @blur="moneyChange"
-                  />
+                  <input style="width:auto;height: 28px;"
+                         class="el-input__inner"
+                         :precision="2"
+                         :controls="false"
+                         v-model="money.emoney"
+                         @keydown="clearZero(1)"
+                         @keyup="clearNum(1)"
+                         @blur="moneyChange" />
                 </li>
               </ul>
             </div>
           </div>
-          <label class="searchArea" style="float: right">
-            <el-input
-              size="small"
-              placeholder="请输入申报单编号/名称"
-              style="border-radius: 5px;width: 250px;overflow: hidden"
-              v-model="searchData.searchValue"
-            >
-              <el-button
-                slot="append"
-                size="small"
-                style="background-color: #3294e8;color: #fff;border-top-left-radius: 0;border-bottom-left-radius: 0"
-              >搜索</el-button>
+          <label class="searchArea"
+                 style="float: right">
+            <el-input size="mini"
+                      placeholder="请输入申报单编号/名称"
+                      v-model="searchData.searchValue">
+              <el-button slot="append"
+                         size="mini">搜索</el-button>
             </el-input>
           </label>
-          <!--<el-button size="small" @click="showOrg">{{searchData.searchorg.label}}</el-button>-->
+          <!--<el-button size="mini" @click="showOrg">{{searchData.searchorg.label}}</el-button>-->
           <!--搜索、高级-->
           <!--<div style="float: right;display: flex" class="searchArea">
 
@@ -182,11 +163,11 @@
                 &lt;!&ndash;<span class=" el-dropdown-link">
               下拉菜单<i class="el-icon-arrow-down el-icon&#45;&#45;right"></i>
               </span>&ndash;&gt;
-                <el-button size="small" slot="reference" style="margin-left:20px;background-color: #39b49b;border-color: #39b49b;color: #fff">高级</el-button>
+                <el-button size="mini" slot="reference" style="margin-left:20px;background-color: #39b49b;border-color: #39b49b;color: #fff">高级</el-button>
                 <ul class="sinor">
                   <li>
                     <span>审批状态</span>
-                    <el-select size="small" v-model="searchData.approvalType">
+                    <el-select size="mini" v-model="searchData.approvalType">
                       <el-option v-for="item in approvalList"
                                  :key="item.value"
                                  :label="item.label"
@@ -196,7 +177,7 @@
                   </li>
                   <li>
                     <span>支付状态</span>
-                    <el-select size="small" v-model="searchData.payType">
+                    <el-select size="mini" v-model="searchData.payType">
                       <el-option v-for="item in payList"
                                  :key="item.value"
                                  :label="item.label"
@@ -207,7 +188,7 @@
                   <li>
                     <span>申报日期</span>
                     <el-date-picker
-                      size="small"
+                      size="mini"
                       v-model="searchData.date"
                       type="daterange"
                       range-separator="至"
@@ -217,9 +198,9 @@
                   </li>
                   <li class="smallinput">
                     <span>申报金额</span>
-                    <el-input size="small" v-model="money.smoney"></el-input>
+                    <el-input size="mini" v-model="money.smoney"></el-input>
                     <span>至</span>
-                    <el-input size="small" v-model="money.emoney"></el-input>
+                    <el-input size="mini" v-model="money.emoney"></el-input>
                   </li>
                   <li style="text-align: center;margin:15px 0 0 0 ">
                     <button class="cancelBtn">重置</button>
