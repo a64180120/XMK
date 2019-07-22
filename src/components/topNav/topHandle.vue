@@ -11,7 +11,6 @@
           <el-breadcrumb separator-class="el-icon-arrow-right">
             <el-breadcrumb-item></el-breadcrumb-item>
             <el-breadcrumb-item v-if="item.meta.name"
-                                :to="{path:item.path}"
                                 v-for="(item,n) of $route.matched"
                                 :key="n">{{item.meta.name}}</el-breadcrumb-item>
 

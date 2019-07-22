@@ -45,8 +45,6 @@ export default {
     let that = this;
     let _body = document.querySelector('body')
     _body.addEventListener("click", this.closeAuditFollow)
-    // debugger;
-    // //消息推送
 
 
   },
@@ -97,9 +95,13 @@ export default {
           }
           window.onmessage = function (e) {
             if (JSON.parse(e.data).ID == 'KillLoginUser') {
-              that.$confirm('当前登录被强制注销，点击确定后将取消当前登录！').then(() => {
-                window.open(window.global.baseUrl.replace('/custom2/api', '/G6H/web'));
-                window.close();
+              this.$msgBox.show({
+                content: '当前登录被强制注销，点击确定后将取消当前登录！',
+                timeout: 10,
+                fn: function () {
+                  window.open(window.global.baseUrl.replace('/custom2/api', '/G6H/web'), '_self');
+
+                }
               })
             }
           }
