@@ -70,10 +70,10 @@
           </div>
 
           <i class="el-icon-d-arrow-left iicon"
-             style="position:absolute;left:130px;top: .12rem;"
+             style="position:absolute;left:130px;"
              @click.stop="unionStateScroll(false)"></i>
           <i class="el-icon-d-arrow-right iicon"
-             style="position:absolute;right:275px;top: .12rem;"
+             style="position:absolute;right:275px;"
              @click.stop="unionStateScroll(true)"></i>
           <div class="scrollNav" style="left: 160px;">
             <div>
@@ -81,7 +81,7 @@
                 <li>
                   <span>审批状态：</span>
                   <el-select collapse-tags
-                             size="small"
+                             size="mini"
                              v-model="approvalType"
                              multiple
                              placeholder="请选择"
@@ -97,7 +97,7 @@
                 <li>
                   <span>支付状态：</span>
                   <el-select collapse-tags
-                             size="small"
+                             size="mini"
                              v-model="payType"
                              multiple
                              placeholder="请选择"
@@ -112,7 +112,7 @@
                 </li>
                 <li>
                   <span>申报日期</span>
-                  <el-date-picker size="small"
+                  <el-date-picker size="mini"
                                   v-model="date"
                                   type="daterange"
                                   range-separator="至"
@@ -124,7 +124,7 @@
                 </li>
                 <li>
                   <span>申报金额</span>
-                  <input style="width:auto;height: 32px;"
+                  <input style="width:auto;height: 28px;"
                          class="el-input__inner"
                          :precision="2"
                          :controls="false"
@@ -133,7 +133,7 @@
                          @keyup="clearNum(0)"
                          @blur="moneyChange" />
                   <span>至</span>
-                  <input style="width:auto;height: 32px;"
+                  <input style="width:auto;height: 28px;"
                          class="el-input__inner"
                          :precision="2"
                          :controls="false"
@@ -149,16 +149,14 @@
           </div>
           <label class="searchArea"
                  style="float: right">
-            <el-input size="small"
+            <el-input size="mini"
                       placeholder="请输入申报单编号/名称"
-                      style="border-radius: 5px;width: 250px;overflow: hidden"
                       v-model="searchData.searchValue">
               <el-button slot="append"
-                         size="small"
-                         style="background-color: #3294e8;color: #fff;border-top-left-radius: 0;border-bottom-left-radius: 0">搜索</el-button>
+                         size="mini">搜索</el-button>
             </el-input>
           </label>
-          <!--<el-button size="small" @click="showOrg">{{searchData.searchorg.label}}</el-button>-->
+          <!--<el-button size="mini" @click="showOrg">{{searchData.searchorg.label}}</el-button>-->
           <!--搜索、高级-->
           <!--<div style="float: right;display: flex" class="searchArea">
 
@@ -167,11 +165,11 @@
                 &lt;!&ndash;<span class=" el-dropdown-link">
               下拉菜单<i class="el-icon-arrow-down el-icon&#45;&#45;right"></i>
               </span>&ndash;&gt;
-                <el-button size="small" slot="reference" style="margin-left:20px;background-color: #39b49b;border-color: #39b49b;color: #fff">高级</el-button>
+                <el-button size="mini" slot="reference" style="margin-left:20px;background-color: #39b49b;border-color: #39b49b;color: #fff">高级</el-button>
                 <ul class="sinor">
                   <li>
                     <span>审批状态</span>
-                    <el-select size="small" v-model="searchData.approvalType">
+                    <el-select size="mini" v-model="searchData.approvalType">
                       <el-option v-for="item in approvalList"
                                  :key="item.value"
                                  :label="item.label"
@@ -181,7 +179,7 @@
                   </li>
                   <li>
                     <span>支付状态</span>
-                    <el-select size="small" v-model="searchData.payType">
+                    <el-select size="mini" v-model="searchData.payType">
                       <el-option v-for="item in payList"
                                  :key="item.value"
                                  :label="item.label"
@@ -192,7 +190,7 @@
                   <li>
                     <span>申报日期</span>
                     <el-date-picker
-                      size="small"
+                      size="mini"
                       v-model="searchData.date"
                       type="daterange"
                       range-separator="至"
@@ -202,9 +200,9 @@
                   </li>
                   <li class="smallinput">
                     <span>申报金额</span>
-                    <el-input size="small" v-model="money.smoney"></el-input>
+                    <el-input size="mini" v-model="money.smoney"></el-input>
                     <span>至</span>
-                    <el-input size="small" v-model="money.emoney"></el-input>
+                    <el-input size="mini" v-model="money.emoney"></el-input>
                   </li>
                   <li style="text-align: center;margin:15px 0 0 0 ">
                     <button class="cancelBtn">重置</button>
@@ -348,7 +346,7 @@
            style="transition: all .3s linear;">
         <div style="width: 278px;overflow-y: scroll;padding-right: 11px;height: 100%;">
           <!--部门选择-->
-          <el-select size="small"
+          <el-select size="mini"
                      style="width: 250px;"
                      class="approvalDepart"
                      popper-class="AD-proper"
@@ -395,7 +393,7 @@
                     <span>名称</span>
                   </div>
                   <!--部门选择-->
-                  <el-select size="small"
+                  <el-select size="mini"
                              style="display: inline-block;width: 200px;border-bottom: 1px solid #ccc"
                              :title="apartDataMst[bzType]"
                              v-model="bzType"
