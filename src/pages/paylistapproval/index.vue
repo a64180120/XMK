@@ -158,7 +158,7 @@
               <tbody>
                 <tr :class="{trActive:check[idx]}" v-for="(item,idx) in tableData" :key="idx">
                   <td @click.self="handleCheckBoxCellClick(item,idx)">
-                    <el-checkbox v-model="check[idx]">{{idx+1}}</el-checkbox>
+                    <el-checkbox v-model="check[idx]" @change="fn(item,idx)">{{idx+1}}</el-checkbox>
                   </td>
                   <td>
                     <el-tooltip
@@ -770,6 +770,10 @@ export default {
     },
     //点击checkBox单元格事件
     handleCheckBoxCellClick(row, idx) {
+      if (this.isApproval){
+        this.fn(row, idx)
+        return
+      }
       for (let key in this.check) {
         if (idx === parseInt(key)) {
           if (this.check[key] === true) {
@@ -942,6 +946,13 @@ export default {
     },
     hideSearchIcon() {
       this.showSearchIconIdx = ''
+    },
+    // 表格单选
+    fn(item,idx){
+      this.check = this.check.map((item, index, array) => false)
+      for (let key in this.check){
+        this.$set(this.check, idx, true)
+      }
     }
   }
 }

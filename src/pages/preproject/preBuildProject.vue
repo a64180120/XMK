@@ -96,20 +96,23 @@
                     <el-option value="3" label="审批通过">审批通过</el-option>
                     <el-option value="3" label="未通过">未通过</el-option>
                   </el-select>
-                </el-form-item> 
+                </el-form-item>
+                <el-form-item>
+                  <el-button size="mini" @click="fn1">部门申报</el-button>
+                </el-form-item>
                 <el-form-item style="float: right">
                     <search-input v-model="search"></search-input>
                 </el-form-item>
               </el-form>
             </div>
             <!--表格区域-->
-            <div  class="table-main">
+            <div v-if="watchTable" class="table-main">
               <data-table
                 :data="table.tableData"
                 :column="table.colum"
                 :selection="table.selection"></data-table>
             </div>
-            <div  class="table-main">
+            <div v-else class="table-main">
               <item-table
                 :data="table1.tableData"
                 :monetaryUnit="formList.year"></item-table>
@@ -254,7 +257,11 @@
           })
         },
         fn1(){
-          this.watchTable = false
+          if (this.watchTable){
+            this.watchTable = false
+          } else {
+            this.watchTable = true
+          }
         }
       }
     }

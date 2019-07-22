@@ -20,15 +20,15 @@
               <div class="top-left">项目编码：{{scope.row.item.projectCode}}</div>
               <div class="top-center">项目名称：{{scope.row.item.projectName}}</div>
               <div class="top-right">
-                <div class="card" v-if="monetaryUnit == '1'">{{scope.row.item.projectMoney | NumFormat}}</div>
+                <div class="card" v-if="monetaryUnit == '1'">{{scope.row.item.projectMoney | NumFormat}}元</div>
                 <div class="card" v-if="monetaryUnit == '2'">{{scope.row.item.projectMoney/10000}}万元</div>
               </div>
             </div>
             <div class="context">
               <ul>
                 <li>
-                  <span>项目属性：{{scope.row.item.name1}}</span>
-                </li>
+                <span>项目属性：{{scope.row.item.name1}}</span>
+              </li>
                 <li>
                   <span>存续期限：{{scope.row.item.name2}}</span>
                 </li>
@@ -299,7 +299,11 @@
     left:-30px;
     top:0;
   }
-  .dataTable .el-table__header-wrapper:before{
+  .itemTable .el-table__header-wrapper:before{
     left:100%;
+  }
+  .itemTable .el-table::before {
+    background-color: #ffffff;
+    height: 4px;
   }
 </style>
