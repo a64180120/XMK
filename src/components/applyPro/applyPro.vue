@@ -6,7 +6,7 @@
           <div class="top-btn">
 
             <el-button :disabled="PaymentXmDtl.length==0" class="btn" size="mini" @click="save(0)">保存</el-button>
-            <el-button :disabled="PaymentXmDtl.length==0" class="btn" size="mini" @click="save(1)" style="padding: 0">保存并送审</el-button>
+            <el-button v-if="menu['fund_check']" :disabled="PaymentXmDtl.length==0" class="btn" size="mini" @click="save(1)" style="padding: 0">保存并送审</el-button>
             <el-button class="btn" size="mini" @click="add">增加项目</el-button>
             <el-button class="btn" size="mini" @click="delPro">删除项目</el-button>
           </div>
@@ -358,6 +358,7 @@
         orgcode:state => state.user.orgcode, //编码
         orgname:state => state.user.orgname,//名称
         year:state => state.user.year,//年份
+        menu: state => state.user.menubutton //权限按钮
       })
     },
     watch:{
