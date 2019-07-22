@@ -1,32 +1,57 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8" />
-    <!-- IE使用当前浏览器的最高文档模式 -->
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-    <!-- 多核浏览器使用webkit内核 急速核-->
-    <!--<meta name="renderer" content="webkit" />-->
-    <!-- 多核浏览器使用 ie兼容内核 -->
-    <!--<meta name="renderer" content="ie-comp" />-->
-    <!-- 多核浏览器使用 ie标准内核 -->
-    <meta name="renderer" content="ie-stand" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>浙江省总工会财务综合管理平台</title>
-    <link
-      rel="shortcut icon"
-      type="image/x-icon"
-      href="favicon.ico"
-      rel="external nofollow"
-    />
-    <script type="text/javascript">
-      window.global = {
-        baseUrl: 'http://127.0.0.1/custom2/api',
-        UsbKeyUrl: 'http://10.0.20.50/'
-        // UsbKeyUrl: 'http://10.0.15.3:8088/'
-      }
-    </script>
-  </head>
-  <body>
-    <div id="app"></div>
-  </body>
+
+<head>
+  <meta charset="UTF-8" />
+  <!-- IE使用当前浏览器的最高文档模式 -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <!-- 多核浏览器使用webkit内核 急速核-->
+  <!--<meta name="renderer" content="webkit" />-->
+  <!-- 多核浏览器使用 ie兼容内核 -->
+  <!--<meta name="renderer" content="ie-comp" />-->
+  <!-- 多核浏览器使用 ie标准内核 -->
+  <meta name="renderer" content="ie-stand" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>浙江省总工会财务综合管理平台</title>
+  <link rel="shortcut icon" type="image/x-icon" href="favicon.ico" rel="external nofollow" />
+  <script type="text/javascript">
+    var $appinfo = {
+      // logid: '9999', username: '省总管理员', ocode: '101',
+      // userID: '488181024000001', orgID: '488181024000002',
+      // dbServer: 'MTAuMC4xMy4xNjg6MTUyMS9uM25q', uCode: '0006'
+    }
+    window.global = {
+      baseUrl: 'http://127.0.0.1/custom2/api',
+      UsbKeyUrl: 'http://10.0.20.50/'
+      // UsbKeyUrl: 'http://10.0.15.3:8088/'
+    }
+
+  </script>
+</head>
+
+<body>
+  <iframe id="desktopMsgClient" src="" style="display:none"></iframe>
+  <div id="app"></div>
+  <script>
+    // window.onload = function () {
+    //   var frame = document.getElementById('desktopMsgClient')
+    //   frame.src = window.global.baseUrl.replace('/custom2/api', '') + "/desktopMsgServer/MsgSubscriber.htm";
+    //   frame.onload = function () {
+    //     frame.contentWindow.postMessage($appinfo, '*');
+    //   }
+    // }
+
+    // window.onmessage = function (e) {
+    //   if (JSON.parse(e.data).ID == 'KillLoginUser') {
+
+    //     alert('TTTTTT');
+    //     window.open(window.global.baseUrl.replace('/custom2/api', '/G6H/web'));
+    //     window.close();
+    //   }
+
+
+    // }
+  </script>
+</body>
+
 </html>

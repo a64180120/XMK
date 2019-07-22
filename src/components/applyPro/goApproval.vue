@@ -364,18 +364,16 @@ export default {
     'param.FOpinion': function(val) {
       this.len = val.length
     },
-    nextDataList:{
-      handler(val){
-
-        if (val.length === 1 ){
+    nextDataList: {
+      handler(val) {
+        if (val.length === 1) {
           this.$nextTick(() => {
             this.$refs.opTable.toggleAllSelection()
           })
         }
       },
-      deep:true
+      deep: true
     }
-
   }
   /*created() {
     this.getAppvalProc();

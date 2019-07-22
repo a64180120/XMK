@@ -38,6 +38,7 @@
                 size="mini"
                 style="padding:0"
                 @click="save('approvalData')"
+                v-if="menubutton.paycenter_check=='True'"
               >保存并送审</el-button>
             </template>
             <template

@@ -38,6 +38,7 @@
                     placeholder="请输入提醒时间(小时)"
                     v-model="Value"></el-input>
         </div>
+        <span>小时</span>
       </div>
       <div v-else
            class="adminCode list">
@@ -176,7 +177,15 @@ export default {
             OName: this.$store.state.user.orgname
           }]
         } else {
-          this.typeInfoList = []
+          this.typeInfoList = [{
+            DicType: 'StayTime',
+            Value: this.Value,
+            OrgList: [{
+              PhId: this.$store.state.user.orgid,
+              OCode: this.$store.state.user.orgcode,
+              OName: this.$store.state.user.orgname
+            }]
+          }]
         }
 
       }
@@ -427,9 +436,10 @@ export default {
   .codeCon {
     padding-left: 50px;
     text-align: left;
-    font-size: 0.16rem;
+    font-size: 0.18rem;
+    margin-top: 30px;
     > div {
-      width: 50%;
+      width: 60px;
       display: inline-block;
     }
     > span {
@@ -517,6 +527,9 @@ export default {
   height: 100%;
 }
 .timesetting .listBody ul.update input {
+  text-align: center;
+}
+.timesetting .codeCon input {
   text-align: center;
 }
 </style>
