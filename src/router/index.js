@@ -29,7 +29,7 @@ function getUserInfo () { //获取url传参
 
 // 路由跳转前验证(全局守卫)
 vuerouters.beforeEach((to, from, next) => {
-  if (from.fullPath == '/') {  //如果是从i8那边过来的
+  if (from.fullPath == '/' || !store.state.user.appinfo || !store.state.user.userid) {  //如果是从i8那边过来的或appinfo没有获取到
     getUserInfo();
   }
 

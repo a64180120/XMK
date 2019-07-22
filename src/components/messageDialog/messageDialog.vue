@@ -76,7 +76,6 @@ export default {
       this.$destroy()
     },
     showMsgBox: function () {
-      debugger
       this.count = this.timeout
       this.openDialog = true
       this.status = 'success'
