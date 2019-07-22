@@ -181,7 +181,7 @@
               <tbody>
               <tr :class="{trActive:check[idx]}" v-for="(item,idx) in tableData"  :key="idx">
                 <td  @click.self="handleCheckBoxCellClick(item,idx)">
-                  <el-checkbox v-model="check[idx]"  >{{idx+1}}</el-checkbox>
+                  <el-checkbox v-model="check[idx]" @change="fn(item,idx)" >{{idx+1}}</el-checkbox>
                 </td>
                 <td>
                   <el-tooltip  effect="dark" :content="item.OrgName" placement="bottom" popper-class="pay-fund-approval_tooltip">
@@ -848,6 +848,13 @@ export default {
     },
     printTable(){
       this.$refs.applybill.printTable()
+    },
+    fn(item,idx){
+      for (let key in this.check){
+        console
+      }
+      console.log(item,idx)
+      console.log(this.check)
     }
   }
 }
