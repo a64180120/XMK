@@ -966,7 +966,7 @@ export default {
   position: absolute;
   top: 50%;
   left: 50%;
-  margin: 0 !important;
+  margin:-5px 0 0 0 !important;
   transform: translate(-50%, -50%);
 }
 .top ul li {

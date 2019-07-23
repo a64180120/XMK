@@ -58,7 +58,7 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column prop="status" width="250" label="审批状态" align="center">
+      <el-table-column prop="status" width="150" label="审批状态" align="center">
         <template  slot-scope="scope">
             <div class="status-row" >
               <div class="status-titile">{{scope.row.status}}(预立项)</div>
@@ -276,13 +276,13 @@
     overflow:visible;
     position: absolute;
     z-index: 2;
-    width: 92%;
+    width: 90%;
     top: 54px;
 
   }
   .itemTable .el-table__header-wrapper:before{
 
-    width: calc(6% + 20px);
+    width: calc(5% + 20px);
     background-color: #CACACA;
     height: 47px;
     content:"";

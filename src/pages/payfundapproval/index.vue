@@ -901,7 +901,7 @@ export default {
       }
       // let status = false
       // for (let key in this.check){
-      //   if(this.check[key]){
+      //   if(this.check[key] && key == idx){
       //       console.log(this.check[key])
       //     status = true
       //   }
@@ -913,9 +913,6 @@ export default {
       //   }
       // }else {
       //   this.check = this.check.map((item, index, array) => false)
-      //   for (let key in this.check){
-      //     this.$set(this.check, idx, true)
-      //   }
       // }
     }
   }
@@ -930,7 +927,7 @@ export default {
   position: absolute;
   top: 50%;
   left: 50%;
-  margin: 0 !important;
+  margin:-5px 0 0 0!important;
   transform: translate(-50%, -50%);
 }
 .top ul li {

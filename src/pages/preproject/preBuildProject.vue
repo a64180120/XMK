@@ -4,13 +4,13 @@
                   @refresh="refresh()">
         <div class="top">
           <ul >
-            <li @click="aprovalItem()">
+            <li @click="add()">
               <div>
                 <img src="@/assets/images/xz.png">
               </div>
               <span>新增</span>
             </li>
-            <li @click="aprovalItem()">
+            <li @click="edit()">
               <div>
                 <img src="@/assets/images/zj2.png">
               </div>
@@ -107,10 +107,32 @@
             </div>
             <!--表格区域-->
             <div v-if="watchTable" class="table-main">
-              <data-table
-                :data="table.tableData"
-                :column="table.colum"
-                :selection="table.selection"></data-table>
+              <section class="dataTable_proBuildProject">
+                <el-table
+                  :data="table.tableData"
+                  :row-class-name="rowClassName"
+                  :cell-class-name="cellClassName"
+                  :header-cell-class-name="handerCellClassName"
+                  @current-change=""
+                  :highlight-current-row="highlightCurrentRow"
+                  style="overflow: visible;position: static;padding-top: 50px"
+                >
+                  <el-table-column v-if="table.selection" type="selection"></el-table-column>
+                  <el-table-column
+                    v-for="(item,idx) in table.column"
+                    :prop="item.prop"
+                    :label="item.label"
+                    :width="item.width"
+                    align="center">
+                    <template  slot-scope="scope" style="">
+                      <div class="table-column-height" :style="{textAlign:item.align}">
+                        <span :style="{textAlign:item.align}" >{{scope.row[item.prop]}}</span>
+                      </div>
+                    </template>
+                  </el-table-column>
+                </el-table>
+              </section>
+
             </div>
             <div v-else class="table-main">
               <item-table
@@ -120,6 +142,12 @@
           </div>
         </div>
       </div>
+      <el-dialog append-to-body
+                 :visible.sync="addDialog"
+                 width="80%"
+                 :close-on-click-modal="false">
+        <prerojectnewproject></prerojectnewproject>
+      </el-dialog>
     </section>
 </template>
 
@@ -128,25 +156,40 @@
     import DataTable from "../../components/dataTable/dataTable";
     import ItemTable from "../../components/itemTable/itemTable";
     import SearchInput from "../../components/searchInput/searchInput";
+    import Prerojectnewproject from "../../components/preProjectDialog/index";
     export default {
         name: "preBuildProject",
-      components: {SearchInput, ItemTable, DataTable, TopHandle},
+      components: {Prerojectnewproject, SearchInput, ItemTable, DataTable, TopHandle},
       data(){
           return{
             table:{
-              tableData:[],
-              colum:[
+              tableData:[{
+                name1:'实业中心',
+                name2:'实业中心',
+                name3:'20190000001',
+                name4:'广东劳模疗养基地5年',
+                name5:"27.68",
+                name6:"主业类",
+                name7:"2019.01.01-2019.12.31",
+                name8:"27.68",
+                name9:"待送审",
+              }],
+              column:[
                 {
                 prop:'name1',
                 label:'申报部门',
-                align:'left'
+                align:'left',
+                width:270,
+                function:function () {
+
+                }
               },{
                 prop:'name2',
                 label:'预算部门',
               },{
                 prop:'name3',
                 label:'项目编码',
-                align:'center'
+                align:'center',
               },{
                 prop:'name4',
                 label:'项目名称',
@@ -154,7 +197,8 @@
               },{
                   prop:'name5',
                   label:'项目金额',
-                  align:'center'
+                  align:'center',
+                  width:130
                 },{
                   prop:'name6',
                   label:'支持类别',
@@ -174,6 +218,8 @@
                 }],
               selection:true
             },
+            highlightCurrentRow:false,
+            rowNumber:4,
             table1:{
               tableData:[]
             },
@@ -184,7 +230,8 @@
               status:'',
               search:''
             },
-            search:''
+            search:'',
+            addDialog:false
           }
       },
       created(){
@@ -218,7 +265,6 @@
         }
         for (let i =0;i<3;i++){
           this.table1.tableData.push(a)
-          this.table.tableData.push(b)
         }
 
       },
@@ -232,11 +278,12 @@
         },
         //单元格样式回调
         cellClassName({row,column,rowIndex,columnIndex}){
-          let a =  Object.getOwnPropertyNames(row).length
-          console.log(column)
+          let length = this.table.column.length
+          if (!this.table.selection){
+            length = this.table.column.length - 1          }
           if (columnIndex === 0){
             return 'frist-column'
-          }else if(columnIndex === this.rowNumber-1){
+          }else if(columnIndex === length){
             return 'last-column'
           }else {
             return 'middle-column'
@@ -244,11 +291,13 @@
         },
         //表头单元格回调
         handerCellClassName({row,column,rowIndex,columnIndex}){
-          return 'thead-cell'
-            if (columnIndex === 0){
-
-            }
+          if (columnIndex === this.table.column.length){
+            return 'thead-last-cell'
+          }else {
+            return 'thead-cell'
+          }
         },
+        //测试方法
         fn(){
           this.table.colum.push({
             prop:'end',
@@ -256,12 +305,20 @@
             align:'left'
           })
         },
+        //切换表格样式
         fn1(){
           if (this.watchTable){
             this.watchTable = false
           } else {
             this.watchTable = true
           }
+        },
+        //新增方法
+        add(){
+          this.addDialog = true
+        },
+        edit(){
+          this.addDialog = true
         }
       }
     }
@@ -280,7 +337,7 @@
     position: absolute;
     top: 50%;
     left: 50%;
-    margin: 0 !important;
+    margin:-5px 0 0 0!important;
     transform: translate(-50%, -50%);
   }
   .top ul li {
