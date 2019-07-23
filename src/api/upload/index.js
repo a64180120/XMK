@@ -27,3 +27,26 @@ export function printTable(vm){
   vm.$print(print);
   loading.close();
 }
+/**/
+//表格滚动事件
+export function tableScroll(el,vm) {
+
+  let scObj = document.getElementById(el);
+  let topHeight=scObj.scrollTop;
+  console.log(topHeight)
+  let childList=scObj.firstElementChild.firstElementChild.childNodes;
+  if(topHeight>0){
+    for(var i in childList){
+      if(childList[i].nodeType==1){
+        childList[i].style.top=topHeight + 'px';
+      }
+    }
+  }else{
+    for(var i in childList){
+      if(childList[i].nodeType==1){
+        childList[i].style.top='0px';
+      }
+    }
+  }
+  console.log(scObj);
+}
