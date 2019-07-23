@@ -1,22 +1,24 @@
 <template>
   <div class="account_bank">
     <div class="searchCon">
-      <search placeholder="银行账户名称/账号" v-model="searchVal" @btnClick="getData"></search>
+      <search placeholder="银行账户名称/账号"
+              v-model="searchVal"
+              @btnClick="getData"></search>
     </div>
     <div class="content clear">
-      <div class="orgList fl" :class="{disabled:type!='handle'}">
+      <div class="orgList fl"
+           :class="{disabled:type!='handle'}">
         <p>组织列表</p>
         <div v-if="orgList.length>0">
-          <el-tree
-            ref="orgtree"
-            node-key="OCode"
-            :highlight-current="true"
-            :props="defaultProps"
-            :default-expanded-keys="[checkedOrg.OCode?checkedOrg.OCode:1]"
-            :data="orgList"
-            :expand-on-click-node="false"
-            @node-click="orgChange"
-          ></el-tree>
+          <el-tree ref="orgtree"
+                   node-key="OCode"
+                   :highlight-current="true"
+                   :props="defaultProps"
+                   :default-expanded-keys="[checkedOrg.OCode?checkedOrg.OCode:1]"
+                   :data="orgList"
+                   :render-content="rendercontent"
+                   :expand-on-click-node="false"
+                   @node-click="orgChange"></el-tree>
         </div>
         <!-- <p class="bottomBtn">
                     <span class="btn" @click="getData">确定</span>
@@ -24,7 +26,8 @@
       </div>
       <div class="account fl">
         <div class="formArea">
-          <div class="tableHead" style="border-right:1px solid #fff;text-align:center;">
+          <div class="tableHead"
+               style="border-right:1px solid #fff;text-align:center;">
             <table>
               <colgroup>
                 <col width="10%">
@@ -32,17 +35,17 @@
                 <col width="15%">
                 <col width="15%">
                 <col width="15%">
-                <col v-if="type=='handle'" width="15%">
-                <col v-if="type=='handle'" width="10%">
+                <col v-if="type=='handle'"
+                     width="15%">
+                <col v-if="type=='handle'"
+                     width="10%">
               </colgroup>
               <thead style="    text-align: center;">
                 <tr>
                   <td style="padding: 0 5px;">
-                    <el-checkbox
-                      v-model="checked"
-                      @change="allChecked"
-                      :indeterminate="indeterminate"
-                    >序号</el-checkbox>
+                    <el-checkbox v-model="checked"
+                                 @change="allChecked"
+                                 :indeterminate="indeterminate">序号</el-checkbox>
                   </td>
                   <td>银行账户名称</td>
                   <td>银行账号</td>
@@ -63,24 +66,20 @@
                 <col width="15%">
 
                 <col width="15%">
-                <col v-if="type=='handle'" width="15%">
-                <col v-if="type=='handle'" width="10%">
+                <col v-if="type=='handle'"
+                     width="15%">
+                <col v-if="type=='handle'"
+                     width="10%">
               </colgroup>
-              <thead >
-                <tr
-                  :class="{trActive:item.checked}"
-                  v-for="(item,index) in accountList"
-                  :key="index"
-                >
-                  <td
-                    @click.stop="choose(item,index)"
-                    style="padding: 0 5px;cursor:pointer;text-align:center;"
-                  >
-                    <el-checkbox
-                      @click.stop.native="1"
-                      @change="choose(item,index,'change')"
-                      v-model="item.checked"
-                    >{{index+1}}</el-checkbox>
+              <thead>
+                <tr :class="{trActive:item.checked}"
+                    v-for="(item,index) in accountList"
+                    :key="index">
+                  <td @click.stop="choose(item,index)"
+                      style="padding: 0 5px;cursor:pointer;text-align:center;">
+                    <el-checkbox @click.stop.native="1"
+                                 @change="choose(item,index,'change')"
+                                 v-model="item.checked">{{index+1}}</el-checkbox>
                   </td>
                   <td>
                     <el-tooltip :content="item.FBankname">
@@ -107,9 +106,15 @@
                       <p>{{item.FCity}}</p>
                     </el-tooltip>
                   </td>
-                  <td style="text-align:center" class="enable" v-if="type=='handle'">
-                    <img v-if="item.FLifecycle=='1'" src="@/assets/images/gou.svg" alt>
-                    <img v-else src="@/assets/images/cha.svg" alt>
+                  <td style="text-align:center"
+                      class="enable"
+                      v-if="type=='handle'">
+                    <img v-if="item.FLifecycle=='1'"
+                         src="@/assets/images/gou.svg"
+                         alt>
+                    <img v-else
+                         src="@/assets/images/cha.svg"
+                         alt>
                   </td>
                 </tr>
               </thead>
@@ -145,7 +150,7 @@ export default {
       default: ''
     }
   },
-  data() {
+  data () {
     return {
       defaultProps: {
         children: 'children',
@@ -166,11 +171,14 @@ export default {
   },
   methods: {
     //组织选择
-    orgChange: function(data) {
+    orgChange: function (data) {
+      if (data.WeChatId) {
+        return;
+      }
       this.checkedOrg = data
       this.getData()
     },
-    getData() {
+    getData () {
       let data = {
         OrgPhid: this.checkedOrg.PhId,
         selectStr: this.searchVal
@@ -190,7 +198,7 @@ export default {
         })
     },
     //选择行
-    choose(val, index, str) {
+    choose (val, index, str) {
       if (str != 'change') {
         val.checked = !val.checked
       }
@@ -218,7 +226,7 @@ export default {
       }
     },
     //全选
-    allChecked(val) {
+    allChecked (val) {
       this.indeterminate = false
       if (val) {
         this.accountList.map(arr => {
@@ -231,9 +239,22 @@ export default {
           this.choosedItem = []
         })
       }
+    },
+    //组织树样式
+    rendercontent (h, { node, data, store }) {
+
+      let cssname = ''
+      if (node.data.WeChatId == 'false') {
+        cssname = 'disableOrg'
+      }
+      return (
+        <span class={cssname}>
+          <span>{node.label}</span>
+
+        </span>);
     }
   },
-  mounted() {
+  mounted () {
     if (this.orgList.length > 0) {
       this.checkedOrg = {
         OCode: this.$store.state.user.orgcode,
@@ -241,13 +262,13 @@ export default {
         PhId: this.$store.state.user.orgid
       }
       this.getData()
-      this.$nextTick(function() {
+      this.$nextTick(function () {
         this.$refs.orgtree.setCurrentNode({ OCode: this.checkedOrg.OCode })
       })
     }
   },
   watch: {
-    orgList() {
+    orgList () {
       if (this.orgList.length > 0) {
         this.checkedOrg = {
           OCode: this.$store.state.user.orgcode,
@@ -256,7 +277,7 @@ export default {
         }
 
         this.getData()
-        this.$nextTick(function() {
+        this.$nextTick(function () {
           this.$refs.orgtree.setCurrentNode({ OCode: this.checkedOrg.OCode })
         })
       }
@@ -270,7 +291,7 @@ export default {
 
 <style lang="scss" scoped>
 .account_bank {
-  padding: 10px 1%;
+  padding: 1%;
   height: 100%;
   .searchCon {
     float: right;
@@ -339,19 +360,25 @@ export default {
     height: 20px;
   }
 }
-	
-.content >.disabled{
-	position: relative;
-	&:after{
-		content:"";
-		position: absolute;
-		left:0;
-		right:0;
-		top:0;
-		bottom:0;
-		z-index:9;
-		background: none;
-	}
+
+.content > .disabled {
+  position: relative;
+  &:after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 9;
+    background: none;
+  }
 }
 </style>
+<style lang="scss">
+.account_bank .disableOrg {
+  color: $orgdisabled;
+}
+</style>
+
 

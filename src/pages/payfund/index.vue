@@ -3,43 +3,43 @@
     <div style="position: relative">
       <tophandle title="资金拨付在线工作平台" @refresh="getDataC">
         <div class="btnCon">
-          <div @click.stop="showAuditAdd('add')" class="handle">
+          <div v-if="menu['fund_add']" @click.stop="showAuditAdd('add')" class="handle">
             <div class="topIcon">
               <img src="@/assets/images/xz.png" alt />
             </div>新增
           </div>
-          <div @click.stop="showAuditAdd('update')" class="handle">
+          <div v-if="menu['fund_edit']" @click.stop="showAuditAdd('update')" class="handle">
             <div class="topIcon">
               <img src="@/assets/images/zj2.png" alt />
             </div>修改
           </div>
-          <div @click.stop="showAuditAdd('delete')" class="handle">
+          <div v-if="menu['fund_delete']" @click.stop="showAuditAdd('delete')" class="handle">
             <div class="topIcon">
               <img src="@/assets/images/zj3.png" alt />
             </div>删除
           </div>
-          <div @click.stop="showAuditAdd('SS')" class="handle">
+          <div v-if="menu['fund_check']" @click.stop="showAuditAdd('SS')" class="handle">
             <div class="topIcon">
               <img src="@/assets/images/ss.png" alt />
             </div>
             <!-- @click.stop="approvalDataS.openDialog=true"-->
             送审
           </div>
-          <div @click.stop="showAuditAdd('QXSS')" class="handle">
+          <div v-if="menu['fund_uncheck']" @click.stop="showAuditAdd('QXSS')" class="handle">
             <div class="topIcon">
               <img src="@/assets/images/ss_d.png" alt />
             </div>
             <!-- @click.stop="approvalDataS.openDialog=true"-->
             取消送审
           </div>
-          <div @click.stop="showAuditAdd('SC')" class="handle" style="width: 80px;">
+          <div v-if="menu['fund_createpay']" @click.stop="showAuditAdd('SC')" class="handle" style="width: 80px;">
             <div class="topIcon">
               <img src="@/assets/images/sc.png" alt />
             </div>
             <!-- @click="creatPayItem()"-->
             生成支付单
           </div>
-          <div @click.stop="showAuditAdd('ZF')" class="handle">
+          <div v-if="menu['fund_cancel']" @click.stop="showAuditAdd('ZF')" class="handle">
             <div class="topIcon">
               <img src="@/assets/images/zf.png" alt />
             </div>
@@ -306,7 +306,7 @@
                       @click.stop="item.FDelete==1?'':openAuditfollow(item,index)"
                     >
                       <div
-                        v-if="isMe&&item.IsApprovalNow==1&&item.FDelete!=1"
+                        v-if="isMe&&item.IsApprovalNow==1&&item.FDelete!=1&&menu['fund_check']"
                         style="color: red;"
                         class="iconMsg"
                         @click.stop="item.FDelete==1?'':approvalSubmit(item)"
@@ -334,7 +334,7 @@
                     </td>
                     <td style="position: relative;overflow: visible">
                       <div
-                        v-if="isMe&&pay&&item.FApproval==9"
+                        v-if="isMe&&menu['paycenter_mergepay']&&item.FApproval==9&&item.IsPay!=9"
                         style="color: #20c1ff;"
                         class="iconMsg"
                         @click.stop="paySubmit(item.FCode)"
@@ -650,8 +650,6 @@ export default {
     //this.getData();
     this.getDataC()
     this.updateTitle()
-    //this.getCheckList(this.dataList.total);
-    console.log(this.pay)
   },
   watch: {
     checked: function(val) {
@@ -749,7 +747,7 @@ export default {
       year: state => state.user.year, //年份
       userid: state => state.user.userid,
       usercode: state => state.user.usercode,
-      pay: state => state.user.menubutton.paycenter_mergepay //权限按钮
+      menu: state => state.user.menubutton //权限按钮
     })
   },
   methods: {
@@ -1183,31 +1181,45 @@ export default {
             }
           )
             .then(() => {
-              this.showAuditAdd('SC')
+              if(this.menu['fund_createpay']){
+                this.showAuditAdd('SC')
+              }else{
+                this.$msgBox.show({
+                  content: '您没有生成支付单权限，请联系管理员获取权限。'
+                })
+              }
+
             })
             .catch(() => {})
         } else {
-          let data = []
-          for (var i in checkedList) {
-            if (
-              checkedList[i].FApproval != 0 &&
-              checkedList[i].FApproval != 2
-            ) {
-              this.$msgBox.show({
-                content: '只允许送审待送审及未通过单据。'
-              })
-              return
-            } else if (checkedList[0].FDelete == 1) {
-              this.$msgBox.show({
-                content: '已作废单据无法送审。'
-              })
-              return
-            } else {
-              data.push(checkedList[i].PhId)
+          if(this.menu['fund_check']){
+            let data = []
+            for (var i in checkedList) {
+              if (
+                checkedList[i].FApproval != 0 &&
+                checkedList[i].FApproval != 2
+              ) {
+                this.$msgBox.show({
+                  content: '只允许送审待送审及未通过单据。'
+                })
+                return
+              } else if (checkedList[0].FDelete == 1) {
+                this.$msgBox.show({
+                  content: '已作废单据无法送审。'
+                })
+                return
+              } else {
+                data.push(checkedList[i].PhId)
+              }
             }
+            this.approvalDataS.openDialog = true
+            this.approvalDataS.data = data
+          }else{
+            this.$msgBox.show({
+              content: '您没有送审权限，请联系管理员获取权限。'
+            })
           }
-          this.approvalDataS.openDialog = true
-          this.approvalDataS.data = data
+
         }
       }
     },
@@ -1396,8 +1408,15 @@ export default {
           type: 'warning'
         })
           .then(() => {
-            this.checkList[idx] = true
-            this.showAuditAdd('SS')
+            if(this.menu['fund_check']){
+              this.checkList[idx] = true
+              this.showAuditAdd('SS')
+            }else{
+              this.$msgBox.show({
+                content: '您没有送审权限，请联系管理员。'
+              })
+            }
+
           })
           .catch(() => {})
       } else {

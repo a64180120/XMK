@@ -1,31 +1,31 @@
 <template>
-  <el-dialog append-to-body
-             :visible.sync="openDialog"
-             width="390px"
-             :close-on-click-modal="false"
-             :before-close="close"
-             class="saasMsgCon">
-    <div slot="title"
-         class="dialog-title">
+  <el-dialog
+    append-to-body
+    :visible.sync="openDialog"
+    width="390px"
+    :close-on-click-modal="false"
+    :before-close="close"
+    class="saasMsgCon"
+  >
+    <div slot="title" class="dialog-title">
       <span style="float: left">{{title}}</span>
     </div>
     <div class="saasMsg">
       <div>
         <div class="imgCon">
-          <img v-if="status === 'success'"
-               src="../../assets/images/message.png">
-          <img v-else-if="status === 'error'"
-               src="../../assets/images/cw.png">
+          <img v-if="status === 'success'" src="../../assets/images/message.png" />
+          <img v-else-if="status === 'error'" src="../../assets/images/cw.png" />
         </div>
         <span style="float:right;width:290px">
           <span v-html="content"></span>
-          &nbsp;
-          ({{count}}s) 后自动关闭
+          <template v-if="!infinity">
+            &nbsp;
+            ({{count}}s) 后自动关闭。
+          </template>
         </span>
       </div>
       <div>
-        <button @click="close"
-                class="btn">{{cancelBtnText}}</button>
+        <button @click="close" class="btn">{{cancelBtnText}}</button>
       </div>
     </div>
   </el-dialog>
@@ -41,7 +41,7 @@ export default {
     },
     fn: {
       type: Function,
-      default: () => { }
+      default: () => {}
     },
     content: {
       type: String,
@@ -54,9 +54,13 @@ export default {
     timeout: {
       type: Number,
       default: 3
+    },
+    infinity: {
+      type: Boolean,
+      default: false
     }
   },
-  data () {
+  data() {
     return {
       openDialog: false,
       interval: null,
@@ -64,9 +68,9 @@ export default {
       status: 'success'
     }
   },
-  mounted () { },
+  mounted() {},
   methods: {
-    close (done) {
+    close(done) {
       this.openDialog = false
       this.fn()
       if (this.interval) {
@@ -75,8 +79,7 @@ export default {
       }
       this.$destroy()
     },
-    showMsgBox: function () {
-      debugger
+    showMsgBox: function() {
       this.count = this.timeout
       this.openDialog = true
       this.status = 'success'
@@ -84,7 +87,7 @@ export default {
         this.beginCount()
       })
     },
-    showError: function () {
+    showError: function() {
       this.count = this.timeout
       this.openDialog = true
       this.status = 'error'
@@ -92,7 +95,8 @@ export default {
         this.beginCount()
       })
     },
-    beginCount: function () {
+    beginCount: function() {
+      if (this.infinity) return
       var that = this
       this.count = this.timeout
       this.interval = setInterval(() => {
@@ -166,25 +170,14 @@ export default {
 </style>
 
 <style lang='scss'>
-// .saasMsgCon {
-//   .el-dialog {
-//     display: inline-block;
-//     margin: 0 !important;
-//     vertical-align: middle;
-//     .el-dialog__body {
-//       padding: 20px;
-//     }
-//   }
-//   &.el-dialog__wrapper {
-//     text-align: center;
-//   }
-//   &.el-dialog__wrapper::after {
-//     display: inline-block;
-//     content: '';
-//     vertical-align: middle;
-//     height: 100%;
-//   }
-// }
+.saasMsgCon {
+  .el-dialog {
+    .el-dialog__body {
+      padding: 20px;
+      padding-top: 10px;
+    }
+  }
+}
 .el-dialog__wrapper.saasMsgCon {
   animation: none !important;
 }

@@ -2,14 +2,14 @@
   <section class="report">
     <div style="position: relative">
       <tophandle title="预算中心" @refresh="getData">
-        <div class="btnCon">
+       <!-- <div class="btnCon">
           <div @click.stop="printTables" class="handle">
             <div class="topIcon">
               <img src="@/assets/images/dy.png" alt="">
             </div>
             打印
           </div>
-        </div>
+        </div>-->
       </tophandle>
     </div>
 
@@ -27,6 +27,15 @@
         <section v-if="navActive==0">
           <budget></budget>
         </section>
+        <section v-if="navActive==1">
+          <proexpend></proexpend>
+        </section>
+        <section v-if="navActive==2">
+          <basexpend></basexpend>
+        </section>
+        <section v-if="navActive==3">
+          <income></income>
+        </section>
       </div>
     </div>
 
@@ -37,6 +46,9 @@
 <script>
   import tophandle from '@/components/topNav/topHandle'
   import budget from './budget'
+  import income from './income'
+  import basexpend from './basexpend'
+  import proexpend from './proexpend'
   export default {
     name: "yearreport",
     data(){
@@ -53,7 +65,12 @@
       }
     },
 
-    components:{tophandle,budget},
+    components:{tophandle,budget,income,basexpend,proexpend},
+    methods:{
+      getData:function(){
+
+      }
+    }
   }
 </script>
 <style lang="scss" >
@@ -108,7 +125,13 @@
         }
       }
       >.rightArea{
-        padding: 10px 10px 10px 50px;
+        padding: 10px;
+        height: 100%;
+        overflow: hidden;
+        >section{
+          height: 100%;
+          overflow: hidden;
+        }
       }
     }
   }

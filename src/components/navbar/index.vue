@@ -15,7 +15,7 @@
             </li> -->
       <li @mouseenter="liActive(item,true)"
           @mouseleave="liActive(item,false)"
-          :class="{choose:choosed==index}"
+          :class="{choose:$store.state.settingnav.navactive.index==index}"
           class="navitem active"
           v-for="(item,index) of navlist"
           :key="index">
@@ -64,14 +64,22 @@ export default {
         }
       ],
       active: false,
-      choosed: 0
     }
+  },
+  created () {
+    if (this.$store.state.settingnav.navactive.url) {
+      this.$router.push(this.$store.state.settingnav.navactive.url);
+    } else {
+      this.$store.commit('settingnav/setNavIndex', { url: '/setting/audit', index: 0 })
+      this.$router.push('/setting/audit');
+    }
+
   },
   methods: {
     routerto (url, index) {
       if (url) {
         this.$router.push('/setting' + url);
-        this.choosed = index;
+        this.$store.commit('settingnav/setNavIndex', { url: '/setting' + url, index: index })
       }
     },
     liActive (item, bool) {
