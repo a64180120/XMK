@@ -227,7 +227,7 @@
               </colgroup>
               <thead>
                 <tr>
-                  <td title="序号" style="text-align: right;padding-right: .5rem">
+                  <td title="序号" style="text-align: right;padding-right: .5rem !important;">
                     <el-checkbox v-model="checked">序号</el-checkbox>
                   </td>
                   <td title="申报单编号">申报单编号</td>
@@ -259,7 +259,7 @@
                 <template v-for="(item,index) in dataList.data">
                   <tr :class="{trActive:checkList[index], deleteRow:item.FDelete==1}">
                     <td
-                      style="text-align: right;padding-right: .5rem"
+                      style="text-align: right;padding-right: .5rem!important;"
                       @click.self="item.FDelete==1?'':changeCheck(index)"
                     >
                       <el-checkbox v-model="checkList[index]">{{index+1}}</el-checkbox>
@@ -566,7 +566,7 @@ export default {
       },
       date: [],
       approvalType: ['', 0, 1, 2, 9],
-      payType: ['', 0, 1, 9],
+      payType: ['', 0, 1,2, 9],
       approvalList: [
         { value: '', label: '全部' },
         { value: 0, label: '待送审' },
