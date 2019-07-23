@@ -14,18 +14,22 @@
       </li>
       <li>
         <span>目录</span>
-        <span>
-          <ul>
-            <li>经费预算说明书</li>
-            <li>本级经费收支预算表</li>
-          </ul>
-        </span>
+
+        <ul>
+          <li>经费预算说明书</li>
+          <li>本级经费收支预算表</li>
+        </ul>
       </li>
       <li>
-        <span>工会主席：<input value="王刚"/></span>
-        <span>财务部长：<input value="赵阳"/></span>
-        <span>制表：<input value="JJ"/></span>
-        <span>经费审查委员会主任：<input value=""/></span>
+        <div>
+          <span>工会主席：<input value="王刚"/></span>
+          <span>财务部长：<input value="赵阳"/></span>
+          <span>制表：<input value="JJ"/></span>
+        </div>
+        <div>
+          <span>经费审查委员会主任：<input value=""/></span>
+        </div>
+
       </li>
       <li>
         <span>报出日期：</span>
@@ -69,18 +73,48 @@ input{
         }
         &:nth-of-type(3){
           font-size: .4rem;
+          >span{
+            letter-spacing: 20px;
+          }
+
         }
         &:nth-of-type(4){
-          font-size: .1rem;
+          font-size: 0.15rem;
+          >span{
+            display: inline-block;
+            width: 20px;
+          }
           >ul{
-            
+            width: 30%;
+            display: inline-block;
+            list-style: decimal inside;
             li{
               border: solid #ccc;
               border-width: 0 0 1px 1px;
               text-align: left;
+              padding-left: 2px;
             }
           }
 
+        }
+        &:nth-of-type(5){
+          font-size: .15rem;
+          padding: 50px 0 30px 0;
+          >div{
+            width: 45%;
+            display: inline-block;
+            text-align: right;
+          }
+          input{
+            width: 80px;
+            text-align: center;
+          }
+        }
+        &:nth-of-type(6){
+          font-size: .15rem;
+          input{
+            width: 100px;
+          }
         }
       }
     }

@@ -208,7 +208,7 @@
     <!--组织树弹窗-->
 <!--    <el-dialog id="orgdialog" width="350px" title="组织树"
                :visible.sync="orgType" :append-to-body="true">-->
-      <orgtree :visible.sync="orgType" :data="orgList" :checked-org="checkedOrgList"  @confirm="confirmOrg"></orgtree>
+      <orgtree :visible.sync="orgType" :data="orgList" :checkedOrg="checkedOrgList" @confirm="confirmOrg"></orgtree>
      <!-- <span slot="footer"   style="text-align: center">
           <button class="cancelBtn"  @click="orgType=false">取消</button>
           <button class="confirmBtn" style="margin-left: 30px" @click="confirmOrg">确定</button>
@@ -903,7 +903,7 @@
       },
       //获取项目总额，已冻结，剩余金额
       getProMoney:function(index,phid){
-        let param={xmPhid:phid,phid:this.PaymentMst.PhId};
+        let param={xmPhid:phid,phid:this.PaymentMst.PhId,FOrgphid:this.orgid};
         this.getAxios('GBK/PaymentMstApi/GetAmountOfMoney',param).then(res=>{
           this.PaymentXmDtl[index].PaymentXm['Frozen']=res.Frozen;
           this.PaymentXmDtl[index].PaymentXm['Use']=res.Use;
