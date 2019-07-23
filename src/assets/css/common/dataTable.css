@@ -91,7 +91,7 @@
 
   width: calc(5% + 20px);
   background-color: #CACACA;
-  height: 0.49rem;
+  height: 0.45rem;
   content:"";
   position:absolute;
   left:95%;
@@ -100,7 +100,7 @@
 .dataTable_proBuildProject .el-table__header-wrapper:after{
   width: 50px;
   background-color: #CACACA;
-  height: 0.49rem;
+  height: 0.45rem;
   content:"";
   position:absolute;
   left:-30px;
@@ -113,7 +113,9 @@
   background-color: #ffffff;
   height: 4px;
 }
-
+.dataTable_proBuildProject .el-table-column--selection .cell{
+  padding: 0;
+}
 
 
 /*表格每一行样式*/
@@ -195,7 +197,7 @@
 
   width: calc(5% + 20px);
   background-color: #CACACA;
-  height: 0.49rem;
+  height: 0.45rem;
   content:"";
   position:absolute;
   left:95%;
@@ -204,7 +206,7 @@
 .itemTable_proBuildProject .el-table__header-wrapper:after{
   width: 50px;
   background-color: #CACACA;
-  height: 0.49rem;
+  height: 0.45rem;
   content:"";
   position:absolute;
   left:-30px;
@@ -257,6 +259,8 @@
   font-family: 宋体;
   display: inline-block;
   text-align: left;
+  float: left;
+  margin-left:30px;
 }
 .itemTable_proBuildProject .top-content .top-center{
   width: 30%;
@@ -309,4 +313,10 @@
   line-height: 50px;
   color:#3495E8 ;
   font-size: 0.14rem;
+}
+.itemTable_proBuildProject .el-table-column--selection .cell{
+  padding: 0;
+}
+.itemTable_proBuildProject .el-table-column--selection .cell{
+  padding: 0;
 }
