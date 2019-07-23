@@ -94,8 +94,13 @@ export default {
             frame.contentWindow.postMessage($appinfo, '*');
           }
           window.onmessage = function (e) {
-            if (JSON.parse(e.data).ID == 'KillLoginUser') {
-              this.$msgBox.show({
+            var xmkMsg = null;
+            if (typeof e.data == 'string') {
+              var xmkMsg = JSON.parse(e.data);
+            }
+
+            if (xmkMsg && xmkMsg.ID == 'KillLoginUser') {
+              that.$msgBox.show({
                 content: '当前登录被强制注销，点击确定后将取消当前登录！',
                 timeout: 10,
                 fn: function () {

@@ -16,6 +16,7 @@
                    :props="defaultProps"
                    :default-expanded-keys="[checkedOrg.OCode?checkedOrg.OCode:1]"
                    :data="orgList"
+                   :render-content="rendercontent"
                    :expand-on-click-node="false"
                    @node-click="orgChange"></el-tree>
         </div>
@@ -171,6 +172,9 @@ export default {
   methods: {
     //组织选择
     orgChange: function (data) {
+      if (data.WeChatId) {
+        return;
+      }
       this.checkedOrg = data
       this.getData()
     },
@@ -235,6 +239,19 @@ export default {
           this.choosedItem = []
         })
       }
+    },
+    //组织树样式
+    rendercontent (h, { node, data, store }) {
+
+      let cssname = ''
+      if (node.data.WeChatId == 'false') {
+        cssname = 'disableOrg'
+      }
+      return (
+        <span class={cssname}>
+          <span>{node.label}</span>
+
+        </span>);
     }
   },
   mounted () {
@@ -358,4 +375,10 @@ export default {
   }
 }
 </style>
+<style lang="scss">
+.account_bank .disableOrg {
+  color: $orgdisabled;
+}
+</style>
+
 
