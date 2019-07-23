@@ -132,6 +132,7 @@
                      :props="defaultProps"
                      :default-expanded-keys="[org.OCode]"
                      :data="orgList"
+                     :render-content="rendercontent"
                      :expand-on-click-node="false"
                      @node-click="orgChange"></el-tree>
             <p slot="reference"
@@ -239,6 +240,19 @@ export default {
     refresh () { //刷新
       this.$emit('refresh');
     },
+    //组织树样式
+    rendercontent (h, { node, data, store }) {
+
+      let cssname = ''
+      if (node.data.WeChatId == 'false') {
+        cssname = 'disableOrg'
+      }
+      return (
+        <span class={cssname}>
+          <span>{node.label}</span>
+
+        </span>);
+    }
 
   }
 }
@@ -424,7 +438,7 @@ export default {
   }
 }
 </style>
-<style>
+<style lang="scss">
 .handleBtnCon .btnContainer {
   font-size: 0.14rem;
 }
@@ -452,6 +466,9 @@ export default {
 .handleBtnCon .el-breadcrumb__item:last-child .el-breadcrumb__inner,
 .handleBtnCon .el-breadcrumb__inner.is-link {
   color: #fff !important;
+}
+.maxH .disableOrg {
+  color: $orgdisabled;
 }
 </style>
 

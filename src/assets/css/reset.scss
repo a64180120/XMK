@@ -95,7 +95,7 @@ html {
   font-size: 100px;
 }
 body {
-  font-size: 14px;
+ 
   color: #333;
   height: 100%;
   overflow: hidden;
@@ -172,7 +172,8 @@ $waitColor: #67971a;
 $whiteColor: #fff; //白色
 $selectedColor: #e4e4e4;
 $yellowColor: #ff9800; //黄色提示
-
+$orgdisabled:#ccc;//没权限组织
+$mainfontsize:0.17rem;
 .msFixed {
   position: fixed;
   position: -ms-page;
@@ -277,4 +278,9 @@ body {
       color: $btnColor;
     }
   }
+}
+//字体大小
+body,.el-table,.el-dialog,.el-dialog__body {
+  font-size:$mainfontsize;
+
 }

@@ -1,33 +1,37 @@
 <template>
-  <el-dialog
-    id="orgtreedialog"
-    width="350px"
-    title="组织选择"
-    :visible.sync="visible2"
-    :append-to-body="true"
-  >
+  <el-dialog id="orgtreedialog"
+             width="350px"
+             title="组织选择"
+             :visible.sync="visible2"
+             :append-to-body="true">
     <div style="margin-bottom:10px;">
-      <span style="margin-right:10px;" class="btn" size="mini" @click="selectAll(1)">全选</span>
-      <span class="btn" size="mini" @click="selectAll(0)">反选</span>
+      <span style="margin-right:10px;"
+            class="btn"
+            size="mini"
+            @click="selectAll(1)">全选</span>
+      <span class="btn"
+            size="mini"
+            @click="selectAll(0)">反选</span>
     </div>
     <div style="height: 350px;overflow-y: auto">
-      <el-tree
-        ref="elt"
-        :data="data"
-        :props="{ children: 'children',label: 'OName' }"
-        node-key="OCode"
-        :default-checked-keys="checkedOrg!=null?checkedOrg:[]"
-        :highlight-current="true"
-        :show-checkbox="true"
-        :check-strictly="true"
-        :check-on-click-node="true"
-        :expand-on-click-node="false"
-        @check-change="handleNodeClick"
-      ></el-tree>
+      <el-tree ref="elt"
+               :data="data"
+               :props="{ children: 'children',label: 'OName' }"
+               node-key="OCode"
+               :default-checked-keys="checkedOrg!=null?checkedOrg:[]"
+               :highlight-current="true"
+               :show-checkbox="true"
+               :check-strictly="true"
+               :check-on-click-node="true"
+               :expand-on-click-node="false"
+               @check-change="handleNodeClick"></el-tree>
     </div>
     <div style="text-align: center;margin-top:10px">
-      <button class="cancelBtn" @click="$emit('update:visible',false)">取消</button>
-      <button class="confirmBtn" style="margin-left: 30px" @click="confirmOrg">确定</button>
+      <button class="cancelBtn"
+              @click="$emit('update:visible',false)">取消</button>
+      <button class="confirmBtn"
+              style="margin-left: 30px"
+              @click="confirmOrg">确定</button>
     </div>
   </el-dialog>
 </template>
@@ -35,7 +39,7 @@
 <script>
 export default {
   name: 'orgtree',
-  data() {
+  data () {
     return {
       visible2: false,
       selected: []
@@ -71,13 +75,13 @@ export default {
   props: {
     data: {
       type: Array,
-      default() {
+      default () {
         return {}
       }
     },
     checkedOrg: {
       type: Array,
-      default() {
+      default () {
         return {}
       }
     },
@@ -88,21 +92,21 @@ export default {
   },
   computed: {},
   watch: {
-    visible(val) {
+    visible (val) {
       this.visible2 = val
       if (val && this.$refs.elt) {
         this.$nextTick(this.$refs.elt.setCheckedKeys([]))
       }
     },
-    visible2(val) {
+    visible2 (val) {
       this.$emit('update:visible', val)
     },
-    currentOrg() {
+    currentOrg () {
       //alert(this.currentOrg.label);
       /* console.log(this.$refs.elt.getCurrentNode());*/
     }
   },
-  mounted() {
+  mounted () {
     /* console.log(this.$refs.elt);
         console.log(this.currentOrg.label);
         console.log(this.$refs.elt.setCurrentNode);*/
@@ -112,9 +116,9 @@ export default {
     console.log(this.data)
   },
   methods: {
-    selectAll(type) {
+    selectAll (type) {
       let key = []
-      function getKey(d) {
+      function getKey (d) {
         d.forEach(item => {
           key.push(item.OCode)
           if (item.children) {
@@ -136,11 +140,11 @@ export default {
         this.selected = this.$refs.elt.getCheckedNodes()
       }
     },
-    handleNodeClick: function(data) {
+    handleNodeClick: function (data) {
       this.selected = this.$refs.elt.getCheckedNodes()
     },
     //点击组织树确定按钮进行选中组织赋值
-    confirmOrg: function() {
+    confirmOrg: function () {
       this.$emit('confirm', this.selected) //回传数据
       this.$emit('update:visible', false) //关闭
     }

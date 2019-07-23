@@ -87,7 +87,7 @@ table .left {
   border-spacing: 0;
   background-color: $listHeader;
   padding: 0 1%;
-  font-size: 0.15rem;
+  font-size: $mainfontsize;
   color: #333;
   table-layout: fixed;
 }
@@ -120,7 +120,7 @@ table .left {
   border-collapse: separate;
   border-spacing: 0 12px;
   padding: 0 1%;
-  font-size: 0.14rem;
+  font-size: $mainfontsize;
   table-layout: fixed;
 }
 .tableBody table tr {
@@ -247,7 +247,7 @@ table .left {
 }
 .print thead td{
   background-color: $listHeader;
-  font-size: 0.15rem;
+  font-size: $mainfontsize;
   color: #333;
   border: 1px solid #eaeaea;
   text-align: center!important;
