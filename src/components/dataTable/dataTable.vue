@@ -1,5 +1,5 @@
 <template>
-    <section class="dataTable">
+    <section class="dataTable_proBuildProject">
       <el-table
         :data="data"
         :row-class-name="rowClassName"
@@ -17,8 +17,8 @@
           :width="item.width"
           align="center">
             <template  slot-scope="scope" style="">
-              <div style="width: 100%;min-height: 30px;line-height: 30px" :style="{textAlign:item.align}">
-                <p style="width: 100%;min-height: 30px;line-height: 30px" :style="{textAlign:item.align}" >{{scope.row[item.prop]}}</p>
+              <div class="table-column-height" :style="{textAlign:item.align}">
+                <span :style="{textAlign:item.align}" @click="cellClick(scope.row,scope.$index,item,idx)" >{{scope.row[item.prop]}}</span>
               </div>
             </template>
         </el-table-column>
@@ -27,9 +27,16 @@
 </template>
 
 <script>
+  import "../../assets/css/common/dataTable.css";
     export default {
         name: "dataTable",
       props:{
+        context:{
+          type:Object,
+          default:function () {
+            return this
+          }
+        },
         data:{
           type:Array,
           default:function () {
@@ -79,116 +86,22 @@
             return 'thead-cell'
           }
         },
+        //单元格点击事件的回调
+        cellClick(a,b,c,d){
+          debugger
+          this.context.add()
+          this.column[d].function(a,b,c,d,this.context)
+          this.context.add()
+        }
       }
     }
 </script>
 <style scoped lang="scss">
-  .dataTable{
-    padding: 0 20px 0 50px;
-    overflow-y: auto;
-    height: 630px;
-    position: static;
-    /*overflow-x: hidden;*/
-    top: 10px;
-    margin-right: -17px;
-  }
 </style>
-<style>
-  /*表格每一行样式*/
-  .dataTable .row-class-name{
-    box-shadow: 0 0px 8px #cbcbcb;
-    border-radius: 8px;
-  }
-  .dataTable .row-class-name:hover{
-    box-shadow: 0 0px 9px #409eff;
-  }
-  .dataTable .el-table__row:hover>td{
-    border-top: 1px solid  #00b7ee !important;
-    border-bottom: 1px solid  #00b7ee !important;
-  }
-  .dataTable .el-table__row:hover>.frist-column{
-    border-left: 1px solid #00b7ee !important;
-  }
-  .dataTable .el-table__row:hover>.last-column{
-    border-right: 1px solid #00b7ee !important;
-  }
-  .dataTable .row-class-name td{
-    border-bottom: none!important;
-    border-top: 1px solid #e3e3e3 !important;
-    border-bottom: 1px solid #e3e3e3 !important;
-    border-right: 1px solid #e3e3e3 !important;
-    padding: 5px 0;
-  }
-  .dataTable .row-class-name td .cell{
-    width: 100%;;overflow: hidden;word-wrap: break-word;word-break: break-all
-  }
-  /*调整表格每一行间距*/
-  .dataTable .el-table__body{
-    border-collapse: separate;
-    border-spacing:0px 10px ;
-  }
-  /*第一列数据*/
-  .dataTable .frist-column{
-    width: 150px !important;
-    border-left: 1px solid #e3e3e3 !important;
-    border-top-left-radius: 8px;
-    border-bottom-left-radius: 8px;
-  }
-  /*最后一列数据*/
-  .dataTable .last-column{
-    border-top-right-radius: 8px;
-    border-bottom-right-radius: 8px;
-  }
-  /*表头单元格*/
-  .dataTable .thead-cell{
-    border-bottom: none !important;
-    background-color: #CACACA !important;
-    border-right: 1px solid #ffffff !important;
-  }
-  /*表头单元格*/
-  .dataTable .thead-last-cell{
-    border-bottom: none !important;
-    background-color: #CACACA !important;
-    border-right: 1px solid #CACACA !important;
-  }
-  .dataTable .current-row td{
-    /*background-color: #409eff !important;*/
-  }
-  .dataTable .gutter{
-    background-color: #CACACA !important;
-  }
-  .dataTable .el-table__body-wrapper{
-    overflow: visible;
-  }
-  .dataTable .el-table__header-wrapper{
-    /*position:relative;*/
-    overflow:visible;
-    position: absolute;
-    z-index: 2;
-    width: 90%;
-    top: 56px;
-
-  }
-  .dataTable .el-table__header-wrapper:before{
-
-    width: calc(5% + 20px);
-    background-color: #CACACA;
-    height: 47px;
-    content:"";
-    position:absolute;
-    left:95%;
-    top:0;
-  }
-  .dataTable .el-table__header-wrapper:after{
-    width: 50px;
-    background-color: #CACACA;
-    height: 47px;
-    content:"";
-    position:absolute;
-    left:-30px;
-    top:0;
-  }
-  .dataTable .el-table__header-wrapper:before{
-    left:100%;
+<style scoped>
+  .column{
+    width: 100%;
+    min-height: 30px;
+    line-height: 30px
   }
 </style>
