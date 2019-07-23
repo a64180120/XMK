@@ -173,7 +173,10 @@ $whiteColor: #fff; //白色
 $selectedColor: #e4e4e4;
 $yellowColor: #ff9800; //黄色提示
 $orgdisabled:#ccc;//没权限组织
-$mainfontsize:0.17rem;
+$mainfontsize:0.17rem;//图标
+$titlefontsize:0.2rem;//title
+$bigtitlefontsize:0.3rem;//大title
+$iconfontsize:0.14rem;//图标
 .msFixed {
   position: fixed;
   position: -ms-page;
@@ -280,7 +283,6 @@ body {
   }
 }
 //字体大小
-body,.el-table,.el-dialog,.el-dialog__body {
+body,.el-table,.el-dialog,.el-checkbox__label,.el-dialog__body {
   font-size:$mainfontsize;
-
 }
