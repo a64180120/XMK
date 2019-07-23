@@ -58,7 +58,7 @@
     </div>
 
     <!--经费收支预算表弹窗-->
-    <el-dialog :visible="book.visiable" title="预算说明书">
+    <el-dialog :visible="book.visiable" title="预算说明书" width="1200px" @close="book.visiable=false">
         <budget-book></budget-book>
     </el-dialog>
   </div>

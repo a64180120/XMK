@@ -1,6 +1,5 @@
 <template>
-  <div class="self">
-    <div style="position: relative">
+  <div class="self_hyz">
       <tophandle title="资金拨付在线工作平台" @refresh="getDataC">
         <div class="btnCon">
           <div v-if="menu['fund_add']" @click.stop="showAuditAdd('add')" class="handle">
@@ -57,7 +56,7 @@
           <!--<div class="nav" @click="payNav('approvalData')">送审</div>-->
         </div>
       </tophandle>
-    </div>
+
 
     <!--列表主体-->
     <div ref="container" class="container fullTable">
@@ -1543,184 +1542,117 @@ export default {
 </script>
 
 <style scoped>
-.formArea,
-.pageArea {
-  right: 300px;
-}
-.deleteRow,
-.deleteRow .atype {
-  cursor: not-allowed;
-  color: #ccc !important;
-}
-.rightPanel {
-  width: 270px;
-  position: absolute;
-  right: 20px;
-  top: 8px;
-  bottom: 20px;
-  box-shadow: 0 0 7px #ccc;
-  padding: 10px;
-  background-color: #58a5e6;
-  overflow: hidden;
-  font-size: 0.12rem;
-}
-.rightPanel .el-icon-arrow-up {
-  transform: rotate(180deg);
-  float: right;
-  margin-top: 4px;
-  transition: transform 0.3s linear;
-  color: #c0c4cc;
-  position: absolute;
-  right: 20px;
-  cursor: pointer;
-}
-.rightPanel .showTil .el-icon-arrow-up {
-  transform: rotatez(0deg);
-}
-.rightPanel p {
-  margin-top: 10px;
-  text-shadow: 1px 2px 1px #5302026e;
-}
-.approvalDepart >>> .el-input--suffix .el-input__inner {
-  text-align: center;
-}
-</style>
-<style lang="scss">
-/* .self .el-select__tags{
+  .self_hyz .handle {
+    display: inline-block;
+    width: 60px;
+    height: 50px;
+    padding: 0px 0;
+    cursor: pointer;
+  }
+  .self_hyz .handle:active {
+    background: #ccc;
+  }
+
+  .formArea,
+  .pageArea {
+    right: 300px;
+  }
+  .deleteRow,
+  .deleteRow .atype {
+    cursor: not-allowed;
+    color: #ccc !important;
+  }
+  .rightPanel {
+    width: 270px;
     position: absolute;
-    right: 5px;
-    width: 30px;
-    height: 30px;
-    font-size: 12px;
-    top: -4px;
-    background-color: #fff;
-    > i {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      font-size: 35px;
-      top: -10px;
-      right: 2px;
-    }
+    right: 20px;
+    top: 8px;
+    bottom: 20px;
+    box-shadow: 0 0 7px #ccc;
+    padding: 10px;
+    background-color: #58a5e6;
+    overflow: hidden;
+    font-size: 0.12rem;
+  }
+  .rightPanel .el-icon-arrow-up {
+    transform: rotate(180deg);
+    float: right;
+    margin-top: 4px;
+    transition: transform 0.3s linear;
+    color: #c0c4cc;
+    position: absolute;
+    right: 20px;
+    cursor: pointer;
+  }
+  .rightPanel .showTil .el-icon-arrow-up {
+    transform: rotatez(0deg);
+  }
+  .rightPanel p {
+    margin-top: 10px;
+    text-shadow: 1px 2px 1px #5302026e;
+  }
+  .approvalDepart >>> .el-input--suffix .el-input__inner {
+    text-align: center;
   }
   .showTil {
     border-bottom: 1px solid #ccc;
     padding: 0 0 10px 0;
   }
-  .fullTable {
-    > .rightPanel {
-      right: -280px;
-      transition: all 0.3s linear;
-    }
-    > .formArea {
-      right: 20px;
-      transition: all 0.3s linear;
-    }
-    > .arrowShow {
-      right: 0 !important;
-      transform: rotate(180deg);
-      transition: all 0.3s linear;
-    }
-  }*/
-.self {
-  .btnCon {
-    .handle {
-      display: inline-block;
-      width: 60px;
-      height: 50px;
-      padding: 0px 0;
-      cursor: pointer;
-      &:active {
-        background: #ccc;
-      }
-    }
-  }
-  .topIcon {
-    height: 60%;
-    > img {
-      height: 100%;
-    }
-  }
-  .iconMsg {
-    position: absolute;
-    right: 5px;
-    width: 30px;
-    height: 30px;
-    font-size: 12px;
-    top: -4px;
-    background-color: #fff;
-    cursor: pointer;
-    > i {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      font-size: 35px;
-      top: -10px;
-      right: 2px;
-    }
-  }
-}
-.showTil {
-  border-bottom: 1px solid #ccc;
-  padding: 0 0 10px 0;
-}
-.fullTable {
-  > .rightPanel {
+  .fullTable .rightPanel {
     right: -280px;
     transition: all 0.3s linear;
   }
-  > .formArea,
-  .pageArea {
-    right: 20px;
+  .fullTable .formArea,
+  .fullTable .pageArea {
+      right: 20px;
+      transition: all 0.3s linear;
+    }
+  .fullTable .arrowShow {
+      right: 0 !important;
+      transform: rotate(180deg);
+      transition: all 0.3s linear;
+      cursor: pointer;
+    }
+
+  .arrowShow {
+    position: absolute;
+    right: 285px;
+    top: 47%;
+    font-size: 33px;
+    text-shadow: -2px 0 4px red;
+    color: #fff;
     transition: all 0.3s linear;
-  }
-  > .arrowShow {
-    right: 0 !important;
-    transform: rotate(180deg);
-    transition: all 0.3s linear;
+    animation: ad 1s infinite linear;
     cursor: pointer;
   }
-}
-.arrowShow {
-  position: absolute;
-  right: 285px;
-  top: 47%;
-  font-size: 33px;
-  text-shadow: -2px 0 4px red;
-  color: #fff;
-  transition: all 0.3s linear;
-  animation: ad 1s infinite linear;
-  cursor: pointer;
-}
-.arrowShow:hover {
-  animation: none;
-}
-//箭头左右移动动效
-@keyframes ad {
-  0% {
-    margin-right: 0px;
+  .arrowShow:hover {
+    animation: none;
   }
-  25% {
-    margin-right: 4px;
+  /*箭头左右移动动效*/
+  @keyframes ad {
+    0% {
+      margin-right: 0px;
+    }
+    25% {
+      margin-right: 4px;
+    }
+    50% {
+      margin-right: 8px;
+    }
+    75% {
+      margin-right: 4px;
+    }
+    100% {
+      margin-right: 0px;
+    }
   }
-  50% {
-    margin-right: 8px;
-  }
-  75% {
-    margin-right: 4px;
-  }
-  100% {
-    margin-right: 0px;
-  }
-}
 
-.container {
-  min-width: 1366px;
-}
+  .container {
+    min-width: 1366px;
+  }
 </style>
-
 <style>
-.self .el-select__tags {
+  .self_hyz .el-select__tags {
   position: absolute;
   left: 0;
 }

@@ -208,7 +208,7 @@
     <!--组织树弹窗-->
 <!--    <el-dialog id="orgdialog" width="350px" title="组织树"
                :visible.sync="orgType" :append-to-body="true">-->
-      <orgtree :visible.sync="orgType" :data="orgList" :checked-org="checkedOrgList"  @confirm="confirmOrg"></orgtree>
+      <orgtree :visible.sync="orgType" :data="orgList"  @confirm="confirmOrg"></orgtree>
      <!-- <span slot="footer"   style="text-align: center">
           <button class="cancelBtn"  @click="orgType=false">取消</button>
           <button class="confirmBtn" style="margin-left: 30px" @click="confirmOrg">确定</button>
