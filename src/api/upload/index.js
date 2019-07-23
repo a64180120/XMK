@@ -33,7 +33,6 @@ export function tableScroll(el,vm) {
 
   let scObj = document.getElementById(el);
   let topHeight=scObj.scrollTop;
-  console.log(topHeight)
   let childList=scObj.firstElementChild.firstElementChild.childNodes;
   if(topHeight>0){
     for(var i in childList){
@@ -48,5 +47,4 @@ export function tableScroll(el,vm) {
       }
     }
   }
-  console.log(scObj);
 }

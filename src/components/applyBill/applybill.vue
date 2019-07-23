@@ -268,7 +268,7 @@ export default {
         ]
       },
       approvalType: { 0: '待送审', 1: '审批中', 2: '未通过', 9: '审批通过' },
-      payTypeList:{'0':'待支付','1':'支付异常','9':'支付成功'},
+      payTypeList:{'0':'待支付','1':'支付异常','2':'支付中','9':'支付成功'},
       //生成支付单
       appDialog: {
         title: '',
@@ -292,6 +292,7 @@ export default {
   },
   computed: {
     ...mapState({
+      orgid: state => state.user.orgid, //id
       menu: state => state.user.menubutton //权限按钮
     })
   },
@@ -316,7 +317,7 @@ export default {
     },
     //申报单查看
     getApply: function() {
-      let param = { fPhId: this.applyNum }
+      let param = { fPhId: this.applyNum,orgid:this.orgid }
       this.getAxios('GBK/PaymentMstApi/GetPaymentMst', param)
         .then(res => {
           this.record = res
