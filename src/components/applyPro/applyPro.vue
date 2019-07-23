@@ -903,7 +903,7 @@
       },
       //获取项目总额，已冻结，剩余金额
       getProMoney:function(index,phid){
-        let param={xmPhid:phid,phid:this.PaymentMst.PhId};
+        let param={xmPhid:phid,phid:this.PaymentMst.PhId,FOrgphid:this.orgid};
         this.getAxios('GBK/PaymentMstApi/GetAmountOfMoney',param).then(res=>{
           this.PaymentXmDtl[index].PaymentXm['Frozen']=res.Frozen;
           this.PaymentXmDtl[index].PaymentXm['Use']=res.Use;
