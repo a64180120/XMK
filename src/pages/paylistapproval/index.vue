@@ -11,7 +11,7 @@
             <span>审批</span>
           </li>
           <li class="handle">
-            <div @click.stop="printTables" class="handle" style=" width: 80px;">
+            <div @click.stop="printTables" class="handle">
               <div class="topIcon">
                 <img src="@/assets/images/dy.png" alt />
               </div>
@@ -24,7 +24,7 @@
       <div class="top" v-else>
         <ul>
           <li class="handle">
-            <div @click.stop="printTables" class="handle" style="width: 80px;">
+            <div @click.stop="printTables" class="handle" >
               <div class="topIcon">
                 <img src="@/assets/images/dy.png" alt />
               </div>
@@ -975,7 +975,6 @@ export default {
 }
 .top ul li {
   float: left;
-  width: 115px;
 }
 .top ul li:hover {
   cursor: pointer;
