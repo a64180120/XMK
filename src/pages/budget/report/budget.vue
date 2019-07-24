@@ -2,7 +2,16 @@
     <!--年初收支预算表-->
   <div class="contentPanel">
     <div class="topNav">
-        <div><span>预算说明书</span></div>
+      <div @click="book.visiable=true"><span>预算说明书</span></div>
+      <div>
+        <ul>
+          <li>编辑</li>
+          <li>上报预算</li>
+          <li>导出</li>
+          <li>打印</li>
+          <li><i class="el-icon-refresh"></i></li>
+        </ul>
+      </div>
     </div>
     <div class="tbArea" @scroll="tablescroll" id="scrollTable">
       <table >
@@ -17,8 +26,8 @@
           <tr v-for="item in 100">
             <td>401</td>
             <td>会费收入</td>
-            <td>100</td>
-            <td>100</td>
+            <td class="right">100</td>
+            <td class="right">100</td>
             <td>asdasjdlkajlj</td>
           </tr>
         <tr>
@@ -47,28 +56,38 @@
         @current-change="changePageindex"
       ></el-pagination>
     </div>
+
+    <!--经费收支预算表弹窗-->
+    <el-dialog :visible="book.visiable" title="预算说明书" width="1200px" @close="book.visiable=false">
+        <budget-book></budget-book>
+    </el-dialog>
   </div>
 </template>
 
 <script>
+  //表头固定监听事件
   import {tableScroll} from '@/api/upload'
+  //预算说明书组件
+  import budgetBook from './budgetBook'
     export default {
         name: "budget",
       data(){
           return {
+            //分页页码
             pageSearch:{
               pageIndex:1,
               pageSize:20,
               total:100
+            },
+            //预算说明书
+            book:{
+              visiable:false
             }
           }
       },
+      components:{budgetBook},
       mounted(){
-          //document.getElementById('scrollTable')
-        //document.getElementById('scrollTable').addEventListener('scroll', tableScroll('scrollTable',this), true);  // 监听（绑定）滚轮滚动事件
-      },
-      destroyed(){
-        //document.getElementById('scrollTable').removeEventListener('scroll', tableScroll('scrollTable',this), true);  // 监听（绑定）滚轮滚动事件
+
       },
       methods:{
         tablescroll:function(){
@@ -91,7 +110,38 @@
     padding-bottom:80px;
     .topNav{
       height: 38px;
+      >div{
+       display: inline-block;
+        &:nth-of-type(1){
+          float: left;
+          border-radius: 0 15px 15px 0;
+          padding: 3px 15px;
+          background-color: #ff9900;
+          color: #fff;
+          vertical-align: middle;
+          font-size: .13rem;
+          cursor: pointer;
+        }
+        &:nth-of-type(2){
+          float: right;
+          >ul{
+            >li{
+              display: inline-block;
+              width: 78px;
+              text-align: center;
+              color: #ff9900;
+              cursor: pointer ;
+            }
+          }
+        }
+      }
+
+      &:after{
+        content: '';
+        clear: both;
+      }
     }
+
     .tbArea{
       position: relative;
       height: 100%;

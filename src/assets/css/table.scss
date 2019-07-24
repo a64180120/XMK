@@ -67,8 +67,9 @@
 .tableHead {
   margin-top: 10px;
 }
-table td {
+.container td,.container th{
   min-width: 50px;
+  padding: 10px !important;
 }
 table .atype {
   color: #3294e8;

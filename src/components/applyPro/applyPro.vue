@@ -41,10 +41,10 @@
                      </el-tooltip>
                    </td>
 
-                   <td class="right" style="border-bottom: 1px solid #fff;min-width: 140px">金&nbsp额&nbsp合&nbsp计（元）:</td>
+                   <td class="right" style="border-bottom: 1px solid #fff;min-width: 170px">金&nbsp额&nbsp合&nbsp计（元）:</td>
                    <td class="left" style="border-bottom:1px solid #9acefb;overflow: hidden">
                      <el-tooltip :content="PaymentMst.FAmountTotal | NumFormat" popper-class="tooltipCla" placement="bottom-start">
-                       <p>{{PaymentMst.FAmountTotal | NumFormat}}</p>
+                       <p style="text-align: right">{{PaymentMst.FAmountTotal | NumFormat}}</p>
                      </el-tooltip>
                    </td>
                  </tr>
@@ -208,7 +208,7 @@
     <!--组织树弹窗-->
 <!--    <el-dialog id="orgdialog" width="350px" title="组织树"
                :visible.sync="orgType" :append-to-body="true">-->
-      <orgtree :visible.sync="orgType" :data="orgList" :checked-org="checkedOrgList"  @confirm="confirmOrg"></orgtree>
+      <orgtree :visible.sync="orgType" :data="orgList" :checkedOrg="checkedOrgList" @confirm="confirmOrg"></orgtree>
      <!-- <span slot="footer"   style="text-align: center">
           <button class="cancelBtn"  @click="orgType=false">取消</button>
           <button class="confirmBtn" style="margin-left: 30px" @click="confirmOrg">确定</button>
@@ -443,7 +443,7 @@
       //申报单查看
       getApply:function(){
         console.log(this.applyNum+'这里添加数据查询方法');
-        let param={fPhId:this.applyNum};
+        let param={fPhId:this.applyNum,orgid:this.orgid};
 
         this.getAxios('GBK/PaymentMstApi/GetPaymentMst',param).then(res=>{
           console.log(this.applyNum+'这里添加数据查询方法');
@@ -903,7 +903,7 @@
       },
       //获取项目总额，已冻结，剩余金额
       getProMoney:function(index,phid){
-        let param={xmPhid:phid,phid:this.PaymentMst.PhId};
+        let param={xmPhid:phid,phid:this.PaymentMst.PhId,FOrgphid:this.orgid};
         this.getAxios('GBK/PaymentMstApi/GetAmountOfMoney',param).then(res=>{
           this.PaymentXmDtl[index].PaymentXm['Frozen']=res.Frozen;
           this.PaymentXmDtl[index].PaymentXm['Use']=res.Use;
@@ -925,7 +925,8 @@
       //获取明细项目列表
       getProDetail:function(f){
         let param={
-          id:this.PaymentXmDtl[f].PaymentXm.XmMstPhid
+          id:this.PaymentXmDtl[f].PaymentXm.XmMstPhid,
+          orgid:this.orgid
         };
         this.getAxios('GYS/BudgetMstApi/GetBudgetMstDtlList',param).then(res=>{
           this.prodataList=res.Dtl;
