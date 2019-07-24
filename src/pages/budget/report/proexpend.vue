@@ -3,19 +3,120 @@
   <div class="contentPanel">
     <div class="topNav">
       <div>
-        <span>
-          <el-select title="年度">
-            <el-option></el-option>
-          </el-select>
-        </span>
+        <ul>
+          <li>
+            <span>单位：</span>
+            <el-select size="mini" v-model="searchData.moneyType">
+              <el-option v-for="item in moneyTypeList" :label="item.label" :value="item.value"></el-option>
+            </el-select>
+          </li>
+          <li>
+            <span>支出类别：</span>
+            <el-select size="mini" v-model="searchData.payType">
+              <el-option v-for="item in payTypeList" :label="item.label" :value="item.value"></el-option>
+            </el-select>
+          </li>
+          <li>
+            <span>审批状态：</span>
+            <el-select size="mini" v-model="searchData.approval">
+              <el-option v-for="item in approvalList" :label="item.label" :value="item.value"></el-option>
+            </el-select>
+          </li>
+        </ul>
       </div>
       <div>
         <ul>
-          <li>编辑</li>
-          <li>上报预算</li>
-          <li>导出</li>
-          <li>打印</li>
-          <li><i class="el-icon-refresh"></i></li>
+          <li>
+            <search-input
+              @btnClick="search()"
+              placeholder="项目编码/名称"
+              v-model="searchData.value"
+            ></search-input>
+          </li>
+          <li>
+            <el-popover palcement="bottom" width="500" trigger="click" v-model="popvisiable">
+              <div class="seniorSearch">
+                <div>
+                  <span>高级查询</span>
+                  <span class="el-icon-close" @click="popvisiable=false"></span>
+                </div>
+                <table>
+                  <colgroup>
+                    <col width="15%">
+                    <col width="15%">
+                    <col width="5%">
+                    <col width="15%">
+                    <col width="15%">
+                    <col width="35%">
+                  </colgroup>
+                  <tr>
+                    <td>项目编码</td>
+                    <td colspan="5"><el-input size="mini" placeholder="请输入项目编码"></el-input></td>
+                  </tr>
+                  <tr>
+                    <td>项目名称</td>
+                    <td colspan="5"><el-input size="mini" placeholder="请输入项目名称"></el-input></td>
+                  </tr>
+                  <tr>
+                    <td>申报部门</td>
+                    <td colspan="3"><el-input size="mini" placeholder="请输入项目编码"></el-input></td>
+                    <td>项目属性</td>
+                    <td><el-input size="mini" placeholder="请输入项目编码"></el-input></td>
+                  </tr>
+                  <tr>
+                    <td>项目金额</td>
+                    <td><el-input size="mini"></el-input></td>
+                    <td>至</td>
+                    <td><el-input size="mini"></el-input></td>
+                    <td>续存期限</td>
+                    <td><el-input size="mini" placeholder="请输入项目编码"></el-input></td>
+                  </tr>
+                  <tr>
+                    <td>支出类别</td>
+                    <td colspan="3">
+                      <el-select size="mini" v-model="searchData.payType">
+                        <el-option v-for="item in payTypeList" :label="item.label" :value="item.value"></el-option>
+                      </el-select>
+                    </td>
+                    <td>审批状态</td>
+                    <td>
+                      <el-select size="mini" v-model="searchData.approval">
+                        <el-option v-for="item in approvalList" :label="item.label" :value="item.value"></el-option>
+                      </el-select>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>项目级别</td>
+                    <td colspan="3"><el-input size="mini" placeholder="请输入项目编码"></el-input></td>
+                    <td>绩效评价</td>
+                    <td><el-input size="mini" placeholder="请输入项目编码"></el-input></td>
+                  </tr>
+                  <tr>
+                    <td>起止日期</td>
+                    <td colspan="3"><el-input size="mini" placeholder="请输入项目编码"></el-input></td>
+                    <td>申报日期</td>
+                    <td><el-input size="mini" placeholder="请输入项目编码"></el-input></td>
+                  </tr>
+                </table>
+                <div>
+                  <span><el-checkbox label="记忆搜索"></el-checkbox></span>
+                  <ul>
+                    <li>
+                      <el-button class="btn" size="mini">清空</el-button>
+                    </li>
+                    <li>
+                      <el-button class="btn" size="mini">搜索</el-button>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+              <el-button class="btn" size="mini" slot="reference">高级</el-button>
+            </el-popover>
+          </li>
+          <li><el-button class="btn" size="mini" @click="">导出</el-button></li>
+          <li><el-button class="btn" size="mini" @click="">打印</el-button></li>
+          <li><el-button class="btn" size="mini" @click=""><i class="el-icon-refresh"></i></el-button></li>
         </ul>
       </div>
     </div>
@@ -68,6 +169,8 @@
 <script>
   //表头固定监听事件
   import {tableScroll} from '@/api/upload'
+  //搜索框组件
+  import SearchInput from '@/components/searchInput/searchInput'
   export default {
     name: "proexpend",
     data(){
@@ -78,24 +181,50 @@
           pageSize:20,
           total:100
         },
-        //年度列表
-        yearList:{}
+        searchData:{
+          moneyType:0,//单位
+          payType:0,//支出类别
+          approval:0,//审批状态
+          value:''//搜索框
+        },
+        //金额单位列表
+        moneyTypeList:[{label:'元',value:0},{label:'万元',value:1}],
+        //支出类别
+        payTypeList:[{label:'全部',value:0},{label:'主业类',value:1},{label:'企事业类',value:2},{label:'机关行政类',value:3}],
+        //审批状态
+        approvalList:[{label:'全部',value:0},{label:'待上报',value:1},{label:'审批中',value:2},{label:'暂存',value:3}],
+        //高级弹窗
+        popvisiable:false
       }
     },
+    components:{SearchInput},
     mounted(){
 
     },
     methods:{
+      //表格滚动事件，表头悬浮
       tablescroll:function(){
         let vm=this;
         tableScroll('scrollTable',vm)
       },
+      //修改页面条数
       changePagesize:function(val){
         console.log('pagesize更改'+val)
       },
+      //修改页数
       changePageindex(val){
         console.log('pageindex更改'+val)
-      }
+      },
+      //搜索框事件
+      search() {
+        this.pageSearch.pageSize = 20
+        this.pageSearch.pageIndex = 1
+        this.loadData()
+      },
+      //数据获取
+      loadData: function(){
+        console.log('数据获取')
+      },
     }
   }
 </script>
@@ -108,30 +237,31 @@
       height: 38px;
       >div{
         display: inline-block;
+        >ul{
+          >li{
+            display: inline-block;
+          }
+        }
         &:nth-of-type(1){
           float: left;
-          border-radius: 0 15px 15px 0;
-          padding: 3px 15px;
-          background-color: #ff9900;
-          color: #fff;
-          vertical-align: middle;
-          font-size: .13rem;
-          cursor: pointer;
         }
         &:nth-of-type(2){
           float: right;
-          >ul{
-            >li{
-              display: inline-block;
-              width: 78px;
-              text-align: center;
-              color: #ff9900;
-              cursor: pointer ;
+          li{
+            width: 78px;
+            text-align: center;
+            color: #ff9900;
+            cursor: pointer ;
+            &:nth-of-type(1){
+              width: auto;
             }
           }
         }
+        &:after{
+          content: '';
+          clear: both;
+        }
       }
-
       &:after{
         content: '';
         clear: both;
@@ -167,5 +297,42 @@
       }
     }
   }
+.seniorSearch{
+  padding: 5px;
+  >div{
+    &:nth-of-type(1){
+      border-bottom: 2px solid #00B8EE;
+      color: #00B8EE;
+      font-size: .2rem;
+    }
+    &:nth-of-type(2){
+      padding: 10px 0 0 0;
+      border-top: 1px solid #ccc;
+      >ul{
+        display: inline-block;
+        float: right;
+        >li{
+          display: inline-block;
+          margin-left: 5px;
+          &:nth-of-type(1){
+            >.btn{
+              background-color: #fff;
+              color: #00B8EE;
+            }
 
+          }
+        }
+      }
+    }
+    >span:nth-of-type(2){
+      float: right;
+    }
+  }
+
+  table{
+    td{
+      padding: 8px 5px;
+    }
+  }
+}
 </style>

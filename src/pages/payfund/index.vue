@@ -1650,6 +1650,28 @@ export default {
   .container {
     min-width: 1366px;
   }
+  .iconMsg {
+    position: absolute;
+    right: 5px;
+    width: 30px;
+    height: 30px;
+    font-size: 0.12rem;
+    top: -4px;
+    background-color: #fff;
+    cursor: pointer;  }
+  .iconMsg i {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    font-size: 0.35rem;
+    top: -10px;
+    right: 2px;
+  }
+
+  .deleteRow,.deleteRow .atype {
+    cursor: not-allowed;
+    color: #ccc !important;
+  }
 </style>
 <style>
   .self_hyz .el-select__tags {
