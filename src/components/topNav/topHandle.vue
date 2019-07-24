@@ -13,7 +13,6 @@
             <el-breadcrumb-item v-if="item.meta.name"
                                 v-for="(item,n) of $route.matched"
                                 :key="n">{{item.meta.name}}</el-breadcrumb-item>
-
           </el-breadcrumb>
         </div>
         <ul class="rightBtn">
@@ -305,7 +304,7 @@ export default {
         text-align: center;
         cursor: pointer;
         &:active {
-          background: #ccc;
+          background: $topNavActive;
         }
         > div {
           text-align: center;

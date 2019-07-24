@@ -177,6 +177,7 @@ $mainfontsize:0.17rem;//图标
 $titlefontsize:0.2rem;//title
 $bigtitlefontsize:0.3rem;//大title
 $iconfontsize:0.14rem;//图标
+$topNavActive:#3294e8;//顶部按钮点击激活颜色
 .msFixed {
   position: fixed;
   position: -ms-page;
@@ -236,6 +237,9 @@ $iconfontsize:0.14rem;//图标
 .btnContainer .handle {
   margin-left: 20px;
   color: $whiteColor;
+  &:active{
+    background:$topNavActive !important;
+  }
 }
 
 body {
