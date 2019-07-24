@@ -4,13 +4,13 @@
       <div class="top" v-if="isApproval">
         <ul>
           <!--v-if="MenuButton.approvalcenter_approval"-->
-          <li @click="aprovalItem()">
+          <li class="handle" @click="aprovalItem()">
             <div>
               <img src="../../assets/images/sp.png" />
             </div>
             <span>审批</span>
           </li>
-          <li>
+          <li class="handle">
             <div @click.stop="printTables" class="handle" style=" width: 80px;">
               <div class="topIcon">
                 <img src="@/assets/images/dy.png" alt />
@@ -23,7 +23,7 @@
       </div>
       <div class="top" v-else>
         <ul>
-          <li>
+          <li class="handle">
             <div @click.stop="printTables" class="handle" style="width: 80px;">
               <div class="topIcon">
                 <img src="@/assets/images/dy.png" alt />
@@ -478,7 +478,7 @@
       @subSuc="plSubSuc()"
     ></pay-dialog>
     <!--查看审批流程-->
-    <auditfollow :visible.sync="visible" :auditMsg="auditMsg"></auditfollow>
+    <auditfollow :visible.sync="visible" @closefollow="closeFollow" :auditMsg="auditMsg"></auditfollow>
     <!--组织树-->
     <orgtree :data="orgtreeData" :checkedOrg="checkedOrg" :visible.sync="orgType" @confirm="getOrg"></orgtree>
     <!--支付单查看-->
@@ -818,6 +818,10 @@ export default {
         FBilltype: this.BType
       }
       this.getAuditfollow(data)
+    },
+    closeFollow(val){
+      console.log('2++++++++++++++')
+      this.visible = val
     },
     //拉去审批流数据查看
     getAuditfollow(data) {

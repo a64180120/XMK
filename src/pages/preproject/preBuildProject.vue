@@ -16,7 +16,7 @@
               </div>
               <span>修改</span>
             </li>
-            <li @click="aprovalItem()">
+            <li @click.stop="openAuditfollow()">
               <div>
                 <img src="@/assets/images/zj3.png">
               </div>
@@ -227,6 +227,7 @@
         <item-print></item-print>
 
       </el-dialog>
+      <auditfollow :visible.sync="openfollow"></auditfollow>
     </section>
 </template>
 
@@ -237,9 +238,10 @@
     import SearchInput from "../../components/searchInput/searchInput";
     import Prerojectnewproject from "../../components/preProjectDialog/index";
     import ItemPrint from "../../components/preProjectDialog/itemPrint";
+    import Auditfollow from "../../components/auditFollow/auditfollow";
     export default {
         name: "preBuildProject",
-      components: {ItemPrint, Prerojectnewproject, SearchInput, ItemTable, DataTable, TopHandle},
+      components: {Auditfollow, ItemPrint, Prerojectnewproject, SearchInput, ItemTable, DataTable, TopHandle},
       data(){
           return{
             table:{
@@ -323,7 +325,8 @@
             },
             search:'',
             addDialog:false,
-            detailDialog:false
+            detailDialog:false,
+            openfollow:false
           }
       },
       created(){
@@ -432,6 +435,9 @@
         },
         showDetail(row){
           this.detailDialog = true
+        },
+        openAuditfollow(){
+          this.openfollow = true
         }
       }
     }
