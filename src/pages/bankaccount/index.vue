@@ -85,8 +85,8 @@ export default {
     showAccountAdd (val) {
       this.handleBtn = val;
       if (val == 'update') {
-        this.info = JSON.parse(JSON.stringify(this.$refs.order.choosedItem[0]));
-        if (!this.info) {
+
+        if (!this.$refs.order.choosedItem.length) {
           this.$msgBox.show('请选择一行数据!')
           return;
         }
@@ -94,6 +94,7 @@ export default {
           this.$msgBox.show('请只选择一行数据!')
           return;
         }
+        this.info = JSON.parse(JSON.stringify(this.$refs.order.choosedItem[0]));
         this.info.OCode = this.info.OrgCode;
         this.info.FLifecycle = this.info.FLifecycle == 0 ? '0' : '1';
         this.info.PersistentState = 2;
@@ -115,12 +116,13 @@ export default {
     },
     //删除行
     deleteRow () {
-      let info = JSON.parse(JSON.stringify(this.$refs.order.choosedItem));
+
       let data = { infoData: [] };
-      if (info.length == 0) {
+      if (this.$refs.order.choosedItem.length == 0) {
         this.$msgBox.show('请选择一行数据!')
         return;
       }
+      let info = JSON.parse(JSON.stringify(this.$refs.order.choosedItem));
       this.$confirm('此操作将永久删除该数据, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',

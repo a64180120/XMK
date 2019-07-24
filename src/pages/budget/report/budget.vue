@@ -5,11 +5,11 @@
       <div @click="book.visiable=true"><span>预算说明书</span></div>
       <div>
         <ul>
-          <li>编辑</li>
-          <li>上报预算</li>
-          <li>导出</li>
-          <li>打印</li>
-          <li><i class="el-icon-refresh"></i></li>
+          <li><el-button class="btn" size="mini" @click="">编辑</el-button></li>
+          <li><el-button class="btn" size="mini" @click="">上报预算</el-button></li>
+          <li><el-button class="btn" size="mini" @click="">导出</el-button></li>
+          <li><el-button class="btn" size="mini" @click="">打印</el-button></li>
+          <li><el-button class="btn" size="mini" @click=""><i class="el-icon-refresh"></i></el-button></li>
         </ul>
       </div>
     </div>

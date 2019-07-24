@@ -13,7 +13,6 @@
             <el-breadcrumb-item v-if="item.meta.name"
                                 v-for="(item,n) of $route.matched"
                                 :key="n">{{item.meta.name}}</el-breadcrumb-item>
-
           </el-breadcrumb>
         </div>
         <ul class="rightBtn">
@@ -285,7 +284,7 @@ export default {
   .btnContainer {
     width: 100%;
     height: 60px;
-    font-size: 0.12rem;
+    font-size: 0.14rem;
     margin-top: 10px;
     position: relative;
     > div {
@@ -305,7 +304,7 @@ export default {
         text-align: center;
         cursor: pointer;
         &:active {
-          background: #ccc;
+          background: $topNavActive;
         }
         > div {
           text-align: center;
@@ -440,7 +439,7 @@ export default {
 </style>
 <style lang="scss">
 .handleBtnCon .btnContainer {
-  font-size: 0.12rem;
+  font-size: 0.14rem;
 }
 
 .orgInfo .el-input--suffix .el-input__inner {
