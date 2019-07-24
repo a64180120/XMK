@@ -405,7 +405,9 @@
     ></go-approval>
     <!-- 银行档案 -->
     <bank-choose v-if="bankChooseData.openDialog" :data="bankChooseData" @getBank="getBank"></bank-choose>
+    <!-- 审批流程 -->
     <auditfollow :auditMsg="auditMsg" :visible="showAuditfollow" @update:visible="closeAuditFollow"></auditfollow>
+    <!-- 关联支付单 -->
     <pay-list v-if="boy.openDialog" :data="boy" />
     <div class="content printcontent" ref="printArea">
       <table>
@@ -1018,7 +1020,7 @@ export default {
       GetSysSetList({
         DicType: 'PayMethod',
         uid: this.userid,
-        orgid: this.orgid
+        orgid: this.detail.Mst.CurOrgId
       })
         .then(res => {
           if (res.Status == 'error') {

@@ -442,14 +442,6 @@ export default {
       visible: false
     }
   },
-  computed: {
-    ...mapState({
-      Orglist: state => state.user.orglist,
-      UserId:state =>state.user.userid,
-      Orgid:state =>state.user.orgid,
-      Year:state =>state.user.year,
-    })
-  },
   mounted() {
     this.getData()
   },
@@ -483,8 +475,9 @@ export default {
       getPayment({
         id: this.data.RefbillPhid,
         // id: 401190528000001,
-        uid: this.userid || 488181024000001, //用户id
-        orgid: this.orgid, //组织id
+        uid: this.userid, //用户id
+        // orgid: this.orgid, //组织id
+        orgid: this.data.CurOrgId, //组织id
         ryear: this.Year //年度
       })
         .then(res => {
@@ -682,7 +675,7 @@ export default {
     ...mapState({
       orgid: state => state.user.orgid,
       userid: state => state.user.userid,
-      orgid: state => state.user.orgid
+      Year: state => state.user.year
     })
   }
 }

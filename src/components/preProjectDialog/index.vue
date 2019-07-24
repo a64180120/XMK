@@ -1,6 +1,6 @@
 <template>
   <!-- <el-dialog
-      append-to-body :visible="true" width="80%" :close-on-click-modal="false"
+      append-to-body :visible="true" width="90%" :close-on-click-modal="false"
   ></el-dialog>-->
   <section class="prerojectnewproject">
     <div slot="title" class="dialog-title">
@@ -8,10 +8,21 @@
     </div>
     <el-row>
       <el-col :span="24" style="margin-top:10px;margin-bottom: 10px">
-        <span style="float:left;font-size:0.16rem;line-height:28px;color:$yellowColor;">当前阶段：年初申报</span>
+        <div class="btn-left">
+          <p style="display:inline-block;margin-right:10px;">
+            <span>项目年度：</span>
+            <el-select v-model="yearSelect" size="small" placeholder="必选">
+              <el-option :label="year" :value="year"></el-option>
+              <el-option :label="year-1" :value="year-1"></el-option>
+              <el-option :label="year-2" :value="year-2"></el-option>
+            </el-select>
+          </p>
+          <span>当前阶段：年初申报</span>
+        </div>
         <slot name="btn">
           <div class="top-btn">
             <el-button class="btn" size="mini">保存</el-button>
+            <el-button class="btn" size="mini">保存并送审</el-button>
             <el-button class="btn" size="mini">暂存</el-button>
             <el-button class="btn" size="mini">上传附件</el-button>
             <el-button class="btn" size="mini">填报预览</el-button>
@@ -74,7 +85,7 @@
                 type="textarea"
                 show-word-limit
                 maxlength="600"
-                :rows="3"
+                :rows="5"
                 placeholder="至少20字以上，限600字以内（必填）"
                 v-model="textarea"
               ></el-input>
@@ -93,6 +104,7 @@
                   <li>金额（必填）</li>
                   <li>资金来源（必选）</li>
                   <li>支付方式（必选）</li>
+                  <li>集中采购（必选）</li>
                   <li>测算过程及其他说明事项（必填）</li>
                 </ul>
               </div>
@@ -128,6 +140,14 @@
                       <el-option label="456" value="456"></el-option>
                       <el-option label="1123" value="1123"></el-option>
                     </el-select>
+                  </li>
+                  <li>
+                    <el-radio v-model="item.radio" :label="1">是</el-radio>
+                    <el-radio v-model="item.radio" :label="0">否</el-radio>
+                    <i
+                      @click="item.radio?setBuy(item):''"
+                      :class="{'el-icon-setting':true,'canSetting':item.radio}"
+                    ></i>
                   </li>
                   <li class="enable">
                     <el-input v-model="item.remark" placeholder />
@@ -170,7 +190,6 @@
                   <li>
                     <el-date-picker v-model="value1" type="date" placeholder="选择日期"></el-date-picker>
                   </li>
-
                   <li class="enable">
                     <el-date-picker v-model="value1" type="date" placeholder="选择日期"></el-date-picker>
                     <div class="icon active">
@@ -256,7 +275,7 @@
                     <col width="15%" />
                   </colgroup>
                   <tbody>
-                    <tr v-for="i in 10">
+                    <tr v-for="i in 3">
                       <td>{{i}}</td>
                       <td style="padding:4px" v-if="i==1" rowspan="10">
                         <add-br :value="'行少竖多咋办行少竖多咋办行少竖多咋办行少竖多咋办1行少竖多咋办'"></add-br>
@@ -277,21 +296,34 @@
         </div>
       </div>
     </el-row>
+    <el-dialog
+      append-to-body
+      :data="setBuyDialog.data"
+      :visible.sync="setBuyDialog.openDialog"
+      width="750px"
+      :close-on-click-modal="false"
+      class="setBuyDialog"
+    >
+      <set-buy></set-buy>
+    </el-dialog>
   </section>
 </template>
 
 <script>
 import addBr from './addBr'
+import setBuy from './setBuy'
+import { mapState } from 'vuex'
 export default {
   name: 'prerojectnewproject',
-  components: { addBr },
+  components: { addBr, setBuy },
   data() {
     return {
       inp: '',
+      yearSelect: '',
       value1: '',
       textarea: '',
       type: '',
-      tabindex: 3,
+      tabindex: 0,
       copyLine: false,
       tabsList: ['项目科研', '预算明细', '实施计划', '绩效目标'],
       budgetdetail: [
@@ -300,10 +332,18 @@ export default {
           money: '',
           get: '',
           method: '',
-          remark: ''
+          remark: '',
+          radio: 1
         }
-      ]
+      ],
+      setBuyDialog: {
+        openDialog: false,
+        data: null
+      }
     }
+  },
+  mounted() {
+    this.yearSelect = this.year
   },
   methods: {
     add(item) {
@@ -316,7 +356,8 @@ export default {
               money: '',
               get: '',
               method: '',
-              remark: ''
+              remark: '',
+              radio: 1
             }
       )
       this.budgetdetail.push(newItem)
@@ -333,10 +374,13 @@ export default {
         .replace('.', '$#$')
         .replace(/\./g, '')
         .replace('$#$', '.')
-      obj.value = obj.value.replace(/^(\-)*(\d+)\.(\d\d).*$/, '$1$2.$3') //只能输入两个小数
+      // obj.value = obj.value.replace(/^(\-)*(\d+)\.(\d\d).*$/, '$1$2.$3') //只能输入两个小数
       if (obj.value.indexOf('.') < 0 && obj.value != '') {
         //以上已经过滤，此处控制的是如果没有小数点，首位不能为类似于 01、02的金额
         obj.value = parseFloat(obj.value)
+      }
+      if (parseInt(obj.value) == '') {
+        obj.value = ''
       }
     },
     filterMoney(item) {
@@ -363,14 +407,22 @@ export default {
         }
         return s.join(dec)
       }
-      item.money = fil(item.money)
+      item.money = parseInt(item.moneyfil) ? item.money : ''
+    },
+    setBuy(item) {
+      console.log(item)
+      if (!item.get) {
+        this.$msgBox.error('请先设置资金来源！')
+        return
+      }
+      this.setBuyDialog.openDialog = true
+      this.setBuyDialog.data = item
     }
   },
-  filters: {
-    rtc(val) {
-      console.log(val)
-      return val.split('').join('<br/>')
-    }
+  computed: {
+    ...mapState({
+      year: state => state.user.year
+    })
   }
 }
 </script>
@@ -384,6 +436,12 @@ export default {
       font-size: 0.16rem;
       border-bottom: 1px solid #eaeaea;
     }
+  }
+  .btn-left {
+    float: left;
+    font-size: 0.16rem;
+    line-height: 28px;
+    color: $yellowColor;
   }
   .top-btn {
     text-align: right;
@@ -407,7 +465,7 @@ export default {
       background: #3294e8;
       text-align: center;
       line-height: 0.35rem;
-      font-size: 0.15rem;
+      font-size: 0.2rem;
       color: #fff;
     }
     ul {
@@ -415,21 +473,21 @@ export default {
       overflow: hidden;
       li {
         margin: 10px;
-        padding-left: 75px;
+        padding-left: 85px;
         overflow: hidden;
-        font-size: 0.14rem;
+        font-size: $mainfontsize;
         border-bottom: 1px solid $borderColor_ccc;
         > span {
           position: relative;
           float: left;
-          left: -75px;
+          left: -85px;
           line-height: 32px;
-          width: 75px;
+          width: 85px;
         }
         > div {
           float: left;
           position: relative;
-          margin-left: -75px;
+          margin-left: -85px;
           &.el-select {
             width: 100%;
           }
@@ -447,7 +505,7 @@ export default {
     width: 80%;
     float: right;
     height: 100%;
-    min-height: 450px;
+    min-height: 600px;
     position: relative;
     padding-left: 0.4rem;
     > ul {
@@ -539,7 +597,7 @@ export default {
               line-height: 40px;
               font-size: 0.16rem;
               &:first-of-type {
-                width: 10%;
+                width: 6%;
                 border-left: 1px solid $borderColor_ccc;
               }
               &:nth-of-type(2) {
@@ -549,13 +607,30 @@ export default {
                 width: 12%;
               }
               &:nth-of-type(4) {
-                width: 18%;
-              }
-              &:nth-of-type(5) {
                 width: 13%;
               }
+              &:nth-of-type(5) {
+                width: 11%;
+              }
               &:nth-of-type(6) {
-                width: 27%;
+                width: 14%;
+              }
+              &:nth-of-type(7) {
+                width: 24%;
+              }
+              > label {
+                line-height: 40px;
+                margin-right: 10px;
+              }
+              > .el-icon-setting {
+                line-height: 40px;
+                font-size: 0.17rem;
+                color: $orgdisabled;
+                cursor: not-allowed;
+                &.canSetting {
+                  color: $btnColor;
+                  cursor: pointer;
+                }
               }
             }
           }
@@ -651,26 +726,25 @@ export default {
         }
         > .line2 {
           text-align: left;
-          padding-left: 100px;
+          padding-left: 120px;
           border-bottom: 1px solid $borderColor_ccc;
           margin-top: 10px;
           padding-bottom: 3px;
           > span {
             position: relative;
-            left: -100px;
+            left: -120px;
             float: left;
-            width: 100px;
             line-height: 32px;
           }
           > div {
-            margin-left: -100px;
+            margin-left: -120px;
             width: 100%;
           }
         }
         > .line3 {
           position: absolute;
           bottom: 0;
-          top: 220px;
+          top: 230px;
           left: 10px;
           right: 10px;
           overflow: hidden;
@@ -733,10 +807,15 @@ export default {
           background-color transparent
         .money .el-input__inner
           text-align right
+        .el-radio__label
+          font-size 0.17rem
     div.jxtarget
       .line2
         .el-input__inner
           border 0
+.setBuyDialog
+  .el-dialog__body
+    padding-top 0
 </style>
 
 
