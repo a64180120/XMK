@@ -1,73 +1,76 @@
 <template>
-  <div @click.stop="keepInputFocus()" v-show="visible"  style="z-index: 3000;overflow: auto" class="auditfollow msFixed">
-    <div class="follow-body">
-      <p class="title">
-        <span>{{title}}</span>
-        <i @click="close"></i>
-      </p>
-      <!--流程-->
-      <div class="follow-main pay-fund">
-        <div class="content" @mouseenter="payfundEnter()" @mouseleave="payfundLeave()" :class="[payfundClass?'payfundHover':'']">
-          <!--资金拨付-->
-          <ul class="pay-fund">
-            <li></li>
-            <li style="height: 45px">
-              <div v-if="payfundClass" class="pay-title">资金拨付单</div>
-              <div v-else class="pay-title"></div>
-            </li>
-            <li class="msg" v-for="(item,index) of payfundData" :key="index" >
+  <div v-if="visible" style="width: 100%;height: 100%;background-color: #1b4a7300;position: fixed;z-index: 2999" @click="close">
+    <div @click.stop="keepInputFocus()" v-show="visible"  style="z-index: 3000;overflow: auto" class="auditfollow msFixed">
+      <div class="follow-body">
+        <p class="title">
+          <span>{{title}}</span>
+          <i @click="close"></i>
+        </p>
+        <!--流程-->
+        <div class="follow-main pay-fund">
+          <div class="content" @mouseenter="payfundEnter()" @mouseleave="payfundLeave()" :class="[payfundClass?'payfundHover':'']">
+            <!--资金拨付-->
+            <ul class="pay-fund">
+              <li></li>
+              <li style="height: 45px">
+                <div v-if="payfundClass" class="pay-title">资金拨付单</div>
+                <div v-else class="pay-title"></div>
+              </li>
+              <li class="msg" v-for="(item,index) of payfundData" :key="index" >
                 <audit-msg class="payfund" :nowNum="inPayfund?nowNum:-1" v-bind="$attrs" v-on="$listeners" :info="item" :index="index+1" :startNum="payfundStartNum" @imgList="getImgList"></audit-msg>
-            </li>
-          </ul>
+              </li>
+            </ul>
+          </div>
         </div>
-      </div>
-      <div class="follow-main pay-list">
-        <div class="content" @mouseenter="paylistEnter()" @mouseleave="paylistLeave()" :class="[paylistClass?'paylistHover':'']">
-          <!--支付单-->
-          <ul class="pay-list" v-if="paylistData.length !==0">
-            <li style="height: 55px">
-              <div v-if="paylistClass" class="pay-title">支付单</div>
-              <div v-else class="pay-title"></div>
-            </li>
-            <li class="msg" v-for="(item,index) of paylistData" :key="index" :style="{'marginBottom':index == paylistData.length-1?'50px':'0'}">
-              <div v-if="index !== 0 && paylistData[index].JudgeRefer == '1'" style="text-align: left;margin-bottom: 15px">
-                <span>重新支付</span>
-              </div>
-              <div style="width: 90%">
-                <audit-msg class="paylist" :nowNum="inPaylist?nowNum:-1" v-bind="$attrs" v-on="$listeners" :info="item" :index="index+1" :startNum="paylistStartNum"  @imgList="getImgList"></audit-msg>
-              </div>
-              <!--标记是否是会签的左边线-->
-              <div v-if="item.IsMode =='1'">
-                <!--判断第一个会签模式第一个-->
-                <div v-if="paylistData[index-1].IsMode != '1' && paylistData[index].IsMode == '1'" class="modeTop">
-                  <span class="hqms" :style="{'top':(item.SameNum-1) * 110 + 50+'px'}">会<br/>签</span>
+        <div class="follow-main pay-list">
+          <div class="content" @mouseenter="paylistEnter()" @mouseleave="paylistLeave()" :class="[paylistClass?'paylistHover':'']">
+            <!--支付单-->
+            <ul class="pay-list" v-if="paylistData.length !==0">
+              <li style="height: 55px">
+                <div v-if="paylistClass" class="pay-title">支付单</div>
+                <div v-else class="pay-title"></div>
+              </li>
+              <li class="msg" v-for="(item,index) of paylistData" :key="index" :style="{'marginBottom':index == paylistData.length-1?'50px':'0'}">
+                <div v-if="index !== 0 && paylistData[index].JudgeRefer == '1'" style="text-align: left;margin-bottom: 15px">
+                  <span>重新支付</span>
                 </div>
-                <!--判断会签模式最后一个且非paylistData的最后一个-->
-                <div v-if="paylistData[index+1] &&paylistData[index+1].IsMode != '1' && paylistData[index].IsMode == '1'" class="modeBottom"></div>
-                <!--会签模式右边的竖线，最后一个加上border-bottom-->
-                <div :class="[index ==paylistData.length-1?'lastMode':'IsMode']" ></div>
-              </div>
-            </li>
-            <li></li>
-          </ul>
+                <div style="width: 90%">
+                  <audit-msg class="paylist" :nowNum="inPaylist?nowNum:-1" v-bind="$attrs" v-on="$listeners" :info="item" :index="index+1" :startNum="paylistStartNum"  @imgList="getImgList"></audit-msg>
+                </div>
+                <!--标记是否是会签的左边线-->
+                <div v-if="item.IsMode =='1'">
+                  <!--判断第一个会签模式第一个-->
+                  <div v-if="paylistData[index-1].IsMode != '1' && paylistData[index].IsMode == '1'" class="modeTop">
+                    <span class="hqms" :style="{'top':(item.SameNum-1) * 110 + 50+'px'}">会<br/>签</span>
+                  </div>
+                  <!--判断会签模式最后一个且非paylistData的最后一个-->
+                  <div v-if="paylistData[index+1] &&paylistData[index+1].IsMode != '1' && paylistData[index].IsMode == '1'" class="modeBottom"></div>
+                  <!--会签模式右边的竖线，最后一个加上border-bottom-->
+                  <div :class="[index ==paylistData.length-1?'lastMode':'IsMode']" ></div>
+                </div>
+              </li>
+              <li></li>
+            </ul>
+          </div>
         </div>
       </div>
+      <el-dialog
+        class="dialog img-dialog"
+        :visible.sync="imgDialog"
+        :append-to-body="false"
+        :close-on-click-modal="true"
+        :modal-append-to-body="true"
+        width="800px"
+        @click.stop="fn()"
+      >
+        <div slot="title" class="dialog-title" @click.stop="fn()">
+          <span style="float: left">查看附件</span>
+        </div>
+        <img-view  :images="imgList"></img-view>
+      </el-dialog>
     </div>
-    <el-dialog
-      class="dialog img-dialog"
-      :visible.sync="imgDialog"
-      :append-to-body="false"
-      :close-on-click-modal="true"
-      :modal-append-to-body="true"
-      width="800px"
-      @click.stop="fn()"
-    >
-      <div slot="title" class="dialog-title" @click.stop="fn()">
-        <span style="float: left">查看附件</span>
-      </div>
-      <img-view  :images="imgList"></img-view>
-    </el-dialog>
   </div>
+
 </template>
 
 <script>
@@ -142,7 +145,9 @@ export default {
     },
     auditfollow(val){
       if (val){
+        this.close()
         this.$emit('update:visible', false)
+        this.$emit('close',false)
         this.$store.commit('setAuditfollow',false)
       }
     }
@@ -159,6 +164,7 @@ export default {
   methods: {
     fn(){},
     close() {
+      this.$emit('close',false)
       this.$emit('update:visible', false)
       this.$store.commit('setAuditfollow',false)
     },

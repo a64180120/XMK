@@ -4,21 +4,21 @@
       <div class="top">
         <ul v-if="isApproval">
           <!--v-if="MenuButton.approvalcenter_approval"-->
-          <li @click="aprovalItem()">
+          <li class="handle" @click="aprovalItem()">
             <div>
               <img src="../../assets/images/sp.png" />
             </div>
             <span>审批</span>
           </li>
           <!--v-if="MenuButton.approvalcenter_approvalpay"-->
-          <li @click="creatPayItem()">
+          <li class="handle" @click="creatPayItem()">
             <div>
               <img src="../../assets/images/sc.png" />
             </div>
             <span>审批并生成支付单</span>
           </li>
-          <li>
-            <div @click.stop="printTables" class="handle" style="width: 80px;">
+          <li class="handle">
+            <div @click.stop="printTables" >
               <div class="topIcon">
                 <img src="@/assets/images/dy.png" alt />
               </div>
@@ -29,13 +29,13 @@
         </ul>
         <ul v-else>
           <!-- v-if="MenuButton.approvalcenter_approvalpay"-->
-          <li @click="creatPayList()">
+          <li class="handle" @click="creatPayList()">
             <div>
               <img src="../../assets/images/sc.png" />
             </div>
             <span>生成支付单</span>
           </li>
-          <li>
+          <li class="handle">
             <div @click.stop="printTables" class="handle" style="width: 80px;">
               <div class="topIcon">
                 <img src="@/assets/images/dy.png" alt />
@@ -932,7 +932,6 @@ export default {
 }
 .top ul li {
   float: left;
-  width: 115px;
 }
 .top ul li:hover {
   cursor: pointer;

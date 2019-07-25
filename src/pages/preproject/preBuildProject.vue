@@ -4,57 +4,57 @@
                   @refresh="refresh()">
         <div class="top">
           <ul >
-            <li @click="add()">
+            <li class="handle" @click="add()">
               <div>
                 <img src="@/assets/images/xz.png">
               </div>
               <span>新增</span>
             </li>
-            <li @click="edit()">
+            <li class="handle" @click="edit()">
               <div>
                 <img src="@/assets/images/zj2.png">
               </div>
               <span>修改</span>
             </li>
-            <li @click="aprovalItem()">
+            <li class="handle" @click.stop="openAuditfollow()">
               <div>
                 <img src="@/assets/images/zj3.png">
               </div>
               <span>删除</span>
             </li>
-            <li @click="aprovalItem()">
+            <li class="handle" @click="openAuditfollow()">
               <div>
                 <img src="@/assets/images/xz.png">
               </div>
               <span>复制</span>
             </li>
-            <li @click="aprovalItem()">
+            <li class="handle" @click="openAuditfollow()">
               <div>
                 <img src="@/assets/images/xz.png">
               </div>
               <span>转立项</span>
             </li>
-            <li @click="aprovalItem()">
+            <li class="handle" @click="openAuditfollow()">
               <div>
                 <img src="@/assets/images/sp.png">
               </div>
               <span>送审</span>
             </li>
-            <li @click="aprovalItem()">
+            <li class="handle" @click="openAuditfollow()">
               <div>
                 <img src="@/assets/images/ss_d.png">
               </div>
               <span>取消送审</span>
             </li>
-            <li @click="aprovalItem()">
+            <li class="handle" @click="openAuditfollow()">
               <div>
-                <img src="@/assets/images/xz.png">
+                <img src="@/assets/images/dy.png">
               </div>
               <span>申请表打印</span>
             </li>
-            <li @click="aprovalItem()">
+            <li class="handle" @click="openAuditfollow()">
               <div>
-                <img src="@/assets/images/xz.png">
+                <img src="@/assets/images/dy.png">
               </div>
               <span>汇总表打印</span>
             </li>
@@ -200,7 +200,7 @@
                       </div>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="status" width="150" label="审批状态" align="center">
+                  <el-table-column prop="status" width="180" label="审批状态" align="center">
                     <template  slot-scope="scope">
                       <div class="status-row" >
                         <div class="status-titile">{{scope.row.status}}(预立项)</div>
@@ -211,6 +211,13 @@
                 </el-table>
               </section>
             </div>
+          </div>
+          <div style="position: absolute;bottom: 10px;right: 30px">
+            <el-pagination  @size-change="handerSizeChange"
+                            @current-change="handerCurrentChange"
+                            :curent-page="currentPage"
+                            :page-sizes="[100,200,300,400]"
+                            :page-size="100" layout="sizes, prev, pager, next, jumper, ->, total, slot" :total="total"></el-pagination>
           </div>
         </div>
       </div>
@@ -227,6 +234,7 @@
         <item-print></item-print>
 
       </el-dialog>
+      <auditfollow :visible.sync="openfollow"></auditfollow>
     </section>
 </template>
 
@@ -237,9 +245,10 @@
     import SearchInput from "../../components/searchInput/searchInput";
     import Prerojectnewproject from "../../components/preProjectDialog/index";
     import ItemPrint from "../../components/preProjectDialog/itemPrint";
+    import Auditfollow from "../../components/auditFollow/auditfollow";
     export default {
         name: "preBuildProject",
-      components: {ItemPrint, Prerojectnewproject, SearchInput, ItemTable, DataTable, TopHandle},
+      components: {Auditfollow, ItemPrint, Prerojectnewproject, SearchInput, ItemTable, DataTable, TopHandle},
       data(){
           return{
             table:{
@@ -323,7 +332,10 @@
             },
             search:'',
             addDialog:false,
-            detailDialog:false
+            detailDialog:false,
+            openfollow:false,
+            currentPage:1,
+            total:400
           }
       },
       created(){
@@ -348,15 +360,16 @@
           name1:'实业中心',
           name2:'实业中心',
           name3:'20190000001',
-          name4:'广东劳模疗养基地5年',
+          name4:'广东劳模',
           name5:3000,
           name6:"主业类",
           name7:"2019.01.01-2019.12.31",
           name8:"27.68",
           name9:"待送审",
         }
-        for (let i =0;i<1;i++){
+        for (let i =0;i<10;i++){
           this.table1.tableData.push(a)
+          this.table.tableData.push(b)
         }
 
       },
@@ -432,19 +445,33 @@
         },
         showDetail(row){
           this.detailDialog = true
+        },
+        openAuditfollow(){
+          this.openfollow = true;
+        },
+        //每页条数改变
+        handerSizeChange(){
+
+        },
+        //当前页改变
+        handerCurrentChange(){
+
         }
       }
     }
 </script>
 
 <style scoped>
+  .content-body {
+
+  }
   .row-class-name{
     margin-top: 10px;
     padding:0 20px;
   }
   .table-main{
     width: 97%;
-    overflow-x: auto;
+    overflow-x: hidden;
   }
   .top {
     position: absolute;
@@ -455,7 +482,6 @@
   }
   .top ul li {
     float: left;
-    width: 75px;
   }
   .top ul li:hover {
     cursor: pointer;
