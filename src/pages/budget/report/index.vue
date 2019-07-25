@@ -88,6 +88,7 @@
   }
   .report{
     >.container{
+      min-width: 1250px;
       >.leftNav{
         height: 100%;
         width: .4rem;

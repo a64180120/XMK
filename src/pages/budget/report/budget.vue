@@ -107,9 +107,10 @@
 <style lang="scss" scoped>
   .contentPanel{
     height: 100%;
-    padding-bottom:80px;
+    padding-bottom:85px;
     .topNav{
       height: 38px;
+      border-bottom: 2px dotted #00b8ee;
       >div{
        display: inline-block;
         &:nth-of-type(1){
@@ -146,6 +147,7 @@
       position: relative;
       height: 100%;
       overflow: auto;
+      margin-top: 10px;
       >table{
         width: 100%;
         >tbody{
