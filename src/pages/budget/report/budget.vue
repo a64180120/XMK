@@ -97,6 +97,10 @@
 
       },
       methods:{
+          /*报表数据获取*/
+          getData:function(){
+
+          },
         tablescroll:function(){
           let vm=this;
           tableScroll('scrollTable',vm)
