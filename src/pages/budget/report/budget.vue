@@ -3,15 +3,20 @@
   <div class="contentPanel">
     <div class="topNav">
       <div @click="book.visiable=true"><span>预算说明书</span></div>
-      <div>
-        <ul>
-          <li><el-button class="btn" size="mini" @click="">编辑</el-button></li>
+      <!--<div>
+        <ul v-if="!edit">
+          <li><el-button class="btn" size="mini" @click="edit=true">编辑</el-button></li>
           <li><el-button class="btn" size="mini" @click="">上报预算</el-button></li>
           <li><el-button class="btn" size="mini" @click="">导出</el-button></li>
           <li><el-button class="btn" size="mini" @click="">打印</el-button></li>
           <li><el-button class="btn" size="mini" @click=""><i class="el-icon-refresh"></i></el-button></li>
         </ul>
-      </div>
+        <ul v-else>
+          <li><el-button class="btn" size="mini" @click="">保存</el-button></li>
+          <li><el-button class="btn" size="mini" @click="">保存并上报</el-button></li>
+          <li><el-button class="btn" size="mini" @click="edit=false">取消</el-button></li>
+        </ul>
+      </div>-->
     </div>
     <div class="tbArea" @scroll="tablescroll" id="scrollTable">
       <table >
@@ -82,7 +87,9 @@
             //预算说明书
             book:{
               visiable:false
-            }
+            },
+            //启用编辑
+            edit:false
           }
       },
       components:{budgetBook},
@@ -99,6 +106,45 @@
         },
         changePageindex(val){
           console.log('pageindex更改'+val)
+        },
+        /*上报预算*/
+        reportBudget:function() {
+          this.$confirm('上报预算后无法进行编辑，是否上报预算？', '提示', {
+            confirmButtonText: '确定',
+            cancelBtnText: '取消',
+            type: 'warning'
+          }).then(() => {
+            this.reportBudgetPost();
+          }).catch(() => { })
+        },
+      //  上报请求接口
+        reportBudgetPost:function(){
+          console.log('这里添加上报预算接口')
+          this.$msgBox.show({
+            content: '上报成功。'
+          })
+        },
+        /*保存
+        * type: 0只保存 1保存后上报
+        * */
+        save:function(type){
+          var timer=null,vm=this;
+          /*if(type==1) {
+           timer = setTimeout(() => {
+              this.reportBudget()
+            }, 3000);
+          }*/
+          this.$msgBox.show({
+            content: '保存成功。',
+            fn:function () {
+              if(type==1){
+                //clearTimeout(timer)
+                vm.reportBudget();
+              }
+
+            }
+          })
+
         }
       }
     }
@@ -107,9 +153,10 @@
 <style lang="scss" scoped>
   .contentPanel{
     height: 100%;
-    padding-bottom:80px;
+    padding-bottom:85px;
     .topNav{
       height: 38px;
+      border-bottom: 2px dotted #00b8ee;
       >div{
        display: inline-block;
         &:nth-of-type(1){
@@ -146,6 +193,7 @@
       position: relative;
       height: 100%;
       overflow: auto;
+      margin-top: 10px;
       >table{
         width: 100%;
         >tbody{
