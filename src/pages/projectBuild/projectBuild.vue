@@ -77,14 +77,14 @@
                 </el-select>
               </el-form-item>
               <el-form-item label="支出类别：">
-                <el-select v-model="formList.type" size="mini">
-                  <el-option value="1" label="主业类">主业类</el-option>
-                  <el-option value="2" label="企事业类">企事业类</el-option>
-                  <el-option value="3" label="机关行政类">机关行政类</el-option>
+                <el-select v-model="formList.payOutType" size="mini" @change="query()">
+                  <el-option value="0" label="全部"></el-option>
+                  <el-option v-for="(item,idx) in payOutType" :key="idx" :value="item.Dm" :label="item.Mc"></el-option>
                 </el-select>
               </el-form-item>
-              <el-form-item label="审批状态：">
-                <el-select v-model="formList.status" size="mini">
+              <el-form-item label="审批状态：" >
+                <el-select v-model="formList.approvalStatus" size="mini" @change="query()">
+                  <el-option value="0" label="全部"></el-option>
                   <el-option value="1" label="待上报">待上报</el-option>
                   <el-option value="2" label="审批中">审批中</el-option>
                   <el-option value="3" label="审批通过">审批通过</el-option>
@@ -92,10 +92,10 @@
                 </el-select>
               </el-form-item>
               <el-form-item>
-                <el-button size="mini" @click="fn1">部门申报</el-button>
+                <el-button size="mini" @click="swatchTable">切换</el-button>
               </el-form-item>
               <el-form-item style="float: right">
-                <search-input v-model="search"></search-input>
+                <search-input v-model="formList.FProjName" @btnClick="searchInput()"></search-input>
               </el-form-item>
             </el-form>
           </div>
@@ -106,6 +106,8 @@
                 :data="table.tableData"
                 :row-class-name="rowClassName"
                 :cell-class-name="cellClassName"
+                @select="rowSelect"
+                @select-all="rowSelectAll"
                 :header-cell-class-name="handerCellClassName"
                 @current-change=""
                 :highlight-current-row="highlightCurrentRow"
@@ -120,12 +122,26 @@
                   :key="idx"
                   align="center">
                   <template  slot-scope="scope" style="">
-                    <div v-if="item.fn" class="table-column-height" @click="showDetail(scope.row)"  :style="{textAlign:item.align}">
-                      <span :style="{textAlign:item.align}" >{{scope.row[item.prop]}}</span>
+                    <div v-if="item.other === 'function'" class="table-column-height" @click="cellClick(scope)"  :style="{textAlign:item.align}">
+                      <span :style="{textAlign:item.align}" class="cell-click">{{scope.row[item.prop]}}</span>
                     </div>
-                    <div v-else-if="item.money" class="table-column-height" :style="{textAlign:item.align}">
+                    <div v-else-if="item.other === 'money'" class="table-column-height" :style="{textAlign:item.align}">
                       <span v-if="formList.year =='1'" :style="{textAlign:item.align}" >{{scope.row[item.prop] |NumFormat}}元</span>
                       <span v-else :style="{textAlign:item.align}" >{{scope.row[item.prop] / 10000}}万元</span>
+                    </div>
+                    <div v-else-if="item.other ==='start-end'" class="table-column-height" :style="{textAlign:item.align}">
+                      <span>{{scope.row[item.prop1].replace('T00:00:00','')}}——</span>
+                      <span>{{scope.row[item.prop2].replace('T00:00:00','')}}</span>
+                    </div>
+                    <div v-else-if="item.other ==='time'">
+                      <span v-if="scope.row[item.prop]">{{scope.row[item.prop].replace('T',' ')}}</span>
+                      <span v-else="scope.row[item.prop]">{{scope.row[item.prop]}}</span>
+                    </div>
+                    <div v-else-if="item.other ==='status-click'">
+                      <span v-html="formatter(scope)" @click="cellClick(scope)" class="cell-click"></span>
+                    </div>
+                    <div v-else-if="item.other ==='status'">
+                      <span v-html="formatter(scope)" class="cell-click"></span>
                     </div>
                     <div v-else class="table-column-height" :style="{textAlign:item.align}">
                       <span :style="{textAlign:item.align}" >{{scope.row[item.prop]}}</span>
@@ -138,9 +154,11 @@
           <div v-else class="table-main">
             <section class="itemTable_proBuildProject">
               <el-table
-                :data="table1.tableData"
+                :data="table.tableData"
                 :row-class-name="rowClassName"
                 :cell-class-name="itemCellClassName"
+                @select="rowSelect"
+                @select-all="rowSelectAll"
                 :header-cell-class-name="itemHanderCellClassName"
                 :highlight-current-row="highlightCurrentRow"
                 style="overflow: visible;position: static;padding-top: 50px"
@@ -153,41 +171,41 @@
                   <template   slot-scope="scope">
                     <div>
                       <div class="top-content">
-                        <div class="top-left">项目编码：{{scope.row.item.projectCode}}</div>
-                        <div class="top-center">项目名称：{{scope.row.item.projectName}}</div>
+                        <div class="top-left">项目编码：{{scope.row.FProjCode}}</div>
+                        <div class="top-center">项目名称：{{scope.row.FProjName}}</div>
                         <div class="top-right">
-                          <div class="card" v-if="formList.year == '1'">{{scope.row.item.projectMoney | NumFormat}}元</div>
-                          <div class="card" v-if="formList.year == '2'">{{scope.row.item.projectMoney/10000}}万元</div>
+                          <div class="card" v-if="formList.year == '1'">{{scope.row.FProjAmount | NumFormat}}元</div>
+                          <div class="card" v-if="formList.year == '2'">{{(scope.row.FProjAmount/10000).toLocaleString()}}万元</div>
                         </div>
                       </div>
                       <div class="context">
                         <ul>
                           <li>
-                            <span @click="showDetail(scope.row)">项目属性：{{scope.row.item.name1}}</span>
+                            <span @click="showDetail(scope.row)">项目属性：{{scope.row.FProjAttr}}</span>
                           </li>
                           <li>
-                            <span>存续期限：{{scope.row.item.name2}}</span>
+                            <span>存续期限：{{scope.row.FDuration}}</span>
                           </li>
                           <li>
-                            <span>项目级别：{{scope.row.item.name3}}</span>
+                            <span>项目级别：{{scope.row.name3}}</span>
                           </li>
                           <li>
-                            <span>项目级别：{{scope.row.item.name4}}</span>
+                            <span>起止日期：{{scope.row.FStartDate.replace('T00:00:00','')}}至{{scope.row.FEndDate.replace('T00:00:00','')}}</span>
                           </li>
                           <li>
-                            <span>项目级别：{{scope.row.item.name5}}</span>
+                            <span>支出类别：{{scope.row.FExpenseCategory_EXName}}</span>
                           </li>
                           <li>
-                            <span>项目级别：{{scope.row.item.name6}}</span>
+                            <span>效绩评价：{{scope.row.FIfPerformanceAppraisal}}</span>
                           </li>
                           <li>
-                            <span>项目级别：{{scope.row.item.name7}}</span>
+                            <span>申报部门：{{scope.row.FDeclarationDept_EXName}}</span>
                           </li>
                           <li>
-                            <span>项目级别：{{scope.row.item.name8}}</span>
+                            <span>预算部门：{{scope.row.FBudgetDept_EXName}}</span>
                           </li>
                           <li>
-                            <span>项目级别：{{scope.row.item.name9}}</span>
+                            <span>申报日期：{{scope.row.FDateofDeclaration}}</span>
                           </li>
                         </ul>
                       </div>
@@ -197,8 +215,8 @@
                 <el-table-column prop="status" width="180" label="审批状态" align="center">
                   <template  slot-scope="scope">
                     <div class="status-row" >
-                      <div class="status-titile">{{scope.row.status}}(预立项)</div>
-                      <div class="status-context">{{scope.row.status}}</div>
+                      <div class="status-titile">{{scope.row.FApproveStatus}}(预立项)</div>
+                      <div class="status-context">{{scope.row.FApproveStatus}}</div>
                     </div>
                   </template>
                 </el-table-column>
@@ -209,23 +227,29 @@
         <div style="position: absolute;bottom: 10px;right: 30px">
           <el-pagination  @size-change="handerSizeChange"
                           @current-change="handerCurrentChange"
-                          :curent-page="currentPage"
-                          :page-sizes="[100,200,300,400]"
-                          :page-size="100" layout="sizes, prev, pager, next, jumper, ->, total, slot" :total="total"></el-pagination>
+                          :curent-page="page.currentPage"
+                          :page-sizes="page.pageSizes"
+                          :page-size="page.pageSize"
+                          layout="total,sizes,prev,pager,next,jumper"
+                          :total="page.total"></el-pagination>
         </div>
       </div>
     </div>
     <el-dialog append-to-body
                :visible.sync="addDialog"
                width="80%"
-               :close-on-click-modal="false">
-      <prerojectnewproject></prerojectnewproject>
+               :close-on-click-modal="false"
+              >
+      <prerojectnewproject ></prerojectnewproject>
     </el-dialog>
     <el-dialog  append-to-body
                 :visible.sync="detailDialog"
                 width="50%"
-                :close-on-click-modal="false">
-      <item-print></item-print>
+                :close-on-click-modal="false" class="applyDetailDialog">
+      <div slot="title" class="applyDetailTitle" style="text-align: left;border-bottom: 1px solid #eaeaea">
+        <span>申报表打印</span>
+      </div>
+      <item-print :data="itemDetail"></item-print>
 
     </el-dialog>
     <auditfollow :visible.sync="openfollow"></auditfollow>
@@ -240,75 +264,75 @@
   import Prerojectnewproject from "../../components/preProjectDialog/index";
   import ItemPrint from "../../components/preProjectDialog/itemPrint";
   import Auditfollow from "../../components/auditFollow/auditfollow";
+  import { mapState } from 'vuex'
   export default {
     name: "projectBuild",
     components: {Auditfollow, ItemPrint, Prerojectnewproject, SearchInput, ItemTable, DataTable, TopHandle},
     data(){
+      let that = this
       return{
         table:{
-          tableData:[{
-            name1:'实业中心',
-            name2:'实业中心',
-            name3:'20190000001',
-            name4:'广东劳模疗',
-            name5:3000,
-            name6:"主业类",
-            name7:"2019.01.01-2019.12.31",
-            name8:"27.68",
-            name9:"待送审",
-          },{
-            name1:'实业中心1',
-            name2:'实业中心2',
-            name3:'201900000013',
-            name4:'广东劳模疗1',
-            name5:1400,
-            name6:"主业类2",
-            name7:"2019.01.01",
-            name8:"2768",
-            name9:"待送审",
-          }],
+          tableData:[],
           column:[
             {
-              prop:'name1',
+              prop:'FDeclarationDept_EXName',
               label:'申报部门',
-              align:'left',
-              width:270,
-              fn:true
+              other:'function',
+              fn:function (scope) {
+                that.showDetail(scope)
+              }
             },{
-              prop:'name2',
+              prop:'FBudgetDept_EXName',
               label:'预算部门',
             },{
-              prop:'name3',
+              prop:'FProjCode',
               label:'项目编码',
               align:'center',
             },{
-              prop:'name4',
+              prop:'FProjName',
               label:'项目名称',
               align:'center'
             },{
-              prop:'name5',
+              prop:'FProjAmount',
               label:'项目金额',
-              align:'center',
               width:130,
-              money:true,
+              other:'money',
               align:"right"
             },{
-              prop:'name6',
-              label:'支持类别',
-              align:'center'
+              prop:'FExpenseCategory_EXName',
+              label:'支出类别',
+              align:'center',
             },{
-              prop:'name7',
+              prop1:'FStartDate',
+              prop2:'FEndDate',
               label:'起止日期',
               align:'center',
               width:270,
+              other:"start-end"
             },{
-              prop:'name8',
+              prop:'FDateofDeclaration',
               label:'申报日期',
-              align:'center'
+              align:'center',
+              other: 'time',
             },{
-              prop:'name9',
+              prop:'FApproveStatus',
               label:'审批状态',
-              align:'center'
+              align:'center',
+              other:'status',
+              format:function(scope){
+                if (scope.row.FApproveStatus == 1){
+                  return '<span>'+'待审批(预立项)'+'</span>'
+                }else if (scope.row.FApproveStatus == 2 ){
+                  return '<span>'+'审批中(预立项)'+'</span>'
+                }else if (scope.row.FApproveStatus == 3 ){
+                  return '<span>'+'审批通过(预立项)'+'</span>'
+                }else if(scope.row.FApproveStatus == 4 ){
+                  return '<span>'+'审批退回(预立项)'+'</span>'
+                }
+              },
+              fn:function (scope) {
+                console.log(scope)
+              }
             }],
           selection:true
         },
@@ -320,57 +344,75 @@
         watchTable:false,
         formList:{
           year:"1",
-          type:'',
-          status:'1',
-          search:''
+          payOutType:'0',
+          approvalStatus:'0',
+          FProjName:''
         },
         search:'',
         addDialog:false,
         detailDialog:false,
         openfollow:false,
-        currentPage:1,
-        total:400
+        page:{
+          currentPage:1,
+          total:0,
+          pageSize:20,
+          pageSizes:[20,30,50,100]
+        },
+        itemDetail:{},
+        selection:[],
+        payOutType:[],
       }
+    },
+    computed: {
+      ...mapState({
+        OrgCode: state => state.user.orgcode,
+        UserId: state => state.user.userid,
+        Orgid: state => state.user.orgid,
+        Year: state => state.user.year,
+        MenuButton: state => state.user.menubutton,
+        UserCode: state => state.user.usercode
+      })
     },
     created(){
-      let a = {
-        item:{
-          projectCode:"1313",
-          projectName:"文书、人事档案整理装订",
-          projectMoney:'500',
-          name1:'新增项目',
-          name2:'经常性项目',
-          name3:"一级",
-          name4:'2019-01-01至2019-12-30',
-          name5:'机关行政类',
-          name6:'否',
-          name7:"组织部",
-          name8:'部门A',
-          name9:'2018-12-18'
-        },
-        status:'审批中'
-      }
-      let b ={
-        name1:'实业中心',
-        name2:'实业中心',
-        name3:'20190000001',
-        name4:'广东劳模',
-        name5:3000,
-        name6:"主业类",
-        name7:"2019.01.01-2019.12.31",
-        name8:"27.68",
-        name9:"待送审",
-      }
-      for (let i =0;i<10;i++){
-        this.table1.tableData.push(a)
-        this.table.tableData.push(b)
-      }
-
     },
     mounted(){
-
+      this.getExpenseCategoryList()
+      this.getTableData()
     },
     methods:{
+      //get获取表格数据
+      getTableData(){
+        let data = {
+          OrgCode:this.OrgCode,//组织编码
+          Ucode:this.UserCode,//用户账号
+          Year:this.Year,//年度
+          ProjStatus:2,//（1-预立项 ；2-立项； 其他）
+          FProjName:this.formList.FProjName,//搜索框的值
+          FExpenseCategory: this.formList.payOutType ,//支出类型（0-全部）
+          FApproveStatus:this.formList.approvalStatus,//审批状态 （0-全部， 1-待上报， 2-审批中，3-审批通过， 4-已退回）
+          PageIndex:this.page.currentPage - 1,  //页码
+          PageSize:this.page.pageSize//每页条数
+        };
+        this.getAxios('/GXM/ProjectMstApi/GetProjectMstList',data).then(res =>{
+          if (res.Record) {
+            this.table.tableData = res.Record
+            this.page.total = res.totalRows
+          }else {
+            this.$msgBox.error(res.Msg)
+          }
+        }).catch(err=>{
+          this.$msgBox.error("数据获取失败")
+        })
+      },
+      //获取支出类型集合
+      getExpenseCategoryList(){
+        this.getAxios('/GQT/SysSettingApi/GetExpenseCategoryList ').then(res =>{
+          if (res.Status ==="success"){
+            this.payOutType = res.Data
+          }
+          console.log(res)
+        })
+      },
       //表格行样式回调
       rowClassName({row,rowIndex}){
         return 'row-class-name'
@@ -414,6 +456,48 @@
           return 'thead-cell'
         }
       },
+      //每页条数改变
+      handerSizeChange(val){
+        console.log(val)
+        this.page.pageSize = val
+        this.getTableData()
+      },
+      //当前页改变
+      handerCurrentChange(val){
+        console.log(val)
+        this.page.currentPage = val
+        this.getTableData()
+      },
+      //
+      rowSelect(selection,row){
+        this.selection = selection
+      },
+      rowSelectAll(selection){
+        this.selection = selection
+      },
+      //自定义列数据替换的回调
+      //自定义列数据替换的回调
+      formatter(scope){
+        let column = scope.column.label;
+        let index = -1
+        for (let key in this.table.column){
+          if (this.table.column[key].label === column){
+            index = key
+          }
+        }
+        return this.table.column[index].format(scope)
+      },
+      //自定义单元格的回调
+      cellClick(scope){
+        let column = scope.column.label;
+        let index = -1
+        for (let key in this.table.column){
+          if (this.table.column[key].label === column){
+            index = key
+          }
+        }
+        return this.table.column[index].fn(scope)
+      },
       //测试方法
       fn(){
         this.table.colum.push({
@@ -423,7 +507,7 @@
         })
       },
       //切换表格样式
-      fn1(){
+      swatchTable(){
         if (this.watchTable){
           this.watchTable = false
         } else {
@@ -437,19 +521,53 @@
       edit(){
         this.addDialog = true
       },
-      showDetail(row){
-        this.detailDialog = true
+      deleteItem(){
+        if (this.selection.length === 0){
+          this.$msgBox.error('请选择数据进行删除')
+          return
+        }else if (this.selection.length !== 1 &&this.selection.length !== 0){
+          this.$msgBox.error('只能选择一行数据进行删除')
+          return
+        }else {
+          let data ={
+            FProjCode:this.selection[0].FProjCode,
+            FProjPhId:this.selection[0].PhId
+          };
+          this.postAxios('/GXM/ProjectMstApi/PostDeleteProject',data).then(res =>{
+            if (res.Status ==='success') {
+              this.$msgBox.show('删除成功')
+              this.getTableData()
+            }else {
+              this.$msgBox.error(res.Msg)
+            }
+          }).catch(err =>{
+            this.$msgBox.error('请求失败')
+          })
+        }
+      },
+      showDetail(scope){
+        let data = {
+          FProjPhId:scope.row.PhId
+        }
+        this.getAxios('/GXM/ProjectMstApi/GetProjectMst',data).then(res =>{
+          this.itemDetail = res
+          this.detailDialog = true
+          console.log(res)
+        }).catch(err=>{
+          this.$msgBox.error('请求失败')
+        })
       },
       openAuditfollow(){
         this.openfollow = true;
       },
-      //每页条数改变
-      handerSizeChange(){
-
+      //选择框改变事件
+      query(){
+        this.formList.FProjName = ''
+        this.getTableData()
       },
-      //当前页改变
-      handerCurrentChange(){
-
+      //搜索框查询事件
+      searchInput(){
+        this.getTableData()
       }
     }
   }
@@ -482,6 +600,28 @@
   }
   .top ul li div img {
     width: 30px;
+  }
+  .cell-click{
+    color:#409EFF;
+    text-decoration: underline;
+  }
+  .cell-click:hover{
+    cursor: pointer;
+  }
+  .applyDetailDialog >>> .el-dialog__header{
+    padding: 10px 0 0 0;
+  }
+  .applyDetailDialog >>>.el-dialog__body{
+    padding: 0 20px;
+  }
+  .applyDetailTitle{
+    text-align: left;
+    border-bottom: 1px solid #eaeaea;
+    height: 30px;
+  }
+  .applyDetailTitle span{
+    margin-left: 10px;
+    line-height: 30px;
   }
 </style>
 <style lang="scss" scoped>

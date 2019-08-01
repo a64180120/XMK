@@ -3,9 +3,6 @@
       append-to-body :visible="true" width="90%" :close-on-click-modal="false"
   ></el-dialog>-->
   <section class="prerojectnewproject">
-    <div slot="title" class="dialog-title">
-      <span style="float: left">新增项目</span>
-    </div>
     <el-row>
       <el-col :span="24" style="margin-top:10px;margin-bottom: 10px">
         <div class="btn-left">
@@ -34,14 +31,12 @@
         <ul>
           <li>
             <span>项目名称：</span>
-            <el-input size="small" v-model="inp" placeholder="请填写项目名称（必填）"></el-input>
+            <el-input size="small" v-model="projSurvey.projName" placeholder="请填写项目名称（必填）"></el-input>
           </li>
           <li>
             <span>申报部门：</span>
-            <el-select v-model="inp" size="small" placeholder="必选">
-              <el-option label="123" value="123"></el-option>
-              <el-option label="456" value="456"></el-option>
-              <el-option label="1123" value="1123"></el-option>
+            <el-select v-model="projSurvey.projDapart" size="small" placeholder="必选">
+              <el-option v-for="(item,idx) in applyGrop" :label="item.DeftName" :value="item.DeftCode"></el-option>
             </el-select>
           </li>
           <li>
@@ -315,9 +310,18 @@ import setBuy from './setBuy'
 import { mapState } from 'vuex'
 export default {
   name: 'prerojectnewproject',
+  props:{
+
+  },
   components: { addBr, setBuy },
   data() {
     return {
+      timeClearable:false,
+      //项目概况
+      projSurvey:{
+        projName:"",
+        projDapart:''
+      },
       inp: '',
       yearSelect: '',
       value1: '',
@@ -339,13 +343,47 @@ export default {
       setBuyDialog: {
         openDialog: false,
         data: null
-      }
+      },
+      applyGrop:[],
     }
+  },
+  computed: {
+    ...mapState({
+      year: state => state.user.year,
+      Orgid: state => state.user.orgid,
+      UserCode: state => state.user.usercode,
+      OrgCode: state => state.user.orgcode,
+    }),
   },
   mounted() {
     this.yearSelect = this.year
+    this.getDeclareList();
+    this.getAllBasicData();
   },
   methods: {
+    //获取申报部门集合
+    getDeclareList(){
+      let data={
+        orgCode:this.OrgCode,
+        uCode:this.UserCode,
+        orgid:this.Orgid
+      };
+      this.getAxios('/GQT/QTSysSetApi/GetDeclareList',data).then(res =>{
+        this.applyGrop = res
+      })
+    },
+    getAllBasicData(){
+      let data ={
+        uCode:this.UserCode,
+        orgCode:this.OrgCode,
+        orgid:this.Orgid
+      }
+      this.getAxios('/GQT/QTSysSetApi/GetAllBasicData',data).then(res=>{
+          console.log('=====',res)
+      }).catch(err=>{
+
+      })
+    },
     add(item) {
       let newItem = Object.assign(
         {},
@@ -419,11 +457,6 @@ export default {
       this.setBuyDialog.data = item
     }
   },
-  computed: {
-    ...mapState({
-      year: state => state.user.year
-    })
-  }
 }
 </script>
 <style lang="scss" scoped>
@@ -774,6 +807,7 @@ export default {
   }
 }
 </style>
+
 <style lang="stylus">
 .prerojectnewproject
   .left-box
@@ -782,6 +816,10 @@ export default {
     .el-date-editor.el-range-editor.el-input__inner
       width 100%
       padding 0
+      .el-range-separator
+        padding 0
+      .el-range-input
+        margin-left 5px
       input, i, span
         font-size 0.14rem
         line-height 32px
