@@ -310,12 +310,12 @@
     </el-dialog>
     <el-dialog
       append-to-body
-      v-if="textareaDialog.openDialog"
       :visible.sync="textareaDialog.openDialog"
+      v-if="textareaDialog.openDialog"
       width="750px"
       :close-on-click-modal="false"
     >
-      <textarea-dialog v-model="textareaDialog.data">
+      <textarea-dialog :data.sync="textareaDialog.data">
         <div slot="btn">
           <el-button class="btn" size="mini" @click="cancel">取消</el-button>
           <el-button class="btn" size="mini" @click="save">保存</el-button>
@@ -442,9 +442,9 @@ export default {
       this.setBuyDialog.data = item
     },
     openTextareaDialog(item) {
+      this.textareaDialog.data = item.remark //将旧textarea内容赋值给弹框data
+      this.textareaDialog.item = item //将旧item存起来，方便保存时修改
       this.textareaDialog.openDialog = true
-      this.textareaDialog.data = item.remark
-      this.textareaDialog.item = item
     },
     cancel() {
       this.textareaDialog.openDialog = false
