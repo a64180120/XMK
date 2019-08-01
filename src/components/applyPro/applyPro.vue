@@ -687,7 +687,7 @@
           this.$nextTick(()=>{
             this.choosedProject=this.prodataList[0];
             this.choosedPro=[pindex,index+1]
-            this.confirmProDetail();
+            this.confirmProDetail(true);
           })
         }
 
@@ -831,8 +831,10 @@
           this.choosedProject={};
         }
       },
-      confirmProDetail:function(){
-        this.orgDetailType=false;
+      confirmProDetail:function(type){
+        if(!type){
+          this.orgDetailType=false;
+        }
         this.PaymentXmDtl[this.choosedPro[0]].PaymentDtls[this.choosedPro[1]].BudgetdtlPhid=this.choosedProject.PhId;
         this.PaymentXmDtl[this.choosedPro[0]].PaymentDtls[this.choosedPro[1]].BudgetdtlName=this.choosedProject.FName;
         this.PaymentXmDtl[this.choosedPro[0]].PaymentDtls[this.choosedPro[1]].QtKmdm=this.choosedProject.FBudgetAccounts;
@@ -933,7 +935,7 @@
           if(res.Dtl.length==1){
             this.choosedProject=res.Dtl[0];
             this.choosedPro=[f,0]
-            this.confirmProDetail();
+            this.confirmProDetail(true);
           }
         }).catch(err=>{
           console.log(err);

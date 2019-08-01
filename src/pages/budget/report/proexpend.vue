@@ -2,8 +2,8 @@
   <!--年初收支预算表-->
   <div class="contentPanel">
     <!--一级栏-->
-    <div class="topNav">
-      <!--<div>
+    <!--<div class="topNav">
+      <div>
         <ul>
           <li>
             <span>单位：</span>
@@ -24,10 +24,10 @@
             </el-select>
           </li>
         </ul>
-      </div>-->
+      </div>
       <div>
         <ul>
-          <!--<li>
+          <li>
             <search-input
               @btnClick="search()"
               placeholder="项目编码/名称"
@@ -114,14 +114,14 @@
 
               <el-button class="btn" size="mini" slot="reference">高级</el-button>
             </el-popover>
-          </li>-->
+          </li>
           <li><el-button class="btn" size="mini" @click="">导出</el-button></li>
           <li><el-button class="btn" size="mini" @click="">打印</el-button></li>
           <li><el-button class="btn" size="mini" @click="tableType=tableType==0?'1':'0'">切换表格</el-button></li>
           <li><el-button class="btn" size="mini" @click=""><i class="el-icon-refresh"></i></el-button></li>
         </ul>
       </div>
-    </div>
+    </div>-->
     <!--二级栏-->
     <div  class="secondNav">
       <div>
@@ -236,7 +236,7 @@
               <el-button class="btn" size="mini" slot="reference">高级</el-button>
             </el-popover>
           </li>
-          <li>
+          <li v-if="tableType==0">
             <el-popover palcement="bottom" width="500" trigger="click" v-model="popvisiableCol">
               <div class="seniorSearch colShow">
                 <div>
@@ -273,7 +273,7 @@
               <el-button class="btn" size="mini" slot="reference">列表显示</el-button>
             </el-popover>
           </li>
-
+          <li><el-button class="btn" size="mini" @click="tableType=tableType==0?'1':'0'">切换表格</el-button></li>
         </ul>
       </div>
     </div>
@@ -422,7 +422,7 @@
 <style lang="scss" scoped>
   .contentPanel{
     height: 100%;
-    padding-bottom:125px;
+    padding-bottom:85px;
     .topNav{
       height: 38px;
       border-bottom: 2px dotted #00b8ee;
@@ -459,8 +459,8 @@
       }
     }
     .secondNav{
-      margin: 10px 0;
-      height: 30px;
+      height: 38px;
+      border-bottom: 2px dotted #00b8ee;
       >div{
         display: inline-block;
         >ul{
@@ -497,7 +497,7 @@
       position: relative;
       height: 100%;
       overflow: auto;
-
+      margin-top: 10px;
       >table{
         width:auto;
         min-width: 100%;

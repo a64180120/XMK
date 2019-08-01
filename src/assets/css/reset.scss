@@ -95,7 +95,7 @@ html {
   font-size: 100px;
 }
 body {
- 
+
   color: #333;
   height: 100%;
   overflow: hidden;
@@ -187,10 +187,10 @@ $topNavActive:#3294e8;//顶部按钮点击激活颜色
   color: #fff;
   border-radius: 3px;
   display: inline-block;
-  width: 70px;
+  width: 78px;
   height: 28px;
   line-height: 28px;
-  padding: 0 10px;
+  padding: 0;
   text-align: center;
   border: 1px solid $btnColor !important;
   background: $btnColor;

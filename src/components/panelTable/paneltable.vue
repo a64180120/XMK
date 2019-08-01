@@ -175,7 +175,7 @@
 
 <style>
   .panelTable .el-table__header-wrapper{
-    top: 100px;
+    top: 50px;
   }
   .panelTable .el-table__header-wrapper:after {
     width: 15px;
