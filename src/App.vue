@@ -95,8 +95,10 @@ export default {
           }
           window.onmessage = function (e) {
             var xmkMsg = null;
-            if (typeof e.data == 'string') {
+            if (typeof e.data == 'string' && e.data.indexOf('KillLoginUser') != -1) {
               var xmkMsg = JSON.parse(e.data);
+            } else {
+              return;
             }
 
             if (xmkMsg && xmkMsg.ID == 'KillLoginUser') {

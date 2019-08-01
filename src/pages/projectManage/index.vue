@@ -110,17 +110,25 @@ export default {
       this.$router.push({ path: str })
     },
     arrowFn (arrow, type) {
-      let list, navlistCon, mixin, left, base;
-      base = 230;
+      let list, navlistCon, mixin, left, base, childrenLength;
+      base = 235;
       mixin = arrow ? 1 : -1;
       list = document.querySelectorAll('.pageNav .navlistCon .navlist')[type];
       navlistCon = document.querySelectorAll('.pageNav .navlistCon ')[type];
+      childrenLength = navlistCon.children[0].children.length;
       left = list.style.marginLeft ? parseFloat(list.style.marginLeft) : 0;
       let width = window.getComputedStyle(navlistCon).width;
       if (arrow) {
-        list.style.marginLeft = (left > -230 ? 0 : base * mixin + left) + 'px';
+        list.style.marginLeft = (left > -base ? 0 : base * mixin + left) + 'px';
       } else {
-        list.style.marginLeft = ((left > 230 * 3 - parseFloat(width) && 230 * 3 - parseFloat(width) < -230) ? base * mixin + left : parseFloat(width) - 230 * 4 - 30) + 'px'
+
+        if (childrenLength * base + left <= parseFloat(width) + base) {
+          list.style.marginLeft = parseFloat(width) - childrenLength * base - 25 + 'px'
+          return;
+        } else {
+          list.style.marginLeft = left - base + 'px'
+
+        }
       }
 
 
@@ -150,11 +158,13 @@ export default {
 <style lang="scss" scoped>
 .projectManage {
   .container {
+    overflow: auto;
     text-align: center;
     .pageNav {
       display: inline-block;
       vertical-align: middle;
-      width: 80%;
+
+      min-width: 1210px;
       height: 470px;
       font-size: 0.25rem;
       > div {
@@ -178,30 +188,29 @@ export default {
     .leftArr,
     .rightArr {
       position: absolute;
-      top: 105px;
-      width: 40px;
-      height: 40px;
+      top: 80px;
     }
     .leftArr {
-      left: -40px;
+      left: -70px;
       animation: da 1s infinite linear;
     }
     .rightArr {
       right: -50px;
       transform: rotate(0deg);
     }
-    @media screen and (max-width: 1530px) {
-      .leftArr,
-      .rightArr {
-        display: block;
-      }
-    }
+    // @media screen and (max-width: 1530px) {
+    //   .leftArr,
+    //   .rightArr {
+    //     display: block;
+    //   }
+    // }
   }
   .navTitle {
     float: left;
-    width: 20%;
+    width: 240px;
     padding: 10px;
     // min-width: 250px;
+    // margin-right: 10px;
     height: 230px;
     line-height: 30px;
     color: #fff;
@@ -209,7 +218,7 @@ export default {
     > div {
       width: 100%;
       height: 100%;
-      box-shadow: 0 0 10px #888;
+      box-shadow: 6px 0 10px #888;
       border-radius: 3px;
       overflow: hidden;
       > div {
@@ -233,7 +242,7 @@ export default {
   }
   .navlistCon {
     float: left;
-    width: 80%;
+    width: 965px;
     height: 250px;
 
     display: inline-block;
@@ -246,16 +255,19 @@ export default {
     white-space: nowrap;
     transition: all 0.2s linear;
     color: $btnColor;
+    position: relative;
     > li {
-      display: inline-block;
+      // display: inline-block;
+      float: left;
+      margin-bottom: 50px;
       width: 220px;
       height: 100%;
       text-align: center;
       border-radius: 3px;
       overflow: hidden;
       cursor: pointer;
-      margin-right: 10px;
-      box-shadow: 0 0 5px #ccc;
+      margin-right: 15px;
+      // box-shadow: 0 0 5px #ccc;
       &:hover {
         box-shadow: 0 0 5px $btnColor;
       }
@@ -279,15 +291,15 @@ export default {
 }
 
 .arrowShow {
-  display: none;
+  // display: none;
   transform: rotate(180deg);
   transition: all 0.3s linear;
   cursor: pointer;
 }
 .arrowShow {
-  font-size: 33px;
-  text-shadow: -2px 0 4px red;
-  color: #fff;
+  font-size: 60px;
+  text-shadow: -2px 0 4px $btnColor;
+  color: $btnColor;
   transition: all 0.3s linear;
   animation: ad 1s infinite linear;
   cursor: pointer;

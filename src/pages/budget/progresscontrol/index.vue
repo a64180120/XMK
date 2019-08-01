@@ -24,7 +24,7 @@
                  alt=""></div>
           取消
         </div>
-        <div @click.stop="dialogVisible=true"
+        <div @click.stop="settingShow"
              class="handle">
           <div class="topIcon"><img src="@/assets/images/xz.png"
                  alt=""></div>
@@ -59,20 +59,22 @@
           <el-table :data="tableData"
                     :height="tableH"
                     style="width: 100%">
-            <el-table-column prop="date"
+            <el-table-column prop="FDeptName"
                              label="部门名称"
+                             min-width="150"
                              header-align="center">
             </el-table-column>
             <el-table-column label="年初申报阶段"
                              align="center">
-              <el-table-column prop="name"
+              <el-table-column prop="FProcessStatus"
                                label="年初申报"
-                               width="120"
+                               width="110"
                                align="center">
                 <template slot-scope="scope">
                   <div>
                     <el-radio :disabled="!update"
-                              v-model="scope.row.name"></el-radio>
+                              :label="'1'"
+                              v-model="scope.row.FProcessStatus"></el-radio>
                   </div>
                 </template>
 
@@ -84,7 +86,7 @@
                 <template slot-scope="scope">
                   <div v-show="update"
                        class="block">
-                    <el-date-picker v-model="value2"
+                    <el-date-picker v-model="scope.row.pickerDate1"
                                     type="daterange"
                                     align="right"
                                     unlink-panels
@@ -95,18 +97,19 @@
                     </el-date-picker>
                   </div>
                   <div v-show="!update">
-                    <span>{{scope.row.date}}</span>
+                    <span>{{scope.row.StartDt.slice(0,10)+' 至 '+scope.row.EndDt.slice(0,10)}}</span>
                   </div>
                 </template>
               </el-table-column>
             </el-table-column>
             <el-table-column label="初报完成阶段"
-                             width="120"
+                             width="110"
                              align="center">
               <template slot-scope="scope">
                 <div>
                   <el-radio :disabled="!update"
-                            v-model="scope.row.name"></el-radio>
+                            label="2"
+                            v-model="scope.row.FProcessStatus"> </el-radio>
                 </div>
               </template>
             </el-table-column>
@@ -114,12 +117,13 @@
                              align="center">
               <el-table-column prop="name"
                                label="年中调整"
-                               width="120"
+                               width="110"
                                align="center">
                 <template slot-scope="scope">
                   <div>
                     <el-radio :disabled="!update"
-                              v-model="scope.row.name"></el-radio>
+                              label="3"
+                              v-model="scope.row.FProcessStatus"> </el-radio>
                   </div>
                 </template>
               </el-table-column>
@@ -130,7 +134,7 @@
                 <template slot-scope="scope">
                   <div v-show="update"
                        class="block">
-                    <el-date-picker v-model="value2"
+                    <el-date-picker v-model="scope.row.pickerDate2"
                                     type="daterange"
                                     align="right"
                                     unlink-panels
@@ -141,18 +145,19 @@
                     </el-date-picker>
                   </div>
                   <div v-show="!update">
-                    <span>{{scope.row.date}}</span>
+                    <span>{{scope.row.StartDt2.slice(0,10)+' 至 '+scope.row.EndDt2.slice(0,10)}}</span>
                   </div>
                 </template>
               </el-table-column>
             </el-table-column>
             <el-table-column label="调整完成阶段"
-                             width="120"
+                             width="110"
                              align="center">
               <template slot-scope="scope">
                 <div>
                   <el-radio :disabled="!update"
-                            v-model="scope.row.name"></el-radio>
+                            label="4"
+                            v-model="scope.row.FProcessStatus"> </el-radio>
                 </div>
               </template>
             </el-table-column>
@@ -160,7 +165,18 @@
         </template>
 
       </div>
+      <div class="pageArea">
+        <el-pagination @size-change="handleSizeChange"
+                       @current-change="handleCurrentChange"
+                       :current-page="pageindex"
+                       :page-sizes="[30,50,100,150,200]"
+                       :page-size="pagesize"
+                       layout="total,sizes,prev,pager,next,jumper"
+                       :total="total">
+        </el-pagination>
+      </div>
     </div>
+
     <el-dialog width="600px"
                :visible.sync="dialogVisible"
                title="批量设置"
@@ -206,6 +222,7 @@
 <script>
 import topHandle from '@/components/topNav/topHandle'
 import { mapState } from 'vuex'
+import { PorcessList, DistinctList, ProcessCtrl } from '@/api/progresscontrol'
 export default {
   name: 'progresscontrol',
   data () {
@@ -221,101 +238,13 @@ export default {
         children: 'children',
         label: 'OName'
       },
-      checkedOrg: {},
-      filterText: '',
 
-      tableData: [{
-        date: '2016-05-03',
-        name: '王小虎',
-        province: '上海',
-        city: '普陀区',
-        address: '上海市普陀区金沙江路 1518 弄',
-        zip: 200333
-      }, {
-        date: '2016-05-02',
-        name: '王小虎',
-        province: '上海',
-        city: '普陀区',
-        address: '上海市普陀区金沙江路 1518 弄',
-        zip: 200333
-      }, {
-        date: '2016-05-04',
-        name: '王小虎',
-        province: '上海',
-        city: '普陀区',
-        address: '上海市普陀区金沙江路 1518 弄',
-        zip: 200333
-      }, {
-        date: '2016-05-01',
-        name: '王小虎',
-        province: '上海',
-        city: '普陀区',
-        address: '上海市普陀区金沙江路 1518 弄',
-        zip: 200333
-      }, {
-        date: '2016-05-08',
-        name: '王小虎',
-        province: '上海',
-        city: '普陀区',
-        address: '上海市普陀区金沙江路 1518 弄',
-        zip: 200333
-      }, {
-        date: '2016-05-06',
-        name: '王小虎',
-        province: '上海',
-        city: '普陀区',
-        address: '上海市普陀区金沙江路 1518 弄',
-        zip: 200333
-      }, {
-        date: '2016-05-07',
-        name: '王小虎',
-        province: '上海',
-        city: '普陀区',
-        address: '上海市普陀区金沙江路 1518 弄',
-        zip: 200333
-      }, {
-        date: '2016-05-08',
-        name: '王小虎',
-        province: '上海',
-        city: '普陀区',
-        address: '上海市普陀区金沙江路 1518 弄',
-        zip: 200333
-      }, {
-        date: '2016-05-06',
-        name: '王小虎',
-        province: '上海',
-        city: '普陀区',
-        address: '上海市普陀区金沙江路 1518 弄',
-        zip: 200333
-      }, {
-        date: '2016-05-07',
-        name: '王小虎',
-        province: '上海',
-        city: '普陀区',
-        address: '上海市普陀区金沙江路 1518 弄',
-        zip: 200333
-      }, {
-        date: '2016-05-08',
-        name: '王小虎',
-        province: '上海',
-        city: '普陀区',
-        address: '上海市普陀区金沙江路 1518 弄',
-        zip: 200333
-      }, {
-        date: '2016-05-06',
-        name: '王小虎',
-        province: '上海',
-        city: '普陀区',
-        address: '上海市普陀区金沙江路 1518 弄',
-        zip: 200333
-      }, {
-        date: '2016-05-07',
-        name: '王小虎',
-        province: '上海',
-        city: '普陀区',
-        address: '上海市普陀区金沙江路 1518 弄',
-        zip: 200333
-      }],
+      checkedOrg: {},//选中的组织
+      filterText: '',
+      pageindex: 1,
+      pagesize: 30,
+      total: 0,
+      tableData: [],
       value2: '',//时间选择器
       pickerOptions: {
         shortcuts: [{
@@ -353,7 +282,27 @@ export default {
     })
   },
   mounted () {
-    this.$nextTick(this.setTableH);
+    let vm = this;
+    window.addEventListener("resize", vm.setTableH)
+    this.checkedOrg = {
+      PhId: this.$store.state.user.orgid,
+      OCode: this.$store.state.user.orgcode,
+      OName: this.$store.state.user.orgname
+    }
+    this.getData();
+    this.$nextTick(function () {
+      //设置table列表高度
+      this.setTableH();
+
+      //高亮选中的组织
+      this.$refs.orgtree.setCurrentNode({ OCode: this.checkedOrg.OCode })
+    })
+    // this.getOrglist();
+
+  },
+  beforeDestroy () {
+    let vm = this;
+    window.removeEventListener("resize", vm.setTableH)
   },
   methods: {
     refresh () {
@@ -362,31 +311,118 @@ export default {
     },
     getData () {
       this.update = false;
+      let data = {
+        FOcode: this.checkedOrg.OCode,
+        PageIndex: this.pageindex - 1,
+        PageSize: this.pagesize,
+      }
+      PorcessList(data).then(res => {
+        if (res.Status == 'error') {
+          this.$msgBox.error(res.Msg)
+        } else {
+
+          this.tableData = res.Record;
+          this.total = res.totalRows;
+          this.tableData.map(data => { //时间控件已数组接收起止时间参数
+            data.pickerDate1 = [data.StartDt, data.EndDt];
+            data.pickerDate2 = [data.StartDt2, data.EndDt2];
+          })
+        }
+      }).catch(err => {
+        console.log(err)
+        this.$msgBox.error('获取进度控制数据失败!')
+      })
+    },
+    //保存
+    save () {
+
+    },
+
+    //获取用户下的组织
+    // getOrglist () {
+    //   let data = {
+    //     UserId: this.$store.state.user.userid
+    //   }
+    //   DistinctList(data).then(res => {
+    //     console.log(res)
+    //   }).catch(err => {
+    //     console.log(err)
+    //   })
+    // },
+    //切换每页显示数量
+    handleSizeChange (val) {
+      this.pagesize = val;
+      this.getData();
+    },
+    //
+    handleCurrentChange (val) {
+      this.pageindex = val;
+      this.getData();
     },
     //设置table高度
     setTableH () {
       let tableCon = document.querySelector('.progresscontrol .tableCon');
       let h = window.getComputedStyle(tableCon).height;
-      this.tableH = h;
+      this.tableH = parseFloat(h) - 30 + 'px';
+    },
+    //
+    settingShow () {
+      this.dialogVisible = true;
+      this.radio = '1';
+      this.setDate = []
     },
     //批量设置完成
     settingConfirm () {
       let date1, date2;
-      date1 = this.setDate[0].getFullYear() + '-' + (this.setDate[0].getMonth() < 9 ? '0' + (this.setDate[0].getMonth() + 1) : (this.setDate[0].getMonth() + 1)) + '-' + this.setDate[0].getDate();
-      date2 = this.setDate[1].getFullYear() + '-' + (this.setDate[1].getMonth() < 9 ? '0' + (this.setDate[1].getMonth() + 1) : (this.setDate[1].getMonth() + 1)) + '-' + this.setDate[1].getDate();
+      let vm = this;
+      if (this.setDate.length) {
+        date1 = this.setDate[0].getFullYear() + '-' + (this.setDate[0].getMonth() < 9 ? '0' + (this.setDate[0].getMonth() + 1) : (this.setDate[0].getMonth() + 1)) + '-' + this.setDate[0].getDate();
+        date2 = this.setDate[1].getFullYear() + '-' + (this.setDate[1].getMonth() < 9 ? '0' + (this.setDate[1].getMonth() + 1) : (this.setDate[1].getMonth() + 1)) + '-' + this.setDate[1].getDate();
 
-      console.log(date1, date2)
-      this.getData();
-      this.dialogVisible = false;
+      }
+
+
+      let data = {
+        FOcode: this.checkedOrg.OCode,
+        FProcessStatus: this.radio,
+
+        StartDt: date1,
+
+        EndDt: date2,
+
+        StartDt2: date1,
+
+        EndDt2: date2,
+      }
+      ProcessCtrl(data).then(res => {
+
+        if (res.Status == 'success') {
+
+          this.$msgBox.show({
+            content: res.Msg,
+            fn: () => {
+              vm.dialogVisible = false;
+              vm.getData();
+            }
+          });
+
+        } else {
+          this.$msgBox.error(res.Msg);
+        }
+      }).catch(err => {
+        console.log(err)
+        this.$msgBox.error('批量设置失败!')
+      })
+
     },
     //切换组织
-    orgChange () {
-
+    orgChange (val) {
+      if (val.WeChatId != 'false') {
+        this.getData()
+      }
     },
     //组织过滤
     filterNode (value, data) {
-      console.log(value, data)
-      debugger
       if (!value) return true;
       return data.OName.indexOf(value) !== -1;
     },
@@ -427,6 +463,7 @@ export default {
 .progresscontrol {
   .container {
     padding: 1%;
+    bottom: 20px;
   }
   .btnCon {
     .handle {
@@ -468,6 +505,7 @@ export default {
     float: left;
     width: 80%;
     height: 100%;
+
     padding-left: 1%;
     > div {
       // height: 100%;
@@ -507,6 +545,14 @@ export default {
     padding-top: 0;
     padding-bottom: 20px;
   }
+}
+</style>
+<style>
+.progresscontrol .tableCon .el-radio__input.is-disabled + span.el-radio__label {
+  display: none;
+}
+.progresscontrol .tableCon .el-date-editor .el-range-separator {
+  padding: 0;
 }
 </style>
 
