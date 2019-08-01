@@ -1,48 +1,60 @@
 <template>
   <div class="password-input-el">
-    <div class="passwordContainer"
-         @click="focusOnInput"
-         :style="!disabled?'cursor:pointer':'cursor:not-allowed'"></div>
+    <div
+      class="passwordContainer"
+      @click="focusOnInput"
+      :style="!disabled?'cursor:pointer':'cursor:not-allowed'"
+    ></div>
     <template v-if="canSee">
       <template v-for="index in maxlength">
-        <input ref="input"
-               :maxlength="1"
-               type="text"
-               style="float:left"
-               @keyup="keyup(index-1,$event)"
-               oncopy="return false"
-               oncontextmenu="return false"
-               onpaste="return false"
-               oncut="return false"
-               :disabled="disabled"
-               @keydown="keydown" />
+        <input
+          ref="input"
+          :maxlength="1"
+          type="text"
+          style="float:left"
+          @keyup="keyup(index-1,$event)"
+          oncopy="return false"
+          oncontextmenu="return false"
+          onpaste="return false"
+          oncut="return false"
+          :disabled="disabled"
+          @keydown="keydown"
+        />
       </template>
-      <img :style="!disabled?'cursor:pointer':'cursor:not-allowed'"
-           class="eye"
-           src="@/assets/images/zy.png"
-           @click="canSee= !canSee" />
+      <img
+        :style="!disabled?'cursor:pointer':'cursor:not-allowed'"
+        class="eye"
+        src="@/assets/images/zy.png"
+        @click="canSee= !canSee"
+      />
     </template>
     <template v-else>
       <template v-for="index in maxlength">
-        <input ref="input"
-               :maxlength="1"
-               type="text"
-               style="float:left"
-               @keyup="keyup(index-1,$event)"
-               oncopy="return false"
-               oncontextmenu="return false"
-               onpaste="return false"
-               oncut="return false"
-               :disabled="disabled"
-               @keydown="keydown" />
+        <input
+          ref="input"
+          :maxlength="1"
+          type="text"
+          style="float:left"
+          @keyup="keyup(index-1,$event)"
+          oncopy="return false"
+          oncontextmenu="return false"
+          onpaste="return false"
+          oncut="return false"
+          :disabled="disabled"
+          @keydown="keydown"
+        />
       </template>
-      <img :style="!disabled?'cursor:pointer':'cursor:not-allowed'"
-           class="eye"
-           src="@/assets/images/by.png"
-           @click="canSee= !canSee" />
+      <img
+        :style="!disabled?'cursor:pointer':'cursor:not-allowed'"
+        class="eye"
+        src="@/assets/images/by.png"
+        @click="canSee= !canSee"
+      />
     </template>
-    <div class="border"
-         :style="{'transform':this.value.length==this.maxlength?'translateX('+(this.maxlength-1)*30+'px)':'translateX('+this.value.length*30+'px)'}"></div>
+    <div
+      class="border"
+      :style="{'transform':this.value.length==this.maxlength?'translateX('+(this.maxlength-1)*30+'px)':'translateX('+this.value.length*30+'px)'}"
+    ></div>
   </div>
 </template>
 
@@ -68,15 +80,15 @@ export default {
       default: ''
     }
   },
-  data () {
+  data() {
     return {
       canSee: false,
       type: 'text'
     }
   },
-  mounted () { },
+  mounted() {},
   watch: {
-    canSee (newVal) {
+    canSee(newVal) {
       if (newVal) {
         for (let i = 0; i < this.value.length; i++) {
           this.$refs.input[i].value = this.value.substr(i, 1)
@@ -87,7 +99,7 @@ export default {
         }
       }
     },
-    value (newVal, oldVal) {
+    value(newVal, oldVal) {
       console.log(newVal, oldVal)
       if (newVal == '') {
         this.$refs.input.forEach(i => {
@@ -96,10 +108,10 @@ export default {
       }
     }
   },
-  created () { },
-  mounted () { },
+  created() {},
+  mounted() {},
   methods: {
-    keydown (e) {
+    keydown(e) {
       if (e.preventDefault) {
         e.preventDefault()
         console.log('prev')
@@ -108,7 +120,7 @@ export default {
         window.event.returnValue = false
       }
     },
-    focusOnInput () {
+    focusOnInput() {
       console.log('focus')
       if (this.value.length == this.maxlength) {
         this.$refs.input[this.value.length - 1].focus()
@@ -118,12 +130,12 @@ export default {
       this.$refs.input[this.value.length].focus()
       this.$refs.input[this.value.length].setSelectionRange(1, 1)
     },
-    keyup (index, e) {
+    keyup(index, e) {
       var obj = e.target
       var key = e.key
       console.log(key)
       if (obj.value != '') {
-        //  
+        //
         console.log(obj.value)
         if (index == this.maxlength - 1) {
           if (this.value.length == this.maxlength) {
@@ -191,56 +203,64 @@ export default {
         obj.value = ''
       }
     },
-    up (newVal) {
+    up(newVal) {
       this.$emit('update:value', newVal)
     }
   }
 }
 </script>
 
-<style lang='stylus' scoped>
-div.password-input-el
-  display inline-block
-  position relative
-  font-size 14px
-  padding-right 56px
-  .passwordContainer
-    position absolute
-    top 0
-    left 0
-    right 56px
-    bottom 0
-  input
-    box-sizing border-box
-    width 30px
-    height 40px
-    outline none
-    box-shadow none
-    font-family 'PingFang', 'songti', 'Avenir', Helvetica, Arial, sans-serif
-    font-size 16px
-    text-align center
-    border 1px solid #DCDFE6
-    border-right-width 0px
-    &:last-of-type
-      border-right-width 1px
-    &:focus
-      &~.border
-        display block
-        transition all 0.1s linear
-  img
-    width 56px
-    height 40px
-    position absolute
-    z-index 1
-    top 0
-    right 0
-  .border
-    display none
-    width 30px
-    height 40px
-    box-sizing border-box
-    position absolute
-    top 0
-    left 0
-    border 1px solid #409EFF
+<style lang='scss' scoped>
+div.password-input-el {
+  display: inline-block;
+  position: relative;
+  font-size: 14px;
+  padding-right: 56px;
+  .passwordContainer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 56px;
+    bottom: 0;
+  }
+  input {
+    box-sizing: border-box;
+    width: 30px;
+    height: 40px;
+    outline: none;
+    box-shadow: none;
+    font-family: 'PingFang', 'songti', 'Avenir', Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    text-align: center;
+    border: 1px solid #dcdfe6;
+    border-right-width: 0px;
+    &:last-of-type {
+      border-right-width: 1px;
+    }
+    &:focus {
+      & ~ .border {
+        display: block;
+        transition: all 0.1s linear;
+      }
+    }
+  }
+  img {
+    width: 56px;
+    height: 40px;
+    position: absolute;
+    z-index: 1;
+    top: 0;
+    right: 0;
+  }
+  .border {
+    display: none;
+    width: 30px;
+    height: 40px;
+    box-sizing: border-box;
+    position: absolute;
+    top: 0;
+    left: 0;
+    border: 1px solid #409eff;
+  }
+}
 </style>

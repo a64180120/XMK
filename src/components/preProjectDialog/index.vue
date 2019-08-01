@@ -150,7 +150,10 @@
                     ></i>
                   </li>
                   <li class="enable">
-                    <el-input v-model="item.remark" placeholder />
+                    <span
+                      @click="openTextareaDialog(item)"
+                      style="position:absolute;top:0;left:0;right:0;bottom:0;font-size:0.16rem;text-align:left;padding:0 10px;"
+                    >{{item.remark}}</span>
                     <div class="icon active">
                       <div>
                         <img @click="add(item)" src="@/assets/images/jia.png" alt />
@@ -298,13 +301,26 @@
     </el-row>
     <el-dialog
       append-to-body
-      :data="setBuyDialog.data"
       :visible.sync="setBuyDialog.openDialog"
       width="750px"
       :close-on-click-modal="false"
       class="setBuyDialog"
     >
-      <set-buy></set-buy>
+      <set-buy :data="setBuyDialog.data"></set-buy>
+    </el-dialog>
+    <el-dialog
+      append-to-body
+      v-if="textareaDialog.openDialog"
+      :visible.sync="textareaDialog.openDialog"
+      width="750px"
+      :close-on-click-modal="false"
+    >
+      <textarea-dialog v-model="textareaDialog.data">
+        <div slot="btn">
+          <el-button class="btn" size="mini" @click="cancel">取消</el-button>
+          <el-button class="btn" size="mini" @click="save">保存</el-button>
+        </div>
+      </textarea-dialog>
     </el-dialog>
   </section>
 </template>
@@ -313,9 +329,11 @@
 import addBr from './addBr'
 import setBuy from './setBuy'
 import { mapState } from 'vuex'
+import textareaDialog from './textareaDialog.vue'
+
 export default {
   name: 'prerojectnewproject',
-  components: { addBr, setBuy },
+  components: { addBr, setBuy, textareaDialog },
   data() {
     return {
       inp: '',
@@ -339,6 +357,11 @@ export default {
       setBuyDialog: {
         openDialog: false,
         data: null
+      },
+      textareaDialog: {
+        openDialog: false,
+        data: '',
+        item: null
       }
     }
   },
@@ -417,6 +440,18 @@ export default {
       }
       this.setBuyDialog.openDialog = true
       this.setBuyDialog.data = item
+    },
+    openTextareaDialog(item) {
+      this.textareaDialog.openDialog = true
+      this.textareaDialog.data = item.remark
+      this.textareaDialog.item = item
+    },
+    cancel() {
+      this.textareaDialog.openDialog = false
+    },
+    save() {
+      this.textareaDialog.openDialog = false
+      this.textareaDialog.item.remark = this.textareaDialog.data
     }
   },
   computed: {
@@ -774,48 +809,76 @@ export default {
   }
 }
 </style>
-<style lang="stylus">
-.prerojectnewproject
-  .left-box
-    .el-input__inner
-      border 0
-    .el-date-editor.el-range-editor.el-input__inner
-      width 100%
-      padding 0
-      input, i, span
-        font-size 0.14rem
-        line-height 32px
-        height 32px
-      .el-input__icon.el-range__icon.el-icon-date
-        display none
-        background-color #000
-  .right-box
-    ul.textareas li
-      .el-textarea .el-textarea__inner
-        padding-top 0.2rem
-    div.budgetdetail
-      .list
-        &.plan .listBody li .el-date-editor
-          width 100%
-          >input
-            text-align center
-          .el-input__prefix
-            display none
-      .listBody
-        .el-input__inner
-          border 0
-          background-color transparent
-        .money .el-input__inner
-          text-align right
-        .el-radio__label
-          font-size 0.17rem
-    div.jxtarget
-      .line2
-        .el-input__inner
-          border 0
-.setBuyDialog
-  .el-dialog__body
-    padding-top 0
+<style lang="scss">
+.prerojectnewproject {
+  .left-box {
+    .el-input__inner {
+      border: 0;
+    }
+    .el-date-editor.el-range-editor.el-input__inner {
+      width: 100%;
+      padding: 0;
+      input,
+      i,
+      span {
+        font-size: 0.14rem;
+        line-height: 32px;
+        height: 32px;
+      }
+      .el-input__icon.el-range__icon.el-icon-date {
+        display: none;
+        background-color: #000;
+      }
+    }
+    .el-range-separator {
+      width: auto;
+    }
+  }
+  .right-box {
+    ul.textareas li {
+      .el-textarea .el-textarea__inner {
+        padding-top: 0.2rem;
+      }
+    }
+    div.budgetdetail {
+      .list {
+        &.plan .listBody li .el-date-editor {
+          width: 100%;
+          > input {
+            text-align: center;
+          }
+          .el-input__prefix {
+            display: none;
+          }
+        }
+      }
+      .listBody {
+        .el-input__inner {
+          border: 0;
+          background-color: transparent;
+        }
+        .money .el-input__inner {
+          text-align: right;
+        }
+        .el-radio__label {
+          font-size: 0.17rem;
+        }
+      }
+    }
+    div.jxtarget {
+      .line2 {
+        .el-input__inner {
+          border: 0;
+        }
+      }
+    }
+  }
+}
+.setBuyDialog {
+  .el-dialog__body {
+    padding-top: 0;
+  }
+}
 </style>
 
 
