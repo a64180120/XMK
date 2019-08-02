@@ -31,13 +31,19 @@
       <div class="type">
         <p>字典类型</p>
         <ul>
+          <li class="typeTitle">--资金拨付--</li>
           <li @click="selectType(type)"
               :class="{active:type.DicType==selected.DicType}"
               v-for="(type,ind) of typeList"
               :key="ind">{{type.DicName}}</li>
+          <li class="typeTitle">--预算项目管理--</li>
+          <li @click="selectType(type2)"
+              :class="{active:type2.DicType==selected.DicType}"
+              v-for="(type2) of typeList2"
+              :key="type2.DicType">{{type2.DicName}}</li>
         </ul>
       </div>
-      <div v-if="selected.DicType=='PayMethod'"
+      <div v-if="selected.DicType=='PayMethod'||selected.DicType=='PayMethodTwo'||selected.DicType=='TimeLimit'||selected.DicType=='ProjectProper'||selected.DicType=='ProjectLevel'"
            class="content">
         <div class="list">
           <div class="listHead">
@@ -95,10 +101,10 @@
               </li>
               <li class="enable">
                 <div v-show="disabled">
-                  <img v-show="item.Isactive=='0'"
+                  <img v-show="item.Isactive==0"
                        src="@/assets/images/gou.svg"
                        alt="">
-                  <img v-show="item.Isactive=='1'"
+                  <img v-show="item.Isactive==1"
                        src="@/assets/images/cha.svg"
                        alt="">
                 </div>
@@ -226,6 +232,13 @@ export default {
         {          DicType: 'DxbzCode',
           DicName: '对下补助代码维护',
         }],//字典类型列表
+      typeList2: [//字典类型列表2
+        { DicType: 'ProjectLevel', DicName: '项目级别' },
+
+        { DicType: 'ProjectProper', DicName: '项目属性' },
+
+        { DicType: 'TimeLimit', DicName: '续存期限', },
+        { DicType: 'PayMethodTwo', DicName: '支付方式', }],
       typeInfoList: [
       ],//类型信息列表
       deleteList: [],//删除的数据
@@ -354,10 +367,11 @@ export default {
         index + 1,
         0,
         {
-          DicType: "DxbzCode",
+
+          DicType: this.selected.DicType,
           Isactive: 0,
           PersistentState: 1,
-          DicName: '对下补助代码维护',
+          DicName: this.selected.DicName,
           Orgid: this.$store.state.user.orgid,
           Orgcode: this.$store.state.user.orgcode,
           OrgList: []
@@ -373,10 +387,10 @@ export default {
         index + 1,
         0,
         {
-          DicType: "PayMethod",
+          DicType: this.selected.DicType,
           Isactive: 0,
           PersistentState: 1,
-          DicName: '支付方式',
+          DicName: this.selected.DicName,
           Orgid: this.$store.state.user.orgid,
           Orgcode: this.$store.state.user.orgcode,
           OrgList: [{ PhId: this.$store.state.user.orgid, OCode: this.$store.state.user.orgcode, OName: this.$store.state.user.orgname }]
@@ -500,6 +514,7 @@ export default {
     > ul {
       padding: 10px;
       font-size: 0.16rem;
+
       > li {
         height: 30px;
         line-height: 30px;
@@ -516,6 +531,14 @@ export default {
           background: #ff9900;
           color: #fff;
           border-color: #ff9900;
+          cursor: default;
+        }
+      }
+      .typeTitle {
+        border: 0;
+        &:hover {
+          color: inherit;
+          background: none;
           cursor: default;
         }
       }
