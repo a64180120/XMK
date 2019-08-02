@@ -252,7 +252,7 @@
     </div>
     <el-dialog append-to-body
                :visible.sync="addDialog"
-               width="80%"
+               width="90%"
                :close-on-click-modal="false" class="applyDetailDialog">
       <div slot="title" class="applyDetailTitle" >
         <span>新增项目</span>
@@ -514,7 +514,6 @@
             index = key
           }
         }
-        debugger
         return this.table.column[index].fn(scope)
       },
       //切换表格样式

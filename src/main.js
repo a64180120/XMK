@@ -4,9 +4,11 @@ import Vue from 'vue'
 import App from './App'
 import ElementUI from 'element-ui'
 
+import 'element-ui/lib/theme-chalk/index.css'
+import './assets/css/reset.scss'
 import './assets/css/base.scss'
 import './assets/css/table.scss'
-import 'element-ui/lib/theme-chalk/index.css'
+
 import router from './router'
 import store from './store'
 import filter from './filter'
