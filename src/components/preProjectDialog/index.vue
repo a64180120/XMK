@@ -34,16 +34,46 @@
             <el-input size="small" v-model="projSurvey.projName" placeholder="请填写项目名称（必填）"></el-input>
           </li>
           <li>
+            <span>项目级别：</span>
+            <el-select v-model="projSurvey.projLeval" size="small" placeholder="必选">
+              <el-option v-for="(item,idx) in projGroup.projLevalGroup" :key="idx" :label="item.DeftName" :value="item.DeftCode"></el-option>
+            </el-select>
+          </li>
+          <li>
             <span>申报部门：</span>
-            <el-select v-model="projSurvey.projDapart" size="small" placeholder="必选">
-              <el-option v-for="(item,idx) in applyGrop" :label="item.DeftName" :value="item.DeftCode"></el-option>
+            <el-select v-model="projSurvey.applyDepart" size="small" placeholder="必选">
+              <el-option v-for="(item,idx) in projGroup.applyGroup"  :key="idx" :label="item.DeftName" :value="item.DeftCode"></el-option>
+            </el-select>
+          </li>
+          <li>
+            <span>预算部门：</span>
+            <el-select v-model="projSurvey.bugedDepart" size="small" placeholder="必选">
+              <el-option v-for="(item,idx) in projGroup.bugedDepartGroup" :key="idx" :label="item.DeftName" :value="item.DeftCode"></el-option>
+            </el-select>
+          </li>
+          <li>
+            <span>项目属性：</span>
+            <el-select v-model="projSurvey.projAbbtribute" size="small" placeholder="必选">
+              <el-option v-for="(item,idx) in projGroup.projAbbtributeGroup" :key="idx" :label="item.DeftName" :value="item.DeftCode"></el-option>
+            </el-select>
+          </li>
+          <li>
+            <span>存续期限：</span>
+            <el-select v-model="projSurvey.keepTerm" size="small" placeholder="必选">
+              <el-option v-for="(item,idx) in projGroup.keepTermGroup" :key="idx" :label="item.DeftName" :value="item.DeftCode"></el-option>
+            </el-select>
+          </li>
+          <li>
+            <span>支出类别：</span>
+            <el-select v-model="projSurvey.payType" size="small" placeholder="必选">
+              <el-option v-for="(item,idx) in projGroup.payTypeGroup" :key="idx" :label="item.DeftName" :value="item.DeftCode"></el-option>
             </el-select>
           </li>
           <li>
             <span>起止日期：</span>
             <el-date-picker
               size="small"
-              v-model="value1"
+              v-model="projSurvey.sedTime"
               type="daterange"
               range-separator="至"
               start-placeholder="开始日期"
@@ -52,9 +82,8 @@
           </li>
           <li>
             <span>绩效评价：</span>
-            <el-select v-model="inp" size="small" placeholder="必选">
-              <el-option label="是" value="1"></el-option>
-              <el-option label="否" value="0"></el-option>
+            <el-select v-model="projSurvey.xjEvaluate" size="small" placeholder="必选">
+              <el-option v-for="(item,idx) in projGroup.xjEvaluateGroup" :key="idx" :label="item.label" :value="item.value"></el-option>
             </el-select>
           </li>
         </ul>
@@ -74,22 +103,59 @@
         <div class="right-box-container">
           <!-- 项目科研 -->
           <ul v-show="tabindex == 0" class="textareas">
-            <li v-for="i in 4">
+            <li>
               <span>部门职能概述：</span>
               <el-input
                 type="textarea"
                 show-word-limit
                 maxlength="600"
+                :autosize="{minRows:4}"
                 :rows="5"
                 placeholder="至少20字以上，限600字以内（必填）"
-                v-model="textarea"
+                v-model="projScience.departFunction"
+              ></el-input>
+            </li>
+            <li>
+              <span>申报依据：</span>
+              <el-input
+                type="textarea"
+                show-word-limit
+                maxlength="600"
+                :autosize="{minRows:4}"
+                :rows="5"
+                placeholder="至少20字以上，限600字以内（必填）"
+                v-model="projScience.applyBasis"
+              ></el-input>
+            </li>
+            <li>
+              <span>可信性：</span>
+              <el-input
+                type="textarea"
+                show-word-limit
+                maxlength="600"
+                :autosize="{minRows:4}"
+                :rows="5"
+                placeholder="至少20字以上，限600字以内（必填）"
+                v-model="projScience.credible"
+              ></el-input>
+            </li>
+            <li>
+              <span>必要性：</span>
+              <el-input
+                type="textarea"
+                show-word-limit
+                maxlength="600"
+                :autosize="{minRows:4}"
+                :rows="5"
+                placeholder="至少20字以上，限600字以内（必填）"
+                v-model="projScience.necessity"
               ></el-input>
             </li>
           </ul>
           <!-- 预算明细 -->
           <div v-show="tabindex == 1" class="budgetdetail">
             <div style="text-align:left;">
-              <el-checkbox v-model="copyLine">复制行</el-checkbox>
+              <el-checkbox v-model="budgetDetail.copyLine">复制行</el-checkbox>
             </div>
             <div class="list">
               <div class="listHead">
@@ -106,8 +172,8 @@
             </div>
             <div class="list listBodyCon">
               <div class="listBody">
-                <div style="cursor:pointer" v-if="!budgetdetail.length">请添加明细</div>
-                <ul v-else v-for="(item,index) in budgetdetail" :key="index">
+                <div style="cursor:pointer" v-if="!budgetDetail.budgetdetailData.length">请添加明细</div>
+                <ul v-else v-for="(item,index) in budgetDetail.budgetdetailData" :key="index">
                   <li>{{index+1}}</li>
                   <li>
                     <el-input v-model="item.name" placeholder />
@@ -116,7 +182,7 @@
                     <el-input
                       @focus="clearNum(index,$event)"
                       @keyup.native="clearNum(index,$event)"
-                      @blur="filterMoney(item)"
+                      @blur="filterMoney(item,index)"
                       class="money"
                       v-model="item.money"
                       placeholder
@@ -124,16 +190,12 @@
                   </li>
                   <li>
                     <el-select v-model="item.get" size="small" placeholder="必选">
-                      <el-option label="123" value="123"></el-option>
-                      <el-option label="456" value="456"></el-option>
-                      <el-option label="1123" value="1123"></el-option>
+                      <el-option v-for="(item,idx) in budgetDetail.fundSorceGroup" :key="idx" :label="item.label" :value="item.value"></el-option>
                     </el-select>
                   </li>
                   <li>
                     <el-select v-model="item.method" size="small" placeholder="必选">
-                      <el-option label="123" value="123"></el-option>
-                      <el-option label="456" value="456"></el-option>
-                      <el-option label="1123" value="1123"></el-option>
+                      <el-option v-for="(item,idx) in budgetDetail.fundPayGroup" :key="idx" :label="item.label" :value="item.value"></el-option>
                     </el-select>
                   </li>
                   <li>
@@ -148,15 +210,22 @@
                     <el-input v-model="item.remark" placeholder />
                     <div class="icon active">
                       <div>
-                        <img @click="add(item)" src="@/assets/images/jia.png" alt />
+                        <img @click="addBudgetdetail(item)" src="@/assets/images/jia.png" alt />
                       </div>
                       <div>
-                        <img @click="del(index)" src="@/assets/images/jian.png" alt />
+                        <img @click="delBudgetdetail(index)" src="@/assets/images/jian.png" alt />
                       </div>
                     </div>
                   </li>
                 </ul>
               </div>
+            </div>
+            <div class="listBottom">
+              <div class="listBottom-left">
+                <span>总计项目金额：</span>
+                <span class="money">{{TotalAmount | NumFormat}}</span>
+              </div>
+              <div></div>
             </div>
           </div>
           <!-- 实施计划 -->
@@ -319,8 +388,65 @@ export default {
       timeClearable:false,
       //项目概况
       projSurvey:{
-        projName:"",
-        projDapart:''
+        projName:"",//项目名称
+        applyDepart:'',//申报部门
+        projLeval:'',//项目级别
+        bugedDepart:'',//预算部门
+        projAbbtribute:"",//项目属性
+        keepTerm:"",//存续期限
+        payType:"",//支出类别
+        sedTime:'',//起止日期
+        xjEvaluate:""
+      },
+      //项目概况下拉框项内容
+      projGroup:{
+        applyGroup:[],
+        projLevalGroup:[],
+        bugedDepartGroup:[],
+        projAbbtributeGroup:[],
+        keepTermGroup:[],
+        payTypeGroup:[],
+        xjEvaluateGroup:[{
+          label:'是',
+          value:1
+        },{
+          label:'否',
+          value:0
+        }]
+      },
+      //项目科研四大文本框内容
+      projScience:{
+        departFunction:"",//部门职能概述
+        applyBasis:'',//申报依据
+        credible:"",//可信性
+        necessity:""//必要性
+      },
+      //预算明细表数据
+      budgetDetail:{
+        copyLine: false,//复制行
+        budgetdetailData:[{
+          name: '',
+          money: '',
+          get: '',
+          method: '',
+          remark: '',
+          radio: 1
+        }],//预算明细数据
+        fundSorceGroup:[
+          {
+          label:'全总预算拨款-工会经费',
+          value:0
+        },{
+          label:'全总预算拨款-中央财政拨款',
+          value:1
+        },{
+          label:"省总预算拨款-工会经费",
+          value:2
+        },{
+          label:"省总预算拨款-省财政拨款",
+          value:3
+        }],//资金源组
+        fundPayGroup:[]//支付方式下拉项组
       },
       inp: '',
       yearSelect: '',
@@ -354,9 +480,11 @@ export default {
       UserCode: state => state.user.usercode,
       OrgCode: state => state.user.orgcode,
     }),
+    TotalAmount(){
+      return 120000
+    }
   },
   mounted() {
-    console.log(1111111111)
     this.yearSelect = this.year
     this.getDeclareList();
     this.getAllBasicData();
@@ -370,7 +498,7 @@ export default {
         orgid:this.Orgid
       };
       this.getAxios('/GQT/QTSysSetApi/GetDeclareList',data).then(res =>{
-        this.applyGrop = res
+        this.projGroup.applyGroup = res
       })
     },
     getAllBasicData(){
@@ -381,9 +509,38 @@ export default {
       }
       this.getAxios('/GQT/QTSysSetApi/GetAllBasicData',data).then(res=>{
           console.log('=====',res)
+        this.fundSorceGroup.fundPayGroup = res.PayMethods
+        console.log('===',this.fundSorceGroup.fundPayGroup)
+        debugger
       }).catch(err=>{
 
       })
+    },
+    addBudgetdetail(item) {
+      let newItem = Object.assign(
+        {},
+        this.budgetDetail.copyLine
+          ? item
+          : {
+            name: '',
+            money: '',
+            get: '',
+            method: '',
+            remark: '',
+            radio: 1
+          }
+      )
+      this.budgetDetail.budgetdetailData.push(newItem)
+    },
+    delBudgetdetail(index) {
+      console.log(this.budgetDetail.budgetdetailData)
+      if (this.budgetDetail.budgetdetailData.length === 1) {
+        this.budgetDetail.budgetdetailData[0] ={
+
+        }
+      } else {
+        this.budgetDetail.budgetdetailData.splice(index, 1)
+      }
     },
     add(item) {
       let newItem = Object.assign(
@@ -402,10 +559,18 @@ export default {
       this.budgetdetail.push(newItem)
     },
     del(index) {
-      this.budgetdetail.splice(index, 1)
+      console.log(this.budgetdetail)
+      if (this.budgetdetail.length === 1) {
+        this.budgetdetail[0] ={
+
+        }
+      } else {
+        this.budgetdetail.splice(index, 1)
+      }
     },
     clearNum(index, e) {
       console.log(index, obj)
+      debugger
       let obj = e.target
       obj.value = obj.value.replace(/[^\d.]/g, '') //清除“数字”和“.”以外的字符
       obj.value = obj.value.replace(/\.{2,}/g, '.') //只保留第一个. 清除多余的
@@ -423,6 +588,8 @@ export default {
       }
     },
     filterMoney(item) {
+      debugger
+      let value = item.money
       function fil(value, decimals = 2, decPoint = '.', thousandsSep = ',') {
         if (!value) return '0.00'
         value = (value + '').replace(/[^0-9+-Ee.]/g, '')
@@ -539,7 +706,7 @@ export default {
     width: 80%;
     float: right;
     height: 100%;
-    min-height: 600px;
+    min-height: 700px;
     position: relative;
     padding-left: 0.4rem;
     > ul {
@@ -572,7 +739,7 @@ export default {
     .right-box-container {
       border-radius: 0.05rem;
       background: #fff;
-      height: 100%;
+      height: 97%;
       float: right;
       padding: 10px;
       position: absolute;
@@ -581,12 +748,13 @@ export default {
       right: 0;
       bottom: 0;
       box-shadow: 0px 2px 6px #26659b80;
-      overflow: hidden;
+      overflow: auto;
       > ul.textareas {
         height: 100%;
         li {
           position: relative;
-          height: 25%;
+          min-height:10%;
+          margin-bottom: 10px;
           > span {
             position: absolute;
             top: 0;
@@ -608,7 +776,7 @@ export default {
         top: 5px;
         bottom: 10px;
         left: 10px;
-        right: -22px;
+        right: 0px;
         .list {
           position: relative;
           width: 100%;
@@ -695,7 +863,7 @@ export default {
           }
         }
         .listBodyCon {
-          height: 100%;
+          height: 70%;
           padding-bottom: 40px;
           &:after {
             bottom: 38px;
@@ -737,6 +905,21 @@ export default {
           ul:hover {
             .enable > .active {
               display: block;
+            }
+          }
+        }
+        .listBottom{
+          height: 150px;
+          margin-top: -20px;
+          .listBottom-left{
+            font-size: 0.36rem;
+            width: 50%;
+            height: 150px;
+            >span{
+              line-height: 150px;
+            }
+            .money{
+              color: #f44336;
             }
           }
         }
