@@ -18,8 +18,8 @@
         </ul>
       </div>-->
     </div>
-    <div class="tbArea" @scroll="tablescroll" id="scrollTable">
-      <table >
+    <div class="tbArea" @scroll="tablescroll" ref="scrollTable">
+      <table>
         <thead>
           <th>科目编码</th>
           <th>科目名称</th>
@@ -28,21 +28,79 @@
           <th>说明</th>
         </thead>
         <tbody>
-          <tr v-for="item in 100">
-            <td>401</td>
-            <td>会费收入</td>
-            <td class="right">100</td>
-            <td class="right">100</td>
-            <td>asdasjdlkajlj</td>
+          <template v-for="(item,index) in dataList">
+            <tr>
+              <td class="left" style="text-indent: 20px">{{item.code}}</td>
+              <td>{{item.title}}</td>
+              <td class="right">
+                <input :value="item.lastBudget | NumFormat" @focus="clearZero" @keydown="clearNoNum" @blur="countMoney(index,pindex)">
+              </td>
+              <td class="right">
+                <input :value="item.nowBudget | NumFormat" @focus="clearZero" @keydown="clearNoNum" @blur="countMoney(index,pindex)">
+              </td>
+              <td>{{item.descript}}</td>
+            </tr>
+            <template v-for="(child,cindex) in item.children">
+              <tr >
+                <td class="left" style="text-indent: 40px">{{child.code}}</td>
+                <td>{{child.title}}</td>
+                <td class="right">
+                  {{child.lastBudget | NumFormat}}</td>
+                <td class="right">{{child.nowBudget | NumFormat}}</td>
+                <td>{{child.descript}}</td>
+              </tr>
+            </template>
+          </template>
+
+          <tr>
+            <td colspan="2">本年合计收入</td>
+            <td></td>
+            <td></td>
+            <td></td>
           </tr>
-        <tr>
-          <td colspan="2">本年合计收入</td>
-          <td></td>
-          <td></td>
-          <td></td>
-        </tr>
           <tr>
             <td colspan="2">本年合计支出</td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td colspan="2">本年结余</td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td>加:上年结余</td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td>加：本年收回投资</td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td>减：本年投资</td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td>减：本年提取后备金</td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>期末滚存结余</td>
+            <td></td>
             <td></td>
             <td></td>
             <td></td>
@@ -74,6 +132,7 @@
   import {tableScroll} from '@/api/upload'
   //预算说明书组件
   import budgetBook from './budgetBook'
+  import { mapState } from 'vuex'
     export default {
         name: "budget",
       data(){
@@ -88,15 +147,63 @@
             book:{
               visiable:false
             },
+            //表格数据
+            dataList:[
+              {code:'401',title:'会费收入',lastBudget:'0',nowBudget:'0',descript:'',type:'0',children:[]},
+              {code:'402',title:'拨缴经费收入',lastBudget:'0',nowBudget:'0',descript:'',type:'0',children:[]},
+              {code:'403',title:'上级补助收入',lastBudget:'0',nowBudget:'0',descript:'',type:'0',children:[
+                  {code:'40301',title:'回拨补助',lastBudget:'0',nowBudget:'0',descript:'',type:'0',children:[]},
+                  {code:'40302',title:'专项补助',lastBudget:'0',nowBudget:'0',descript:'',type:'0',children:[]},
+                  {code:'40303',title:'超收补助',lastBudget:'0',nowBudget:'0',descript:'',type:'0',children:[]}
+                ]},
+              {code:'501',title:'职工活动支出',lastBudget:'0',nowBudget:'0',descript:'',type:'1',children:[]},
+              {code:'502',title:'维权支出',lastBudget:'0',nowBudget:'0',descript:'',type:'1',children:[]},
+              {code:'503',title:'业务支出',lastBudget:'0',nowBudget:'0',descript:'',type:'1',children:[
+                  {code:'50301',title:'培训费',lastBudget:'0',nowBudget:'0',descript:'',type:'1',children:[]},
+                  {code:'50302',title:'会议费',lastBudget:'0',nowBudget:'0',descript:'',type:'1',children:[]},
+                  {code:'50303',title:'外事费',lastBudget:'0',nowBudget:'0',descript:'',type:'1',children:[]}
+                ]}
+            ],
             //启用编辑
             edit:false
           }
       },
       components:{budgetBook},
+      computed: {
+        ...mapState({
+          orgid: state => state.user.orgid, //id
+          orgcode: state => state.user.orgcode, //编码
+          orgname: state => state.user.orgname, //名称
+          year: state => state.user.year, //年份
+          userid: state => state.user.userid,
+          usercode: state => state.user.usercode,
+          menu: state => state.user.menubutton //权限按钮
+        })
+      },
       mounted(){
-
+        this.getData();
       },
       methods:{
+          /*报表数据获取*/
+          getData:function(){
+            let data={
+              UserId:this.userid,
+              Fkmlb:'0',//(必填，申报种类 1-基本支出0-收入预算)
+              FApproveStatus:'0', //(选填，审批状态0-全部；1-待上报；2-审批中；3-审批通过；4-未通过;5-作废)、
+              Year:this.year,//年度
+              PageIndex:this.pageSearch.pageIndex,
+              PageSize:this.pageSearch.pageSize
+          }
+            this.getAxios('GYS/BudgetMstApi/GetBudgetMstLists', data)
+              .then(res => {
+                console.log(res)
+                res.Record
+              })
+              .catch(err => {
+                this.$msgBox.show('数据获取异常')
+              })
+          },
+        //表头固定
         tablescroll:function(){
           let vm=this;
           tableScroll('scrollTable',vm)
@@ -145,12 +252,47 @@
             }
           })
 
+        },
+        //打印
+        printTable:function(){
+         this.$print( this.$refs.scrollTable );
+        },
+        //导出
+        exportTable:function(){
+
         }
       }
     }
 </script>
 
 <style lang="scss" scoped>
+
+  @media print {
+    @page{
+      margin: 10px;
+    }
+    .tbArea {
+      width: 100%;
+      overflow: auto;
+      padding: 30px;
+      >table{
+        width: 100%;
+        margin-top: 10px;
+        th{
+          border:solid #eee;
+          border-width: 0 1px;
+          height: 38px;
+          background-color: #d3e9f9;
+          position: static;
+        }
+        td{
+          border: 1px solid #eee;
+          height: 38px;
+          padding: 0 10px;
+        }
+      }
+    }
+  }
   .contentPanel{
     height: 100%;
     padding-bottom:85px;
@@ -219,5 +361,4 @@
       }
     }
   }
-
 </style>

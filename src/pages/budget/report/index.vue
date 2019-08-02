@@ -18,13 +18,13 @@
                </div>
                上报预算
              </div>
-             <div @click.stop="printTables" class="handle">
+             <div @click.stop="exportTables" class="handle">
                <div class="topIcon">
                  <img src="@/assets/images/dy.png" alt="">
                </div>
                导出
              </div>
-             <div @click.stop="printTables" class="handle">
+             <div @click.stop="$refs.budget.printTable" class="handle">
                <div class="topIcon">
                  <img src="@/assets/images/dy.png" alt="">
                </div>
@@ -138,16 +138,16 @@
       </div>
       <div class="rightArea">
         <section v-if="navActive==0">
-          <budget ref="budget"></budget>
+          <budget v-if="navActive==0" ref="budget"></budget>
         </section>
         <section v-if="navActive==1">
-          <proexpend></proexpend>
+          <proexpend v-if="navActive==1" ref="proexpend"></proexpend>
         </section>
         <section v-if="navActive==2">
-          <basexpend></basexpend>
+          <basexpend v-if="navActive==2" ref="basexpend"></basexpend>
         </section>
         <section v-if="navActive==3">
-          <income></income>
+          <income v-if="navActive==3" ></income>
         </section>
       </div>
     </div>
@@ -170,8 +170,8 @@
         navList:[
           {title:'年初收支预算汇总表',url:''},
           {title:'项目支出申报',url:''},
-          /*{title:'基本支出申报',url:''},
-          {title:'收入预算申报',url:''}*/
+          {title:'基本支出申报',url:''},
+          {title:'收入预算申报',url:''}
         ],
         //选中的导航
         navActive:0,
