@@ -3,6 +3,7 @@
 import Vue from 'vue'
 import App from './App'
 import ElementUI from 'element-ui'
+
 import './assets/css/base.scss'
 import './assets/css/table.scss'
 import router from './router'
@@ -25,6 +26,7 @@ Vue.use(ajax)
 Vue.use(MessageBox)
 // 注册组件到Vue
 Vue.prototype.$axios = axios
+
 // 注册打印
 Vue.use(Print)
 
