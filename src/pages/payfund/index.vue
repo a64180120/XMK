@@ -1544,7 +1544,7 @@ export default {
 <style scoped>
   .self_hyz .handle {
     display: inline-block;
-    width: 60px;
+    min-width: 60px;
     height: 50px;
     padding: 0px 0;
     cursor: pointer;
