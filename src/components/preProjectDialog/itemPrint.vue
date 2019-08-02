@@ -3,9 +3,6 @@
     <tb-data></tb-data>
   </el-dialog>-->
   <section class="item-print">
-    <div slot="title" class="dialog-title">
-      <span style="float: left">申报表打印</span>
-    </div>
     <el-row>
       <el-col :span="24" style="margin-top:10px;margin-bottom: 10px">
         <slot name="btn">
@@ -17,8 +14,8 @@
       </el-col>
     </el-row>
     <div class="printContent">
-      <h2>广东省总工会预立项项目申报表</h2>
-      <h2 style="text-align:right;">单据号： 201900000201</h2>
+      <h2>{{data.ProjectMst.FProjName}}</h2>
+      <h2 style="text-align:right;">单据号： {{data.ProjectMst.PhId}}</h2>
       <div class="content">
         <div class="list">
           <div class="tableBody">
@@ -36,96 +33,108 @@
               <tbody>
                 <tr>
                   <td>申报部门</td>
-                  <td colspan="2">{{'广东深公会啊'}}</td>
+                  <td colspan="2">{{data.ProjectMst.FDeclarationDept_EXName}}</td>
                   <td>申报日期</td>
-                  <td colspan="2">123</td>
+                  <td colspan="2">{{data.ProjectMst.FDateofDeclaration}}</td>
                   <td>填表人</td>
-                  <td>123</td>
+                  <td>{{data.ProjectMst.FDeclarer}}</td>
                 </tr>
                 <tr>
                   <td>项目名称</td>
-                  <td colspan="5">{{'广东testtttttttttt'}}</td>
+                  <td colspan="5">{{data.ProjectMst.FProjName}}</td>
                   <td>项目编码</td>
-                  <td>123</td>
+                  <td>{{data.ProjectMst.FProjCode}}</td>
                 </tr>
                 <tr>
                   <td>项目属性</td>
-                  <td colspan="7">{{'广东testtttttttttt'}}</td>
+                  <td colspan="7">{{data.ProjectMst.FProjAttr}}</td>
                 </tr>
                 <!-- 项目预算明细行 -->
                 <tr>
-                  <td rowspan="3">项目预算明细</td>
+                  <td v-if="data.ProjectDtlBudgetDtls.length !==0" :rowspan="data.ProjectDtlBudgetDtls.length+2">项目预算明细</td>
+                  <td v-if="data.ProjectDtlBudgetDtls.length ===0" :rowspan="1+2">项目预算明细</td>
                   <td>序号</td>
                   <td colspan="2">明细项目名称</td>
-                  <td>金额</td>
+                  <td>金额(元)</td>
                   <td>支付方式</td>
                   <td colspan="2">测算过程或其他需要说明的事项</td>
                 </tr>
-                <tr>
-                  <td>1</td>
-                  <td class="tltd" colspan="2">明细项目名称1111</td>
-                  <td class="trtd">{{123 | NumFormat}}</td>
-                  <td class="tltd">支付方式1</td>
+                <tr v-if="data.ProjectDtlBudgetDtls.length !==0" v-for="(item,idx) in data.ProjectDtlBudgetDtls">
+                  <td>{{idx+1}}</td>
+                  <td class="tltd" colspan="2">{{item.FName}}</td>
+                  <td class="trtd">{{item.FAmount | NumFormat}}</td>
+                  <td class="tltd">{{item.FPaymentMethod_EXName}}</td>
                   <td
                     colspan="2"
-                  >测算过程或其他需要说明的事项测算过程或其他需要说明的事项测算过程或其他需要说明的事项测算过程或其他需要说明的事项测算过程或其他需要说明的事项测算过程或其他需要说明的事项测算过程或其他需要说明的事项测算过程或其他需要说明的事项测算过程或其他需要说明的事项</td>
+                  >{{item.FOtherInstructions}}</td>
+                </tr>
+                <tr v-if="data.ProjectDtlBudgetDtls.length ===0">
+                  <td class="no-data" colspan="7">暂无数据</td>
                 </tr>
                 <tr>
-                  <td colspan="3">合计</td>
-                  <td class="trtd">{{123 | NumFormat}}</td>
-                  <td></td>
-                  <td colspan="2"></td>
+                  <td colspan="3">合计(元)</td>
+                  <td  colspan="4">{{budgetAmount | NumFormat}}</td>
                 </tr>
                 <!-- 项目资金申请行 -->
                 <tr>
-                  <td rowspan="2">项目资金申请(万元)</td>
-                  <td>1</td>
-                  <td class="tltd" colspan="5">胜总预算拨款</td>
-                  <td class="trtd">{{123 | NumFormat}}</td>
+                  <td v-if="data.ProjectDtlFundAppls.length !==0" :rowspan="data.ProjectDtlFundAppls.length +1">项目资金申请(万元)</td>
+                  <td v-if="data.ProjectDtlFundAppls.length ===0" :rowspan="1 +1">项目资金申请(万元)</td>
+                  <td>序号</td>
+                  <td  colspan="5">资金来源</td>
+                  <td>金额</td>
                 </tr>
-                <tr>
-                  <td colspan="6">资金总额</td>
-                  <td class="trtd">{{123 | NumFormat}}</td>
+                <tr v-if="data.ProjectDtlFundAppls.length !== 0" v-for="(item,idx) in data.ProjectDtlFundAppls">
+                  <td  colspan="1">{{idx + 1}}</td>
+                  <td class="tltd" colspan="5">{{item.FSourceOfFunds_EXName}}</td>
+                  <td class="trtd">{{item.FAmount | NumFormat}}</td>
+                </tr>
+                <tr v-if="data.ProjectDtlFundAppls.length === 0">
+                  <td class="no-data" colspan="7">暂无数据</td>
                 </tr>
                 <!-- 项目实施进度计划 -->
                 <tr>
-                  <td rowspan="2">项目实施进度计划</td>
+                  <td v-if="data.ProjectDtlImplPlans.length !== 0" :rowspan="data.ProjectDtlImplPlans.length+1">项目实施进度计划</td>
+                  <td v-if="data.ProjectDtlImplPlans.length === 0" :rowspan="1+1">项目实施进度计划</td>
                   <td colspan="4">项目实施内容</td>
                   <td colspan="2">开始时间</td>
                   <td colspan="1">完成时间</td>
                 </tr>
-                <tr>
-                  <td class="tltd" colspan="4">工会经费发放</td>
-                  <td colspan="2">2019/1/1</td>
-                  <td colspan="1">2019/2/1</td>
+                <tr v-if="data.ProjectDtlImplPlans.length !== 0" v-for="(item,idx) in data.ProjectDtlImplPlans">
+                  <td class="tltd" colspan="4">{{item.FImplContent}}</td>
+                  <td colspan="2">{{item.FStartDate}}</td>
+                  <td colspan="1">{{item.FEndDate}}</td>
+                </tr>
+                <tr v-if="data.ProjectDtlImplPlans.length === 0">
+                  <td class="no-data" colspan="7">暂无数据</td>
                 </tr>
                 <!-- 绩效目标 -->
                 <tr>
-                  <td rowspan="2">绩效目标</td>
+                  <td v-if="data.ProjectDtlTextContents.length !==0" :rowspan="data.ProjectDtlTextContents.length + 1">绩效目标</td>
+                  <td v-if="data.ProjectDtlTextContents.length ===0" :rowspan="1 + 1">绩效目标</td>
                   <td colspan="4">年度目标</td>
                   <td colspan="3">长期目标</td>
                 </tr>
-                <tr>
-                  <td
-                    colspan="4"
-                    class="tltd"
-                  >年度目标内容年度目标内容年度目标内容年度目标内容年度目标内容年度目标内容年度目标内容年度目标内容年度目标内容年度目标内容年度目标内容年度目标内容</td>
-                  <td class="tltd" colspan="3">长期目标长期目标长期目标长期目标长期目标长期目标长期目标长期目标长期目标长期目标长期目标</td>
+                <tr v-if="data.ProjectDtlTextContents.length !== 0" v-for="(item,idx) in data.ProjectDtlTextContents">
+                  <td colspan="4" class="tltd">{{item.FLTPerformGoal}}</td>
+                  <td class="tltd" colspan="3">{{item.FAnnualPerformGoal}}</td>
+                </tr>
+                <tr v-if="data.ProjectDtlTextContents.length === 0">
+                  <td colspan="7" class="no-data">暂无数据</td>
                 </tr>
                 <!-- 部门领导意见 -->
                 <tr>
                   <td>部门领导意见</td>
-                  <td colspan="4" class="tltd">同意</td>
+                  <td colspan="4">{{'待添加字段'}}</td>
                   <td class="tltd">部门分管领导意见</td>
-                  <td colspan="2" class="tltd">停用</td>
+                  <td colspan="2" class="tltd">{{'待添加字段'}}</td>
                 </tr>
                 <!-- 预算编审小组意见 -->
                 <tr>
                   <td>预算编审小组意见</td>
-                  <td>会议时间</td>
-                  <td colspan="3" class="tltd">20119/1/1</td>
+                  <td colspan="1">会议时间</td>
+                  <td colspan="3" class="tltd">{{data.ProjectMst.FMeetingTime}}</td>
                   <td class="tltd">会议纪要编号</td>
-                  <td colspan="2" class="tltd">110</td>
+                  <td colspan="2" class="tltd">{{data.ProjectMst.FMeetiingSummaryNo}}</td>
                 </tr>
               </tbody>
             </table>
@@ -139,7 +148,14 @@
 <script>
 export default {
   name: 'itemPrint',
-
+  props:{
+    data:{
+      type:Object,
+      default:function () {
+        return {}
+      }
+    }
+  },
   data() {
     return {
       checkAll: false,
@@ -156,6 +172,20 @@ export default {
         8
       ],
       isIndeterminate: false
+    }
+  },
+  computed:{
+    budgetAmount(){
+      let budg =  this.data.ProjectDtlBudgetDtls
+      if (budg.length !== 0 ){
+        let amount = 0
+        for (let key in budg){
+          amount = amount + budg[key].FAmount
+        }
+        return amount
+      }else {
+        return amount
+      }
     }
   },
   methods: {
@@ -196,7 +226,7 @@ export default {
       margin-bottom: 10px;
     }
     .content {
-      height: 350px;
+      height: 670px;
       position: relative;
       .list {
         color: #333;
@@ -261,6 +291,10 @@ export default {
   }
   td .el-checkbox__label {
     color: #333 !important;
+  }
+  .no-data{
+    font-size: 14px;
+    color: #ccc;
   }
 }
 </style>
