@@ -91,7 +91,7 @@
             <div class="listBody">
               <ul>
                 <li>{{1}}</li>
-                <li>{{data.get}}</li>
+                <li>{{data.fundSorce}}</li>
                 <li></li>
               </ul>
             </div>
