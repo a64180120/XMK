@@ -867,15 +867,17 @@ export default {
           if (res.Mst.FPaymethod == 0) {
             this.detail.Mst.FPaymethod = ''
           }
-          this.getAccountList(
-            {
-              OrgPhid: this.detail.Mst.OrgPhid,
-              selectStr: ''
-            },
-            this.detail.Mst.FApproval
-          )
-          this.GetSysSetList()
-          this.getBudgetAccountsList()
+          if (this.accountList.length == 0) {
+            this.getAccountList(
+              {
+                OrgPhid: this.detail.Mst.OrgPhid,
+                selectStr: ''
+              },
+              this.detail.Mst.FApproval
+            )
+          }
+          !this.FPaymethodList.length && this.GetSysSetList()
+          !this.kemuList.length && this.getBudgetAccountsList()
         })
         .catch(err => {
           this.$msgBox.error('获取支付单详情失败！')
