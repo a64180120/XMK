@@ -419,13 +419,12 @@
     </el-row>
     <el-dialog
       append-to-body
-      :data="setBuyDialog.data"
       :visible.sync="setBuyDialog.openDialog"
       width="750px"
       :close-on-click-modal="false"
       class="setBuyDialog"
     >
-      <set-buy></set-buy>
+      <set-buy :data="setBuyDialog.data"></set-buy>
     </el-dialog>
   </section>
 </template>
@@ -718,7 +717,7 @@ export default {
     },
     setBuy(item) {
       console.log(item)
-      if (!item.get) {
+      if (item.fundSorce === '') {
         this.$msgBox.error('请先设置资金来源！')
         return
       }
