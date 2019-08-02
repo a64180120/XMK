@@ -4,16 +4,19 @@
  */
 
 import axios from 'axios'
-import { Message } from 'element-ui'
+
 import store from '@/store'
 import {  baseURL } from './config.js'
-import { Loading } from 'element-ui';
+
+import  Message  from 'element-ui/packages/message'
+import  Loading  from 'element-ui/packages/loading'
 // create an axios instance
 const service = axios.create({
   baseURL: baseURL, 
   timeout: 10000 // 请求超时时间
 })
 let loading;
+
 // 添加请求拦截器，在发送请求之前做些什么(**具体查看axios文档**)--------------------------------------------
 service.interceptors.request.use(
   config => {

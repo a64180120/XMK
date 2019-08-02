@@ -9,7 +9,8 @@
       <div class="btnContainer">
         <div class="leftBtn">
           <el-breadcrumb separator-class="el-icon-arrow-right">
-            <el-breadcrumb-item></el-breadcrumb-item>
+            <el-breadcrumb-item><img src="@/assets/images/g1.png"
+                   alt=""></el-breadcrumb-item>
             <el-breadcrumb-item v-if="item.meta.name"
                                 v-for="(item,n) of $route.matched"
                                 :key="n">{{item.meta.name}}</el-breadcrumb-item>
@@ -284,7 +285,7 @@ export default {
   .btnContainer {
     width: 100%;
     height: 60px;
-    font-size: 0.14rem;
+    font-size: 0.16rem;
     margin-top: 10px;
     position: relative;
     > div {
@@ -324,6 +325,14 @@ export default {
       left: 20px;
       bottom: 13px;
       color: #fff;
+      img {
+        width: 25px;
+        height: 25px;
+      }
+      .el-breadcrumb__item {
+        line-height: 25px;
+        font-size: 0.16rem;
+      }
     }
   }
 }
@@ -439,7 +448,7 @@ export default {
 </style>
 <style lang="scss">
 .handleBtnCon .btnContainer {
-  font-size: 0.14rem;
+  font-size: 0.16rem;
 }
 
 .orgInfo .el-input--suffix .el-input__inner {
@@ -468,6 +477,8 @@ export default {
 }
 .maxH .disableOrg {
   color: $orgdisabled;
+}
+.handleBtnCon .leftBtn {
 }
 </style>
 

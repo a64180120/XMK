@@ -11,7 +11,7 @@
           编辑
         </div>
         <div v-if="update"
-             @click.stop=""
+             @click.stop="save"
              class="handle">
           <div class="topIcon"><img src="@/assets/images/xz.png"
                  alt=""></div>
@@ -90,9 +90,12 @@
                                     type="daterange"
                                     align="right"
                                     unlink-panels
+                                    format='yyyy-MM-dd'
+                                    value-format='yyyy-MM-dd'
                                     range-separator="至"
                                     start-placeholder="开始日期"
                                     end-placeholder="结束日期"
+                                    @change="test"
                                     :picker-options="pickerOptions">
                     </el-date-picker>
                   </div>
@@ -138,9 +141,12 @@
                                     type="daterange"
                                     align="right"
                                     unlink-panels
+                                    format='yyyy-MM-dd'
+                                    value-format='yyyy-MM-dd'
                                     range-separator="至"
                                     start-placeholder="开始日期"
                                     end-placeholder="结束日期"
+                                    @change="test"
                                     :picker-options="pickerOptions">
                     </el-date-picker>
                   </div>
@@ -222,7 +228,7 @@
 <script>
 import topHandle from '@/components/topNav/topHandle'
 import { mapState } from 'vuex'
-import { PorcessList, DistinctList, ProcessCtrl } from '@/api/progresscontrol'
+import { PorcessList, DistinctList, ProcessCtrl, ProcessTime } from '@/api/progresscontrol'
 export default {
   name: 'progresscontrol',
   data () {
@@ -305,6 +311,9 @@ export default {
     window.removeEventListener("resize", vm.setTableH)
   },
   methods: {
+    test (val) {
+      console.log(val)
+    },
     refresh () {
       this.filterText = '';
       this.getData();
@@ -324,8 +333,11 @@ export default {
           this.tableData = res.Record;
           this.total = res.totalRows;
           this.tableData.map(data => { //时间控件已数组接收起止时间参数
-            data.pickerDate1 = [data.StartDt, data.EndDt];
-            data.pickerDate2 = [data.StartDt2, data.EndDt2];
+            this.$set(data, 'pickerDate1', [data.StartDt.slice(0, 10), data.EndDt.slice(0, 10)])
+            this.$set(data, 'pickerDate2', [data.StartDt2, data.EndDt2])
+            console.log(data)
+            //  data.pickerDate1 = [new Date(data.StartDt.slice(0, 10)), new Date(data.EndDt.slice(0, 10))];
+            //   data.pickerDate2 = [new Date(data.StartDt2.slice(0, 10)), new Date(data.EndDt2.slice(0, 10))];
           })
         }
       }).catch(err => {
@@ -335,7 +347,26 @@ export default {
     },
     //保存
     save () {
-
+      this.tableData.map(data => {
+        data.StartDt = data.pickerDate1[0];
+        data.EndDt = data.pickerDate1[1];
+        data.StartDt2 = data.pickerDate2[0];
+        data.EndDt2 = data.pickerDate2[1];
+      })
+      let data = {
+        infodata: this.tableData
+      }
+      ProcessCtrl(data).then(res => {
+        if (res.Status == 'success') {
+          this.$msgBox.show(res.Msg)
+          this.getData();
+        } else {
+          this.$msgBox.error(res.Msg)
+        }
+      }).catch(err => {
+        console.log(err)
+        this.$msgBox.error('保存数据失败!')
+      })
     },
 
     //获取用户下的组织
@@ -394,7 +425,7 @@ export default {
 
         EndDt2: date2,
       }
-      ProcessCtrl(data).then(res => {
+      ProcessTime(data).then(res => {
 
         if (res.Status == 'success') {
 
@@ -548,7 +579,7 @@ export default {
 }
 </style>
 <style>
-.progresscontrol .tableCon .el-radio__input.is-disabled + span.el-radio__label {
+.progresscontrol .tableCon .el-radio span.el-radio__label {
   display: none;
 }
 .progresscontrol .tableCon .el-date-editor .el-range-separator {

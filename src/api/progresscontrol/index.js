@@ -11,6 +11,12 @@ export function DistinctList (param) {
 
 //批量设置
 
-export function ProcessCtrl (param) {
+export function ProcessTime (param) {
   return Vue.prototype.postAxios('/GYS/BudgetProcessCtrl/PostSaveBudgetProcessTime ', param)
+}
+
+//编辑保存
+
+export function ProcessCtrl (param) {
+  return Vue.prototype.postAxios('/GYS/BudgetProcessCtrl/PostSaveBudgetProcessCtrl', param)
 }
