@@ -3,7 +3,7 @@
     <top-handle title="项目管理在线工作平台"
                 @refresh="refresh()">
       <div class="top">
-        <ul >
+        <ul>
           <li class="handle" @click="add()">
             <div>
               <img src="@/assets/images/xz.png">
@@ -28,23 +28,42 @@
             </div>
             <span>复制</span>
           </li>
-          <li class="handle" @click="openAuditfollow()">
+          <li v-if="formList.swatchBtn ==='3'" class="handle" @click="openAuditfollow()">
             <div>
               <img src="@/assets/images/xz.png">
             </div>
             <span>转立项</span>
           </li>
-          <li class="handle" @click="openAuditfollow()">
+          <li v-if="formList.swatchBtn ==='3'" class="handle" @click="openAuditfollow()">
+            <div>
+              <img src="@/assets/images/xz.png">
+            </div>
+            <span>驳回</span>
+          </li>
+          <li v-if="formList.swatchBtn ==='1'" class="handle" @click="openAuditfollow()">
             <div>
               <img src="@/assets/images/sp.png">
             </div>
             <span>送审</span>
           </li>
-          <li class="handle" @click="openAuditfollow()">
+
+          <li v-if="formList.swatchBtn ==='1'" class="handle" @click="openAuditfollow()">
             <div>
               <img src="@/assets/images/ss_d.png">
             </div>
             <span>取消送审</span>
+          </li>
+          <li v-if="formList.swatchBtn ==='2'||formList.swatchBtn ==='2'" class="handle" @click="openAuditfollow()">
+            <div>
+              <img src="@/assets/images/ss_d.png">
+            </div>
+            <span>上报</span>
+          </li>
+          <li v-if="formList.swatchBtn ==='1'||formList.swatchBtn ==='2'" class="handle" @click="openAuditfollow()">
+            <div>
+              <img src="@/assets/images/ss_d.png">
+            </div>
+            <span>作废</span>
           </li>
           <li class="handle" @click="openAuditfollow()">
             <div>
@@ -69,15 +88,15 @@
           <!--搜索栏-->
           <div class="btnArea" style="margin-bottom: 15px">
             <el-form :inline="true">
-              <el-form-item label="部门申报/部门审批：">
-                <el-select v-model="formList.type" size="mini">
-                  <el-option value="1" label="主业类">主业类</el-option>
-                  <el-option value="2" label="企事业类">企事业类</el-option>
-                  <el-option value="3" label="机关行政类">机关行政类</el-option>
+              <el-form-item label="">
+                <el-select v-model="formList.swatchBtn" size="mini">
+                  <el-option value="1" label="不启用"></el-option>
+                  <el-option value="2" label="部门申报"></el-option>
+                  <el-option value="3" label="汇总审批"></el-option>
                 </el-select>
               </el-form-item>
               <el-form-item label="单位：">
-                <el-select v-model="formList.year" size="mini">
+                <el-select v-model="formList.year" size="mini" class="money-dw">
                   <el-option value="2" label="万元">万元</el-option>
                   <el-option value="1" label="元">元</el-option>
                 </el-select>
@@ -362,6 +381,7 @@
         watchTable:false,
         payOutType:[],
         formList:{
+          swatchBtn:'1',
           year:"1",
           payOutType:'0',
           approvalStatus:'0',
@@ -632,6 +652,10 @@
   .applyDetailTitle span{
     margin-left: 10px;
     line-height: 30px;
+  }
+
+  .money-dw>>>  .el-input{
+      width: 80px;
   }
 </style>
 <style lang="scss" scoped>

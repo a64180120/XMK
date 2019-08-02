@@ -515,15 +515,16 @@
     },
     watch:{
       budgetdetailData:{
-          handler(val){
-            console.log('++',arr)
+          handler(val,oldVal){
+            console.log('++',val)
             console.log('--', this.budgetDetail.fundSorceGroup)
-            let arr = val
+            let newArr = val;//改变前的值
+            let oldArr = val;
             let itemArr = this.budgetDetail.fundSorceGroup
-            for (let i in arr){
+            for (let i in newArr){
               for (let j in itemArr){
-                if (arr[i].fundSorce == itemArr[j].value) {
-                  itemArr[j].money = itemArr[j].money + arr[i].money
+                if (newArr[i].fundSorce == itemArr[j].value ) {
+                  itemArr[j].money = itemArr[j].money + newArr[i].money
                 }
               }
             }
@@ -534,8 +535,8 @@
     },
     mounted() {
       this.yearSelect = this.year
-      this.getDeclareList();
-      this.getAllBasicData();
+      // this.getDeclareList();
+      // this.getAllBasicData();
     },
     methods: {
       //获取申报部门集合

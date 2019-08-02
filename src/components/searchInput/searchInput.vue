@@ -1,7 +1,7 @@
 <template>
     <section>
-      <el-input class="input" v-model="inputValue" :size="size" :style="inputStyle" :placeholder="placeholder" @keyup.enter.native="btnClick(inputValue)"></el-input>
-      <el-button class="button" :size="size"  :type="type" :style="btnStyle"  @click="btnClick(inputValue)">{{label}}</el-button>
+        <el-input class="input" v-model="inputValue" :size="size" :style="inputStyle" :placeholder="placeholder" @keyup.enter.native="btnClick(inputValue)"></el-input>
+        <el-button class="button" :size="size"  :type="type" :style="btnStyle"  @click="btnClick(inputValue)">{{label}}</el-button>
     </section>
 </template>
 
