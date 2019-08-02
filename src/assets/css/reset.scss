@@ -95,7 +95,6 @@ html {
   font-size: 100px;
 }
 body {
-
   color: #333;
   height: 100%;
   overflow: hidden;
@@ -160,24 +159,6 @@ body {
   overflow: hidden;
 }
 
-// 项目库
-$primaryColor: #cbcbcb; //主色
-$btnColor: #3294e8; //弹窗按钮颜色
-$listHeader: rgba(158, 158, 158, 0.54); //表头颜色
-$borderColor_ccc: #ccc; //表格线#ccc
-$dangerColor: #ff0000; //红色警告颜色
-$loadColor: #1f6cfc; //蓝色进行中颜色
-$alertColor: #ff9900; //提示颜色
-$waitColor: #67971a;
-$whiteColor: #fff; //白色
-$selectedColor: #e4e4e4;
-$yellowColor: #ff9800; //黄色提示
-$orgdisabled:#ccc;//没权限组织
-$mainfontsize:0.17rem;//图标
-$titlefontsize:0.2rem;//title
-$bigtitlefontsize:0.3rem;//大title
-$iconfontsize:0.14rem;//图标
-$topNavActive:#3294e8;//顶部按钮点击激活颜色
 .msFixed {
   position: fixed;
   position: -ms-page;
@@ -237,8 +218,8 @@ $topNavActive:#3294e8;//顶部按钮点击激活颜色
 .btnContainer .handle {
   margin-left: 20px;
   color: $whiteColor;
-  &:active{
-    background:$topNavActive !important;
+  &:active {
+    background: $topNavActive !important;
   }
 }
 
@@ -287,6 +268,13 @@ body {
   }
 }
 //字体大小
-body,.el-table,.el-dialog,.el-checkbox__label,.el-dialog__body {
-  font-size:$mainfontsize;
+body,
+.el-table,
+.el-dialog,
+.el-checkbox__label,
+.el-dialog__body {
+  font-size: $mainfontsize;
+}
+.topIcon {
+  height: 60%;
 }

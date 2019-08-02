@@ -183,7 +183,7 @@
           </div>
         </div>
       </div>
-      <!-- <usb-key style="height:1px;width:1px;"></usb-key> -->
+      <usb-key style="height:1px;width:1px;"></usb-key>
     </el-dialog>
   </div>
 </template>
@@ -200,7 +200,7 @@ import {
   postUpdatePaymentsState
 } from '@/api/paycenter'
 import md5 from 'js-md5'
-// import usbKey from './usbKey.vue'
+import usbKey from './usbKey.vue'
 import { mapState } from 'vuex'
 import { SearchUSB } from '@/api/paycenter'
 import passwordInput from '@/components/passwordInput/index.vue'
@@ -208,7 +208,7 @@ import passwordInput from '@/components/passwordInput/index.vue'
 export default {
   name: 'mergePay',
   components: {
-    // usbKey,
+    usbKey,
     passwordInput
   },
   props: {
@@ -328,83 +328,83 @@ export default {
     },
     // 进入支付页面
     enterPassword() {
-      this.postPayPsd()
+      // this.postPayPsd()
       // 检测加密狗状态
-      // PostPayUsbKeyIsActive({
-      //   uid: this.userid,
-      //   orgid: this.orgid
-      // })
-      //   .then(res => {
-      //     if (res.Status == 'error') {
-      //       this.$msgBox.error(res.Msg)
-      //       return
-      //     }
-      //     console.log(res)
-      //     if (res.IsActive == true) {
-      //       // 需要加密锁
-      //       this.$nextTick(() => {
-      //         var re = SearchUSB()
-      //         if (re.Status == 'error') {
-      //           // 加密锁读取失败
-      //           if (re.retuCode == 1) {
-      //             this.$alert(
-      //               `加密锁驱动程序未安装！点
-      //       <a style='cursor:pointer;' href="${window.global.UsbKeyUrl +
-      //         'custom2/Resource/UsbKeyEnvSetup.exe'}">客户端安装程序</a>，下载,运行该程序，然后重启电脑即可。`,
-      //               '提示',
-      //               {
-      //                 confirmButtonText: '关闭',
-      //                 cancelBtnText: '关闭',
-      //                 dangerouslyUseHTMLString: true,
-      //                 type: 'warning'
-      //               }
-      //             )
-      //               .then(() => {})
-      //               .catch(() => {})
-      //             return
-      //           } else if (re.retuCode == -1) {
-      //             this.$alert(
-      //               `无法下载新中大客户端控件！请在 "Internet选项"中降低安全级别，使得ActiveX控件允许被下载。点<a style='cursor:pointer;' href="${window
-      //                 .global.UsbKeyUrl +
-      //                 'custom2/Resource/UsbKeyEnvSetup.exe'}">客户端安装程序</a>，下载,运行该程序，然后重启电脑即可。`,
-      //               '提示',
-      //               {
-      //                 confirmButtonText: '关闭',
-      //                 cancelBtnText: '关闭',
-      //                 dangerouslyUseHTMLString: true,
-      //                 type: 'warning'
-      //               }
-      //             )
-      //               .then(() => {})
-      //               .catch(() => {})
-      //             return
-      //           }
-      //           this.$msgBox.error('加密锁读取失败：' + re.Msg)
-      //           return
-      //         } else {
-      //           // 加密锁读取成功
-      //           // alert('加密锁suc' + re.id)
-      //           if (res.LockKeyIsValid == false) {
-      //             this.$msgBox.error('加密锁无法获取！')
-      //             return
-      //           } else if (re.id != res.LockKey) {
-      //             this.$msgBox.error('请确认是否当前用户的加密锁！')
-      //             return
-      //           } else {
-      //             // this.$msgBox.show('加密锁通过验证，将进入支付页面')
-      //             this.postPayPsd()
-      //           }
-      //         }
-      //       })
-      //     } else {
-      //       // this.$msgBox.show('用户未启用加密锁，将进入支付页面')
-      //       this.postPayPsd()
-      //     }
-      //   })
-      //   .catch(err => {
-      //     console.log(err)
-      //     this.$msgBox.error('获取加密锁状态失败！')
-      //   })
+      PostPayUsbKeyIsActive({
+        uid: this.userid,
+        orgid: this.orgid
+      })
+        .then(res => {
+          if (res.Status == 'error') {
+            this.$msgBox.error(res.Msg)
+            return
+          }
+          console.log(res)
+          if (res.IsActive == true) {
+            // 需要加密锁
+            this.$nextTick(() => {
+              var re = SearchUSB()
+              if (re.Status == 'error') {
+                // 加密锁读取失败
+                if (re.retuCode == 1) {
+                  this.$alert(
+                    `加密锁驱动程序未安装！点<a style='cursor:pointer;' href="${window
+                      .global.UsbKeyUrl +
+                      'custom2/Resource/UsbKeyEnvSetup.exe'}">客户端安装程序</a>，下载,运行该程序，然后重启电脑即可。`,
+                    '提示',
+                    {
+                      confirmButtonText: '关闭',
+                      cancelBtnText: '关闭',
+                      dangerouslyUseHTMLString: true,
+                      type: 'warning'
+                    }
+                  )
+                    .then(() => {})
+                    .catch(() => {})
+                  return
+                } else if (re.retuCode == -1) {
+                  this.$alert(
+                    `无法下载新中大客户端控件！请在 "Internet选项"中降低安全级别，使得ActiveX控件允许被下载。点<a style='cursor:pointer;' href="${window
+                      .global.UsbKeyUrl +
+                      'custom2/Resource/UsbKeyEnvSetup.exe'}">客户端安装程序</a>，下载,运行该程序，然后重启电脑即可。`,
+                    '提示',
+                    {
+                      confirmButtonText: '关闭',
+                      cancelBtnText: '关闭',
+                      dangerouslyUseHTMLString: true,
+                      type: 'warning'
+                    }
+                  )
+                    .then(() => {})
+                    .catch(() => {})
+                  return
+                }
+                this.$msgBox.error('加密锁读取失败：' + re.Msg)
+                return
+              } else {
+                // 加密锁读取成功
+                // alert('加密锁suc' + re.id)
+                if (res.LockKeyIsValid == false) {
+                  this.$msgBox.error('加密锁无法获取！')
+                  return
+                } else if (re.id != res.LockKey) {
+                  this.$msgBox.error('请确认是否当前用户的加密锁！')
+                  return
+                } else {
+                  // this.$msgBox.show('加密锁通过验证，将进入支付页面')
+                  this.postPayPsd()
+                }
+              }
+            })
+          } else {
+            // this.$msgBox.show('用户未启用加密锁，将进入支付页面')
+            this.postPayPsd()
+          }
+        })
+        .catch(err => {
+          console.log(err)
+          this.$msgBox.error('获取加密锁状态失败！')
+        })
     },
     beforeClose(done) {
       if (this.showMergePay) {

@@ -244,7 +244,9 @@
                   </div>
                 </td>
                 <td>
-                  <p>{{item.Mst.RefbillName}}</p>
+                  <el-tooltip :content="item.Mst.RefbillName">
+                    <p>{{item.Mst.RefbillName}}</p>
+                  </el-tooltip>
                 </td>
                 <td>
                   <el-tooltip :content="item.Mst.NgInsertDt.replace('T',' ')">
@@ -279,6 +281,7 @@
                   <div v-else>————</div>
                 </td>
                 <td style="position: relative;">
+                  <p v-if="item.Mst.FDelete==1" style="width:100%;height:100%;"></p>
                   <div
                     v-if="item.Mst.FDelete==1"
                     style="width:60px;height:30px;position: absolute;top:50%;left:50%;margin-top:-15px;margin-left:-30px;"

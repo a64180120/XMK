@@ -116,7 +116,9 @@
 .dataTable_proBuildProject .el-table-column--selection .cell{
   padding: 0;
 }
-
+.dataTable_proBuildProject .el-table__header thead tr .is-leaf .cell{
+  padding: 0;
+}
 
 /*表格每一行样式*/
 .itemTable_proBuildProject .row-class-name{
@@ -144,7 +146,7 @@
   padding: 5px 0;
 }
 .itemTable_proBuildProject .row-class-name td .cell{
-  width: 100%;;overflow: hidden;word-wrap: break-word;word-break: break-all
+  width: 100%;;overflow: hidden;word-wrap: break-word;word-break: break-all;padding: 0;
 }
 /*调整表格每一行间距*/
 .itemTable_proBuildProject .el-table__body{
@@ -318,5 +320,8 @@
   padding: 0;
 }
 .itemTable_proBuildProject .el-table-column--selection .cell{
+  padding: 0;
+}
+.itemTable_proBuildProject .el-table__header thead tr .is-leaf .cell{
   padding: 0;
 }

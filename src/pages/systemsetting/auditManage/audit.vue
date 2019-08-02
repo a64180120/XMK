@@ -837,7 +837,7 @@ export default {
   }
 }
 .tableBody {
-  top: 50px;
+  top: 60px;
 }
 .tableBody table {
   width: 100%;
