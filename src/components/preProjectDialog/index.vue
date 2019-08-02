@@ -446,7 +446,7 @@ export default {
         }
         return s.join(dec)
       }
-      item.money = parseInt(item.moneyfil) ? item.money : ''
+      item.money = fil(item.money)
     },
     setBuy(item) {
       console.log(item)
