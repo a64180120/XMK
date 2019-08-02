@@ -1648,7 +1648,7 @@ export default {
   }
 
   .container {
-    min-width: 1366px;
+    min-width: 1500px;
   }
   .iconMsg {
     position: absolute;
@@ -1671,6 +1671,10 @@ export default {
   .deleteRow,.deleteRow .atype {
     cursor: not-allowed;
     color: #ccc !important;
+  }
+  td p{
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 </style>
 <style>
