@@ -31,7 +31,17 @@
         <ul>
           <li>
             <span>项目名称：</span>
-            <el-input size="small" v-model="projSurvey.projName" placeholder="请填写项目名称（必填）"></el-input>
+            <div
+              @click="openTextarea(projSurvey,'projName')"
+              class="opentextarea"
+              style="width:100%;text-align:left;line-height:32px;padding-left:15px;"
+            >
+              <el-tooltip v-if="projSurvey.projName" :content="projSurvey.projName">
+                <span style="font-size:0.14rem;">{{projSurvey.projName}}</span>
+              </el-tooltip>
+              <span v-else style="font-size:0.14rem;color:#c0c4cc;">请填写项目名称（必填）</span>
+            </div>
+            <!-- <el-input size="small" v-model="projSurvey.projName" placeholder="请填写项目名称（必填）"></el-input> -->
           </li>
           <li>
             <span>项目级别：</span>
@@ -252,7 +262,12 @@
                     ></i>
                   </li>
                   <li class="enable">
-                    <el-input v-model="item.remark" placeholder />
+                    <!-- <el-input v-model="item.remark" placeholder /> -->
+                    <p
+                      class="opentextarea"
+                      style
+                      @click="openTextarea(item,'remark')"
+                    >{{item.remark}}</p>
                     <div class="icon active">
                       <div>
                         <img @click="addBudgetdetail(item)" src="@/assets/images/jia.png" alt />
@@ -426,18 +441,28 @@
     >
       <set-buy :data="setBuyDialog.data"></set-buy>
     </el-dialog>
+    <el-dialog
+      append-to-body
+      :visible.sync="textareaDialogData.openDialog"
+      width="750px"
+      :close-on-click-modal="false"
+      class="setBuyDialog"
+    >
+      <textarea-dialog v-if="textareaDialogData.openDialog" :data="textareaDialogData"></textarea-dialog>
+    </el-dialog>
   </section>
 </template>
 
 <script>
 import addBr from './addBr'
 import setBuy from './setBuy'
+import textareaDialog from './textareaDialog'
 import { mapState } from 'vuex'
 
 export default {
   name: 'prerojectnewproject',
   props: {},
-  components: { addBr, setBuy },
+  components: { addBr, setBuy, textareaDialog },
   data() {
     return {
       timeClearable: false,
@@ -538,7 +563,12 @@ export default {
         openDialog: false,
         data: null
       },
-      applyGrop: []
+      applyGrop: [],
+      textareaDialogData: {
+        openDialog: false,
+        data: null,
+        property: ''
+      }
     }
   },
   computed: {
@@ -723,6 +753,13 @@ export default {
       }
       this.setBuyDialog.openDialog = true
       this.setBuyDialog.data = item
+    },
+    openTextarea(item, property) {
+      this.textareaDialogData.data = item
+      this.textareaDialogData.property = property
+      this.$nextTick(() => {
+        this.textareaDialogData.openDialog = true
+      })
     }
   }
 }
@@ -1024,7 +1061,15 @@ export default {
           ul li:not(:first-of-type) {
             font-size: 0;
           }
-
+          li .opentextarea {
+            position: absolute;
+            top: 0;
+            left: 15px;
+            bottom: 0;
+            right: 0;
+            font-size: $mainfontsize;
+            text-align: left;
+          }
           .enable {
             position: relative;
 

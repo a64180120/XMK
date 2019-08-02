@@ -20,7 +20,8 @@
     </div>
     <el-col :span="24" style="margin-top:10px;margin-bottom: 10px">
       <div class="top-btn" style="float:right;">
-        <slot name="btn"></slot>
+        <el-button class="btn" size="mini" @click="btn(0)">取消</el-button>
+        <el-button class="btn" size="mini" @click="btn(1)">保存</el-button>
       </div>
     </el-col>
   </section>
@@ -31,21 +32,27 @@ export default {
   name: 'textareaDialog',
   props: {
     data: {
-      type: String
+      type: Object,
+      required: true
     }
   },
   data() {
     return {
-      textarea: ''
+      textarea: '',
+      oldtextarea: ''
     }
   },
   mounted() {
     console.log(this.data)
-    this.textarea = this.data
+    this.textarea = this.data.data[this.data.property]
+    this.oldtextarea = this.data.data[this.data.property]
   },
-  watch: {
-    textarea(val) {
-      this.$emit('update:data', val)
+  methods: {
+    btn(type) {
+      this.data.data[this.data.property] = type
+        ? this.textarea
+        : this.oldtextarea
+      this.data.openDialog = false
     }
   }
 }
