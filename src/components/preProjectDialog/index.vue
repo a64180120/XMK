@@ -225,7 +225,7 @@
                   </li>
                   <li>
                     <el-input
-                      @focus="clearNum(item,$event)"
+                      @focus="clearNum(item,$event,1)"
                       @keyup.native="clearNum(item,$event)"
                       @blur="filterMoney(item,index)"
                       class="money"
@@ -697,7 +697,7 @@ export default {
         this.budgetdetail.splice(index, 1)
       }
     },
-    clearNum(item, e) {
+    clearNum(item, e,isFocus) {
       console.log(item, obj)
       let obj = e.target
       obj.value = obj.value.replace(/[^\d.]/g, '') //清除“数字”和“.”以外的字符
@@ -711,7 +711,7 @@ export default {
         //以上已经过滤，此处控制的是如果没有小数点，首位不能为类似于 01、02的金额
         obj.value = parseFloat(obj.value)
       }
-      if (parseInt(obj.value) == '') {
+      if (parseInt(obj.value) == '' && isFocus) {
         obj.value = ''
       }
       item.money = obj.value
