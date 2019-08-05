@@ -82,8 +82,8 @@
               <el-option
                 v-for="(item,idx) in projGroup.projAbbtributeGroup"
                 :key="idx"
-                :label="item.DeftName"
-                :value="item.DeftCode"
+                :label="item.TypeName"
+                :value="item.TypeCode"
               ></el-option>
             </el-select>
           </li>
@@ -483,7 +483,12 @@ export default {
         applyGroup: [],
         projLevalGroup: [],
         bugedDepartGroup: [],
-        projAbbtributeGroup: [],
+        projAbbtributeGroup: [
+          {
+            TypeCode:'001',
+            TypeName:'属性1'
+          }
+        ],
         keepTermGroup: [],
         payTypeGroup: [],
         xjEvaluateGroup: [

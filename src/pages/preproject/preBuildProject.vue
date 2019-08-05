@@ -83,7 +83,7 @@
     </top-handle>
 
     <div>
-      <div class="container content-body">
+      <div class="container content-body" style="min-width: 1300px;overflow: auto">
         <div class="formArea">
           <!--搜索栏-->
           <div class="btnArea" style="margin-bottom: 15px">
