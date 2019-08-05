@@ -20,7 +20,8 @@
     </div>
     <el-col :span="24" style="margin-top:10px;margin-bottom: 10px">
       <div class="top-btn" style="float:right;">
-        <slot name="btn"></slot>
+        <el-button class="btn" size="mini" @click="close(0)">取消</el-button>
+        <el-button class="btn" size="mini" @click="close(1)">保存</el-button>
       </div>
     </el-col>
   </section>
@@ -36,16 +37,20 @@ export default {
   },
   data() {
     return {
-      textarea: ''
+      textarea: '',
+      oldTextarea: ''
     }
   },
   mounted() {
-    console.log(this.data)
-    this.textarea = this.data
+    this.textarea = this.data.data[this.data.property]
+    this.oldTextarea = this.data.data[this.data.property]
   },
-  watch: {
-    textarea(val) {
-      this.$emit('update:data', val)
+  methods: {
+    close(type) {
+      this.data.data[this.data.property] = type
+        ? this.textarea
+        : this.oldTextarea
+      this.data.openDialog = false
     }
   }
 }

@@ -263,11 +263,11 @@
                   </li>
                   <li class="enable">
                     <!-- <el-input v-model="item.remark" placeholder /> -->
-                    <p
-                      class="opentextarea"
-                      style
-                      @click="openTextarea(item,'remark')"
-                    >{{item.remark}}</p>
+                    <p class="opentextarea" style @click="openTextarea(item,'remark')">
+                      <el-tooltip v-if="item.remark" :content="item.remark">
+                        <span style="display: inline-block;max-width: 100%;">{{item.remark}}</span>
+                      </el-tooltip>
+                    </p>
                     <div class="icon active">
                       <div>
                         <img @click="addBudgetdetail(item)" src="@/assets/images/jia.png" alt />
@@ -1036,7 +1036,7 @@ export default {
 
           &.plan ul li {
             &:nth-of-type(2) {
-              width: 40%;
+              width: 44%;
             }
 
             &:nth-of-type(3) {
@@ -1071,9 +1071,12 @@ export default {
             top: 0;
             left: 15px;
             bottom: 0;
-            right: 0;
+            right: 15px;
             font-size: $mainfontsize;
             text-align: left;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
           }
           .enable {
             position: relative;
