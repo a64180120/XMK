@@ -163,13 +163,13 @@
           <table>
             <colgroup>
               <col width="7%" />
+              <col width="18%" />
+              <col width="15%" />
               <col width="15%" />
               <col width="13%" />
+              <col width="16%" />
               <col width="13%" />
-              <col width="13%" />
-              <col width="13%" />
-              <col width="13%" />
-              <col width="13%" />
+              <col width="15%" />
               <col width="10%" />
               <col width="10%" />
               <col width="13%" />
@@ -196,13 +196,13 @@
           <table v-if="tableData.length" ref="printArea">
             <colgroup>
               <col width="7%" />
+              <col width="18%" />
+              <col width="15%" />
               <col width="15%" />
               <col width="13%" />
+              <col width="16%" />
               <col width="13%" />
-              <col width="13%" />
-              <col width="13%" />
-              <col width="13%" />
-              <col width="13%" />
+              <col width="15%" />
               <col width="10%" />
               <col width="10%" />
               <col width="13%" />
@@ -217,7 +217,9 @@
                   <el-checkbox v-model="item.Mst.checked" @change="handleCheckOne(item)">{{index+1}}</el-checkbox>
                 </td>
                 <td @click.stop="payNav('payListData',item)" class="atype">
-                  <span>{{item.Mst.FCode}}</span>
+                  <el-tooltip :content="item.Mst.FCode">
+                    <span>{{item.Mst.FCode}}</span>
+                  </el-tooltip>
                 </td>
                 <td>
                   <div style="text-align:right;">{{item.Mst.FAmountTotal | NumFormat}}</div>
@@ -1028,7 +1030,7 @@ export default {
     padding: 0 15px;
   }
   .container {
-    min-width: 1400px;
+    min-width: 1500px;
     .btns {
       position: absolute;
       top: 8px;
