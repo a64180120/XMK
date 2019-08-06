@@ -14,7 +14,7 @@
     <div>
       <el-row>
         <el-col :span="24">
-          <el-input type="textarea" show-word-limit maxlength="600" :rows="5" v-model="textarea"></el-input>
+          <el-input type="textarea" show-word-limit :maxlength="maxWord" :rows="5" v-model="textarea"></el-input>
         </el-col>
       </el-row>
     </div>
@@ -32,7 +32,11 @@ export default {
   name: 'textareaDialog',
   props: {
     data: {
-      type: String
+      type: Object
+    },
+    maxWord:{
+      type: String,
+      default:600
     }
   },
   data() {

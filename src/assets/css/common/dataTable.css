@@ -295,9 +295,12 @@
 }
 
 .itemTable_proBuildProject .context ul li{
-  width: 25%;
+  width: 20%;
   float: left;
   text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .itemTable_proBuildProject .context ul li span{
   height: 30px;
