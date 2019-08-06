@@ -225,7 +225,7 @@
         </el-radio-group>
       <span slot="footer"  style="text-align: center">
           <button class="cancelBtn"  @click="orgDetailType=false">取消</button>
-          <button class="confirmBtn" style="margin-left: 30px" @click="confirmProDetail">保存</button>
+          <button class="confirmBtn" style="margin-left: 30px" @click="confirmProDetail(false)">保存</button>
         </span>
     </el-dialog>
     <!--送审-->
@@ -835,6 +835,7 @@
         if(!type){
           this.orgDetailType=false;
         }
+        console.log(this.choosedPro);
         this.PaymentXmDtl[this.choosedPro[0]].PaymentDtls[this.choosedPro[1]].BudgetdtlPhid=this.choosedProject.PhId;
         this.PaymentXmDtl[this.choosedPro[0]].PaymentDtls[this.choosedPro[1]].BudgetdtlName=this.choosedProject.FName;
         this.PaymentXmDtl[this.choosedPro[0]].PaymentDtls[this.choosedPro[1]].QtKmdm=this.choosedProject.FBudgetAccounts;
@@ -850,7 +851,7 @@
         }
         this.orgDetailType=true;
 
-        this.getProDetail(f);
+        this.getProDetail(f,true);
 
         this.choosedPro=[f,s];
       },
@@ -925,7 +926,7 @@
         })
       },
       //获取明细项目列表
-      getProDetail:function(f){
+      getProDetail:function(f,type){
         let param={
           id:this.PaymentXmDtl[f].PaymentXm.XmMstPhid,
           orgid:this.orgid
@@ -934,8 +935,10 @@
           this.prodataList=res.Dtl;
           if(res.Dtl.length==1){
             this.choosedProject=res.Dtl[0];
-            this.choosedPro=[f,0]
-            this.confirmProDetail(true);
+            //this.choosedPro=[f,0]
+            if(!type){
+              this.confirmProDetail(true);
+            }
           }
         }).catch(err=>{
           console.log(err);
