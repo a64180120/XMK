@@ -6,14 +6,14 @@
          <!-- 预算按钮事件 -->
          <template v-if="navActive==0">
            <template v-if="!edit">
-             <div @click.stop="edit=true" class="handle">
+             <div @click.stop="editFuc" class="handle">
                <div class="topIcon">
                  <img src="@/assets/images/dy.png" alt="">
                </div>
                编辑
              </div>
-             <div @click.stop="$refs.budget.reportBudget" class="handle">
-               <div class="topIcon">
+             <div @click.stop="$refs.budget.reportBudget" class="handle" style="width:80px">
+               <div class="topIcon" >
                  <img src="@/assets/images/dy.png" alt="">
                </div>
                上报预算
@@ -44,7 +44,7 @@
                </div>
                保存并上报
              </div>
-             <div @click.stop="edit=false" class="handle">
+             <div @click.stop="editFuc" class="handle">
                <div class="topIcon">
                  <img src="@/assets/images/dy.png" alt="">
                </div>
@@ -185,6 +185,10 @@
     methods:{
       getData:function(){
 
+      },
+      editFuc: function() {
+        this.edit=!this.edit;
+        this.$refs.budget.editFuc();
       }
     }
   }
