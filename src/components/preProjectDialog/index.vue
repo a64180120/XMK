@@ -45,9 +45,9 @@
           </li>
           <li>
             <span>项目级别：</span>
-            <el-select v-model="projSurvey.projLeval" size="small" placeholder="必选">
+            <el-select v-model="projSurvey.ProjectLevels" size="small" placeholder="必选">
               <el-option
-                v-for="(item,idx) in projGroup.projLevalGroup"
+                v-for="(item,idx) in projGroup.ProjectLevelsGroup"
                 :key="idx"
                 :label="item.DeftName"
                 :value="item.DeftCode"
@@ -78,20 +78,20 @@
           </li>
           <li>
             <span>项目属性：</span>
-            <el-select v-model="projSurvey.projAbbtribute" size="small" placeholder="必选">
+            <el-select v-model="projSurvey.ProjectPropers" size="small" placeholder="必选">
               <el-option
-                v-for="(item,idx) in projGroup.projAbbtributeGroup"
+                v-for="(item,idx) in projGroup.ProjectPropersGroup"
                 :key="idx"
-                :label="item.DeftName"
-                :value="item.DeftCode"
+                :label="item.TypeName"
+                :value="item.TypeCode"
               ></el-option>
             </el-select>
           </li>
           <li>
             <span>存续期限：</span>
-            <el-select v-model="projSurvey.keepTerm" size="small" placeholder="必选">
+            <el-select v-model="projSurvey.TimeLimits" size="small" placeholder="必选">
               <el-option
-                v-for="(item,idx) in projGroup.keepTermGroup"
+                v-for="(item,idx) in projGroup.TimeLimitsGroup"
                 :key="idx"
                 :label="item.DeftName"
                 :value="item.DeftCode"
@@ -100,9 +100,9 @@
           </li>
           <li>
             <span>支出类别：</span>
-            <el-select v-model="projSurvey.payType" size="small" placeholder="必选">
+            <el-select v-model="projSurvey.ExpenseCategories" size="small" placeholder="必选">
               <el-option
-                v-for="(item,idx) in projGroup.payTypeGroup"
+                v-for="(item,idx) in projGroup.ExpenseCategoriesGroup"
                 :key="idx"
                 :label="item.DeftName"
                 :value="item.DeftCode"
@@ -225,7 +225,7 @@
                   </li>
                   <li>
                     <el-input
-                      @focus="clearNum(item,$event)"
+                      @focus="clearNum(item,$event,1)"
                       @keyup.native="clearNum(item,$event)"
                       @blur="filterMoney(item,index)"
                       class="money"
@@ -234,9 +234,9 @@
                     />
                   </li>
                   <li>
-                    <el-select v-model="item.fundSorce" size="small" placeholder="必选">
+                    <el-select v-model="item.SourceOfFunds" size="small" placeholder="必选">
                       <el-option
-                        v-for="(item,idx) in budgetDetail.fundSorceGroup"
+                        v-for="(item,idx) in budgetDetail.SourceOfFundsGroup"
                         :key="idx"
                         :label="item.label"
                         :value="item.value"
@@ -263,11 +263,11 @@
                   </li>
                   <li class="enable">
                     <!-- <el-input v-model="item.remark" placeholder /> -->
-                    <p
-                      class="opentextarea"
-                      style
-                      @click="openTextarea(item,'remark')"
-                    >{{item.remark}}</p>
+                    <p class="opentextarea" style @click="openTextarea(item,'remark')">
+                      <el-tooltip v-if="item.remark" :content="item.remark">
+                        <span style="display: inline-block;max-width: 100%;">{{item.remark}}</span>
+                      </el-tooltip>
+                    </p>
                     <div class="icon active">
                       <div>
                         <img @click="addBudgetdetail(item)" src="@/assets/images/jia.png" alt />
@@ -290,11 +290,11 @@
               <div class="listBottom-right">
                 <span>其中:</span>
                 <ul>
-                  <li v-for="(item,idx) in budgetDetail.fundSorceGroup">
+                  <li v-for="(item,idx) in budgetDetail.SourceOfFundsGroup">
                     <span class="title">{{item.label}}</span>
                     <span
                       class="money"
-                    >{{budgetdetailData.filter(i=>i.fundSorce===item.value).reduce((prev,cur)=>prev+parseFloat((Number((cur.money).replace(/[,]/g, ''))).toFixed(2)),0) | NumFormat}}</span>
+                    >{{budgetdetailData.filter(i=>i.SourceOfFunds===item.value).reduce((prev,cur)=>prev+parseFloat((Number((cur.money).replace(/[,]/g, ''))).toFixed(2)),0) | NumFormat}}</span>
                   </li>
                 </ul>
               </div>
@@ -470,22 +470,29 @@ export default {
       projSurvey: {
         projName: '', //项目名称
         applyDepart: '', //申报部门
-        projLeval: '', //项目级别
+        ProjectLevels: '', //项目级别
         bugedDepart: '', //预算部门
-        projAbbtribute: '', //项目属性
-        keepTerm: '', //存续期限
-        payType: '', //支出类别
+        ProjectPropers: '', //项目属性
+        TimeLimits: '', //存续期限
+        ExpenseCategories: '', //支出类别
         sedTime: '', //起止日期
         xjEvaluate: ''
       },
       //项目概况下拉框项内容
       projGroup: {
         applyGroup: [],
-        projLevalGroup: [],
+        ProjectLevelsGroup: [],
         bugedDepartGroup: [],
-        projAbbtributeGroup: [],
-        keepTermGroup: [],
-        payTypeGroup: [],
+        ProjectPropersGroup: [
+          {
+            TypeCode:'001',
+            TypeName:'属性1'
+          }
+        ],
+        TimeLimitsGroup: [{
+
+        }],
+        ExpenseCategoriesGroup: [],
         xjEvaluateGroup: [
           {
             label: '是',
@@ -507,7 +514,7 @@ export default {
       //预算明细表数据
       budgetDetail: {
         copyLine: false, //复制行
-        fundSorceGroup: [
+        SourceOfFundsGroup: [
           {
             label: '全总预算拨款-工会经费',
             value: 0,
@@ -535,7 +542,7 @@ export default {
         {
           name: '',
           money: '',
-          fundSorce: '',
+          SourceOfFunds: '',
           method: '',
           remark: '',
           radio: 1
@@ -650,7 +657,7 @@ export default {
           : {
               name: '',
               money: '',
-              fundSorce: '',
+              SourceOfFunds: '',
               method: '',
               remark: '',
               radio: 1
@@ -664,7 +671,7 @@ export default {
         this.$set(this.budgetdetailData, 0, {
           name: '',
           money: '',
-          fundSorce: '',
+          SourceOfFunds: '',
           method: '',
           remark: '',
           radio: 1
@@ -681,7 +688,7 @@ export default {
           : {
               name: '',
               money: '',
-              fundSorce: '',
+              SourceOfFunds: '',
               method: '',
               remark: '',
               radio: 1
@@ -697,7 +704,7 @@ export default {
         this.budgetdetail.splice(index, 1)
       }
     },
-    clearNum(item, e) {
+    clearNum(item, e,isFocus) {
       console.log(item, obj)
       let obj = e.target
       obj.value = obj.value.replace(/[^\d.]/g, '') //清除“数字”和“.”以外的字符
@@ -711,7 +718,7 @@ export default {
         //以上已经过滤，此处控制的是如果没有小数点，首位不能为类似于 01、02的金额
         obj.value = parseFloat(obj.value)
       }
-      if (parseInt(obj.value) == '') {
+      if (parseInt(obj.value) == '' && isFocus) {
         obj.value = ''
       }
       item.money = obj.value
@@ -747,7 +754,7 @@ export default {
     },
     setBuy(item) {
       console.log(item)
-      if (item.fundSorce === '') {
+      if (item.SourceOfFunds === '') {
         this.$msgBox.error('请先设置资金来源！')
         return
       }
@@ -1031,7 +1038,7 @@ export default {
 
           &.plan ul li {
             &:nth-of-type(2) {
-              width: 40%;
+              width: 44%;
             }
 
             &:nth-of-type(3) {
@@ -1066,9 +1073,12 @@ export default {
             top: 0;
             left: 15px;
             bottom: 0;
-            right: 0;
+            right: 15px;
             font-size: $mainfontsize;
             text-align: left;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
           }
           .enable {
             position: relative;
