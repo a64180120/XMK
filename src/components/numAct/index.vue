@@ -1,6 +1,6 @@
 <template>
   <section>
-    <div ref="number" class="wrap-container"></div>
+    <div ref="number" class="hyz_wrap-container"></div>
     <div style="text-shadow: none">支出预算总额({{dw}})</div>
   </section>
 
@@ -32,7 +32,7 @@
       methods:{
           move(t){
             t.toString().split('').forEach(v=>{
-              this.html += '<div class="wrap"><ul class="list pos' + v +' scroll0-'+ v +'">';
+              this.html += '<div class="hyz_wrap"><ul class="hyz_list hyz_pos' + v +' hyz_scroll0-'+ v +'">';
               for(let i=0 ; i<=9 ; i++){
                 this.html+='<li>'+i+'</li>';
               }
@@ -43,16 +43,16 @@
         comDigitsScroll(startArr,endArr){
             startArr.forEach((v,k)=>{
               if(v==','||v=='.'){
-                this.html += '<div class="wrap">'+v+'</div>';
+                this.html += '<div class="hyz_wrap">'+v+'</div>';
               }else{
-                this.html += '<div class="wrap"><ul class="list pos' + endArr[parseInt(k)] +' scroll'+ v +'-'+endArr[parseInt(k)]+'">';
+                this.html += '<div class="hyz_wrap"><ul class="hyz_list hyz_pos' + endArr[parseInt(k)] +' hyz_scroll'+ v +'-'+endArr[parseInt(k)]+'">';
                 for(let i=0 ; i<=9 ; i++){
                   this.html+='<li>'+i+'</li>';
                 }
                 this.html+='</ul></div>'
               }
             })
-          this.html += '<div class="wrap" style="width: 0.43rem;"><span class="dw">'+this.dw+'</span></div>';
+          this.html += '<div class="hyz_wrap" style="width: 0.43rem;"><span class="hyz_dw">'+this.dw+'</span></div>';
         },
         changeMove (t,tt){
             t=this.numFormate(t);
@@ -133,10 +133,10 @@
     }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @for $i from 0 through 9 {
   @for $j from 0 through 9 {
-    @keyframes move#{$i}-#{$j} {
+    @keyframes hyz_move#{$i}-#{$j} {
       0%{
         top: -100% * $i;
       }
@@ -148,16 +148,16 @@
 }
 @for $i from 0 through 9 {
   @for $j from 0 through 9 {
-    .scroll#{$i}-#{$j} {
-      animation: 0.5s move#{$i}-#{$j} linear;
+    .hyz_scroll#{$i}-#{$j} {
+      animation: 0.5s hyz_move#{$i}-#{$j} linear;
     }
   }
 }
-  .wrap-container {
+  .hyz_wrap-container {
     white-space: nowrap;
     color:#f52c1d;
     font-size: .4rem;
-    .wrap{
+    .hyz_wrap{
       width: .23rem;
       height: .4rem;
       position: relative;
@@ -166,7 +166,7 @@
       font-size: .4rem;
       line-height: .3rem;
       display: inline-block;
-      .list{
+      .hyz_list{
         position: absolute;
         left: 0;
         top: 0;
@@ -182,13 +182,13 @@
           float: left;
         }
       }
-      .dw{
+      .hyz_dw{
         font-size: .2rem;
         color: #3294ec;
         vertical-align: center;
       }
       @for $i from 0 through 19{
-        .pos#{$i}{
+        .hyz_pos#{$i}{
           top: -100% * $i;
         }
       };
