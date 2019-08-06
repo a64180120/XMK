@@ -1,15 +1,15 @@
 <template>
   <div class="payList">
     <!-- 支付单查看 -->
-    <el-dialog
-      append-to-body
-      :visible.sync="openDialog"
-      width="80%"
-      :close-on-click-modal="false"
-      class="payCenter payList"
-      :before-close="payListClose"
-    >
-      <div slot="title" class="dialog-title">
+    <el-dialog append-to-body
+               modal-append-to-body
+               :visible.sync="openDialog"
+               width="80%"
+               :close-on-click-modal="false"
+               class="payCenter payList"
+               :before-close="payListClose">
+      <div slot="title"
+           class="dialog-title">
         <span style="float: left">支付单查看</span>
       </div>
       <el-row :gutter="10">
@@ -17,7 +17,9 @@
           <span style="float:left;font-size:0.16rem;line-height:28px;">支付单号：{{detail.Mst.FCode}}</span>
           <div class="top-btn">
             <template v-if="data.itemType =='approval'">
-              <el-button class="btn" size="mini" @click="save('approval')">审批</el-button>
+              <el-button class="btn"
+                         size="mini"
+                         @click="save('approval')">审批</el-button>
             </template>
             <!--            <span class="btn btn-large">打印</span>-->
           </div>
@@ -37,9 +39,7 @@
                 <li>
                   <span>付款账户：</span>
                   <div>
-                    <el-tooltip
-                      :content="(accountList.length && account&&account!='0')?(accountList.find(item=>{return item.PhId == account})).FBankname:''"
-                    >
+                    <el-tooltip :content="(accountList.length && account&&account!='0')?(accountList.find(item=>{return item.PhId == account})).FBankname:''">
                       <div>{{(accountList.length && account&&account!='0')?(accountList.find(item=>{return item.PhId == account})).FBankname:''}}</div>
                     </el-tooltip>
                   </div>
@@ -56,27 +56,32 @@
         </el-col>
       </el-row>
       <!--  收款方信息    -->
-      <el-row class="content" :gutter="10">
-        <el-col :span="24" style="text-align: left">
+      <el-row class="content"
+              :gutter="10">
+        <el-col :span="24"
+                style="text-align: left">
           <el-card class="payText">
-            <div slot="header" style="padding: 0 10px;text-align: left">
+            <div slot="header"
+                 style="padding: 0 10px;text-align: left">
               <span>
                 <span>收款方</span>
               </span>
             </div>
             <div class="detail-table">
               <div class="getDetail">
-                <el-table
-                  max-height="350px"
-                  ref="payListTable"
-                  style="margin-top:10px;"
-                  :data="detail.Dtls"
-                  border
-                  :span-method="tabelColspan"
-                >
+                <el-table max-height="350px"
+                          ref="payListTable"
+                          style="margin-top:10px;"
+                          :data="detail.Dtls"
+                          border
+                          :span-method="tabelColspan">
                   <!-- 序号列 -->
-                  <el-table-column type="index" width="80" header-align="center" align="center">
-                    <template slot="header" slot-scope="scope">
+                  <el-table-column type="index"
+                                   width="80"
+                                   header-align="center"
+                                   align="center">
+                    <template slot="header"
+                              slot-scope="scope">
                       <template>序号</template>
                     </template>
                     <template slot-scope="scope">
@@ -84,62 +89,58 @@
                     </template>
                   </el-table-column>
                   <!-- 公共列 -->
-                  <el-table-column
-                    v-for="(item,index) in payHeaders1"
-                    :key="index"
-                    :property="item.name"
-                    :label="item.label"
-                    :width="item.width||''"
-                    :header-align="item.headerAlign||'center'"
-                    :align="item.bodyAlign||'left'"
-                    empty-text="————"
-                  >
+                  <el-table-column v-for="(item,index) in payHeaders1"
+                                   :key="index"
+                                   :property="item.name"
+                                   :label="item.label"
+                                   :width="item.width||''"
+                                   :header-align="item.headerAlign||'center'"
+                                   :align="item.bodyAlign||'left'"
+                                   empty-text="————">
                     <template slot-scope="scope">
                       <!-- 申报金额 -->
-                      <div
-                        v-if="scope.column.property=='FAmount'"
-                        :title="scope.row[scope.column.property] | NumFormat"
-                        class="table-item"
-                      >{{scope.row[scope.column.property] | NumFormat}}</div>
+                      <div v-if="scope.column.property=='FAmount'"
+                           :title="scope.row[scope.column.property] | NumFormat"
+                           class="table-item">{{scope.row[scope.column.property] | NumFormat}}</div>
                       <!-- 预算科目  -->
-                      <div v-else-if="scope.column.property=='QtKmdm'" class="table-item nopadding">
+                      <div v-else-if="scope.column.property=='QtKmdm'"
+                           class="table-item nopadding">
                         <template>{{scope.row.QtKmdm}} {{scope.row.QtKmmc}}</template>
                       </div>
                       <!-- 支付方式 -->
-                      <div
-                        v-else-if="scope.column.property=='FSamebank'"
-                        class="table-item nopadding"
-                      >
+                      <div v-else-if="scope.column.property=='FSamebank'"
+                           class="table-item nopadding">
                         <template>{{FSamebankList.find(item=>item.value==scope.row[scope.column.property]).label}}</template>
                       </div>
                       <!-- 收款方账户名称 -->
-                      <div
-                        v-else-if="scope.column.property=='FRecAcntname'&&data.itemType == 'notApprove'"
-                        class="table-item"
-                        @click="selectBank(scope.row)"
-                      >{{scope.row[scope.column.property]}}</div>
+                      <div v-else-if="scope.column.property=='FRecAcntname'&&data.itemType == 'notApprove'"
+                           class="table-item"
+                           @click="selectBank(scope.row)">{{scope.row[scope.column.property]}}</div>
                       <!-- 其他 -->
-                      <div :title="scope.row[scope.column.property]" class="table-item" v-else>
+                      <div :title="scope.row[scope.column.property]"
+                           class="table-item"
+                           v-else>
                         <span>{{scope.row[scope.column.property]}}</span>
                       </div>
                     </template>
                   </el-table-column>
                   <!-- 支付异常列 -->
                   <template v-if="data.itemType=='error'">
-                    <el-table-column
-                      v-for="(item,index) in payHeaders2"
-                      :key="index+20"
-                      :property="item.name"
-                      :label="item.label"
-                      :width="item.width||''"
-                      :header-align="item.headerAlign||'center'"
-                      :align="item.bodyAlign||'left'"
-                    >
+                    <el-table-column v-for="(item,index) in payHeaders2"
+                                     :key="index+20"
+                                     :property="item.name"
+                                     :label="item.label"
+                                     :width="item.width||''"
+                                     :header-align="item.headerAlign||'center'"
+                                     :align="item.bodyAlign||'left'">
                       <template slot-scope="scope">
-                        <div v-if="scope.column.property=='FState'" class="table-item">
+                        <div v-if="scope.column.property=='FState'"
+                             class="table-item">
                           <template>{{FStateList.find(item=>item.value==scope.row[scope.column.property]).label}}</template>
                         </div>
-                        <div :title="scope.row[scope.column.property]" class="table-item" v-else>
+                        <div :title="scope.row[scope.column.property]"
+                             class="table-item"
+                             v-else>
                           <span v-if="scope.row.FState == 1">————</span>
                           <span v-else>{{scope.row[scope.column.property]||'————'}}</span>
                         </div>
@@ -148,15 +149,14 @@
                   </template>
                   <!-- 支付成功列 -->
                   <template v-if="data.itemType=='success'">
-                    <el-table-column
-                      :property="payHeaders2[0].name"
-                      :label="payHeaders2[0].label"
-                      :width="payHeaders2[0].width||''"
-                      :header-align="payHeaders2[0].headerAlign||'center'"
-                      :align="payHeaders2[0].bodyAlign||'left'"
-                    >
+                    <el-table-column :property="payHeaders2[0].name"
+                                     :label="payHeaders2[0].label"
+                                     :width="payHeaders2[0].width||''"
+                                     :header-align="payHeaders2[0].headerAlign||'center'"
+                                     :align="payHeaders2[0].bodyAlign||'left'">
                       <template slot-scope="scope">
-                        <div v-if="scope.column.property=='FState'" class="table-item">
+                        <div v-if="scope.column.property=='FState'"
+                             class="table-item">
                           <!-- <template>{{FStateList.find(item=>item.value==scope.row[scope.column.property]).label}}</template> -->
                           支付成功
                         </div>
@@ -172,48 +172,53 @@
 
       <el-row :gutter="10">
         <div class="bottom">
-          <span
-            @click="openFollow()"
-            style="text-decoration:underline;"
-          >{{detail.Mst.FApproval!=undefined?FApprovalList.find(item=>item.value==detail.Mst.FApproval).label:''}}</span>
-          <span class="dj" @click="openDetailDialog()">点击查看关联申报单信息（申报编号：{{detail.Mst.RefbillCode}}）</span>
+          <span @click="openFollow()"
+                style="text-decoration:underline;">{{detail.Mst.FApproval!=undefined?FApprovalList.find(item=>item.value==detail.Mst.FApproval).label:''}}</span>
+          <span class="dj"
+                @click="openDetailDialog()">点击查看关联申报单信息（申报编号：{{detail.Mst.RefbillCode}}）</span>
         </div>
       </el-row>
     </el-dialog>
     <!-- 关联申报单信息查看 -->
-    <el-dialog
-      append-to-body
-      :visible.sync="fundDetailData.openDialog"
-      width="80%"
-      :close-on-click-modal="false"
-      class="dialog detail-dialog payCenter"
-    >
-      <div slot="title" class="dialog-title">
+    <el-dialog append-to-body
+               modal-append-to-body
+               :visible.sync="fundDetailData.openDialog"
+               width="80%"
+               :close-on-click-modal="false"
+               class="dialog detail-dialog payCenter">
+      <div slot="title"
+           class="dialog-title">
         <span style="float: left;">查看申报</span>
       </div>
-      <apply-bill v-if="fundDetailData.openDialog" :applyNum="applyNum" @showImg="showImg">
+      <apply-bill v-if="fundDetailData.openDialog"
+                  :applyNum="applyNum"
+                  @showImg="showImg">
         <div slot="btn-group">
-          <el-button class="btn" size="mini">打印</el-button>
+          <el-button class="btn"
+                     size="mini">打印</el-button>
         </div>
       </apply-bill>
     </el-dialog>
     <!--图片预览-->
-    <el-dialog
-      class="dialog img-dialog payCenter"
-      :visible.sync="imgDialog"
-      :close-on-click-modal="true"
-      width="800px"
-      height="600px"
-    >
-      <div slot="title" class="dialog-title">
+    <el-dialog modal-append-to-body
+               append-to-body
+               class="dialog img-dialog payCenter"
+               :visible.sync="imgDialog"
+               :close-on-click-modal="true"
+               width="800px"
+               height="600px">
+      <div slot="title"
+           class="dialog-title">
         <span style="float: left">查看附件</span>
       </div>
-      <div class="btn-load" style="text-align:right;">
+      <div class="btn-load"
+           style="text-align:right;">
         <el-button class="btn">下载</el-button>
       </div>
       <img-view v-if="imgDialog"></img-view>
     </el-dialog>
-    <auditfollow :visible.sync="visible" :auditMsg="auditMsg"></auditfollow>
+    <auditfollow :visible.sync="visible"
+                 :auditMsg="auditMsg"></auditfollow>
     <!-- 审批弹框 -->
   </div>
 </template>
@@ -237,7 +242,7 @@ export default {
   props: {
     data: {
       type: Object,
-      default: function() {
+      default: function () {
         return {}
       }
     },
@@ -247,13 +252,13 @@ export default {
     },
     OrgTree: {
       type: Array,
-      default: function() {
+      default: function () {
         let arr = new Array()
         return arr
       }
     }
   },
-  data() {
+  data () {
     return {
       imgDialog: false, //图片预览弹框
       showAuditfollow: false,
@@ -442,12 +447,12 @@ export default {
       visible: false
     }
   },
-  mounted() {
+  mounted () {
     this.getData()
   },
   methods: {
     //获取银行信息
-    getBack(e) {
+    getBack (e) {
       GetSysSetList({
         DicType: 'PayMethod',
         uid: this.userid,
@@ -468,7 +473,7 @@ export default {
         })
     },
     // 获取支付单详情
-    getData() {
+    getData () {
       console.log('----------------------')
       console.log(this.Orglist)
       let that = this
@@ -499,7 +504,7 @@ export default {
         })
     },
     // 获取预算科目列表
-    getBudgetAccountsList() {
+    getBudgetAccountsList () {
       getBudgetAccountsList({})
         .then(res => {
           if (res.Status == 'error') {
@@ -515,7 +520,7 @@ export default {
         })
     },
     // 获取付款银行档案
-    getAccountList(data) {
+    getAccountList (data) {
       BankAccountList(data)
         .then(res => {
           if (res.Status == 'error') {
@@ -530,7 +535,7 @@ export default {
         })
     },
     // 支付单 按钮事件
-    save(type) {
+    save (type) {
       switch (type) {
         case 'approval':
           this.appDialog.title = '查看'
@@ -541,12 +546,12 @@ export default {
       }
     },
     //打开图片预览
-    showImg(file) {
+    showImg (file) {
       console.log(file)
       this.imgDialog = true
     },
     // 表格合并方法
-    tabelColspan({ row, column, rowIndex, columnIndex }) {
+    tabelColspan ({ row, column, rowIndex, columnIndex }) {
       if (this.detail.Dtls.length == 0) return
       if (columnIndex === 1 || columnIndex === 2) {
         let count = 1
@@ -554,7 +559,7 @@ export default {
           while (
             rowIndex < this.detail.Dtls.length - 1 &&
             this.detail.Dtls[rowIndex][column.property] ==
-              this.detail.Dtls[rowIndex + 1][column.property]
+            this.detail.Dtls[rowIndex + 1][column.property]
           ) {
             count++
             rowIndex++
@@ -570,7 +575,7 @@ export default {
             while (
               rowIndex < this.detail.Dtls.length - 1 &&
               this.detail.Dtls[rowIndex][column.property] ==
-                this.detail.Dtls[rowIndex + 1][column.property]
+              this.detail.Dtls[rowIndex + 1][column.property]
             ) {
               count++
               rowIndex++
@@ -585,15 +590,15 @@ export default {
       }
     },
     // 关闭审批流程框
-    closeAuditFollow() {
+    closeAuditFollow () {
       this.showAuditfollow = false
     },
     // 关闭支付单弹框
-    payListClose(done) {
+    payListClose (done) {
       this.$emit('closeDetail', false)
     },
     // dialog中的check事件
-    selectOne($scope) {
+    selectOne ($scope) {
       console.log($scope.row)
       if ($scope.row.choosed) {
         if (this.data.itemType == 'error') {
@@ -607,14 +612,14 @@ export default {
       }
       this.$forceUpdate()
     },
-    selectAll(choosed) {
+    selectAll (choosed) {
       this.detail.Dtls.forEach(item => {
         item.choosed = choosed
       })
       this.$forceUpdate()
     },
     //通过遍历找出orgName
-    getOrgName(e) {
+    getOrgName (e) {
       let arr = this.toArray(this.OrgTree)
       for (let k in arr) {
         if (e == arr[k].OCode) {
@@ -622,7 +627,7 @@ export default {
         }
       }
     },
-    toArray(nodes, parentId = '') {
+    toArray (nodes, parentId = '') {
       if (!nodes) {
         return []
       }
@@ -646,11 +651,11 @@ export default {
       }
       return r
     },
-    openDetailDialog() {
+    openDetailDialog () {
       this.fundDetailData.openDialog = true
       this.applyNum = this.detail.Mst.RefbillPhid
     },
-    openFollow() {
+    openFollow () {
       this.visible = true
       let data = {
         RefbillPhid: this.data.RefbillPhid,
@@ -809,7 +814,7 @@ export default {
         padding: 0;
       }
       &:after {
-        content: '';
+        content: "";
         display: inline-block;
         vertical-align: middle;
         height: 100%;
@@ -828,9 +833,9 @@ export default {
       position: relative;
       padding-left: 0.3rem;
       &::before {
-        content: '';
+        content: "";
         display: inline-block;
-        background-image: url('../../assets/images/yk1.png');
+        background-image: url("../../assets/images/yk1.png");
         background-size: contain;
         background-repeat: no-repeat;
         background-position: 0 center;
@@ -844,10 +849,10 @@ export default {
       &:nth-of-type(2) {
         cursor: auto;
         &::before {
-          background-image: url('../../assets/images/wzf.png');
+          background-image: url("../../assets/images/wzf.png");
         }
         &.success::before {
-          background-image: url('../../assets/images/zfcg.png');
+          background-image: url("../../assets/images/zfcg.png");
         }
       }
       &:last-of-type {
@@ -986,7 +991,7 @@ export default {
   }
   &.el-dialog__wrapper::after {
     display: inline-block;
-    content: '';
+    content: "";
     vertical-align: middle;
     height: 100%;
   }

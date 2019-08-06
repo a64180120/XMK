@@ -193,6 +193,8 @@
              :data="orglist"
              :checked-org="orgSelected"></orgtree>
     <el-dialog :close-on-click-modal="false"
+               append-to-body
+               modal-append-to-body
                :title="(postBtn=='add'?'新增':'修改')+'岗位'"
                :visible.sync="postAddShow">
       <post-add v-if="postAddShow"

@@ -183,7 +183,8 @@
       </div>
     </div>
 
-    <el-dialog width="600px"
+    <el-dialog modal-append-to-body
+               width="600px"
                :visible.sync="dialogVisible"
                title="批量设置"
                :close-on-click-modal="false">

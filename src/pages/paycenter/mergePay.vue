@@ -1,27 +1,31 @@
 <template>
   <div class="mergePay">
     <!-- 支付流程 -->
-    <el-dialog
-      append-to-body
-      :visible.sync="data.openDialog"
-      class="payCenter"
-      :width="showMergePay?'550px':showPassword?'550px':'420px'"
-      :close-on-click-modal="false"
-      :before-close="beforeClose"
-    >
-      <div slot="title" class="dialog-title">
+    <el-dialog append-to-body
+               modal-append-to-body
+               :visible.sync="data.openDialog"
+               class="payCenter"
+               :width="showMergePay?'550px':showPassword?'550px':'420px'"
+               :close-on-click-modal="false"
+               :before-close="beforeClose">
+      <div slot="title"
+           class="dialog-title">
         <span style="float: left">{{title}}</span>
       </div>
       <!-- 合并支付 -->
-      <div class="dialogContainer" v-show="showMergePay">
+      <div class="dialogContainer"
+           v-show="showMergePay">
         <div class="payCenterDialog">
           <div class="content">
-            <img src="@/assets/images/mergepay.png" alt />
+            <img src="@/assets/images/mergepay.png"
+                 alt />
             <span>合计支付{{money | NumFormat}}元？</span>
           </div>
           <div class="btns">
-            <span class="btn btn-cancel" @click="beforeClose('btn')">取消</span>
-            <span class="btn" @click="enterPassword">确定</span>
+            <span class="btn btn-cancel"
+                  @click="beforeClose('btn')">取消</span>
+            <span class="btn"
+                  @click="enterPassword">确定</span>
           </div>
           <!-- <el-collapse>
             <el-collapse-item name="1">
@@ -44,30 +48,31 @@
               </el-table>
             </el-collapse-item>
           </el-collapse>-->
-          <div @click="showList = !showList" class="collapse" style>
-            <i class="header-icon el-icon-menu" style="margin-left:10px;"></i>点击查看详细收款信息
-            <i
-              :class="{'el-icon-arrow-right':true,'trDown':showList}"
-              style="float:right"
-            ></i>
+          <div @click="showList = !showList"
+               class="collapse"
+               style>
+            <i class="header-icon el-icon-menu"
+               style="margin-left:10px;"></i>点击查看详细收款信息
+            <i :class="{'el-icon-arrow-right':true,'trDown':showList}"
+               style="float:right"></i>
           </div>
           <template v-if="showList">
-            <el-table max-height="200px" :data="gridData" border>
-              <el-table-column
-                header-align="center"
-                align="center"
-                type="index"
-                label="序号"
-                width="50"
-              ></el-table-column>
-              <el-table-column header-align="center" property="FDepartmentname" label="收款方姓名"></el-table-column>
-              <el-table-column
-                property="FAmount"
-                header-align="center"
-                align="right"
-                label="待付金额（元）"
-                width="150"
-              >
+            <el-table max-height="200px"
+                      :data="gridData"
+                      border>
+              <el-table-column header-align="center"
+                               align="center"
+                               type="index"
+                               label="序号"
+                               width="50"></el-table-column>
+              <el-table-column header-align="center"
+                               property="FDepartmentname"
+                               label="收款方姓名"></el-table-column>
+              <el-table-column property="FAmount"
+                               header-align="center"
+                               align="right"
+                               label="待付金额（元）"
+                               width="150">
                 <template slot-scope="scope">{{scope.row[scope.column.property] | NumFormat}}</template>
               </el-table-column>
             </el-table>
@@ -75,19 +80,19 @@
         </div>
       </div>
       <!-- 支付口令 -->
-      <div class="dialogContainer" v-show="showPassword">
+      <div class="dialogContainer"
+           v-show="showPassword">
         <div class="payCenterDialog">
           <div class="content password">
-            <img src="@/assets/images/mergepay.png" alt />
+            <img src="@/assets/images/mergepay.png"
+                 alt />
             <div class="passwordContent">
               <span>请输入支付口令：</span>
-              <password-input
-                :disabled="needSet"
-                style="top:15px"
-                :value.sync="password"
-                :maxlength="6"
-                :enter="pay"
-              ></password-input>
+              <password-input :disabled="needSet"
+                              style="top:15px"
+                              :value.sync="password"
+                              :maxlength="6"
+                              :enter="pay"></password-input>
               <!-- <el-input
                 :type="passwordCanSee?'text':'password'"
                 v-model="password"
@@ -109,25 +114,33 @@
                 src="@/assets/images/by.png"
                 @click="passwordCanSee= !passwordCanSee"
               />-->
-              <div class="notice" v-show="needSet">
+              <div class="notice"
+                   v-show="needSet">
                 <span @click="goSetting">支付口令已启用，不允许为空，请点击维护。</span>
               </div>
             </div>
           </div>
           <div class="btns">
-            <span class="btn btn-cancel" @click="beforeClose('btn')">取消</span>
-            <span class="btn btn-disable" v-if="needSet">支付</span>
-            <span class="btn" v-else @click="pay">支付</span>
+            <span class="btn btn-cancel"
+                  @click="beforeClose('btn')">取消</span>
+            <span class="btn btn-disable"
+                  v-if="needSet">支付</span>
+            <span class="btn"
+                  v-else
+                  @click="pay">支付</span>
           </div>
         </div>
       </div>
       <!-- 设置支付口令 -->
-      <div class="dialogContainer" v-if="showSetting&&needSet">
+      <div class="dialogContainer"
+           v-if="showSetting&&needSet">
         <div class="payCenterDialog">
           <div class="content password setting">
             <span>支付口令</span>
             <div class="passwordContent">
-              <password-input style="top:6px" :value.sync="newPassword" :maxlength="6"></password-input>
+              <password-input style="top:6px"
+                              :value.sync="newPassword"
+                              :maxlength="6"></password-input>
               <!-- <el-input
                 :type="newPasswordCanSee?'text':'password'"
                 v-model="newPassword"
@@ -150,7 +163,9 @@
             </div>
             <span>口令确认</span>
             <div class="passwordContent">
-              <password-input style="top:6px" :value.sync="confirmPassword" :maxlength="6"></password-input>
+              <password-input style="top:6px"
+                              :value.sync="confirmPassword"
+                              :maxlength="6"></password-input>
               <!-- <el-input
                 :type="confirmPasswordCanSee?'text':'password'"
                 :maxlength="6"
@@ -178,8 +193,10 @@
             </el-radio-group>
           </div>
           <div class="btns">
-            <span class="btn btn-cancel" @click="beforeClose('btn')">取消</span>
-            <span class="btn" @click="setPassword">保存</span>
+            <span class="btn btn-cancel"
+                  @click="beforeClose('btn')">取消</span>
+            <span class="btn"
+                  @click="setPassword">保存</span>
           </div>
         </div>
       </div>
@@ -225,7 +242,7 @@ export default {
     }
   },
   inject: ['refreshIndexData'],
-  data() {
+  data () {
     return {
       radio: 0,
       showList: false,
@@ -243,15 +260,15 @@ export default {
       passwordtest: ''
     }
   },
-  created() {
+  created () {
     this.data.data.forEach(item => {
       this.gridData = [...this.gridData, ...item.Dtls]
     })
   },
-  mounted() {},
+  mounted () { },
   methods: {
     // 提交口令设置
-    setPassword() {
+    setPassword () {
       if (this.confirmPassword == '' || this.newPassword == '') {
         this.$msgBox.error('支付口令不能为空！')
         return
@@ -298,7 +315,7 @@ export default {
         })
     },
     // 检测支付密码状态
-    postPayPsd() {
+    postPayPsd () {
       postPayPsd({
         TypeCode: this.usercode,
         TypeName: this.username,
@@ -327,7 +344,7 @@ export default {
         })
     },
     // 进入支付页面
-    enterPassword() {
+    enterPassword () {
       // this.postPayPsd()
       // 检测加密狗状态
       PostPayUsbKeyIsActive({
@@ -350,7 +367,7 @@ export default {
                   this.$alert(
                     `加密锁驱动程序未安装！点<a style='cursor:pointer;' href="${window
                       .global.UsbKeyUrl +
-                      'custom2/Resource/UsbKeyEnvSetup.exe'}">客户端安装程序</a>，下载,运行该程序，然后重启电脑即可。`,
+                    'custom2/Resource/UsbKeyEnvSetup.exe'}">客户端安装程序</a>，下载,运行该程序，然后重启电脑即可。`,
                     '提示',
                     {
                       confirmButtonText: '关闭',
@@ -359,14 +376,14 @@ export default {
                       type: 'warning'
                     }
                   )
-                    .then(() => {})
-                    .catch(() => {})
+                    .then(() => { })
+                    .catch(() => { })
                   return
                 } else if (re.retuCode == -1) {
                   this.$alert(
                     `无法下载新中大客户端控件！请在 "Internet选项"中降低安全级别，使得ActiveX控件允许被下载。点<a style='cursor:pointer;' href="${window
                       .global.UsbKeyUrl +
-                      'custom2/Resource/UsbKeyEnvSetup.exe'}">客户端安装程序</a>，下载,运行该程序，然后重启电脑即可。`,
+                    'custom2/Resource/UsbKeyEnvSetup.exe'}">客户端安装程序</a>，下载,运行该程序，然后重启电脑即可。`,
                     '提示',
                     {
                       confirmButtonText: '关闭',
@@ -375,8 +392,8 @@ export default {
                       type: 'warning'
                     }
                   )
-                    .then(() => {})
-                    .catch(() => {})
+                    .then(() => { })
+                    .catch(() => { })
                   return
                 }
                 this.$msgBox.error('加密锁读取失败：' + re.Msg)
@@ -406,7 +423,7 @@ export default {
           this.$msgBox.error('获取加密锁状态失败！')
         })
     },
-    beforeClose(done) {
+    beforeClose (done) {
       if (this.showMergePay) {
         this.data.openDialog = false
       } else if (this.showPassword) {
@@ -421,12 +438,12 @@ export default {
       }
     },
     // 进入口令设置页面
-    goSetting() {
+    goSetting () {
       this.showPassword = false
       this.showSetting = true
     },
     // 发起支付
-    pay() {
+    pay () {
       if (this.password == '') {
         this.$msgBox.error('支付口令不能为空！')
         return
@@ -439,16 +456,16 @@ export default {
       // 判断口令是否正确
     },
     // 请求-支付
-    postSubmitPayments() {
+    postSubmitPayments () {
       var vm = this
       if (vm.father) {
         // 单笔支付非网银,不校验银行状态
         var payMethodName =
           this.$parent.detail.Mst.FPaymethod.length == 15 &&
-          this.$parent.FPaymethodList.length > 0
+            this.$parent.FPaymethodList.length > 0
             ? this.$parent.FPaymethodList.find(
-                item => item.PhId == this.$parent.detail.Mst.FPaymethod
-              ).TypeName
+              item => item.PhId == this.$parent.detail.Mst.FPaymethod
+            ).TypeName
             : ''
         if (payMethodName != '网银') {
           postSubmitPayment({
@@ -619,7 +636,7 @@ export default {
       // }
     },
     // 请求-判断口令正确-正确直接发起支付
-    postJudgePayPsd() {
+    postJudgePayPsd () {
       postJudgePayPsd({
         TypeCode: this.usercode,
         Value: md5(this.password)
@@ -642,24 +659,24 @@ export default {
           console.log('judge', err)
         })
     },
-    clearNoNum(event) {
+    clearNoNum (event) {
       var obj = event.target
       obj.value = obj.value.replace(/[^\d]/g, '') //清除“数字”以外的字符
     }
   },
   computed: {
-    title() {
+    title () {
       return this.showMergePay
         ? this.father
           ? '支付确认'
           : '合并支付'
         : this.showPassword
-        ? '请输入支付口令'
-        : this.showSetting
-        ? '请设置支付口令'
-        : ''
+          ? '请输入支付口令'
+          : this.showSetting
+            ? '请设置支付口令'
+            : ''
     },
-    money() {
+    money () {
       return this.data.data.reduce((prev, item) => {
         return prev + item.Mst.FAmountTotal
       }, 0)

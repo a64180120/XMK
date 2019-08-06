@@ -1,35 +1,36 @@
 <template>
   <section>
-    <el-dialog
-      :visible.sync="data.openDialog"
-      width="620px"
-      :close-on-click-modal="false"
-      class="dialog goApproval"
-      append-to-body
-    >
-      <div slot="title" class="dialog-title">
+    <el-dialog :visible.sync="data.openDialog"
+               width="620px"
+               :close-on-click-modal="false"
+               class="dialog goApproval"
+               modal-append-to-body
+               append-to-body>
+      <div slot="title"
+           class="dialog-title">
         <p>送审</p>
       </div>
       <div class="content">
         <div class="handle">
           <div class="title">
             <span>送审备注</span>
-            <span style="float:right;color:#333;cursor: pointer" @click="openUpload">
+            <span style="float:right;color:#333;cursor: pointer"
+                  @click="openUpload">
               附单据
               <span style="text-decoration: underline">{{fileCount}}</span> 张
               <span>
-                <img width="20px" src="@/assets/images/hxz.png" />
+                <img width="20px"
+                     src="@/assets/images/hxz.png" />
               </span>
             </span>
           </div>
-          <div class="textare" style="height: 100px">
-            <el-input
-              type="textarea"
-              maxlength="100"
-              style="height: 100%"
-              resize="none"
-              v-model="param.FOpinion"
-            ></el-input>
+          <div class="textare"
+               style="height: 100px">
+            <el-input type="textarea"
+                      maxlength="100"
+                      style="height: 100%"
+                      resize="none"
+                      v-model="param.FOpinion"></el-input>
             <div style="position: relative;right: -275px;top: -20px;font-size: 10px;">
               <span style="color: red">{{len}}</span>
               <span>/100</span>
@@ -43,17 +44,20 @@
               <span>送审流程</span>
             </div>
             <div class="table">
-              <el-table
-                class="table-content"
-                :data="subDataNew"
-                :border="true"
-                highlight-current-row
-                @current-change="handleCurrentChange"
-                header-row-class-name="table-header"
-                ref="content"
-              >
-                <el-table-column prop="FCode" width="80" align="center" label="流程编码"></el-table-column>
-                <el-table-column prop="FName" align="center" label="流程名称"></el-table-column>
+              <el-table class="table-content"
+                        :data="subDataNew"
+                        :border="true"
+                        highlight-current-row
+                        @current-change="handleCurrentChange"
+                        header-row-class-name="table-header"
+                        ref="content">
+                <el-table-column prop="FCode"
+                                 width="80"
+                                 align="center"
+                                 label="流程编码"></el-table-column>
+                <el-table-column prop="FName"
+                                 align="center"
+                                 label="流程名称"></el-table-column>
                 <!-- <el-table-column width="60" align="center" label="查看">
                   <template slot-scope="scope">
                     <span
@@ -72,40 +76,43 @@
               <span>接收人</span>
             </div>
             <div class="table">
-              <el-table
-                class="table-next"
-                :data="nextDataList"
-                :border="true"
-                @select="handleSelect"
-                @select-all="handleSelectAll"
-                header-row-class-name="table-header"
-                ref="opTable"
-              >
-                <el-table-column type="selection" width="30"></el-table-column>
-                <el-table-column prop="OperatorCode" align="center" label="操作员编码"></el-table-column>
-                <el-table-column prop="OperatorName" align="center" label="姓名"></el-table-column>
+              <el-table class="table-next"
+                        :data="nextDataList"
+                        :border="true"
+                        @select="handleSelect"
+                        @select-all="handleSelectAll"
+                        header-row-class-name="table-header"
+                        ref="opTable">
+                <el-table-column type="selection"
+                                 width="30"></el-table-column>
+                <el-table-column prop="OperatorCode"
+                                 align="center"
+                                 label="操作员编码"></el-table-column>
+                <el-table-column prop="OperatorName"
+                                 align="center"
+                                 label="姓名"></el-table-column>
               </el-table>
             </div>
           </div>
         </div>
       </div>
       <div class="approval-btn">
-        <el-button
-          size="small"
-          type="primary"
-          @click="data.openDialog = false"
-        >{{btnGroup.cancelName}}</el-button>
-        <el-button size="small" type="primary" @click="submit">{{btnGroup.onfirmName}}</el-button>
+        <el-button size="small"
+                   type="primary"
+                   @click="data.openDialog = false">{{btnGroup.cancelName}}</el-button>
+        <el-button size="small"
+                   type="primary"
+                   @click="submit">{{btnGroup.onfirmName}}</el-button>
       </div>
-      <approval-follow :auditMsg="auditMsg" :showAuditfollow.sync="showAuditfollow"></approval-follow>
+      <approval-follow :auditMsg="auditMsg"
+                       :showAuditfollow.sync="showAuditfollow"></approval-follow>
     </el-dialog>
-    <el-dialog
-      :visible.sync="uploadDialog"
-      width="auto"
-      :close-on-click-modal="false"
-      class
-      :append-to-body="true"
-    >
+    <el-dialog :visible.sync="uploadDialog"
+               width="auto"
+               :close-on-click-modal="false"
+               class
+               modal-append-to-body
+               :append-to-body="true">
       <upload @submit="submitFn"></upload>
     </el-dialog>
   </section>
@@ -132,7 +139,7 @@ export default {
     },
     btnGroup: {
       type: Object,
-      default: function() {
+      default: function () {
         return {
           cancelName: '取消',
           onfirmName: '确认'
@@ -149,7 +156,7 @@ export default {
       default: '001'
     }
   },
-  data() {
+  data () {
     return {
       uploadDialog: false,
       showAuditfollow: false,
@@ -193,19 +200,19 @@ export default {
       usercode: state => state.user.usercode //用户code
     })
   },
-  mounted() {
+  mounted () {
     this.param.RefbillPhidList = this.data.data
     this.getAppvalProc()
   },
   methods: {
-    closeAuditFollow() {
+    closeAuditFollow () {
       this.showAuditfollow = false
     },
-    changeDialog() {
+    changeDialog () {
       this.openDialog = true
     },
     //获取审批流
-    getAppvalProc: function() {
+    getAppvalProc: function () {
       let param = {
         BPhIds: JSON.stringify(this.param.RefbillPhidList),
         Orgid: this.bmid, //组织id
@@ -223,7 +230,7 @@ export default {
         })
     },
     //获取审批人
-    getApprovalPerson: function(phid) {
+    getApprovalPerson: function (phid) {
       let param = { PhId: phid }
       this.getAxios('GSP/GAppvalPost/GetFirstStepOperator', param)
         .then(res => {
@@ -244,7 +251,7 @@ export default {
         })
     },
     //查看详细流程
-    searchFlow(row, column, index, store) {
+    searchFlow (row, column, index, store) {
       console.log(row, column, index, store)
       let param = {
         ProcId: row.PhId
@@ -266,25 +273,25 @@ export default {
         })
     },
     //表格单选
-    handleSelect(selection, row) {
+    handleSelect (selection, row) {
       console.log(selection, row)
       if (res.Data.FMode == 1) {
         this.$refs.opTable.toggleAllSelection()
       }
     },
     //表格全选
-    handleSelectAll(selection) {},
+    handleSelectAll (selection) { },
     //取消
-    cancel() {
+    cancel () {
       this.openDialog = false
     },
-    handleCurrentChange(newRow, oldRow) {
+    handleCurrentChange (newRow, oldRow) {
       this.param.ProcPhid = newRow.PhId
       this.getApprovalPerson(newRow.PhId)
       this.searchFlow(newRow)
     },
     //确认
-    submit() {
+    submit () {
       let nextOperatorsList = this.$refs.opTable.selection
       if (nextOperatorsList.length == 0) {
         this.$msgBox.show({
@@ -349,11 +356,11 @@ export default {
           console.log(err)
         })
     },
-    openUpload(e) {
+    openUpload (e) {
       this.uploadDialog = true
     },
     //点击添加到附件列表
-    submitFn(e) {
+    submitFn (e) {
       console.log(e)
       this.fileList = e
       this.fileCount = e.length
@@ -361,11 +368,11 @@ export default {
     }
   },
   watch: {
-    'param.FOpinion': function(val) {
+    'param.FOpinion': function (val) {
       this.len = val.length
     },
     nextDataList: {
-      handler(val) {
+      handler (val) {
         if (val.length === 1) {
           this.$nextTick(() => {
             this.$refs.opTable.toggleAllSelection()
@@ -413,7 +420,7 @@ export default {
       font-size: 0.16rem;
       > span {
         &:first-of-type:before {
-          content: '';
+          content: "";
           display: inline-block;
           width: 0.12rem;
           height: 0.12rem;
@@ -451,7 +458,7 @@ export default {
           font-size: 0.16rem;
           color: $btnColor;
           &:first-of-type:before {
-            content: '';
+            content: "";
             display: inline-block;
             width: 0.12rem;
             height: 0.12rem;
@@ -474,7 +481,7 @@ export default {
           font-size: 0.16rem;
           color: $btnColor;
           &:first-of-type:before {
-            content: '';
+            content: "";
             display: inline-block;
             width: 0.12rem;
             height: 0.12rem;
@@ -564,7 +571,7 @@ export default {
   }
   &.el-dialog__wrapper::after {
     display: inline-block;
-    content: '';
+    content: "";
     vertical-align: middle;
     height: 100%;
   }

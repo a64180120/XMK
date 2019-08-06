@@ -1,6 +1,11 @@
 <template>
-  <div v-if="visible" style="width: 100%;height: 100%;background-color: #1b4a7300;position: fixed;z-index: 2999" @click="close">
-    <div @click.stop="keepInputFocus()" v-show="visible"  style="z-index: 3000;overflow: auto" class="auditfollow msFixed">
+  <div v-if="visible"
+       style="width: 100%;height: 100%;background-color: #1b4a7300;position: fixed;z-index: 2999"
+       @click="close">
+    <div @click.stop="keepInputFocus()"
+         v-show="visible"
+         style="z-index: 3000;overflow: auto"
+         class="auditfollow msFixed">
       <div class="follow-body">
         <p class="title">
           <span>{{title}}</span>
@@ -8,45 +13,79 @@
         </p>
         <!--流程-->
         <div class="follow-main pay-fund">
-          <div class="content" @mouseenter="payfundEnter()" @mouseleave="payfundLeave()" :class="[payfundClass?'payfundHover':'']">
+          <div class="content"
+               @mouseenter="payfundEnter()"
+               @mouseleave="payfundLeave()"
+               :class="[payfundClass?'payfundHover':'']">
             <!--资金拨付-->
             <ul class="pay-fund">
               <li></li>
               <li style="height: 45px">
-                <div v-if="payfundClass" class="pay-title">资金拨付单</div>
-                <div v-else class="pay-title"></div>
+                <div v-if="payfundClass"
+                     class="pay-title">资金拨付单</div>
+                <div v-else
+                     class="pay-title"></div>
               </li>
-              <li class="msg" v-for="(item,index) of payfundData" :key="index" >
-                <audit-msg class="payfund" :nowNum="inPayfund?nowNum:-1" v-bind="$attrs" v-on="$listeners" :info="item" :index="index+1" :startNum="payfundStartNum" @imgList="getImgList"></audit-msg>
+              <li class="msg"
+                  v-for="(item,index) of payfundData"
+                  :key="index">
+                <audit-msg class="payfund"
+                           :nowNum="inPayfund?nowNum:-1"
+                           v-bind="$attrs"
+                           v-on="$listeners"
+                           :info="item"
+                           :index="index+1"
+                           :startNum="payfundStartNum"
+                           @imgList="getImgList"></audit-msg>
               </li>
             </ul>
           </div>
         </div>
         <div class="follow-main pay-list">
-          <div class="content" @mouseenter="paylistEnter()" @mouseleave="paylistLeave()" :class="[paylistClass?'paylistHover':'']">
+          <div class="content"
+               @mouseenter="paylistEnter()"
+               @mouseleave="paylistLeave()"
+               :class="[paylistClass?'paylistHover':'']">
             <!--支付单-->
-            <ul class="pay-list" v-if="paylistData.length !==0">
+            <ul class="pay-list"
+                v-if="paylistData.length !==0">
               <li style="height: 55px">
-                <div v-if="paylistClass" class="pay-title">支付单</div>
-                <div v-else class="pay-title"></div>
+                <div v-if="paylistClass"
+                     class="pay-title">支付单</div>
+                <div v-else
+                     class="pay-title"></div>
               </li>
-              <li class="msg" v-for="(item,index) of paylistData" :key="index" :style="{'marginBottom':index == paylistData.length-1?'50px':'0'}">
-                <div v-if="index !== 0 && paylistData[index].JudgeRefer == '1'" style="text-align: left;margin-bottom: 15px">
+              <li class="msg"
+                  v-for="(item,index) of paylistData"
+                  :key="index"
+                  :style="{'marginBottom':index == paylistData.length-1?'50px':'0'}">
+                <div v-if="index !== 0 && paylistData[index].JudgeRefer == '1'"
+                     style="text-align: left;margin-bottom: 15px">
                   <span>重新支付</span>
                 </div>
                 <div style="width: 90%">
-                  <audit-msg class="paylist" :nowNum="inPaylist?nowNum:-1" v-bind="$attrs" v-on="$listeners" :info="item" :index="index+1" :startNum="paylistStartNum"  @imgList="getImgList"></audit-msg>
+                  <audit-msg class="paylist"
+                             :nowNum="inPaylist?nowNum:-1"
+                             v-bind="$attrs"
+                             v-on="$listeners"
+                             :info="item"
+                             :index="index+1"
+                             :startNum="paylistStartNum"
+                             @imgList="getImgList"></audit-msg>
                 </div>
                 <!--标记是否是会签的左边线-->
                 <div v-if="item.IsMode =='1'">
                   <!--判断第一个会签模式第一个-->
-                  <div v-if="paylistData[index-1].IsMode != '1' && paylistData[index].IsMode == '1'" class="modeTop">
-                    <span class="hqms" :style="{'top':(item.SameNum-1) * 110 + 50+'px'}">会<br/>签</span>
+                  <div v-if="paylistData[index-1].IsMode != '1' && paylistData[index].IsMode == '1'"
+                       class="modeTop">
+                    <span class="hqms"
+                          :style="{'top':(item.SameNum-1) * 110 + 50+'px'}">会<br />签</span>
                   </div>
                   <!--判断会签模式最后一个且非paylistData的最后一个-->
-                  <div v-if="paylistData[index+1] &&paylistData[index+1].IsMode != '1' && paylistData[index].IsMode == '1'" class="modeBottom"></div>
+                  <div v-if="paylistData[index+1] &&paylistData[index+1].IsMode != '1' && paylistData[index].IsMode == '1'"
+                       class="modeBottom"></div>
                   <!--会签模式右边的竖线，最后一个加上border-bottom-->
-                  <div :class="[index ==paylistData.length-1?'lastMode':'IsMode']" ></div>
+                  <div :class="[index ==paylistData.length-1?'lastMode':'IsMode']"></div>
                 </div>
               </li>
               <li></li>
@@ -54,19 +93,20 @@
           </div>
         </div>
       </div>
-      <el-dialog
-        class="dialog img-dialog"
-        :visible.sync="imgDialog"
-        :append-to-body="false"
-        :close-on-click-modal="true"
-        :modal-append-to-body="true"
-        width="800px"
-        @click.stop="fn()"
-      >
-        <div slot="title" class="dialog-title" @click.stop="fn()">
+      <el-dialog class="dialog img-dialog"
+                 :visible.sync="imgDialog"
+                 modal-append-to-body
+                 :append-to-body="false"
+                 :close-on-click-modal="true"
+                 :modal-append-to-body="true"
+                 width="800px"
+                 @click.stop="fn()">
+        <div slot="title"
+             class="dialog-title"
+             @click.stop="fn()">
           <span style="float: left">查看附件</span>
         </div>
-        <img-view  :images="imgList"></img-view>
+        <img-view :images="imgList"></img-view>
       </el-dialog>
     </div>
   </div>
@@ -92,63 +132,63 @@ export default {
     },
     auditMsg: {
       type: Array,
-      default() {
+      default () {
         return []
       }
     }
   },
-  data() {
+  data () {
     return {
       activeName: '',
-      imgList:[],//图片列表
-      imgDialog:false,//图片预览弹框
-      payfundData:[],
-      paylistData:[],
-      payfundStartNum:0,
-      paylistStartNum:0,
-      payfundClass:false,//资金拨付移入移出类名
-      paylistClass:false,//支付单移入移出类名
-      inPayfund:false,//下一审批在资金拨付流程中
-      inPaylist:false,//下一审批在支付单流程中
-      nowNum:-1//下一审批所在位置
+      imgList: [],//图片列表
+      imgDialog: false,//图片预览弹框
+      payfundData: [],
+      paylistData: [],
+      payfundStartNum: 0,
+      paylistStartNum: 0,
+      payfundClass: false,//资金拨付移入移出类名
+      paylistClass: false,//支付单移入移出类名
+      inPayfund: false,//下一审批在资金拨付流程中
+      inPaylist: false,//下一审批在支付单流程中
+      nowNum: -1//下一审批所在位置
     }
   },
   watch: {
     auditMsg: {
-      handler(val) {
+      handler (val) {
         this.nowNum = -1
-        this.payfundData = val.filter(item =>item.FBilltype === '001');
-        this.paylistData = val.filter(item =>item.FBilltype === '002');
+        this.payfundData = val.filter(item => item.FBilltype === '001');
+        this.paylistData = val.filter(item => item.FBilltype === '002');
         this.paylistStartNum = this.payfundData.length;
-        for (let key in val){
-          if (val[key].FApproval ===1){
-            if (val[key].FBilltype ==='001') {
+        for (let key in val) {
+          if (val[key].FApproval === 1) {
+            if (val[key].FBilltype === '001') {
               this.inPayfund = true;
               this.inPaylist = false;
-              this.nowNum = parseInt(key)+1
+              this.nowNum = parseInt(key) + 1
               break
-            }else if(val[key].FBilltype ==='002'){
+            } else if (val[key].FBilltype === '002') {
               this.inPayfund = false;
               this.inPaylist = true;
-              this.nowNum = parseInt(key)+1 - parseInt(this.paylistStartNum)
+              this.nowNum = parseInt(key) + 1 - parseInt(this.paylistStartNum)
               break
             }
             console.log(this.nowNum)
           }
         }
         // console.log(this.nowNum)
-        for (let key in val){
+        for (let key in val) {
 
         }
       },
       deep: true
     },
-    auditfollow(val){
-      if (val){
+    auditfollow (val) {
+      if (val) {
         this.close()
         this.$emit('update:visible', false)
-        this.$emit('close',false)
-        this.$store.commit('setAuditfollow',false)
+        this.$emit('close', false)
+        this.$store.commit('setAuditfollow', false)
       }
     }
   },
@@ -158,58 +198,58 @@ export default {
       auditfollow: state => state.auditfollow.auditfollow
     })
   },
-  mounted(){
-    this.$store.commit('setAuditfollow',false)
+  mounted () {
+    this.$store.commit('setAuditfollow', false)
   },
   methods: {
-    fn(){},
-    close() {
-      this.$emit('close',false)
+    fn () { },
+    close () {
+      this.$emit('close', false)
       this.$emit('update:visible', false)
-      this.$store.commit('setAuditfollow',false)
+      this.$store.commit('setAuditfollow', false)
     },
     //通过审批流获取图片列表
-    getImgList(imgList){
-      if (this.imgList.length !== 0){
-        for (let key in this.imgList){
+    getImgList (imgList) {
+      if (this.imgList.length !== 0) {
+        for (let key in this.imgList) {
           this.imgList = []
         }
       }
-      this.imgDialog= false
+      this.imgDialog = false
       let arr = []
-      if(imgList !== null){
-        this.imgDialog= true
-        for (let key in imgList){
-          let img ={
-            name:imgList[key].BUrlpath.replace('/UpLoadFiles/BkPayment/',''),
-            path:baseURL.replace('/api','')+imgList[key].BUrlpath
+      if (imgList !== null) {
+        this.imgDialog = true
+        for (let key in imgList) {
+          let img = {
+            name: imgList[key].BUrlpath.replace('/UpLoadFiles/BkPayment/', ''),
+            path: baseURL.replace('/api', '') + imgList[key].BUrlpath
           };
-          this.$set(this.imgList,key,img)
+          this.$set(this.imgList, key, img)
         }
       }
       console.log(this.imgList)
     },
     //资金拨付鼠标移入事件
-    payfundEnter(){
+    payfundEnter () {
       this.payfundClass = true
     },
     //资金拨付鼠标移出事件
-    payfundLeave(){
+    payfundLeave () {
       this.payfundClass = false
     },
     //支付单鼠标移入事件
-    paylistEnter(){
+    paylistEnter () {
       this.paylistClass = true
     },
     //支付单鼠标移出事件
-    paylistLeave(){
+    paylistLeave () {
       this.paylistClass = false
     },
-    keepInputFocus(){
-      this.$store.commit('setAuditfollow',false)
+    keepInputFocus () {
+      this.$store.commit('setAuditfollow', false)
       console.log(this.auditfollow)
     },
-    keepDialog(){
+    keepDialog () {
 
     }
   },
@@ -228,7 +268,7 @@ export default {
   width: 310px;
   background: #fff;
   box-shadow: 0px 1px 9px #1b4a7394;
-  >.follow-body{
+  > .follow-body {
     position: relative;
     .title {
       text-align: center;
@@ -251,13 +291,13 @@ export default {
         background-size: 100% 100%;
       }
     }
-    .pay-fund{
-      .content{
-        padding: 10px 0px  0px;
+    .pay-fund {
+      .content {
+        padding: 10px 0px 0px;
       }
     }
     .follow-main {
-      height:100%;
+      height: 100%;
       overflow: auto;
       overflow-x: hidden;
       .content {
@@ -290,7 +330,7 @@ export default {
     }
   }
 }
-.dialog-title{
+.dialog-title {
   height: 40px;
   border-bottom: 1px solid #eaeaea;
   padding: 15px 10px;
@@ -302,83 +342,83 @@ export default {
 }
 </style>
 <style scoped>
-  .img-dialog >>> .el-dialog{
-    width: 780px!important;
-  }
-  .img-dialog >>> .el-dialog__body{
-    padding: 0;
-  }
-  .img-dialog >>>.el-dialog__header{
-    padding: 0;
-  }
-  .paylist >>> ul li em{
-      /*color: red !important;*/
-  }
-  .payfundHover .pay-fund li{
-    border-left: 2px solid #8bc34a !important;
-  }
-  .IsMode{
-    width: 10px;
-    height: 100%;
-    border-right: 2px solid #ff2929b5;
-    /*border-bottom: 2px solid red;*/
-    /*background-color: red;*/
-    position: absolute;
-    right: 0;
-    top: 0;
-    display: inline-block;
-    /*border-bottom: 1px solid #0ee6d4 !important;*/
-  }
-  .lastMode{
-    width: 10px;
-    height: 100%;
-    border-right: 2px solid #ff2929b5;
-    border-bottom: 2px solid #ff2929b5;
-    position: absolute;
-    right: 0;
-    top: 0;
-    display: inline-block;
-  }
-  .modeTop{
-    border-top: 2px solid #ff2929b5;
-    width: 10px;
-    height: 100%;
-    position: absolute;
-    right: 0;
-    top: 0;
-    display: inline-block;
-  }
-  .hqms{
-    background-color: #ffffff;
-    position: absolute;
-    z-index: 1;
-    left: -1px;
-    top: 50px;
-  }
-  .modeBottom{
-    border-bottom: 2px solid #ff2929b5;
-    width: 10px;
-    height: 100%;
-    position: absolute;
-    right: 0;
-    top: 0;
-    display: inline-block;
-  }
-  .payfundHover .pay-fund li .payfund >>> ul li em{
-    color:#8bc34a ;
-    border: 2px solid #8bc34a;
-  }
-  .paylistHover .pay-list li{
-    border-left: 2px solid #8bc34a !important;
-  }
-  .paylistHover .pay-list li .paylist >>> ul li em{
-    border: 2px solid #8bc34a;
-    color: #8bc34a ;
-  }
-  .pay-title {
-    text-align: left;
-    height: 20px;
-    padding-top: 15px;
-    font-size: 0.14rem;
-  }
+.img-dialog >>> .el-dialog {
+  width: 780px !important;
+}
+.img-dialog >>> .el-dialog__body {
+  padding: 0;
+}
+.img-dialog >>> .el-dialog__header {
+  padding: 0;
+}
+.paylist >>> ul li em {
+  /*color: red !important;*/
+}
+.payfundHover .pay-fund li {
+  border-left: 2px solid #8bc34a !important;
+}
+.IsMode {
+  width: 10px;
+  height: 100%;
+  border-right: 2px solid #ff2929b5;
+  /*border-bottom: 2px solid red;*/
+  /*background-color: red;*/
+  position: absolute;
+  right: 0;
+  top: 0;
+  display: inline-block;
+  /*border-bottom: 1px solid #0ee6d4 !important;*/
+}
+.lastMode {
+  width: 10px;
+  height: 100%;
+  border-right: 2px solid #ff2929b5;
+  border-bottom: 2px solid #ff2929b5;
+  position: absolute;
+  right: 0;
+  top: 0;
+  display: inline-block;
+}
+.modeTop {
+  border-top: 2px solid #ff2929b5;
+  width: 10px;
+  height: 100%;
+  position: absolute;
+  right: 0;
+  top: 0;
+  display: inline-block;
+}
+.hqms {
+  background-color: #ffffff;
+  position: absolute;
+  z-index: 1;
+  left: -1px;
+  top: 50px;
+}
+.modeBottom {
+  border-bottom: 2px solid #ff2929b5;
+  width: 10px;
+  height: 100%;
+  position: absolute;
+  right: 0;
+  top: 0;
+  display: inline-block;
+}
+.payfundHover .pay-fund li .payfund >>> ul li em {
+  color: #8bc34a;
+  border: 2px solid #8bc34a;
+}
+.paylistHover .pay-list li {
+  border-left: 2px solid #8bc34a !important;
+}
+.paylistHover .pay-list li .paylist >>> ul li em {
+  border: 2px solid #8bc34a;
+  color: #8bc34a;
+}
+.pay-title {
+  text-align: left;
+  height: 20px;
+  padding-top: 15px;
+  font-size: 0.14rem;
+}
 </style>

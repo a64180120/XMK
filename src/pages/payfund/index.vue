@@ -1,70 +1,94 @@
 <template>
   <div class="self_hyz">
-      <tophandle title="资金拨付在线工作平台" @refresh="getDataC">
-        <div class="btnCon">
-          <div v-if="menu['fund_add']" @click.stop="showAuditAdd('add')" class="handle">
-            <div class="topIcon">
-              <img src="@/assets/images/xz.png" alt />
-            </div>新增
-          </div>
-          <div v-if="menu['fund_edit']" @click.stop="showAuditAdd('update')" class="handle">
-            <div class="topIcon">
-              <img src="@/assets/images/zj2.png" alt />
-            </div>修改
-          </div>
-          <div v-if="menu['fund_delete']" @click.stop="showAuditAdd('delete')" class="handle">
-            <div class="topIcon">
-              <img src="@/assets/images/zj3.png" alt />
-            </div>删除
-          </div>
-          <div v-if="menu['fund_check']" @click.stop="showAuditAdd('SS')" class="handle">
-            <div class="topIcon">
-              <img src="@/assets/images/ss.png" alt />
-            </div>
-            <!-- @click.stop="approvalDataS.openDialog=true"-->
-            送审
-          </div>
-          <div v-if="menu['fund_uncheck']" @click.stop="showAuditAdd('QXSS')" class="handle">
-            <div class="topIcon">
-              <img src="@/assets/images/ss_d.png" alt />
-            </div>
-            <!-- @click.stop="approvalDataS.openDialog=true"-->
-            取消送审
-          </div>
-          <div v-if="menu['fund_createpay']" @click.stop="showAuditAdd('SC')" class="handle" style="width: 80px;">
-            <div class="topIcon">
-              <img src="@/assets/images/sc.png" alt />
-            </div>
-            <!-- @click="creatPayItem()"-->
-            生成支付单
-          </div>
-          <div v-if="menu['fund_cancel']" @click.stop="showAuditAdd('ZF')" class="handle">
-            <div class="topIcon">
-              <img src="@/assets/images/zf.png" alt />
-            </div>
-            <!-- @click.stop="approvalDataS.openDialog=true"-->
-            作废
-          </div>
-          <div @click.stop="printTables" class="handle">
-            <div class="topIcon">
-              <img src="@/assets/images/dy.png" alt />
-            </div>
-            <!-- @click="creatPayItem()"-->
-            打印
-          </div>
-
-          <!--<div class="nav" @click="payNav('approvalData')">送审</div>-->
+    <tophandle title="资金拨付在线工作平台"
+               @refresh="getDataC">
+      <div class="btnCon">
+        <div v-if="menu['fund_add']"
+             @click.stop="showAuditAdd('add')"
+             class="handle">
+          <div class="topIcon">
+            <img src="@/assets/images/xz.png"
+                 alt />
+          </div>新增
         </div>
-      </tophandle>
+        <div v-if="menu['fund_edit']"
+             @click.stop="showAuditAdd('update')"
+             class="handle">
+          <div class="topIcon">
+            <img src="@/assets/images/zj2.png"
+                 alt />
+          </div>修改
+        </div>
+        <div v-if="menu['fund_delete']"
+             @click.stop="showAuditAdd('delete')"
+             class="handle">
+          <div class="topIcon">
+            <img src="@/assets/images/zj3.png"
+                 alt />
+          </div>删除
+        </div>
+        <div v-if="menu['fund_check']"
+             @click.stop="showAuditAdd('SS')"
+             class="handle">
+          <div class="topIcon">
+            <img src="@/assets/images/ss.png"
+                 alt />
+          </div>
+          <!-- @click.stop="approvalDataS.openDialog=true"-->
+          送审
+        </div>
+        <div v-if="menu['fund_uncheck']"
+             @click.stop="showAuditAdd('QXSS')"
+             class="handle">
+          <div class="topIcon">
+            <img src="@/assets/images/ss_d.png"
+                 alt />
+          </div>
+          <!-- @click.stop="approvalDataS.openDialog=true"-->
+          取消送审
+        </div>
+        <div v-if="menu['fund_createpay']"
+             @click.stop="showAuditAdd('SC')"
+             class="handle"
+             style="width: 80px;">
+          <div class="topIcon">
+            <img src="@/assets/images/sc.png"
+                 alt />
+          </div>
+          <!-- @click="creatPayItem()"-->
+          生成支付单
+        </div>
+        <div v-if="menu['fund_cancel']"
+             @click.stop="showAuditAdd('ZF')"
+             class="handle">
+          <div class="topIcon">
+            <img src="@/assets/images/zf.png"
+                 alt />
+          </div>
+          <!-- @click.stop="approvalDataS.openDialog=true"-->
+          作废
+        </div>
+        <div @click.stop="printTables"
+             class="handle">
+          <div class="topIcon">
+            <img src="@/assets/images/dy.png"
+                 alt />
+          </div>
+          <!-- @click="creatPayItem()"-->
+          打印
+        </div>
 
+        <!--<div class="nav" @click="payNav('approvalData')">送审</div>-->
+      </div>
+    </tophandle>
 
     <!--列表主体-->
-    <div ref="container" class="container fullTable">
-      <div class="formArea" style="transition: all .3s linear;">
+    <div ref="container"
+         class="container fullTable">
+      <div class="formArea"
+           style="transition: all .3s linear;">
         <div class="btnArea">
-          <div
-            style="height: 100%;width: 130px;display: inline-block;vertical-align: middle;line-height: 30px;"
-          >
+          <div style="height: 100%;width: 130px;display: inline-block;vertical-align: middle;line-height: 30px;">
             <el-checkbox v-model="isMe">标记我的待办</el-checkbox>
           </div>
 
@@ -74,7 +98,8 @@
           <i class="el-icon-d-arrow-right iicon"
              style="position:absolute;right:275px;"
              @click.stop="unionStateScroll(true)"></i>
-          <div class="scrollNav" style="left: 160px;">
+          <div class="scrollNav"
+               style="left: 160px;">
             <div>
               <ul>
                 <li>
@@ -117,8 +142,7 @@
                                   range-separator="至"
                                   start-placeholder="开始日期"
                                   end-placeholder="结束日期"
-                                  @change="getData"
-                                  >
+                                  @change="getData">
                   </el-date-picker>
                 </li>
                 <li>
@@ -226,7 +250,8 @@
               </colgroup>
               <thead>
                 <tr>
-                  <td title="序号" style="text-align: right;padding-right: .5rem !important;">
+                  <td title="序号"
+                      style="text-align: right;padding-right: .5rem !important;">
                     <el-checkbox v-model="checked">序号</el-checkbox>
                   </td>
                   <td title="申报单编号">申报单编号</td>
@@ -257,111 +282,88 @@
               <tbody>
                 <template v-for="(item,index) in dataList.data">
                   <tr :class="{trActive:checkList[index], deleteRow:item.FDelete==1}">
-                    <td
-                      style="text-align: right;padding-right: .5rem!important;"
-                      @click.self="item.FDelete==1?'':changeCheck(index)"
-                    >
+                    <td style="text-align: right;padding-right: .5rem!important;"
+                        @click.self="item.FDelete==1?'':changeCheck(index)">
                       <el-checkbox v-model="checkList[index]">{{index+1}}</el-checkbox>
                     </td>
-                    <td @click="showApply(item.PhId,item.FDelete)" class="atype">
-                      <el-tooltip
-                        :content="item.FCode"
-                        popper-class="tooltipCla"
-                        placement="bottom-start"
-                      >
+                    <td @click="showApply(item.PhId,item.FDelete)"
+                        class="atype">
+                      <el-tooltip :content="item.FCode"
+                                  popper-class="tooltipCla"
+                                  placement="bottom-start">
                         <p>{{item.FCode}}</p>
                       </el-tooltip>
                     </td>
                     <td>
-                      <el-tooltip
-                        :content="item.FName"
-                        popper-class="tooltipCla"
-                        placement="bottom-start"
-                      >
+                      <el-tooltip :content="item.FName"
+                                  popper-class="tooltipCla"
+                                  placement="bottom-start">
                         <p>{{item.FName}}</p>
                       </el-tooltip>
                     </td>
                     <td class="right">
-                      <el-tooltip
-                        :content="item.FAmountTotal| NumFormat"
-                        popper-class="tooltipCla"
-                        placement="bottom-start"
-                      >
+                      <el-tooltip :content="item.FAmountTotal| NumFormat"
+                                  popper-class="tooltipCla"
+                                  placement="bottom-start">
                         <p>{{item.FAmountTotal| NumFormat}}</p>
                       </el-tooltip>
                     </td>
                     <td>
-                      <el-tooltip
-                        :content="(item.FDate.substring(0,19)).replace('T',' ')"
-                        popper-class="tooltipCla"
-                        placement="bottom-start"
-                      >
+                      <el-tooltip :content="(item.FDate.substring(0,19)).replace('T',' ')"
+                                  popper-class="tooltipCla"
+                                  placement="bottom-start">
                         <p>{{(item.FDate.substring(0,19)).replace('T',' ')}}</p>
                       </el-tooltip>
                     </td>
-                    <td
-                      class="atype"
-                      style="position: relative;overflow: visible"
-                      @click.stop="item.FDelete==1?'':openAuditfollow(item,index)"
-                    >
-                      <div
-                        v-if="isMe&&item.IsApprovalNow==1&&item.FDelete!=1&&menu['fund_check']"
-                        style="color: red;"
-                        class="iconMsg"
-                        @click.stop="item.FDelete==1?'':approvalSubmit(item)"
-                      >
+                    <td class="atype"
+                        style="position: relative;overflow: visible"
+                        @click.stop="item.FDelete==1?'':openAuditfollow(item,index)">
+                      <div v-if="isMe&&item.IsApprovalNow==1&&item.FDelete!=1&&menu['fund_check']"
+                           style="color: red;"
+                           class="iconMsg"
+                           @click.stop="item.FDelete==1?'':approvalSubmit(item)">
                         <i class="el-icon-chat-round"></i>
                         <span>审批</span>
                       </div>
-                      <el-tooltip
-                        :content="spTypeList[item.FApproval]"
-                        popper-class="tooltipCla"
-                        placement="bottom-start"
-                      >
+                      <el-tooltip :content="spTypeList[item.FApproval]"
+                                  popper-class="tooltipCla"
+                                  placement="bottom-start">
                         <p>{{spTypeList[item.FApproval]}}</p>
                       </el-tooltip>
                     </td>
                     <td>
-                      <el-tooltip
-                        :disabled="!item.GkPaymentCode"
-                        :content="item.GkPaymentCode?item.GkPaymentCode:'-'"
-                        popper-class="tooltipCla"
-                        placement="bottom-start"
-                      >
+                      <el-tooltip :disabled="!item.GkPaymentCode"
+                                  :content="item.GkPaymentCode?item.GkPaymentCode:'-'"
+                                  popper-class="tooltipCla"
+                                  placement="bottom-start">
                         <p>{{item.GkPaymentCode?item.GkPaymentCode:'-'}}</p>
                       </el-tooltip>
                     </td>
                     <td style="position: relative;overflow: visible">
-                      <div
-                        v-if="isMe&&menu['paycenter_mergepay']&&item.FApproval==9&&item.IsPay!=9"
-                        style="color: #20c1ff;"
-                        class="iconMsg"
-                        @click.stop="paySubmit(item.FCode)"
-                      >
+                      <div v-if="isMe&&menu['paycenter_mergepay']&&item.FApproval==9&&item.IsPay!=9"
+                           style="color: #20c1ff;"
+                           class="iconMsg"
+                           @click.stop="paySubmit(item.FCode)">
                         <i class="el-icon-chat-round"></i>
                         <span>支付</span>
                       </div>
-                      <el-tooltip
-                        :content="item.FApproval==9?payTypeList[item.IsPay]:'-'"
-                        popper-class="tooltipCla"
-                        placement="bottom-start"
-                      >
+                      <el-tooltip :content="item.FApproval==9?payTypeList[item.IsPay]:'-'"
+                                  popper-class="tooltipCla"
+                                  placement="bottom-start">
                         <p>{{item.FApproval==9?payTypeList[item.IsPay]:'-'}}</p>
                       </el-tooltip>
                     </td>
-                    <td class="left" style="position:relative;">
-                      <el-tooltip
-                        :content="item.FDescribe"
-                        popper-class="tooltipCla"
-                        placement="bottom-start"
-                      >
+                    <td class="left"
+                        style="position:relative;">
+                      <el-tooltip :content="item.FDescribe"
+                                  popper-class="tooltipCla"
+                                  placement="bottom-start">
                         <p>{{item.FDescribe}}</p>
                       </el-tooltip>
-                      <div
-                        v-if="item.FDelete==1"
-                        style="width:60px;height:30px;position: absolute;top:50%;left:50%;margin-top:-15px;margin-left:-30px;"
-                      >
-                        <img style="width:60px;height:30px;" src="../../assets/images/zhang_zf.png" />
+                      <div v-if="item.FDelete==1"
+                           style="width:60px;height:30px;position: absolute;top:50%;left:50%;margin-top:-15px;margin-left:-30px;">
+                        <img style="width:60px;height:30px;"
+                             src="../../assets/images/zhang_zf.png" />
                       </div>
                     </td>
                   </tr>
@@ -375,36 +377,32 @@
           </div>
         </div>
       </div>
-      <div class="rightPanel" style="transition: all .3s linear;">
+      <div class="rightPanel"
+           style="transition: all .3s linear;">
         <div style="width: 278px;overflow-y: scroll;padding-right: 11px;height: 100%;">
           <!--部门选择-->
-          <el-select
-            size="small"
-            style="width: 250px;"
-            class="approvalDepart"
-            popper-class="AD-proper"
-            v-model="searchData.bmType"
-            @change="changeApart"
-          >
-            <el-option
-              v-for="item in bmList"
-              :key="item.PhId"
-              :label="item.OName"
-              :value="item.PhId"
-            ></el-option>
+          <el-select size="small"
+                     style="width: 250px;"
+                     class="approvalDepart"
+                     popper-class="AD-proper"
+                     v-model="searchData.bmType"
+                     @change="changeApart">
+            <el-option v-for="item in bmList"
+                       :key="item.PhId"
+                       :label="item.OName"
+                       :value="item.PhId"></el-option>
           </el-select>
           <!--预算显示区域-->
           <el-card>
-            <div
-              style="font-size: .15rem;cursor: pointer;"
-              @click="rightShow.show1=!rightShow.show1"
-              :class="{showTil:rightShow.show1}"
-            >
+            <div style="font-size: .15rem;cursor: pointer;"
+                 @click="rightShow.show1=!rightShow.show1"
+                 :class="{showTil:rightShow.show1}">
               <span>预算支出</span>
               <i class="el-icon-arrow-up"></i>
             </div>
             <transition name="el-zoom-in-top">
-              <div v-show="rightShow.show1" class="transition-box">
+              <div v-show="rightShow.show1"
+                   class="transition-box">
                 <div>
                   <p style="color: #3294e8;font-size: .4rem">{{apartData.Mst.length-1}}</p>
                   <div>项目总数</div>
@@ -419,104 +417,99 @@
             </transition>
           </el-card>
           <el-card>
-            <div
-              style="font-size: .15rem;cursor: pointer;"
-              @click="rightShow.show2=!rightShow.show2"
-              :class="{showTil:rightShow.show2}"
-            >
+            <div style="font-size: .15rem;cursor: pointer;"
+                 @click="rightShow.show2=!rightShow.show2"
+                 :class="{showTil:rightShow.show2}">
               <span>对下补助项目</span>
               <i class="el-icon-arrow-up"></i>
             </div>
             <transition name="el-zoom-in-top">
-              <div v-show="rightShow.show2" class="transition-box">
+              <div v-show="rightShow.show2"
+                   class="transition-box">
                 <div style="margin: 10px 0;">
                   <div style="width: 30px;display:inline-block;font-size: .14rem">
                     <span>名称</span>
                   </div>
                   <!--部门选择-->
-                  <el-select
-                    size="small"
-                    style="display: inline-block;width: 200px;border-bottom: 1px solid #ccc"
-                    :title="apartDataMst[bzType]"
-                    v-model="bzType"
-                    @change="getChartList"
-                  >
-                    <el-option
-                      v-for="item in apartData.Mst"
-                      :key="item.PhId"
-                      :label="item.FProjName"
-                      :value="item.PhId"
-                    ></el-option>
+                  <el-select size="small"
+                             style="display: inline-block;width: 200px;border-bottom: 1px solid #ccc"
+                             :title="apartDataMst[bzType]"
+                             v-model="bzType"
+                             @change="getChartList">
+                    <el-option v-for="item in apartData.Mst"
+                               :key="item.PhId"
+                               :label="item.FProjName"
+                               :value="item.PhId"></el-option>
                   </el-select>
                 </div>
                 <div>
                   <!--echartArea-->
-                  <pie-chart
-                    :dw="chartData.dw"
-                    :opinion="chartData.title"
-                    :opinionData="chartData.chart"
-                  ></pie-chart>
+                  <pie-chart :dw="chartData.dw"
+                             :opinion="chartData.title"
+                             :opinionData="chartData.chart"></pie-chart>
                 </div>
               </div>
             </transition>
           </el-card>
         </div>
       </div>
-      <div class="pageArea" style="transition: all .3s linear;">
-        <el-pagination
-          :current-page="pageSearch.pageIndex"
-          :page-sizes="[20,30,50,100]"
-          :page-size="pageSearch.pageSize"
-          layout="total,sizes,prev,pager,next,jumper"
-          :total="dataList.total"
-          @size-change="changePagesize"
-          @current-change="changePageindex"
-        ></el-pagination>
+      <div class="pageArea"
+           style="transition: all .3s linear;">
+        <el-pagination :current-page="pageSearch.pageIndex"
+                       :page-sizes="[20,30,50,100]"
+                       :page-size="pageSearch.pageSize"
+                       layout="total,sizes,prev,pager,next,jumper"
+                       :total="dataList.total"
+                       @size-change="changePagesize"
+                       @current-change="changePageindex"></el-pagination>
       </div>
       <div class="arrowShow">
-        <i class="el-icon-d-arrow-right" @click.stop="arrowShow"></i>
+        <i class="el-icon-d-arrow-right"
+           @click.stop="arrowShow"></i>
       </div>
     </div>
 
     <!--申报单弹窗-->
-    <el-dialog
-      v-if="applyType"
-      class="applydialog"
-      title="查看申报"
-      :visible.sync="applyType"
-      :close-on-click-modal="false"
-      :before-close="handleClose"
-    >
-      <applybill
-        :applyNum="applyNum"
-        :applyBillType="applyBillType"
-        :subData="approvalDataS.subData"
-        @delete="handleDelete"
-      ></applybill>
+    <el-dialog v-if="applyType"
+               append-to-body
+               modal-append-to-body
+               class="applydialog"
+               title="查看申报"
+               :visible.sync="applyType"
+               :close-on-click-modal="false"
+               :before-close="handleClose">
+      <applybill :applyNum="applyNum"
+                 :applyBillType="applyBillType"
+                 :subData="approvalDataS.subData"
+                 @delete="handleDelete"></applybill>
     </el-dialog>
     <!--项目新增修改-->
-    <el-dialog
-      v-if="applyproType"
-      class="applydialog"
-      :title="applyproTitle"
-      :visible.sync="applyproType"
-      :close-on-click-modal="false"
-    >
-      <applypro :applyNum="applyNum" :prodata="apartData" :isAdd="isAdd" @delete="handleDelete"></applypro>
+    <el-dialog v-if="applyproType"
+               append-to-body
+               modal-append-to-body
+               class="applydialog"
+               :title="applyproTitle"
+               :visible.sync="applyproType"
+               :close-on-click-modal="false">
+      <applypro :applyNum="applyNum"
+                :prodata="apartData"
+                :isAdd="isAdd"
+                @delete="handleDelete"></applypro>
     </el-dialog>
     <!--送审-->
-    <go-approval v-if="approvalDataS.openDialog" :data="approvalDataS" @delete="handleDelete"></go-approval>
+    <go-approval v-if="approvalDataS.openDialog"
+                 :data="approvalDataS"
+                 @delete="handleDelete"></go-approval>
     <!--审批弹窗-->
 
-    <approval-dialog
-      ref="approvalDialog"
-      :title="appDialog.title"
-      :btn-group="appDialog.btnGroup"
-      :rowData="approvalData"
-      @refresh="getData"
-    ></approval-dialog>
+    <approval-dialog ref="approvalDialog"
+                     :title="appDialog.title"
+                     :btn-group="appDialog.btnGroup"
+                     :rowData="approvalData"
+                     @refresh="getData"></approval-dialog>
     <!--查看审批流程-->
-    <auditfollow :visible.sync="visible" :auditMsg="auditMsg"></auditfollow>
+    <auditfollow :visible.sync="visible"
+                 :auditMsg="auditMsg"></auditfollow>
   </div>
 </template>
 
@@ -534,7 +527,7 @@ import { mapState } from 'vuex'
 import { printTable } from '@/api/upload'
 export default {
   name: 'index',
-  data() {
+  data () {
     return {
       //选择与我相关的审批和支付
       isMe: false,
@@ -565,7 +558,7 @@ export default {
       },
       date: [],
       approvalType: ['', 0, 1, 2, 9],
-      payType: ['', 0, 1,2, 9],
+      payType: ['', 0, 1, 2, 9],
       approvalList: [
         { value: '', label: '全部' },
         { value: 0, label: '待送审' },
@@ -645,13 +638,13 @@ export default {
     ApprovalDialog,
     num
   },
-  mounted() {
+  mounted () {
     //this.getData();
     this.getDataC()
     this.updateTitle()
   },
   watch: {
-    checked: function(val) {
+    checked: function (val) {
       //数组快速修改，方法一
       this.checkList.forEach((item, index, array) => {
         this.checkList[index] = val
@@ -663,7 +656,7 @@ export default {
            this.$forceUpdate(this.checkList);*/
     },
     searchData: {
-      handler(val) {
+      handler (val) {
         if (val.bmType) {
           this.pageSearch.pageIndex = 1
           this.getData()
@@ -671,11 +664,11 @@ export default {
       },
       deep: true
     },
-    isMe(val) {
+    isMe (val) {
       this.getData()
     },
-    approvalType(newVal, oldVal) {
-      function arrSame(arr1, arr2) {
+    approvalType (newVal, oldVal) {
+      function arrSame (arr1, arr2) {
         return JSON.stringify(arr1) == JSON.stringify(arr2)
       }
       let allChoosed = this.approvalList.map(i => {
@@ -706,8 +699,8 @@ export default {
       }
       this.getData()
     },
-    payType(newVal, oldVal) {
-      function arrSame(arr1, arr2) {
+    payType (newVal, oldVal) {
+      function arrSame (arr1, arr2) {
         return JSON.stringify(arr1) == JSON.stringify(arr2)
       }
       let allChoosed = this.payList.map(i => i.value)
@@ -751,15 +744,15 @@ export default {
   },
   methods: {
     //修改title
-    updateTitle() {
+    updateTitle () {
       let title = document.getElementsByTagName('title')[0]
       title.innerText = '资金拨付在线工作平台'
     },
-    printTables: function() {
+    printTables: function () {
       let vm = this
       printTable(vm)
     },
-    clearZero: function(type) {
+    clearZero: function (type) {
       console.log(this.money.smoney)
 
       if (type == 0) {
@@ -778,7 +771,7 @@ export default {
         }
       }
     },
-    clearNum: function(type) {
+    clearNum: function (type) {
       let val = this.money[type == 0 ? 'smoney' : 'emoney'] + ''
       //obj.value = obj.value.replace(/[\u4e00-\u9fa5]/g,"");  //清除“汉字”和“.”以外的字符
       val = val.replace(/[^\d.]/g, '') //清除“数字”和“.”以外的字符
@@ -795,12 +788,12 @@ export default {
       this.money[type == 0 ? 'smoney' : 'emoney'] = val
     },
     //td选中事件
-    changeCheck(val) {
+    changeCheck (val) {
       this.checkList[val] = !this.checkList[val]
       this.$forceUpdate(this.checkList)
     },
     //滚动
-    unionStateScroll(bool) {
+    unionStateScroll (bool) {
       var union = document.getElementsByClassName('scrollNav')[0]
       var unionStateCon = document.getElementsByClassName('scrollNav')[0]
         .firstElementChild
@@ -846,7 +839,7 @@ export default {
       }
     },
     //根据数据的长度生成checkList
-    getCheckList: function(n) {
+    getCheckList: function (n) {
       let checkList = []
       for (var i = 0; i < n; i++) {
         checkList.push(false)
@@ -855,7 +848,7 @@ export default {
       this.checked = false
     },
     //获取当前选中的数组
-    getCheckedList: function() {
+    getCheckedList: function () {
       let checkedList = []
       this.checkList.forEach((item, index, array) => {
         if (item) {
@@ -865,7 +858,7 @@ export default {
       return checkedList
     },
     //q切换右侧项目是进行并状态数据切换
-    getChartList: function(val) {
+    getChartList: function (val) {
       let param = {
         xmPhid: val,
         PhId: 0,
@@ -920,7 +913,7 @@ export default {
     },
 
     //获取部门
-    getDataC: function() {
+    getDataC: function () {
       let param = { orgid: this.orgid, uid: this.userid }
       this.searchData.bmType = ''
       this.getAxios('GQT/CorrespondenceSettingsApi/GetDeptByUnit', param)
@@ -937,7 +930,7 @@ export default {
         })
     },
     //获取部门对应的项目及项目总额
-    getAllProByBm: function() {
+    getAllProByBm: function () {
       let param = {
         Year: this.year, //年度
         UnitId: this.orgid, //组织代码
@@ -970,7 +963,7 @@ export default {
         })
     },
     //获取审批流
-    getAppvalProc: function() {
+    getAppvalProc: function () {
       let param = {
         Orgid: this.apartData.bm.PhId, //组织id
         BType: '001' //单据类型（"001":资金拨付单,"002":支付单）
@@ -985,7 +978,7 @@ export default {
         })
     },
     //获取列表数据
-    getData: function() {
+    getData: function () {
       /*console.log(new Date(this.searchData.date[0]).getFullYear());
           let startTime=new Date(this.searchData.date[0]).getFullYear()+'-'*/
       if (!this.apartData['bm'].PhId) {
@@ -1045,18 +1038,18 @@ export default {
           this.getData()
         },*/
     //dialog关闭前触发事件
-    handleClose: function() {
+    handleClose: function () {
       //alert('cloase');
       this.applyType = false
     },
     //查看申报弹窗
-    showApply: function(num, type) {
+    showApply: function (num, type) {
       this.applyType = true
       this.applyNum = num + ''
       this.applyBillType = type
     },
     //删除事件
-    handleDelete: function(val) {
+    handleDelete: function (val) {
       if (val.flag) {
         if (val.type == 'applyproType') {
           this.applyproType = false
@@ -1069,11 +1062,11 @@ export default {
       }
     },
     //弹出组织树
-    showOrg() {
+    showOrg () {
       this.orgType = true
     },
     //申报
-    SB: function() {
+    SB: function () {
       if (this.apartData.Mst.length == 0) {
         this.$msgBox.error('当前部门无预算支出项目，无法发起资金拨付申报。')
         return
@@ -1084,7 +1077,7 @@ export default {
       this.applyproType = true
     },
     //修改
-    Update: function(checkedList) {
+    Update: function (checkedList) {
       if (checkedList.length == 0) {
         this.$msgBox.show({
           content: '请选择要修改的单据。'
@@ -1112,7 +1105,7 @@ export default {
       }
     },
     //删除
-    Delete: function(checkedList) {
+    Delete: function (checkedList) {
       if (checkedList.length == 0) {
         this.$msgBox.show({
           content: '请选择要删除的单据。'
@@ -1136,11 +1129,11 @@ export default {
           .then(() => {
             this.deleteJk(phidList)
           })
-          .catch(() => {})
+          .catch(() => { })
       }
     },
     //删除接口
-    deleteJk: function(phidList) {
+    deleteJk: function (phidList) {
       let param = {
         fPhIdList: phidList
       }
@@ -1163,7 +1156,7 @@ export default {
         })
     },
     //送审方法
-    SS: function(checkedList) {
+    SS: function (checkedList) {
       if (checkedList.length == 0) {
         this.$msgBox.show({
           content: '请选择要送审的单据。'
@@ -1180,18 +1173,18 @@ export default {
             }
           )
             .then(() => {
-              if(this.menu['fund_createpay']){
+              if (this.menu['fund_createpay']) {
                 this.showAuditAdd('SC')
-              }else{
+              } else {
                 this.$msgBox.show({
                   content: '您没有生成支付单权限，请联系管理员获取权限。'
                 })
               }
 
             })
-            .catch(() => {})
+            .catch(() => { })
         } else {
-          if(this.menu['fund_check']){
+          if (this.menu['fund_check']) {
             let data = []
             for (var i in checkedList) {
               if (
@@ -1213,7 +1206,7 @@ export default {
             }
             this.approvalDataS.openDialog = true
             this.approvalDataS.data = data
-          }else{
+          } else {
             this.$msgBox.show({
               content: '您没有送审权限，请联系管理员获取权限。'
             })
@@ -1223,7 +1216,7 @@ export default {
       }
     },
     //取消送审
-    QXSS: function(checkedList) {
+    QXSS: function (checkedList) {
       if (checkedList.length == 0) {
         this.$msgBox.show({
           content: '请选择要取消送审的单据。'
@@ -1265,7 +1258,7 @@ export default {
       }
     },
     //生成支付单
-    SC: function(checkedList) {
+    SC: function (checkedList) {
       if (this.approvalDataS.subData.length != 0) {
         this.$msgBox.show({
           content:
@@ -1310,7 +1303,7 @@ export default {
         })
     },
     //单据作废
-    ZF: function(checkedList) {
+    ZF: function (checkedList) {
       if (checkedList.length == 0) {
         this.$msgBox.show({
           content: '请选择要作废的单据。'
@@ -1334,11 +1327,11 @@ export default {
           .then(() => {
             this.zuofei(checkedListPhId)
           })
-          .catch(() => {})
+          .catch(() => { })
       }
     },
     //作废接口
-    zuofei: function(checkedListPhId) {
+    zuofei: function (checkedListPhId) {
       let param = {
         fPhIdList: checkedListPhId
       }
@@ -1361,7 +1354,7 @@ export default {
         })
     },
     //
-    showAuditAdd(val) {
+    showAuditAdd (val) {
       let checkedList = this.getCheckedList()
       switch (val) {
         case 'add':
@@ -1389,10 +1382,10 @@ export default {
           break
       }
     },
-    closeAuditFollow() {
+    closeAuditFollow () {
       this.visible = false
     },
-    openAuditfollow(item, idx) {
+    openAuditfollow (item, idx) {
       if (this.apartData.subData.length == 0) {
         this.$msgBox.show({
           content: '当前部门未创建审批流。'
@@ -1407,17 +1400,17 @@ export default {
           type: 'warning'
         })
           .then(() => {
-            if(this.menu['fund_check']){
+            if (this.menu['fund_check']) {
               this.checkList[idx] = true
               this.showAuditAdd('SS')
-            }else{
+            } else {
               this.$msgBox.show({
                 content: '您没有送审权限，请联系管理员。'
               })
             }
 
           })
-          .catch(() => {})
+          .catch(() => { })
       } else {
         /*审批流查看*/
         this.visible = true
@@ -1429,7 +1422,7 @@ export default {
       }
     },
     //拉取审批流数据查看
-    getAuditfollow(data) {
+    getAuditfollow (data) {
       this.getAxios('GSP/GAppvalRecord/GetAppvalRecordList', data)
         .then(res => {
           console.log(res)
@@ -1448,7 +1441,7 @@ export default {
         参数：
         RefbillPhidList: ['10'], （单据主键集合）
         * */
-    postBill: function(data) {
+    postBill: function (data) {
       let param = { RefbillPhidList: data }
       this.postAxios('GSP//GAppvalRecord/PostAddPayMents', param)
         .then(res => {
@@ -1470,12 +1463,12 @@ export default {
         })
     },
     //生成支付单弹框
-    creatPayItem() {
+    creatPayItem () {
       this.appDialog.title = '审批并生成支付单'
       this.appDialog.btnGroup.cancelName = '取消'
       this.appDialog.btnGroup.onfirmName = '生成支付单'
     },
-    changeApart: function(val) {
+    changeApart: function (val) {
       for (var i in this.bmList) {
         if (this.searchData.bmType == this.bmList[i].PhId) {
           this.apartData.bm = this.bmList[i]
@@ -1487,27 +1480,27 @@ export default {
       this.getAllProByBm()
     },
 
-    changePagesize: function(val) {
+    changePagesize: function (val) {
       this.pageSearch.pageSize = val
       this.pageSearch.pageIndex = 1
       this.getData()
     },
-    changePageindex: function(val) {
+    changePageindex: function (val) {
       this.pageSearch.pageIndex = val
       this.getData()
     },
-    moneyChange: function() {
+    moneyChange: function () {
       if (
         this.money.smoney &&
         this.money.smoney.toString().lastIndexOf('.') ==
-          this.money.smoney.length - 1
+        this.money.smoney.length - 1
       ) {
         this.money.smoney.length = this.money.smoney.length - 1
       }
       if (
         this.money.emoney &&
         this.money.emoney.toString().lastIndexOf('.') ==
-          this.money.emoney.length - 1
+        this.money.emoney.length - 1
       ) {
         this.money.emoney.length = this.money.emoney.length - 1
       }
@@ -1516,17 +1509,17 @@ export default {
       }
       this.getData()
     },
-    handleChange: function(val) {
+    handleChange: function (val) {
       console.log(val)
       console.log(this.$refs.sp)
     },
-    arrowShow: function() {
+    arrowShow: function () {
       let cls = this.$refs.container.className
       this.$refs.container.className =
         cls == 'container' ? 'container fullTable' : 'container'
     },
     /*当前页面审批*/
-    approvalSubmit: function(val) {
+    approvalSubmit: function (val) {
       console.log(val)
       this.approvalData = [val]
       this.$nextTick(() => {
@@ -1534,7 +1527,7 @@ export default {
       })
     },
     /*支付单审批，直接跳转页面*/
-    paySubmit: function(val) {
+    paySubmit: function (val) {
       this.$router.push({ name: 'paycenter', params: { phid: val } })
     }
   }
@@ -1542,143 +1535,145 @@ export default {
 </script>
 
 <style scoped>
-  .self_hyz .handle {
-    display: inline-block;
-    min-width: 60px;
-    height: 50px;
-    padding: 0px 0;
-    cursor: pointer;
-  }
-  .self_hyz .handle:active {
-    background: #ccc;
-  }
+.self_hyz .handle {
+  display: inline-block;
+  min-width: 60px;
+  height: 50px;
+  padding: 0px 0;
+  cursor: pointer;
+}
+.self_hyz .handle:active {
+  background: #ccc;
+}
 
-  .formArea,
-  .pageArea {
-    right: 300px;
-  }
-  .deleteRow,
-  .deleteRow .atype {
-    cursor: not-allowed;
-    color: #ccc !important;
-  }
-  .rightPanel {
-    width: 270px;
-    position: absolute;
-    right: 20px;
-    top: 8px;
-    bottom: 20px;
-    box-shadow: 0 0 7px #ccc;
-    padding: 10px;
-    background-color: #58a5e6;
-    overflow: hidden;
-    font-size: 0.12rem;
-  }
-  .rightPanel .el-icon-arrow-up {
-    transform: rotate(180deg);
-    float: right;
-    margin-top: 4px;
-    transition: transform 0.3s linear;
-    color: #c0c4cc;
-    position: absolute;
-    right: 20px;
-    cursor: pointer;
-  }
-  .rightPanel .showTil .el-icon-arrow-up {
-    transform: rotatez(0deg);
-  }
-  .rightPanel p {
-    margin-top: 10px;
-    text-shadow: 1px 2px 1px #5302026e;
-  }
-  .approvalDepart >>> .el-input--suffix .el-input__inner {
-    text-align: center;
-  }
-  .showTil {
-    border-bottom: 1px solid #ccc;
-    padding: 0 0 10px 0;
-  }
-  .fullTable .rightPanel {
-    right: -280px;
-    transition: all 0.3s linear;
-  }
-  .fullTable .formArea,
-  .fullTable .pageArea {
-      right: 20px;
-      transition: all 0.3s linear;
-    }
-  .fullTable .arrowShow {
-      right: 0 !important;
-      transform: rotate(180deg);
-      transition: all 0.3s linear;
-      cursor: pointer;
-    }
+.formArea,
+.pageArea {
+  right: 300px;
+}
+.deleteRow,
+.deleteRow .atype {
+  cursor: not-allowed;
+  color: #ccc !important;
+}
+.rightPanel {
+  width: 270px;
+  position: absolute;
+  right: 20px;
+  top: 8px;
+  bottom: 20px;
+  box-shadow: 0 0 7px #ccc;
+  padding: 10px;
+  background-color: #58a5e6;
+  overflow: hidden;
+  font-size: 0.12rem;
+}
+.rightPanel .el-icon-arrow-up {
+  transform: rotate(180deg);
+  float: right;
+  margin-top: 4px;
+  transition: transform 0.3s linear;
+  color: #c0c4cc;
+  position: absolute;
+  right: 20px;
+  cursor: pointer;
+}
+.rightPanel .showTil .el-icon-arrow-up {
+  transform: rotatez(0deg);
+}
+.rightPanel p {
+  margin-top: 10px;
+  text-shadow: 1px 2px 1px #5302026e;
+}
+.approvalDepart >>> .el-input--suffix .el-input__inner {
+  text-align: center;
+}
+.showTil {
+  border-bottom: 1px solid #ccc;
+  padding: 0 0 10px 0;
+}
+.fullTable .rightPanel {
+  right: -280px;
+  transition: all 0.3s linear;
+}
+.fullTable .formArea,
+.fullTable .pageArea {
+  right: 20px;
+  transition: all 0.3s linear;
+}
+.fullTable .arrowShow {
+  right: 0 !important;
+  transform: rotate(180deg);
+  transition: all 0.3s linear;
+  cursor: pointer;
+}
 
-  .arrowShow {
-    position: absolute;
-    right: 285px;
-    top: 47%;
-    font-size: 33px;
-    text-shadow: -2px 0 4px red;
-    color: #fff;
-    transition: all 0.3s linear;
-    animation: ad 1s infinite linear;
-    cursor: pointer;
+.arrowShow {
+  position: absolute;
+  right: 285px;
+  top: 47%;
+  font-size: 33px;
+  text-shadow: -2px 0 4px red;
+  color: #fff;
+  transition: all 0.3s linear;
+  animation: ad 1s infinite linear;
+  cursor: pointer;
+}
+.arrowShow:hover {
+  animation: none;
+}
+/*箭头左右移动动效*/
+@keyframes ad {
+  0% {
+    margin-right: 0px;
   }
-  .arrowShow:hover {
-    animation: none;
+  25% {
+    margin-right: 4px;
   }
-  /*箭头左右移动动效*/
-  @keyframes ad {
-    0% {
-      margin-right: 0px;
-    }
-    25% {
-      margin-right: 4px;
-    }
-    50% {
-      margin-right: 8px;
-    }
-    75% {
-      margin-right: 4px;
-    }
-    100% {
-      margin-right: 0px;
-    }
+  50% {
+    margin-right: 8px;
   }
+  75% {
+    margin-right: 4px;
+  }
+  100% {
+    margin-right: 0px;
+  }
+}
 
-  .container {
-    min-width: 1500px;
-  }
-  .iconMsg {
-    position: absolute;
-    right: 5px;
-    width: 30px;
-    height: 30px;
-    font-size: 0.12rem;
-    top: -4px;
-    background-color: #fff;
-    cursor: pointer;  }
-  .iconMsg i {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    font-size: 0.35rem;
-    top: -10px;
-    right: 2px;
-  }
+.container {
+  min-width: 1500px;
+}
+.iconMsg {
+  position: absolute;
+  right: 5px;
+  width: 30px;
+  height: 30px;
+  font-size: 0.12rem;
+  top: -4px;
+  background-color: #fff;
+  cursor: pointer;
+}
+.iconMsg i {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  font-size: 0.35rem;
+  top: -10px;
+  right: 2px;
+}
 
-  .deleteRow,.deleteRow .atype {
-    cursor: not-allowed;
-    color: #ccc !important;
-  }
-  td p{
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
+.deleteRow,
+.deleteRow .atype {
+  cursor: not-allowed;
+  color: #ccc !important;
+}
+td p {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 </style>
 <style>
-  .self_hyz .el-select__tags {
+.self_hyz .el-select__tags {
   position: absolute;
   left: 0;
 }

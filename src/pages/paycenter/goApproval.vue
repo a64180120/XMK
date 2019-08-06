@@ -1,39 +1,42 @@
 <template>
   <section>
-    <el-dialog
-      :visible.sync="data.openDialog"
-      width="620px"
-      :close-on-click-modal="false"
-      class="dialog goApproval"
-      append-to-body
-    >
-      <div slot="title" class="dialog-title">
+    <el-dialog :visible.sync="data.openDialog"
+               width="620px"
+               :close-on-click-modal="false"
+               class="dialog goApproval"
+               modal-append-to-body
+               append-to-body>
+      <div slot="title"
+           class="dialog-title">
         <p>送审</p>
       </div>
-      <approval-bill
-        ref="approvalbill"
-        v-model="content"
-        :isApproval="true"
-        :approvalFollow="approvalFollow"
-        @approvalRowClick="approvalRowClick"
-        :nextApprovaler="nextApprovaler"
-        @dialogFlow="dialogFlow"
-        @selectApprovaler="selectApprovaler"
-        :upload.sync="upload"
-        :fileCount="fileCount"
-        @uploadFn="upload = true"
-        :FMode="FMode"
-      ></approval-bill>
+      <approval-bill ref="approvalbill"
+                     v-model="content"
+                     :isApproval="true"
+                     :approvalFollow="approvalFollow"
+                     @approvalRowClick="approvalRowClick"
+                     :nextApprovaler="nextApprovaler"
+                     @dialogFlow="dialogFlow"
+                     @selectApprovaler="selectApprovaler"
+                     :upload.sync="upload"
+                     :fileCount="fileCount"
+                     @uploadFn="upload = true"
+                     :FMode="FMode"></approval-bill>
       <div class="approval-btn">
-        <el-button
-          size="small"
-          type="primary"
-          @click="data.openDialog = false"
-        >{{btnGroup.cancelName}}</el-button>
-        <el-button size="small" type="primary" @click="submit">{{btnGroup.onfirmName}}</el-button>
+        <el-button size="small"
+                   type="primary"
+                   @click="data.openDialog = false">{{btnGroup.cancelName}}</el-button>
+        <el-button size="small"
+                   type="primary"
+                   @click="submit">{{btnGroup.onfirmName}}</el-button>
       </div>
-      <el-dialog :close-on-click-modal="false" width="auto" append-to-body :visible.sync="upload">
-        <upload ref="upload" @submit="uploadClose" />
+      <el-dialog modal-append-to-body
+                 :close-on-click-modal="false"
+                 width="auto"
+                 append-to-body
+                 :visible.sync="upload">
+        <upload ref="upload"
+                @submit="uploadClose" />
       </el-dialog>
       <!-- <div
         :class="{approvalfollow:true,show:showAuditfollow}"
@@ -43,7 +46,8 @@
           <auditmsg :info="item" :index="index+1" :isApproval="true"></auditmsg>
         </template>
       </div>-->
-      <approvalfollow :showAuditfollow.sync="showAuditfollow" :auditMsg="auditMsg"></approvalfollow>
+      <approvalfollow :showAuditfollow.sync="showAuditfollow"
+                      :auditMsg="auditMsg"></approvalfollow>
     </el-dialog>
   </section>
 </template>
@@ -74,7 +78,7 @@ export default {
     },
     btnGroup: {
       type: Object,
-      default: function() {
+      default: function () {
         return {
           cancelName: '取消',
           onfirmName: '确认'
@@ -92,7 +96,7 @@ export default {
     }
   },
   inject: ['refreshIndexData'],
-  data() {
+  data () {
     return {
       showAuditfollow: false,
       auditfollowPhId: '',
@@ -119,7 +123,7 @@ export default {
   },
   methods: {
     // 获取审批人
-    approvalRowClick(item) {
+    approvalRowClick (item) {
       console.log('item:', item)
       this.ProcPhid = item.PhId
       this.NextOperators = []
@@ -146,15 +150,15 @@ export default {
           this.$msgBox.error('获取审批人失败！')
         })
     },
-    selectApprovaler(list) {
+    selectApprovaler (list) {
       this.NextOperators = list
     },
 
-    changeDialog() {
+    changeDialog () {
       this.openDialog = true
     },
     //查看详细流程
-    dialogFlow(row) {
+    dialogFlow (row) {
       GetAllPostsAndOpersByProc({
         ProcId: row.PhId
       })
@@ -176,20 +180,20 @@ export default {
         })
     },
     //取消
-    cancel() {
+    cancel () {
       this.openDialog = false
     },
     // 送审请求
-    postAddAppvalRecord(PhId) {
+    postAddAppvalRecord (PhId) {
       let formData = new FormData()
       let data = {
         RefbillPhidList: PhId
           ? JSON.stringify([PhId + ''])
           : JSON.stringify(
-              this.data.data.map(item => {
-                return item.Mst.PhId + ''
-              })
-            ),
+            this.data.data.map(item => {
+              return item.Mst.PhId + ''
+            })
+          ),
         FBilltype: this.bType,
         ProcPhid: this.ProcPhid,
         PostPhid: this.PostPhid,
@@ -229,7 +233,7 @@ export default {
         })
     },
     //确认
-    submit() {
+    submit () {
       if (this.ProcPhid == '') {
         this.$msgBox.error('请选择一条审批流程！')
         return
@@ -261,14 +265,14 @@ export default {
       }
     },
     // 上传附件
-    uploadClose(files) {
+    uploadClose (files) {
       console.log(files)
       this.upload = false
       this.fileCount = files.length
       this.files = files
     }
   },
-  mounted() {
+  mounted () {
     var data = {
       Orgid: this.orgid,
       BType: this.bType,
@@ -299,9 +303,9 @@ export default {
         this.$msgBox.error('获取送审流程失败！')
       })
   },
-  created() {},
+  created () { },
   watch: {
-    'data.openDialog'(newVal) {
+    'data.openDialog' (newVal) {
       if (newVal) {
         this.$nextTick(() => {
           this.$refs.content.setCurrentRow(this.subData[0])

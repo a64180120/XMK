@@ -1,60 +1,56 @@
 <template>
   <section>
-    <el-dialog
-      :visible.sync="openDialog"
-      width="37.5%"
-      v-show="openDialog"
-      :close-on-click-modal="false"
-      class="dialog approval-dialog"
-      :append-to-body="true"
-      @close="closeDialog"
-    >
-      <div slot="title" class="dialog-title">
+    <el-dialog :visible.sync="openDialog"
+               width="37.5%"
+               v-show="openDialog"
+               :close-on-click-modal="false"
+               class="dialog approval-dialog"
+               modal-append-to-body
+               :append-to-body="true"
+               @close="closeDialog">
+      <div slot="title"
+           class="dialog-title">
         <p>审批{{isLast&&BType!='002'?'并生成支付单':''}}</p>
       </div>
-      <approval-bill
-        @dialogFlow="searchFlow"
-        @approvalRowClick="approvalRowClick"
-        @selectApprovaler="selectApprovaler"
-        @isArgeen="backAproval"
-        @uploadFn="openUpload"
-        :upload="uploadDialog"
-        :approvalFollow="approvalFollow"
-        :nextApprovaler="nextApprovaler"
-        :backPersonnel="backPersonnel"
-        :FMode="nextData"
-        ref="approval"
-        v-model="textare"
-        :file-count="fileCount"
-      ></approval-bill>
+      <approval-bill @dialogFlow="searchFlow"
+                     @approvalRowClick="approvalRowClick"
+                     @selectApprovaler="selectApprovaler"
+                     @isArgeen="backAproval"
+                     @uploadFn="openUpload"
+                     :upload="uploadDialog"
+                     :approvalFollow="approvalFollow"
+                     :nextApprovaler="nextApprovaler"
+                     :backPersonnel="backPersonnel"
+                     :FMode="nextData"
+                     ref="approval"
+                     v-model="textare"
+                     :file-count="fileCount"></approval-bill>
       <div class="approval-btn">
-        <el-button size="small" type="primary" @click="cancel()">取消</el-button>
-        <el-button
-          size="small"
-          type="primary"
-          @click="submit()"
-        >{{isLast&&BType!='002'?'生成支付单':'确认'}}</el-button>
+        <el-button size="small"
+                   type="primary"
+                   @click="cancel()">取消</el-button>
+        <el-button size="small"
+                   type="primary"
+                   @click="submit()">{{isLast&&BType!='002'?'生成支付单':'确认'}}</el-button>
       </div>
-      <el-dialog
-        :visible.sync="uploadDialog"
-        width="auto"
-        :close-on-click-modal="false"
-        class
-        :append-to-body="true"
-      >
+      <el-dialog :visible.sync="uploadDialog"
+                 width="auto"
+                 :close-on-click-modal="false"
+                 class
+                 modal-append-to-body
+                 :append-to-body="true">
         <upload @submit="submitFn"></upload>
       </el-dialog>
     </el-dialog>
     <!--右侧回退人员-->
-    <back-approval
-      v-if="visible"
-      :visible.sync="visible"
-      :auditMsg="backData"
-      @getBackPeople="getBackPeople"
-      @closeBack="closeBack"
-    ></back-approval>
+    <back-approval v-if="visible"
+                   :visible.sync="visible"
+                   :auditMsg="backData"
+                   @getBackPeople="getBackPeople"
+                   @closeBack="closeBack"></back-approval>
     <!--查看审批流-->
-    <auditfollow :visible.sync="auditVisible" :auditMsg="auditMsg"></auditfollow>
+    <auditfollow :visible.sync="auditVisible"
+                 :auditMsg="auditMsg"></auditfollow>
   </section>
 </template>
 
@@ -69,7 +65,7 @@ export default {
   props: {
     rowData: {
       type: Array,
-      default: function() {
+      default: function () {
         return []
       }
     },
@@ -78,7 +74,7 @@ export default {
       default: '001'
     }
   },
-  data() {
+  data () {
     return {
       uploadDialog: false,
       visible: false,
@@ -101,21 +97,21 @@ export default {
       isLast: false //是否为最后一个审批岗位
     }
   },
-  mounted() {},
+  mounted () { },
   watch: {
     rowData: {
-      handler(val) {
+      handler (val) {
         console.log(val)
       },
       deep: true
     },
-    textare(ac) {
+    textare (ac) {
       console.log('key:', ac)
     }
   },
   methods: {
     //根据组织id，单据类型获取所有的审批流程
-    getAppvalProc() {
+    getAppvalProc () {
       let data = {
         ProcPhid: this.rowData[0].ProcPhid,
         PostPhid: this.rowData[0].PostPhid,
@@ -139,7 +135,7 @@ export default {
             let that = this
             this.$msgBox.show({
               content: res.Msg,
-              fn: function() {
+              fn: function () {
                 that.openDialog = false
               }
             })
@@ -150,28 +146,28 @@ export default {
         })
     },
     //审批流列表行点击事件
-    approvalRowClick(e) {
+    approvalRowClick (e) {
       console.log(e)
     },
     //下一审批人选中弹框
-    selectApprovaler(e) {
+    selectApprovaler (e) {
       this.operatorID = []
       for (let k in e) {
         this.operatorID[k] = e[k].OperatorPhid
       }
     },
     //开启或关闭弹框
-    changeDialog() {
+    changeDialog () {
       this.openDialog = true
       console.log(this.rowData)
       this.getAppvalProc()
     },
     //表头样式回调
-    headerRowClass(val) {
+    headerRowClass (val) {
       return 'table-header'
     },
     //查看详细流程
-    searchFlow(row) {
+    searchFlow (row) {
       // this.$emit("dialogFlow", row)
 
       this.auditVisible = true
@@ -182,7 +178,7 @@ export default {
       this.getAuditfollow(data)
     },
     //拉去审批流数据查看
-    getAuditfollow(data) {
+    getAuditfollow (data) {
       let that = this
       this.getAxios('/GAppvalRecord/GetAppvalRecordList', data)
         .then(res => {
@@ -198,7 +194,7 @@ export default {
         })
     },
     //取消
-    cancel() {
+    cancel () {
       this.openDialog = false
       this.visible = false
       this.backPersonnel = []
@@ -207,7 +203,7 @@ export default {
       this.$refs.approval.handleValue = ''
     },
     //关闭弹框
-    closeDialog() {
+    closeDialog () {
       this.openDialog = false
       this.visible = false
       this.backPersonnel = []
@@ -216,7 +212,7 @@ export default {
     },
 
     //确认
-    submit() {
+    submit () {
       if (this.isAgree === '') {
         this.$msgBox.error({
           content: '必须选择是否同意'
@@ -275,11 +271,11 @@ export default {
           if (res.Status == 'success' && res) {
             this.fileCount = 0
             let that = this
-            ;(that.operatorID = []), (that.textare = '')
+              ; (that.operatorID = []), (that.textare = '')
             this.visible = false
             this.$msgBox.show({
               content: '审批成功',
-              fn: function() {
+              fn: function () {
                 that.openDialog = false
                 that.$emit('subSuc')
                 that.$refs.approval.handleValue = ''
@@ -297,7 +293,7 @@ export default {
               this.$msgBox.error({
                 content: '当前流程已发生变化，请更新！',
                 cancelBtnText: '确定',
-                fn: function() {
+                fn: function () {
                   that.getAppvalProc()
                 }
               })
@@ -309,12 +305,12 @@ export default {
         })
         .catch(err => {
           console.log(err)
-          ;(that.operatorID = []), (this.fileCount = 0)
+            ; (that.operatorID = []), (this.fileCount = 0)
           this.$msgBox.error('请求出错')
         })
     },
     //生成支付单
-    creatPayList() {
+    creatPayList () {
       let data = {
         RefbillPhid: this.rowData[0].RefbillPhid
       }
@@ -324,7 +320,7 @@ export default {
           if (res && res.Status == 'success') {
             this.$msgBox.show({
               content: '生成支付单成功',
-              fn: function() {
+              fn: function () {
                 that.openDialog = false
                 that.$emit('subSuc')
                 that.$refs.approval.handleValue = ''
@@ -335,7 +331,7 @@ export default {
           } else {
             this.$msgBox.error({
               content: res.Msg,
-              fn: function() {
+              fn: function () {
                 that.openDialog = false
                 that.$emit('subSuc')
                 that.$refs.approval.handleValue = ''
@@ -350,13 +346,13 @@ export default {
         })
     },
     //关闭销毁回退,下次打开执行生命周期
-    closeBack() {
+    closeBack () {
       this.visible = false
       this.textare = ''
       this.fileCount = 0
       // this.$emit('refresh')
     },
-    backAproval(val) {
+    backAproval (val) {
       this.getAppvalProc()
       console.log(val)
       if (!val) {
@@ -369,7 +365,7 @@ export default {
       }
     },
     //拉去回退时,获取之前的所有岗位,包括发起人(岗位id为0)
-    getBackApprovalPost() {
+    getBackApprovalPost () {
       let data = {
         ProcPhid: this.rowData[0].ProcPhid,
         PostPhid: this.rowData[0].PostPhid,
@@ -391,7 +387,7 @@ export default {
         })
     },
     //点击获取回退人员名字 以及回退的岗位信息
-    getBackPeople(item) {
+    getBackPeople (item) {
       this.backPost = item
       for (let key in item.Operators) {
         this.$set(this.backPersonnel, key, item.Operators[key])
@@ -400,11 +396,11 @@ export default {
         this.nextApprovaler.splice(key, 1)
       }
     },
-    openUpload(e) {
+    openUpload (e) {
       this.uploadDialog = true
     },
     //点击添加到附件列表
-    submitFn(e) {
+    submitFn (e) {
       this.fileList = e
       this.fileCount = e.length
       this.uploadDialog = false

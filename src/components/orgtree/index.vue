@@ -3,6 +3,7 @@
              width="350px"
              title="组织选择"
              :visible.sync="visible2"
+             modal-append-to-body
              :append-to-body="true">
     <div style="margin-bottom:10px;">
       <span style="margin-right:10px;"

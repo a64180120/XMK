@@ -30,7 +30,8 @@
       <order type="handle"
              ref="order" />
     </div>
-    <el-dialog :close-on-click-modal="false"
+    <el-dialog modal-append-to-body
+               :close-on-click-modal="false"
                :title="'银行账号'+(handleBtn=='add'?'新增':'修改')"
                :visible.sync="accountAddShow">
       <accountAdd v-if="accountAddShow"

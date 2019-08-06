@@ -5,6 +5,7 @@
                v-show="openDialog"
                :close-on-click-modal="false"
                class="dialog approval-dialog"
+               modal-append-to-body
                :append-to-body="true"
                @close="closeDialog">
       <div slot="title"
@@ -36,6 +37,7 @@
                  width="auto"
                  :close-on-click-modal="false"
                  class=""
+                 modal-append-to-body
                  :append-to-body="true">
         <upload @submit="submitFn"></upload>
       </el-dialog>
@@ -59,7 +61,7 @@ import Upload from "../../components/upload/index";
 import Auditfollow from "../../components/auditFollow/auditfollow";
 export default {
   name: "approvalDialog",
-  components: {Auditfollow, Upload, BackApproval, ApprovalBill },
+  components: { Auditfollow, Upload, BackApproval, ApprovalBill },
   props: {
     rowData: {
       type: Array,
@@ -90,8 +92,8 @@ export default {
       row: this.rowData[0],
       fileList: [],//文件列表
       fileCount: 0,
-      auditMsg:[],
-      auditVisible:false
+      auditMsg: [],
+      auditVisible: false
     }
   },
   mounted () {

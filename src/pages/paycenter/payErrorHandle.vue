@@ -1,28 +1,32 @@
 <template>
   <div class="payErrorHandle">
     <!-- 异常处理 -->
-    <el-dialog
-      append-to-body
-      :visible.sync="data.openDialog"
-      width="390px"
-      :close-on-click-modal="false"
-      class="payCenter"
-    >
-      <div slot="title" class="dialog-title">
+    <el-dialog append-to-body
+               modal-append-to-body
+               :visible.sync="data.openDialog"
+               width="390px"
+               :close-on-click-modal="false"
+               class="payCenter">
+      <div slot="title"
+           class="dialog-title">
         <span style="float: left">支付状态清查</span>
       </div>
       <div class="payCenterDialog">
         <div class="content">
           <el-radio-group v-model="radio">
-            <el-radio :label="0" :disabled="data.data[0].Mst.FState != 3 ">重新从银行获取最新的支付状态回执。</el-radio>
+            <el-radio :label="0"
+                      :disabled="data.data[0].Mst.FState != 3 ">重新从银行获取最新的支付状态回执。</el-radio>
             <!-- <div class="notice">（）</div> -->
-            <el-radio :label="1" :disabled="data.data[0].Mst.FState != 2 ">已线下确认支付成功，将支付状态改为成功。</el-radio>
+            <el-radio :label="1"
+                      :disabled="data.data[0].Mst.FState != 2 ">已线下确认支付成功，将支付状态改为成功。</el-radio>
             <!-- <div class="notice">（已线下确认支付成功，将支付状态改为成功）</div> -->
           </el-radio-group>
         </div>
         <div class="btns">
-          <span class="btn" @click="data.openDialog = false">取消</span>
-          <span class="btn" @click="errorHandle">确定</span>
+          <span class="btn"
+                @click="data.openDialog = false">取消</span>
+          <span class="btn"
+                @click="errorHandle">确定</span>
         </div>
       </div>
     </el-dialog>
@@ -52,19 +56,19 @@ export default {
     }
   },
   inject: ['refreshIndexData'],
-  data() {
+  data () {
     return {
       radio: ''
     }
   },
-  created() {
+  created () {
     this.radio = this.data.data[0].Mst.FState == 3 ? 0 : 1
     console.log(this.data.data)
     console.log(this.data.father)
   },
-  mounted() {},
+  mounted () { },
   methods: {
-    errorHandle() {
+    errorHandle () {
       if (this.radio === '') {
         this.$msgBox.error('请选择一种处理方式。')
         return
@@ -92,7 +96,7 @@ export default {
       }
     },
     // 刷新并获取支付单支付状态
-    postRefreshPaymentState() {
+    postRefreshPaymentState () {
       postRefreshPaymentState({
         id: this.data.data.Mst.PhId,
         uid: this.userid,
@@ -116,7 +120,7 @@ export default {
         })
     },
     // 刷新并获取支付单支付状态-多笔
-    postRefreshPaymentsState(ids) {
+    postRefreshPaymentsState (ids) {
       postRefreshPaymentsState({
         infoData: ids,
         uid: this.userid,
@@ -139,7 +143,7 @@ export default {
         })
     },
     // 批量更新支付单支付状态
-    postUpdatePaymentsState(infoData) {
+    postUpdatePaymentsState (infoData) {
       postUpdatePaymentsState({
         uid: this.userid,
         orgid: this.orgid,

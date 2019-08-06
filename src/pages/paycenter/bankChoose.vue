@@ -1,24 +1,28 @@
 <template>
   <div class="bankChoose">
     <!-- 异常处理 -->
-    <el-dialog
-      append-to-body
-      :visible.sync="data.openDialog"
-      width="90%"
-      :close-on-click-modal="false"
-      class="payCenter"
-    >
-      <div slot="title" class="dialog-title">
+    <el-dialog append-to-body
+               modal-append-to-body
+               :visible.sync="data.openDialog"
+               width="90%"
+               :close-on-click-modal="false"
+               class="payCenter">
+      <div slot="title"
+           class="dialog-title">
         <span style="float: left">请选择收款方账户</span>
       </div>
       <div class="payCenterDialog">
-        <div class="content" style="position:relative">
+        <div class="content"
+             style="position:relative">
           <div class="btns">
-            <span class="btn" @click="data.openDialog = false">取消</span>
-            <span class="btn" @click="bankConfirm">确定</span>
+            <span class="btn"
+                  @click="data.openDialog = false">取消</span>
+            <span class="btn"
+                  @click="bankConfirm">确定</span>
           </div>
           <div style="height: 500px;">
-            <bankorder ref="bankorder" :selectitem="data"></bankorder>
+            <bankorder ref="bankorder"
+                       :selectitem="data"></bankorder>
           </div>
         </div>
       </div>
@@ -41,13 +45,13 @@ export default {
       }
     }
   },
-  data() {
+  data () {
     return {}
   },
-  created() {},
-  mounted() {},
+  created () { },
+  mounted () { },
   methods: {
-    bankConfirm() {
+    bankConfirm () {
       var data = this.$refs.bankorder.choosedItem
       if (data.length != 1) {
         this.$msgBox.error('请选择一条数据!')
@@ -114,7 +118,7 @@ export default {
     .btns {
       text-align: right;
       padding-top: 10px;
-			padding-right: 1%;
+      padding-right: 1%;
       .btn {
         border: 1px solid $btnColor;
         cursor: pointer;
