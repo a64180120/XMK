@@ -107,7 +107,7 @@ export default {
         if (that.count == 0) {
           that.close()
         }
-      }, 10000000)
+      }, 1000)
     }
   }
 }
