@@ -95,7 +95,7 @@
       </div>
       <el-dialog class="dialog img-dialog"
                  :visible.sync="imgDialog"
-                 modal-append-to-body
+                 
                  :append-to-body="false"
                  :close-on-click-modal="true"
                  :modal-append-to-body="true"
