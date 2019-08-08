@@ -380,7 +380,7 @@
       return {
         //分页页码
         pageSearch:{
-          pageIndex:1,
+          pageIndex:0,
           pageSize:20,
           total:100
         },
@@ -404,11 +404,11 @@
         seniorSearch:{
           memory:false, //记忆高级搜索
           FTime:'', // 起止日期（时间格式） 会在数据查询时进行修改
-          FProjCode :"201900000479", //项目编码
-          FProjName:"07.31新增",//项目名称
-          FProjAmountBegin:"1", // 项目金额起始
-          FProjAmountEnd:"3", // 项目金额结束
-          FDeclarationDept:"101.01",  //申报部门
+          FProjCode :"", //项目编码
+          FProjName:"",//项目名称
+          FProjAmountBegin:"", // 项目金额起始
+          FProjAmountEnd:"", // 项目金额结束
+          FDeclarationDept:"",  //申报部门
           FProjAttr:"", //项目属性
           FDuration:"",//续存期限
 /*          FExpenseCategory:"",//支出类别
@@ -464,7 +464,7 @@
         if(sin!=undefined){
           this.seniorSearch=JSON.parse(sin);
         }
-        this.getData
+        this.getData();
     },
     watch:{
      /* seniorSearch:{
@@ -514,7 +514,8 @@
       /*报表数据获取*/
       getData:function(){
         let data={
-          UserId:this.userid,
+          /*UserId:this.userid,*/
+          UserId:'9999',
           FApproveStatus:this.searchData.approval, //(选填，审批状态0-全部；1-待上报；2-审批中；3-审批通过；4-未通过)、
           FExpenseCategory:this.searchData.payType,
           PageIndex:this.pageSearch.pageIndex,

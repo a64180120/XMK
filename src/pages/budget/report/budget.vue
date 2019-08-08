@@ -27,96 +27,232 @@
           <th>科目名称</th>
           <th>上年决算数（元）</th>
           <th>本年预算数（元）</th>
-          <th>说明</th>
+          <th>说明{{verifyType}}</th>
         </thead>
+        <colgroup>
+          <col width="15%">
+          <col width="20%">
+          <col width="25%">
+          <col width="25%">
+          <col width="15%">
+        </colgroup>
         <tbody>
-          <template v-for="(item,index) in dataList">
-            <tr>
-              <td class="left"
-                  style="text-indent: 20px">{{item.SUBJECTCODE}}</td>
-              <td class="left"
-                  style="text-indent: 20px">{{item.SUBJECTNAME}}</td>
-              <!--上年决算数-->
-              <td class="right"
-                  :style="{padding:edit&&item.children.length==0? '0 !important':''}">
-                <template v-if="edit&&item.children.length==0">
-                  <input :value="item.FINALACCOUNTSTOTAL"
-                         :data-prop="[index,-1,0]"
-                         @focus="clearZero"
-                         @keyup="clearNoNum"
-                         @blur="countMoney">
-                </template>
-                <template v-else>
-                  {{item.FINALACCOUNTSTOTAL | NumFormat}}
-                </template>
-              </td>
-              <!--本年预算数-->
-              <td class="right"
-                  :style="{padding:edit&&item.children.length==0? '0 !important':''}">
-                <template v-if="edit&&item.children.length==0">
-                  <input :value="item.BUDGETTOTAL"
-                         :data-prop="[index,-1,1]"
-                         @focus="clearZero"
-                         @keyup="clearNoNum"
-                         @blur="countMoney">
-                </template>
-                <template v-else>
-                  {{item.BUDGETTOTAL | NumFormat}}
-                </template>
-              </td>
-              <td :style="{padding:edit? '0 !important':''}">
-                <template v-if="edit">
-                  <input v-model="item.DESCRIPTION">
-                </template>
-                <template v-else>
-                  {{item.DESCRIPTION}}
-                </template>
-              </td>
-            </tr>
-
-            <template v-for="(child,cindex) in item.children">
+         <!-- <template v-for="(item,index) in dataList">
+            &lt;!&ndash; 本年结余、期末滚存结余 &ndash;&gt;
+            <template v-if="item.SUBJECTCODE=='5QM1'||item.SUBJECTCODE=='5QM6'">
               <tr>
-                <td class="left"
-                    style="text-indent: 40px">{{child.code}}</td>
-                <td>{{child.title}}</td>
-                <td class="right"
-                    :style="{padding:edit? '0 !important':''}">
+                <td>{{item.SUBJECTNAME}}</td>
+                <td></td>
+                &lt;!&ndash;上年决算数&ndash;&gt;
+                <td class="right">
+                  {{item.FINALACCOUNTSTOTAL | NumFormat}}
+                </td>
+                &lt;!&ndash;本年预算数&ndash;&gt;
+                <td class="right">
+                  {{item.BUDGETTOTAL | NumFormat}}
+                </td>
+                <td :style="{padding:edit? '0 !important':''}">
                   <template v-if="edit">
-                    <input :value="child.lastBudget"
-                           :data-prop="[index,cindex,0]"
-                           @focus="clearZero"
-                           @keyup="clearNoNum"
-                           @blur="countMoney">
+                    <input v-model="item.DESCRIPTION">
                   </template>
                   <template v-else>
-                    {{item.lastBudget | NumFormat}}
+                    {{item.DESCRIPTION}}
                   </template>
                 </td>
-                <td class="right"
-                    :style="{padding:edit? '0 !important':''}">
+              </tr>
+
+            </template>
+
+            &lt;!&ndash; 上年结余、本年收回投资、本年投资、本年提取后备金 &ndash;&gt;
+            <template v-else-if="item.SUBJECTCODE=='5QM2'||item.SUBJECTCODE=='5QM3'||item.SUBJECTCODE=='5QM4'||item.SUBJECTCODE=='5QM5'">
+              <tr>
+                <td></td>
+                <td>{{item.SUBJECTNAME}}</td>
+                &lt;!&ndash;上年决算数&ndash;&gt;
+                <td class="right">
+                  {{item.FINALACCOUNTSTOTAL | NumFormat}}
+                </td>
+                &lt;!&ndash;本年预算数&ndash;&gt;
+                <td class="right">
+                  {{item.BUDGETTOTAL | NumFormat}}
+                </td>
+                <td :style="{padding:edit? '0 !important':''}">
                   <template v-if="edit">
-                    <input :value="child.nowBudget"
-                           :data-prop="[index,cindex,1]"
+                    <input v-model="item.DESCRIPTION">
+                  </template>
+                  <template v-else>
+                    {{item.DESCRIPTION}}
+                  </template>
+                </td>
+              </tr>
+
+            </template>
+
+            &lt;!&ndash; 本年合计支出 本年合计收入 &ndash;&gt;
+            <template v-else-if="item.SUBJECTCODE=='4BNHJSR'||item.SUBJECTCODE=='5BNHJZC'">
+              <tr>
+                <td colspan="2">{{item.SUBJECTNAME}}</td>
+                &lt;!&ndash;上年决算数&ndash;&gt;
+                <td class="right">
+                  {{item.FINALACCOUNTSTOTAL | NumFormat}}
+                </td>
+                &lt;!&ndash;本年预算数&ndash;&gt;
+                <td class="right">
+                  {{item.BUDGETTOTAL | NumFormat}}
+                </td>
+                <td :style="{padding:edit? '0 !important':''}">
+                  <template v-if="edit">
+                    <input v-model="item.DESCRIPTION">
+                  </template>
+                  <template v-else>
+                    {{item.DESCRIPTION}}
+                  </template>
+                </td>
+              </tr>
+
+            </template>
+
+            &lt;!&ndash; 普通科目 &ndash;&gt;
+            <template v-else>
+              <tr>
+                <td class="left"
+                    style="text-indent: 20px">{{item.SUBJECTCODE}}</td>
+                <td class="left"
+                    style="text-indent: 20px">{{item.SUBJECTNAME}}</td>
+                &lt;!&ndash;上年决算数&ndash;&gt;
+                <td class="right"
+                    :style="{padding:edit&&!item.Childrens? '0 !important':''}">
+                  <template v-if="edit&&!item.Childrens">
+                    <input :value="item.FINALACCOUNTSTOTAL"
+                           :data-prop="[index,-1,0]"
                            @focus="clearZero"
                            @keyup="clearNoNum"
                            @blur="countMoney">
                   </template>
                   <template v-else>
-                    {{child.nowBudget | NumFormat}}
+                    {{item.FINALACCOUNTSTOTAL | NumFormat}}
+                  </template>
+                </td>
+                &lt;!&ndash;本年预算数&ndash;&gt;
+                <td class="right"
+                    :style="{padding:edit&&!item.Childrens? '0 !important':''}">
+                  <template v-if="edit&&!item.Childrens">
+                    <input :value="item.BUDGETTOTAL"
+                           :data-prop="[index,-1,1]"
+                           @focus="clearZero"
+                           @keyup="clearNoNum"
+                           @blur="countMoney">
+                  </template>
+                  <template v-else>
+                    {{item.BUDGETTOTAL | NumFormat}}
                   </template>
                 </td>
                 <td :style="{padding:edit? '0 !important':''}">
                   <template v-if="edit">
-                    <input v-model="child.descript">
+                    <input v-model="item.DESCRIPTION">
                   </template>
                   <template v-else>
-                    {{child.descript}}
+                    {{item.DESCRIPTION}}
                   </template>
                 </td>
               </tr>
+              &lt;!&ndash; 一级科目对应的子级 &ndash;&gt;
+              <template v-if="item.Childrens" v-for="(child,cindex) in item.Childrens">
+                <tr>
+                  <td class="left"
+                      style="text-indent: 40px">{{child.SUBJECTCODE}}</td>
+                  <td class="left"
+                      style="text-indent: 40px">{{child.SUBJECTNAME}}</td>
+                  <td class="right"
+                      :style="{padding:edit? '0 !important':''}">
+                    <template v-if="edit">
+                      <input :value="child.FINALACCOUNTSTOTAL"
+                             :data-prop="[index,cindex,0]"
+                             @focus="clearZero"
+                             @keyup="clearNoNum"
+                             @blur="countMoney">
+                    </template>
+                    <template v-else>
+                      {{item.FINALACCOUNTSTOTAL | NumFormat}}
+                    </template>
+                  </td>
+                  <td class="right"
+                      :style="{padding:edit? '0 !important':''}">
+                    <template v-if="edit">
+                      <input :value="child.BUDGETTOTAL"
+                             :data-prop="[index,cindex,1]"
+                             @focus="clearZero"
+                             @keyup="clearNoNum"
+                             @blur="countMoney">
+                    </template>
+                    <template v-else>
+                      {{child.BUDGETTOTAL | NumFormat}}
+                    </template>
+                  </td>
+                  <td :style="{padding:edit? '0 !important':''}">
+                    <template v-if="edit">
+                      <input v-model="child.DESCRIPTION">
+                    </template>
+                    <template v-else>
+                      {{child.DESCRIPTION}}
+                    </template>
+                  </td>
+                </tr>
+              </template>
             </template>
           </template>
-
+-->
+         <!--只允许编辑说明-->
+         <template v-for="(item,index) in dataList">
+           <tr>
+             <td class="left"
+                 style="text-indent: 20px"
+                  v-if="item.SUBJECTCODE!='4BNHJSR'&&item.SUBJECTCODE!='5BNHJZC'">
+               <template v-if="item.SUBJECTCODE=='5QM1'||item.SUBJECTCODE=='5QM6'">{{item.SUBJECTNAME}}</template>
+               <template v-else-if="item.SUBJECTCODE=='5QM2'||item.SUBJECTCODE=='5QM3'||item.SUBJECTCODE=='5QM4'||item.SUBJECTCODE=='5QM5'"></template>
+               <template v-else>{{item.SUBJECTCODE}}</template>
+             </td>
+             <td :class="item.SUBJECTCODE=='4BNHJSR'||item.SUBJECTCODE=='5BNHJZC'?'center':'left'"
+                 style="text-indent: 20px"
+                 :colspan="item.SUBJECTCODE=='4BNHJSR'||item.SUBJECTCODE=='5BNHJZC'?2:1">
+               <template v-if="item.SUBJECTCODE!='5QM1'&&item.SUBJECTCODE!='5QM6'">{{item.SUBJECTNAME}}</template>
+             </td>
+             <td class="right">{{item.FINALACCOUNTSTOTAL | NumFormat}}</td>
+             <td class="right">
+                 {{item.BUDGETTOTAL | NumFormat}}
+             </td>
+             <td :style="{padding:edit? '0 !important':''}">
+               <template v-if="edit">
+                 <input v-model="item.DESCRIPTION">
+               </template>
+               <template v-else>
+                 {{item.DESCRIPTION}}
+               </template>
+             </td>
+           </tr>
+           <template v-if="item.Childrens" v-for="(child,cindex) in item.Childrens">
+             <tr>
+               <td class="left"
+                   style="text-indent: 40px">{{child.SUBJECTCODE}}</td>
+               <td class="left"
+                   style="text-indent: 40px">{{child.SUBJECTNAME}}</td>
+               <td class="right">
+                   {{item.FINALACCOUNTSTOTAL | NumFormat}}
+               </td>
+               <td class="right">
+                   {{child.BUDGETTOTAL | NumFormat}}
+               </td>
+               <td :style="{padding:edit? '0 !important':''}">
+                 <template v-if="edit">
+                   <input v-model="child.DESCRIPTION">
+                 </template>
+                 <template v-else>
+                   {{child.DESCRIPTION}}
+                 </template>
+               </td>
+             </tr>
+           </template>
+         </template>
           <!--<tr>
             <td colspan="2">本年合计收入</td>
             <td></td>
@@ -173,6 +309,11 @@
         </tbody>
       </table>
     </div>
+    <!-- 上报标记 -->
+    <div class="reportMark" v-if="verifyType==1">
+      <p>已上报</p>
+      <p>{{dataList[0].VERIFYSTARTTIME}}</p>
+    </div>
     <!--<div class="pageArea" style="transition: all .3s linear;">
       <el-pagination
         :current-page="pageSearch.pageIndex"
@@ -192,6 +333,16 @@
                width="1200px"
                @close="book.visiable=false">
       <budget-book></budget-book>
+      <tinymce-editor
+        ref="editor"
+        id="budgetet-editor"
+        v-model="tableFace.Content"
+        :initvalue="tableFace.Content"
+        :disabled='false'
+        @onClick='tinymceClick'
+        :style="{'margin-top': '15px','height':'80%'}"
+      >
+      </tinymce-editor>
     </el-dialog>
   </div>
 </template>
@@ -202,6 +353,8 @@ import { tableScroll } from '@/api/upload'
 //预算说明书组件
 import budgetBook from './budgetBook'
 import { mapState } from 'vuex'
+import tinymceEditor from '@/components/tinymce/tinymce-editor.vue'
+
 export default {
   name: "budget",
   data () {
@@ -228,12 +381,17 @@ export default {
             {code:'50303',title:'外事费',lastBudget:'0',nowBudget:'0',descript:'',type:'1',children:[]}
           ]}*/
       ],
-
+      /*记录本年支出合计以及本年收入合计等特殊行的下标，用于计算
+      * [  本年收入合计，  本年支出合计， 本年结余（本年收入-本年支出），期末滚存结余（本年结余+上年结余+本年收回投资-本年投资-本年提取后备金）]
+      * */
+      specialLineList:[0,0,0,0],
       //启用编辑
-      edit: false
+      edit: false,
+      //是否上报 0-未上报，1-已上报
+      verifyType: 0
     }
   },
-  components: { budgetBook },
+  components: { budgetBook,tinymceEditor },
   computed: {
     ...mapState({
       orgid: state => state.user.orgid, //id
@@ -276,7 +434,30 @@ export default {
       this.getAxios('GYS/BudgetMstApi/GetBeginYear', data)
         .then(res => {
           console.log(res);
-          this.dataList = res;
+          if(res.Status=='success'){
+            this.dataList = res.Data;
+            this.verifyType=res.Data[0].VERIFYSTART;
+            if(this.verifyType==1){
+              this.$emit('hideTil');
+            }
+            /*这里进行循环，得到特殊行的下标(本年合计收入，本年合计支出，本年结余，期末滚存结余)，同时可以判断，是否已上报（VERIFYSTART）*/
+            for( var i in res.Data ){
+              if( res.Data[i].SUBJECTCODE=='4BNHJSR' ){
+               this.specialLineList[0]=i;
+              }
+              if( res.Data[i].SUBJECTCODE=='5BNHJZC' ){
+                this.specialLineList[1]=i;
+              }
+              if( res.Data[i].SUBJECTCODE=='5QM1' ){
+                this.specialLineList[2]=i;
+              }
+              if( res.Data[i].SUBJECTCODE=='5QM6' ){
+                this.specialLineList[3]=i;
+              }
+            }
+          console.log(this.specialLineList);
+          }
+
         })
         .catch(err => {
           this.$msgBox.show('数据获取异常')
@@ -300,27 +481,42 @@ export default {
         cancelBtnText: '取消',
         type: 'warning'
       }).then(() => {
-        this.reportBudgetPost();
+        //修改verifystart
+        this.filterData(this.dataList);
+        //保存
+        this.save(1)
       }).catch(() => { })
-    },
-    //  上报请求接口
-    reportBudgetPost: function () {
-      console.log('这里添加上报预算接口')
-      this.$msgBox.show({
-        content: '上报成功。'
-      })
     },
     /*保存
     * type: 0只保存 1保存后上报
     * */
     save: function (type) {
-      var timer = null, vm = this;
-      /*if(type==1) {
-       timer = setTimeout(() => {
-          this.reportBudget()
-        }, 3000);
-      }*/
-      this.$msgBox.show({
+
+      let data={
+       /* orgid: this.orgid,
+        orgCode: this.orgcode,
+        Year:this.year,//年度*/
+        orgid: '488181024000003',
+        orgCode: '101001',
+        Year: '2019',
+        infoData:this.dataList  //列表集合
+      };
+      this.postAxios('GYS/BudgetMstApi/PostSaveAccountList', data)
+        .then(res => {
+          console.log(res);
+          if(res.Status=='success') {
+            if(type==1){
+              this.$msgBox.show('上报成功。')
+            }else{
+              this.$msgBox.show('保存成功。')
+            }
+            this.getData()
+          }
+        }).catch(err => {
+          this.$msgBox.show(err)
+        })
+
+     /* this.$msgBox.show({
         content: '保存成功。',
         fn: function () {
           if (type == 1) {
@@ -329,7 +525,7 @@ export default {
           }
 
         }
-      })
+      })*/
 
     },
     //打印
@@ -374,31 +570,54 @@ export default {
       let valList = el.attributes['data-prop'].value.split(',');
       let a = valList[0], b = valList[1], c = valList[2];
       //设置数组中需要获取的字段
-      let str = 'nowBudget';
+      let str = 'BUDGETTOTAL';
       if (c === '0') {
         //上年决算数计算
-        str = 'lastBudget';
+        str = 'FINALACCOUNTSTOTAL';
       } else {
         //本年预算数计算
-        str = 'nowBudget'
+        str = 'BUDGETTOTAL'
       }
 
-      let count = this.dataList[a][str];
+      let count = this.dataList[a][str],oldcount=this.dataList[a][str];
       if (b === '-1') {
         //不包含二级科目
-        //1、判断是收入还是支出，还是其他类型数值，进行总收入总支出，本年结余计算
-
-
-        //2、修改对应数组中的值
+        //修改对应数组中的值
         this.$set(this.dataList[a], str, ev.target.value);
       } else {
-        let chilNum = this.dataList[a].children[b][str];
+        //修改二级科目，需要对相应的一级科目进行汇总
+        let chilNum = this.dataList[a].Childrens[b][str];
         count = (count * 100 - (chilNum * 100)) / 100;
         count = (count * 100 + (ev.target.value * 100)) / 100;
-        this.$set(this.dataList[a].children[b], str, ev.target.value);
+        this.$set(this.dataList[a].Childrens[b], str, ev.target.value);
         this.$set(this.dataList[a], str, count);
       }
-      console.log()
+      //根据下标判断是收入还是支出，还是其他类型数值，进行总收入总支出，本年结余计算
+      let index=this.specialLineList[0];
+      if( +a<+this.specialLineList[0] ){
+        //本年合计收入
+        index=this.specialLineList[0];
+      }else{
+        //本年合计支出
+        index=this.specialLineList[1];
+      }
+      //修改本年收入或本年支出  上面已经修改对应一级科目，所以这里可以直接取值，计算
+      this.dataList[index][str]=Number(this.dataList[index][str]-oldcount+this.dataList[a][str]);
+      //得到本年结余旧值，用于期末滚存结余计算
+      let qmkc=this.dataList[this.specialLineList[2]][str];
+      //这里进行本年结余计算
+      this.dataList[this.specialLineList[2]][str]=Number(this.dataList[this.specialLineList[0]][str]-this.dataList[this.specialLineList[1]][str]);
+      //这里进行期末滚存结余计算
+      this.dataList[this.specialLineList[3]][str]=this.dataList[this.specialLineList[3]][str]-qmkc+this.dataList[this.specialLineList[2]][str];
+    },
+    //上报，字段修改
+    filterData:function(list){
+      for(var i in list){
+        list[i].VERIFYSTART=1;
+        if(list[i].Childrens){
+          this.filterData(list[i].Childrens)
+        }
+      }
     }
   }
 }
@@ -433,7 +652,7 @@ export default {
 }
 .contentPanel {
   height: 100%;
-  padding-bottom: 85px;
+  padding-bottom: 50px;
   .topNav {
     height: 38px;
     border-bottom: 2px dotted #00b8ee;
@@ -510,4 +729,20 @@ export default {
 .tbArea .right input {
   text-align: right;
 }
+
+  /*上报标记样式*/
+  .reportMark {
+    width: 200px;
+    height: 80px;
+    color: red;
+    position: absolute;
+    z-index: 99;
+    top: 170px;
+    right: 75px;
+    border: 2px solid red;
+    font-size: .25rem;
+    border-radius: 8px;
+    transform: rotate(25deg);
+    background: rgba(255,255,255,.4);
+  }
 </style>
