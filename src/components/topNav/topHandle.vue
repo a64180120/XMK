@@ -8,8 +8,8 @@
       <p>{{title}}</p>
       <div class="btnContainer">
         <div class="leftBtn">
-					<div style="float:left"><img src="@/assets/images/g1.png"
-					       alt=""></div>
+          <div style="float:left"><img src="@/assets/images/g1.png"
+                 alt=""></div>
           <el-breadcrumb separator-class="el-icon-arrow-right">
             <!-- <el-breadcrumb-item><img src="@/assets/images/g1.png"
                    alt=""></el-breadcrumb-item> -->
@@ -327,10 +327,10 @@ export default {
       left: 20px;
       bottom: 13px;
       color: #fff;
-			>div{
-				display: inline-block;
-				margin-right:5px;
-			}
+      > div {
+        display: inline-block;
+        margin-right: 5px;
+      }
       img {
         width: 25px;
         height: 25px;

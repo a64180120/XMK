@@ -1,60 +1,48 @@
 <template>
   <div class="password-input-el">
-    <div
-      class="passwordContainer"
-      @click="focusOnInput"
-      :style="!disabled?'cursor:pointer':'cursor:not-allowed'"
-    ></div>
+    <div class="passwordContainer"
+         @click="focusOnInput"
+         :style="!disabled?'cursor:pointer':'cursor:not-allowed'"></div>
     <template v-if="canSee">
       <template v-for="index in maxlength">
-        <input
-          ref="input"
-          :maxlength="1"
-          type="text"
-          style="float:left"
-          @keyup="keyup(index-1,$event)"
-          oncopy="return false"
-          oncontextmenu="return false"
-          onpaste="return false"
-          oncut="return false"
-          :disabled="disabled"
-          @keydown="keydown"
-        />
+        <input ref="input"
+               :maxlength="1"
+               type="text"
+               style="float:left"
+               @keyup="keyup(index-1,$event)"
+               oncopy="return false"
+               oncontextmenu="return false"
+               onpaste="return false"
+               oncut="return false"
+               :disabled="disabled"
+               @keydown="keydown" />
       </template>
-      <img
-        :style="!disabled?'cursor:pointer':'cursor:not-allowed'"
-        class="eye"
-        src="@/assets/images/zy.png"
-        @click="canSee= !canSee"
-      />
+      <img :style="!disabled?'cursor:pointer':'cursor:not-allowed'"
+           class="eye"
+           src="@/assets/images/zy.png"
+           @click="canSee= !canSee" />
     </template>
     <template v-else>
       <template v-for="index in maxlength">
-        <input
-          ref="input"
-          :maxlength="1"
-          type="text"
-          style="float:left"
-          @keyup="keyup(index-1,$event)"
-          oncopy="return false"
-          oncontextmenu="return false"
-          onpaste="return false"
-          oncut="return false"
-          :disabled="disabled"
-          @keydown="keydown"
-        />
+        <input ref="input"
+               :maxlength="1"
+               type="text"
+               style="float:left"
+               @keyup="keyup(index-1,$event)"
+               oncopy="return false"
+               oncontextmenu="return false"
+               onpaste="return false"
+               oncut="return false"
+               :disabled="disabled"
+               @keydown="keydown" />
       </template>
-      <img
-        :style="!disabled?'cursor:pointer':'cursor:not-allowed'"
-        class="eye"
-        src="@/assets/images/by.png"
-        @click="canSee= !canSee"
-      />
+      <img :style="!disabled?'cursor:pointer':'cursor:not-allowed'"
+           class="eye"
+           src="@/assets/images/by.png"
+           @click="canSee= !canSee" />
     </template>
-    <div
-      class="border"
-      :style="{'transform':this.value.length==this.maxlength?'translateX('+(this.maxlength-1)*30+'px)':'translateX('+this.value.length*30+'px)'}"
-    ></div>
+    <div class="border"
+         :style="{'transform':this.value.length==this.maxlength?'translateX('+(this.maxlength-1)*30+'px)':'translateX('+this.value.length*30+'px)'}"></div>
   </div>
 </template>
 
@@ -80,15 +68,15 @@ export default {
       default: ''
     }
   },
-  data() {
+  data () {
     return {
       canSee: false,
       type: 'text'
     }
   },
-  mounted() {},
+  mounted () { },
   watch: {
-    canSee(newVal) {
+    canSee (newVal) {
       if (newVal) {
         for (let i = 0; i < this.value.length; i++) {
           this.$refs.input[i].value = this.value.substr(i, 1)
@@ -99,7 +87,7 @@ export default {
         }
       }
     },
-    value(newVal, oldVal) {
+    value (newVal, oldVal) {
       console.log(newVal, oldVal)
       if (newVal == '') {
         this.$refs.input.forEach(i => {
@@ -108,10 +96,10 @@ export default {
       }
     }
   },
-  created() {},
-  mounted() {},
+  created () { },
+  mounted () { },
   methods: {
-    keydown(e) {
+    keydown (e) {
       if (e.preventDefault) {
         e.preventDefault()
         console.log('prev')
@@ -120,7 +108,7 @@ export default {
         window.event.returnValue = false
       }
     },
-    focusOnInput() {
+    focusOnInput () {
       console.log('focus')
       if (this.value.length == this.maxlength) {
         this.$refs.input[this.value.length - 1].focus()
@@ -130,12 +118,13 @@ export default {
       this.$refs.input[this.value.length].focus()
       this.$refs.input[this.value.length].setSelectionRange(1, 1)
     },
-    keyup(index, e) {
+    keyup (index, e) {
       var obj = e.target
       var key = e.key
       console.log(key)
       if (obj.value != '') {
         //
+        console.log("obj.value != ''")
         console.log(obj.value)
         if (index == this.maxlength - 1) {
           if (this.value.length == this.maxlength) {
@@ -166,6 +155,7 @@ export default {
           obj.value = ''
         }
       } else if (/^[0-9]$/.test(key)) {
+        console.log("/^[0-9]$/.test(key)")
         if (this.value.length < this.maxlength) {
           this.up(this.value + (key + ''))
           if (this.canSee) {
@@ -179,6 +169,7 @@ export default {
           }
         }
       } else if (key == 'Backspace') {
+        console.log("Backspace")
         if (
           index == this.maxlength - 1 &&
           this.value.length == this.maxlength
@@ -195,15 +186,15 @@ export default {
         }
         // this.value = this.value.substring(0, this.value.length - 1)
       } else if (key == 'Enter') {
+        console.log("Enter")
         obj.blur()
         this.enter()
-      } else if (obj.value != '') {
-        // 防止输完密码后，输入别的内容将最后一位删除
       } else {
+        console.log("else:obj.value = ''")
         obj.value = ''
       }
     },
-    up(newVal) {
+    up (newVal) {
       this.$emit('update:value', newVal)
     }
   }
@@ -229,7 +220,7 @@ div.password-input-el {
     height: 40px;
     outline: none;
     box-shadow: none;
-    font-family: 'PingFang', 'songti', 'Avenir', Helvetica, Arial, sans-serif;
+    font-family: "PingFang", "songti", "Avenir", Helvetica, Arial, sans-serif;
     font-size: 16px;
     text-align: center;
     border: 1px solid #dcdfe6;
