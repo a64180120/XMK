@@ -134,13 +134,13 @@
           </li>
           <li>
             <span>支出类别：</span>
-            <el-select size="mini" style="width: 130px;" v-model="searchData.payType">
+            <el-select size="mini" style="width: 130px;" v-model="searchData.payType" @change="getData">
               <el-option v-for="item in payTypeList" :label="item.label" :value="item.value"></el-option>
             </el-select>
           </li>
           <li>
             <span>审批状态：</span>
-            <el-select size="mini" style="width: 100px;" v-model="searchData.approval">
+            <el-select size="mini" style="width: 100px;" v-model="searchData.approval" @change="getData">
               <el-option v-for="item in approvalList" :label="item.label" :value="item.value"></el-option>
             </el-select>
           </li>
@@ -181,9 +181,32 @@
                   </tr>
                   <tr>
                     <td>申报部门</td>
-                    <td colspan="3"><el-input size="mini"  v-model="seniorSearch.FDeclarationDept"  placeholder="请输入申报部门"></el-input></td>
+                    <td colspan="3"><!--<el-input size="mini"  v-model="seniorSearch.FDeclarationDept"  placeholder="请输入申报部门"></el-input>-->
+                      <el-select size="small"
+                                 class="approvalDepart"
+                                 popper-class="AD-proper"
+                                 v-model="seniorSearch.FDeclarationDept">
+                        <el-option v-for="item in bmList"
+                                   :key="item.OCode"
+                                   :label="item.OName"
+                                   :value="item.OCode"></el-option>
+                      </el-select>
+
+                    </td>
                     <td>项目属性</td>
-                    <td><el-input size="mini" v-model="seniorSearch.FProjAttr" placeholder="请输入项目属性"></el-input></td>
+                    <td>
+                      <!--<el-input size="mini" v-model="seniorSearch.FProjAttr" placeholder="请输入项目属性"></el-input>-->
+                      <el-select size="small"
+                                 class="approvalDepart"
+                                 popper-class="AD-proper"
+                                 v-model="seniorSearch.FProjAttr">
+                        <el-option v-for="item in baseList.ProjectPropers"
+                                   :key="item.TypeCode"
+                                   :label="item.TypeName"
+                                   :value="item.TypeCode"></el-option>
+                      </el-select>
+
+                    </td>
                   </tr>
                   <tr>
                     <td>项目金额</td>
@@ -295,13 +318,13 @@
                   </tr>
                 </table>
                 <div>
-                  <span><el-checkbox label="记忆搜索"></el-checkbox></span>
+                  <span><el-checkbox v-model="tableContent[tableContent.length-1].memory" label="记忆搜索"></el-checkbox></span>
                   <ul>
                     <li>
-                      <el-button class="btn" size="mini">取消</el-button>
+                      <el-button class="btn" size="mini" @click="popvisiableCol=false">取消</el-button>
                     </li>
                     <li>
-                      <el-button class="btn" size="mini">保存</el-button>
+                      <el-button class="btn" size="mini" @click="tableStrorage">保存</el-button>
                     </li>
                   </ul>
                 </div>
@@ -320,8 +343,8 @@
         <div class="tbArea" @scroll="tablescroll" ref="scrollTable">
           <table >
             <thead>
-            <th><input type="checkbox" />序号</th>
-            <th v-for="item in tableContent" v-if="item.isShow">
+            <th><input type="checkbox" v-model="checkeAll" />序号</th>
+            <th v-for="item in tableContent" v-if="item.isShow&&item.title">
               <span>{{item.title}}</span>
               <span class="upOrDown">
               <i class="el-icon-arrow-up"></i>
@@ -330,10 +353,29 @@
             </th>
             </thead>
             <tbody>
-            <tr v-for="(item,index) in 100">
-              <td><input type="checkbox" />{{index+1}}</td>
+            <tr v-for="(data,index) in dataList">
+              <td><input type="checkbox" v-model="data['checked']"/>{{index+1}}</td>
               <template v-for="col in tableContent">
-                <td v-if="col.isShow">{{col.title}}</td>
+                <td v-if="col.isShow&&col.title">
+                  <template v-if="col.title=='起止日期'">
+                    {{data[col.prop.split('-')[0]].substring(0,10)+'至'+data[col.prop.split('-')[1]].substring(0,10)}}
+                  </template>
+                  <template v-else-if="col.title=='项目金额'">
+                    <el-tooltip :content="data[col.prop] | NumFormat"
+                                popper-class="tooltipCla"
+                                placement="bottom-start">
+                      <p style="overflow: hidden;text-overflow: ellipsis;text-align: right">{{ searchData.moneyType==1?data[col.prop]/10000:data[col.prop] | NumFormat}}</p>
+                    </el-tooltip>
+                  </template>
+                  <template v-else>
+                    <el-tooltip :disabled="!(data[col.prop]&&data[col.prop].length>20)" :content="(col.subLen?data[col.prop].substring(col.subLen[0],col.subLen[1]):data[col.prop]||'').toString()"
+                                popper-class="tooltipCla"
+                                placement="bottom-start">
+                      <p style="overflow: hidden;text-overflow: ellipsis">{{col.subLen?data[col.prop].substring(col.subLen[0],col.subLen[1]):data[col.prop]}}</p>
+                    </el-tooltip>
+                  </template>
+
+                </td>
               </template>
             </tr>
             </tbody>
@@ -344,7 +386,7 @@
       <!--面板表格-->
       <template v-else>
         <div class="tbArea_panel">
-          <paneltable :moneyType="searchData.moneyType"></paneltable>
+          <paneltable v-if="tableType!=0" :moneyType="searchData.moneyType"></paneltable>
         </div>
       </template>
 
@@ -380,7 +422,7 @@
       return {
         //分页页码
         pageSearch:{
-          pageIndex:0,
+          pageIndex:1,
           pageSize:20,
           total:100
         },
@@ -395,7 +437,7 @@
         //支出类别
         payTypeList:[{label:'全部',value:0},{label:'主业类',value:1},{label:'企事业类',value:2},{label:'机关行政类',value:3}],
         //审批状态 审批状态0-全部 1-待上报 2-审批中 3-已审批 4-纳入预算 5-作废
-        approvalList:[{label:'全部',value:0},{label:'待上报',value:1},{label:'审批中',value:2},{label:'已审批',value:3},{label:'纳入预算',value:4},{label:'作废',value:5}],
+        approvalList:[{label:'全部',value:0},{label:'待上报',value:1},{label:'审批中',value:2},{label:'审批通过',value:3},{label:'已退回',value:4},{label:'作废',value:5}],
         //绩效评价
         FIfPerformanceAppraisal:[{label:'是',value:1},{label:'否',value:2}],
         //高级弹窗
@@ -414,7 +456,7 @@
 /*          FExpenseCategory:"",//支出类别
           FApproveStatus: "",//审批状态（文档里已加）*/
           FIfPerformanceAppraisal:"",//绩效评价 是1/否2
-          FDateofDeclaration:'' //申报日期（时间格式）
+          FDateofDeclaration:"" //申报日期（时间格式）
         },
 
 
@@ -422,20 +464,21 @@
         popvisiableCol:false,
         //表格显示列 列表
         tableContent:[
-          {title:'申报部门',isSort:true,isShow:true,prop:''},
-          {title:'项目编码',isSort:true,isShow:true,prop:''},
-          {title:'项目名称',isSort:true,isShow:true,prop:''},
-          {title:'项目金额',isSort:true,isShow:true,prop:''},
-          {title:'项目属性',isSort:true,isShow:false,prop:''},
-          {title:'缓存期限',isSort:true,isShow:false,prop:''},
-          {title:'支出类别',isSort:true,isShow:true,prop:''},
-          {title:'项目级别',isSort:true,isShow:false,prop:''},
-          {title:'绩效评价',isSort:true,isShow:false,prop:''},
-          {title:'绩效指标类别',isSort:true,isShow:false,prop:''},
-          {title:'起止日期',isSort:true,isShow:true,prop:''},
-          {title:'申报人员',isSort:true,isShow:true,prop:''},
-          {title:'申报日期',isSort:true,isShow:true,prop:''},
-          {title:'审批状态',isSort:true,isShow:true,prop:''},
+          {title:'申报部门',isSort:true,isShow:true,prop:'FDeclarationDept_EXName'},
+          {title:'项目编码',isSort:true,isShow:true,prop:'FProjCode'},
+          {title:'项目名称',isSort:true,isShow:true,prop:'FProjName'},
+          {title:'项目金额',isSort:true,isShow:true,prop:'FProjAmount'},
+          {title:'项目属性',isSort:true,isShow:false,prop:'FProjAttr'},
+          {title:'缓存期限',isSort:true,isShow:false,prop:'FDuration'},
+          {title:'支出类别',isSort:true,isShow:true,prop:'FExpenseCategory_EXName'},
+          {title:'项目级别',isSort:true,isShow:false,prop:'FProjStatus'},
+          {title:'绩效评价',isSort:true,isShow:false,prop:'FPerformEvalType'},
+          {title:'绩效指标类别',isSort:true,isShow:false,prop:'FPerformType'},
+          {title:'起止日期',isSort:true,isShow:true,prop:'FStartDate-FEndDate',subLen:[0,10]},
+          {title:'申报人员',isSort:true,isShow:true,prop:'FDeclarer'},
+          {title:'申报日期',isSort:true,isShow:true,prop:'FDateofDeclaration',subLen:[0,10]},
+          {title:'审批状态',isSort:true,isShow:true,prop:'FApproveStatus'},
+          {memory:false}
         ],
         //切换列表,0-普通列表，1-面板列表
         tableType:0,
@@ -445,6 +488,11 @@
         table1:{
           tableData:[]
         },
+        dataList:[],
+        bmList:[],//部门列表
+        baseList:[],//基础信息列表
+        checkeAll:false,//表格全选
+
       }
     },
     components:{SearchInput,paneltable},
@@ -464,7 +512,15 @@
         if(sin!=undefined){
           this.seniorSearch=JSON.parse(sin);
         }
+      let tableRow=this.getCookie('tableRow');
+      if(tableRow!=undefined){
+        this.tableContent=JSON.parse(tableRow);
+      }
         this.getData();
+        //获取部门
+        this.getDataC();
+        //获取基础信息
+      this.getBaseData();
     },
     watch:{
      /* seniorSearch:{
@@ -488,6 +544,11 @@
           this.removeCookie('seniorSearch')
         }
       }*/
+      checkeAll: function(val) {
+        for(var i in this.dataList){
+          this.dataList[i]['checked']=val
+        }
+      }
     },
     methods:{
       /*cookie获取 seniorSearch*/
@@ -512,13 +573,13 @@
         Cookie.set(key, '', { expires: -1 })
       },
       /*报表数据获取*/
-      getData:function(){
+      getData:function(search_val){
         let data={
           /*UserId:this.userid,*/
           UserId:'9999',
           FApproveStatus:this.searchData.approval, //(选填，审批状态0-全部；1-待上报；2-审批中；3-审批通过；4-未通过)、
           FExpenseCategory:this.searchData.payType,
-          PageIndex:this.pageSearch.pageIndex,
+          PageIndex:this.pageSearch.pageIndex-1,
           PageSize:this.pageSearch.pageSize
         };
         for(var i in this.seniorSearch){
@@ -529,16 +590,22 @@
         //这里进行起止时间修改，时间选择器是数组，需要在发请求前进行赋值
         data['FStartDate']=this.seniorSearch.FTime?this.seniorSearch.FTime[0]:'';
         data['FEndDate']=this.seniorSearch.FTime?this.seniorSearch.FTime[1]:'';
-
+        //搜索框搜索--若传值过来，则以搜索框为主，修改字段
+        if(search_val){
+          data['FProjCode']=search_val; //项目编码
+          data['FProjName']=search_val//项目名称
+        }
         console.log(data)
         this.getAxios('GYS/BudgetMstApi/GetBudgetMstLists', data)
           .then(res => {
             console.log(res)
-            if (res && res.Status === 'success') {
+            this.dataList=res.Record;
+            this.pageSearch.total=res.totalRows;
+            /*if (res && res.Status === 'success') {
 
             } else {
 
-            }
+            }*/
           })
           .catch(err => {
             this.$msgBox.show('数据获取异常')
@@ -547,7 +614,6 @@
       //清空高级搜索
       clearSenior: function(){
         for(var i in this.seniorSearch) {
-          console.log(typeof this.seniorSearch[i]);
           if (typeof this.seniorSearch[i] == "string") {
             this.seniorSearch[i] = ''
           }else if(typeof  this.seniorSearch[i] == 'boolean'){
@@ -568,6 +634,16 @@
         //数据获取
         this.getData()
       },
+      //保存表格显示列
+      tableStrorage:function(){
+        //高级搜索条件缓存操作
+        if(this.tableContent[this.tableContent.length-1].memory){
+          this.setCookie('tableRow',this.tableContent)
+        }else{
+          this.removeCookie('tableRow')
+        }
+        this.popvisiableCol=false;
+      },
       //表格滚动事件，表头悬浮
       tablescroll:function(){
         let vm=this;
@@ -576,20 +652,54 @@
       //修改页面条数
       changePagesize:function(val){
         console.log('pagesize更改'+val)
+        this.pageSearch.pageSize=val;
+        this.getData()
       },
       //修改页数
       changePageindex(val){
         console.log('pageindex更改'+val)
+        this.pageSearch.pageIndex=val;
+        this.getData();
       },
       //搜索框事件
       search() {
-        this.pageSearch.pageSize = 20
-        this.pageSearch.pageIndex = 1
-        this.loadData()
+        this.pageSearch.pageSize = 20;
+        this.pageSearch.pageIndex = 1;
+
+
+        this.getData(this.searchData.value)
       },
-      //数据获取
-      loadData: function(){
-        console.log('数据获取')
+      //获取部门
+      getDataC: function () {
+        let param = { orgid: this.orgid, uid: this.userid }
+        this.searchData.bmType = ''
+        this.getAxios('GQT/CorrespondenceSettingsApi/GetDeptByUnit', param)
+          .then(res => {
+            this.bmList = res.Record;
+          })
+          .catch(err => {
+            console.log(err)
+          })
+      },
+      //获取基础数据
+      getBaseData: function() {
+        let param = { orgid: this.orgid, orgCode: this.orgcode }
+        this.getAxios('GQT/QTSysSetApi/GetAllBasicData', param)
+          .then(res => {
+            console.log(res)
+            if(res.Status=='success') this.baseList=res;
+
+          })
+          .catch(err => {
+            console.log(err)
+          })
+      },
+      //调用打印
+      printTables: function() {
+        let print=document.createElement('div');
+        print.appendChild(this.$refs.scrollTable.cloneNode(true));
+        this.$print(print);
+        print=null;
       },
     }
   }
@@ -697,6 +807,13 @@
         td{
           border: 1px solid #eee;
           height: 38px;
+          max-width: 300px;
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          &:nth-of-type(1){
+            position: relative;
+          }
         }
         .upOrDown{
           display: inline-block;
@@ -717,6 +834,13 @@
               font-size: 15px;
             }
           }
+        }
+        input{
+          position: absolute;
+          left: 20px;
+          top: 15px;
+          height: 15px;
+          width: 15px;
         }
       }
     }
@@ -777,6 +901,42 @@
   .seniorSearch{
     td{
       text-align: center;
+    }
+  }
+  @media print {
+    @page {
+      margin: 10px;
+    }
+    .tbArea {
+      width: 100%;
+      overflow: auto;
+      padding: 30px;
+      > table {
+        width: 100%;
+        margin-top: 10px;
+        th {
+          border: solid #eee;
+          border-width: 0 1px;
+          height: 38px;
+          background-color: #d3e9f9;
+          position: static;
+          &:nth-of-type(1){
+            display: none;
+          }
+          span:nth-of-type(2){
+            display: none;
+          }
+        }
+        td {
+          border: 1px solid #eee;
+          height: 38px;
+          padding: 0 10px;
+          min-width: 100px;
+          &:nth-of-type(1){
+            display: none;
+          }
+        }
+      }
     }
   }
 </style>

@@ -18,13 +18,13 @@
                </div>
                上报预算
              </div>
-             <div @click.stop="exportTables" class="handle">
+             <div @click.stop="$refs.budget.printOrexcelTable(1)" class="handle">
                <div class="topIcon">
                  <img src="@/assets/images/dy.png" alt="">
                </div>
                导出
              </div>
-             <div @click.stop="$refs.budget.printTable" class="handle">
+             <div @click.stop="$refs.budget.printOrexcelTable(0)" class="handle">
                <div class="topIcon">
                  <img src="@/assets/images/dy.png" alt="">
                </div>
@@ -61,7 +61,7 @@
              </div>
              导出
            </div>
-           <div @click.stop="printTables" class="handle">
+           <div @click.stop="$refs.proexpend.printTables" class="handle">
              <div class="topIcon">
                <img src="@/assets/images/dy.png" alt="">
              </div>

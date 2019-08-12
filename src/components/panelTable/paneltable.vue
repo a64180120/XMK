@@ -174,6 +174,9 @@
 </script>
 
 <style>
+  .panelTable{
+    padding: 0 25px 0 0;
+  }
   .panelTable .el-table__header-wrapper{
     top: 50px;
   }

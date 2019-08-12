@@ -37,6 +37,7 @@
           <col width="15%">
         </colgroup>
         <tbody>
+        <!--全部可编辑-->
          <!-- <template v-for="(item,index) in dataList">
             &lt;!&ndash; 本年结余、期末滚存结余 &ndash;&gt;
             <template v-if="item.SUBJECTCODE=='5QM1'||item.SUBJECTCODE=='5QM6'">
@@ -253,66 +254,13 @@
              </tr>
            </template>
          </template>
-          <!--<tr>
-            <td colspan="2">本年合计收入</td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td colspan="2">本年合计支出</td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td colspan="2">本年结余</td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td></td>
-            <td>加:上年结余</td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td></td>
-            <td>加：本年收回投资</td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td></td>
-            <td>减：本年投资</td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td></td>
-            <td>减：本年提取后备金</td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td>期末滚存结余</td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>-->
         </tbody>
       </table>
     </div>
     <!-- 上报标记 -->
     <div class="reportMark" v-if="verifyType==1">
       <p>已上报</p>
-      <p>{{dataList[0].VERIFYSTARTTIME}}</p>
+      <p>{{dataList[0].VERIFYSTARTTIME.substring(0,10)}}</p>
     </div>
     <!--<div class="pageArea" style="transition: all .3s linear;">
       <el-pagination
@@ -327,22 +275,78 @@
     </div>-->
 
     <!--经费收支预算表弹窗-->
+   <!-- <div data-v-178c06ba="" class="el-dialog__wrapper" style="display: none;">
+      <div role="dialog" aria-modal="true" aria-label="预算说明书" class="el-dialog" style="margin-top: 15vh; width: 1200px;">
+        <div class="el-dialog__header">
+          <span class="el-dialog__title">预算说明书</span>
+          <button type="button" aria-label="Close" class="el-dialog__headerbtn"><i class="el-dialog__close el-icon el-icon-close"></i></button>
+        </div>
+      </div>
+    </div>-->
+
+
     <el-dialog modal-append-to-body
                :visible="book.visiable"
                title="预算说明书"
                width="1200px"
+               class="bookArea"
                @close="book.visiable=false">
-      <budget-book></budget-book>
-      <tinymce-editor
-        ref="editor"
-        id="budgetet-editor"
-        v-model="tableFace.Content"
-        :initvalue="tableFace.Content"
-        :disabled='false'
-        @onClick='tinymceClick'
-        :style="{'margin-top': '15px','height':'80%'}"
-      >
-      </tinymce-editor>
+      <div slot="footer">
+        <div :style="{left: -(bookStep*1200)+'px'}">
+          <!--封面组件-->
+          <div>
+            <budget-book ref="bookArea"></budget-book>
+          </div>
+
+          <!-- 说明书 -->
+          <div>
+            <div style="text-align: right">
+              <el-button class="btn" @click="bookEdit=!bookEdit">{{bookEdit?'保存':'编辑'}}</el-button>
+            </div>
+
+            <div  ref="bookContent" v-html="tableFace.Content" :style="{'page-break-after':'always',display:bookEdit?'none':'block',height: '480px' , overflowY:'auto', 'margin-top':'10px'}">{{tableFace.Content}}</div>
+            <tinymce-editor
+              ref="editor"
+              id="budgetet-editor"
+              v-model="tableFace.Content"
+              :initvalue="tableFace.Content"
+              :disabled='false'
+              :resize="false"
+              @onClick='tinymceClick'
+              :style="{'margin-top': '15px','height':'80%'}"
+              v-if="bookEdit"
+            >
+            </tinymce-editor>
+          </div>
+        </div>
+
+        <!-- 左右箭头，切换封面和说明书 -->
+        <i class="el-icon-d-arrow-left arrow arrowLeft" @click="bookStep=0" :style="{'opacity':bookStep==1?1:0}"></i>
+        <i class="el-icon-d-arrow-right arrow arrowRight" @click="bookStep=1" :style="{'opacity':bookStep==0?1:0}"></i>
+      </div>
+
+    </el-dialog>
+    <!--打印内容选择-->
+    <el-dialog modal-append-to-body
+               :visible="printShow"
+               :title="'选择'+(printOrExcel==0?'打印':'导出')+'内容'"
+               width="400px"
+               @close="printShow=false">
+      <div>
+        <el-checkbox v-model="printChoice[0]">封面</el-checkbox>
+        <el-checkbox v-model="printChoice[1]">说明</el-checkbox>
+        <el-checkbox v-model="printChoice[2]">报表</el-checkbox>
+      </div>
+
+      <div slot="footer" class="dialog-footer">
+        <el-button class="btn whiteBtn" size="small" @click="printShow=false">取消</el-button>
+        <template v-if="printOrExcel==0">
+          <el-button class="btn" size="small" @click="printTableAc">打印</el-button>
+        </template>
+        <template v-else>
+          <el-button class="btn" size="small" @click="printTableAc">导出</el-button>
+        </template>
+      </div>
     </el-dialog>
   </div>
 </template>
@@ -388,7 +392,21 @@ export default {
       //启用编辑
       edit: false,
       //是否上报 0-未上报，1-已上报
-      verifyType: 0
+      verifyType: 0,
+      tableFace:{
+        phid:'',
+        Content:'<h1>你好</h1>'
+      },
+      //打印选择弹窗显示
+      printShow: false,
+      //打印-0 还是导出-1（共用弹窗）
+      printOrExcel:0,
+      //打印内容选择-封面，说明书，报表
+      printChoice: [false,false,true],
+      //封面位置
+      bookStep:0,
+      //说明书编辑
+      bookEdit:false
     }
   },
   components: { budgetBook,tinymceEditor },
@@ -528,13 +546,26 @@ export default {
       })*/
 
     },
-    //打印
-    printTable: function () {
-      this.$print(this.$refs.scrollTable);
+    //打印选择弹窗type:0-打印，1-导出
+    printOrexcelTable: function( type ) {
+      this.printShow=true;
+      this.printOrExcel=type;
+    },
+    //调用打印
+    printTableAc: function() {
+      let print=document.createElement('div');
+      //封面
+      if( this.printChoice[0] ) print.appendChild(this.$refs.bookArea.getFace().cloneNode(true));
+      //说明书
+      if( this.printChoice[1] ) print.appendChild(this.$refs.bookContent.cloneNode(true));
+      //报表
+      if( this.printChoice[2] )print.appendChild(this.$refs.scrollTable.cloneNode(true));
+      this.$print(print);
+      print=null;
     },
     //导出
-    exportTable: function () {
-
+    exportTableAc: function () {
+     console.log('这里发送导出请求')
     },
     //输入框清除0，顺便将格式化的金额修改为正常数值，便于修改
     clearZero: function (val) {
@@ -614,11 +645,15 @@ export default {
     filterData:function(list){
       for(var i in list){
         list[i].VERIFYSTART=1;
+        list[i].VERIFYSTARTTIME=new Date();
         if(list[i].Childrens){
           this.filterData(list[i].Childrens)
         }
       }
-    }
+    },
+    tinymceClick(e,tinymceObj){
+      console.log(e);
+    },
   }
 }
 </script>
@@ -744,5 +779,64 @@ export default {
     border-radius: 8px;
     transform: rotate(25deg);
     background: rgba(255,255,255,.4);
+  }
+
+</style>
+<style lang="scss">
+  .dialog-footer {
+    text-align: center;
+  }
+  .bookArea .el-dialog{
+    height: 600px;
+  }
+  .bookArea .el-dialog__footer{
+    text-align: center;
+    padding-top: 0;
+    margin-top: -70px;
+    position: relative;
+    overflow: hidden;
+    white-space: nowrap;
+    height: 555px;
+    >div{
+      >div{
+        width: 2400px;
+        height: 100%;
+        min-height: 500px;
+        overflow: hidden;
+        position: absolute;
+        left: 0;
+        transition: all .5s linear;
+        >div{
+          height: auto;
+          min-height: 555px;
+          margin: 0 auto;
+          overflow-x: hidden;
+          overflow-y: auto;
+          padding: 10px 30px;
+          display: inline-block;
+          width: 1200px;
+          &:nth-of-type(2){
+            text-align: justify;
+          }
+        }
+      }
+      .arrow{
+        display: inline-block;
+        position: absolute;
+        top: 190px;
+        font-size: .35rem;
+        transition: all .3s linear;
+        &:hover{
+          color: #00B8EE;
+        }
+      }
+      .arrowLeft{
+        left: 0;
+      }
+      .arrowRight{
+        left: 1150px;
+      }
+    }
+
   }
 </style>

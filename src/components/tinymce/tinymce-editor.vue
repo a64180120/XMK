@@ -94,9 +94,9 @@ export default {
       this.myValue = ''
     },
     getContent(){
-        // var activeEditor = tinymce.activeEditor; 
-        // var editBody = activeEditor.getBody(); 
-        // activeEditor.selection.select(editBody); 
+        // var activeEditor = tinymce.activeEditor;
+        // var editBody = activeEditor.getBody();
+        // activeEditor.selection.select(editBody);
         // var text = activeEditor.selection.getContent({'format':'text'});
 
         return text;
