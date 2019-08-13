@@ -1,5 +1,5 @@
 <template>
-  <div class="container_bk">
+  <div class="container_bk" ref="bookFace">
     <ul>
       <li>
         <input />
@@ -22,9 +22,9 @@
       </li>
       <li>
         <div>
-          <span>工会主席：<input value="王刚"/></span>
-          <span>财务部长：<input value="赵阳"/></span>
-          <span>制表：<input value="JJ"/></span>
+          <span>工会主席：<input value=""/></span>
+          <span>财务部长：<input value=""/></span>
+          <span>制表：<input value=""/></span>
         </div>
         <div>
           <span>经费审查委员会主任：<input value=""/></span>
@@ -46,7 +46,12 @@
 
 <script>
     export default {
-        name: "budgetBook"
+        name: "budgetBook",
+      methods:{
+          getFace:function(){
+            return (this.$refs.bookFace)
+          }
+      }
     }
 </script>
 
@@ -56,6 +61,8 @@ input{
 }
   .container_bk{
     padding: 20px 50px;
+    text-align: center;
+    page-break-after: always;
     >ul{
       >li{
         padding: 10px;

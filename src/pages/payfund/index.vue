@@ -404,14 +404,16 @@
               <div v-show="rightShow.show1"
                    class="transition-box">
                 <div>
-                  <p style="color: #3294e8;font-size: .4rem">{{apartData.Mst.length-1}}</p>
+                  <p style="color: #3294e8;font-size: .4rem">{{apartData.Mst.length>0?apartData.Mst.length-1:0}}</p>
                   <div>项目总数</div>
                 </div>
                 <div>
-                  <p :title="apartData.Amount | NumFormat">
-                    <num :vv="Number(apartData.Amount)"></num>
+                  <p style="color:#f52c1d; font-size: .4rem;" :title="apartData.Amount | NumFormat">
+                    <count-to :startVal="startVal" :endVal="endVal" :duration="1000" :decimals="2" separator="," :suffix="dw"></count-to>
+                    <!--<num :vv="Number(apartData.Amount)"></num>-->
                     <!--{{apartData.money}}-->
                   </p>
+                  <div style="text-shadow: none">支出预算总额({{dw}})</div>
                 </div>
               </div>
             </transition>
@@ -516,7 +518,7 @@
 <script>
 import tophandle from '../../components/topNav/topHandle'
 import pieChart from '../../components/echart/pieChart'
-import num from '../../components/numAct/index'
+/*import num from '../../components/numAct/index'*/
 import Applybill from '../../components/applyBill/applybill'
 import Orgtree from '../../components/orgtree/index'
 import Applypro from '../../components/applyPro/applyPro'
@@ -525,6 +527,7 @@ import Auditfollow from '../../components/auditFollow/auditfollow'
 import ApprovalDialog from '../../components/applyPro/approval'
 import { mapState } from 'vuex'
 import { printTable } from '@/api/upload'
+import countTo from 'vue-count-to'
 export default {
   name: 'index',
   data () {
@@ -623,7 +626,10 @@ export default {
       apartData: { bm: {}, Mst: [], Amount: '0', subData: [] }, //选择部门后获取的项目信息
       apartDataMst: {}, //部门数组，通过phid绑值，用于显示title
       isAdd: true, //判断是修改（false）还是新增(true)
-      auditMsg: [] //审批流程 数据
+      auditMsg: [], //审批流程 数据
+      startVal:0,
+      endVal:0,
+      dw:'元'
     }
   },
   components: {
@@ -636,7 +642,8 @@ export default {
     goApproval,
     Auditfollow,
     ApprovalDialog,
-    num
+    countTo
+    /*num*/
   },
   mounted () {
     //this.getData();
@@ -728,7 +735,7 @@ export default {
         return
       }
       this.getData()
-    }
+    },
   },
 
   computed: {
@@ -952,7 +959,14 @@ export default {
             for (var i in res.Mst) {
               this.apartDataMst[res.Mst[i].PhId] = res.Mst[i].FProjName
             }
-            this.apartData.Amount = res.FAmount
+            this.apartData.Amount = res.FAmount;
+            this.startVal=this.endVal;
+            this.endVal=+(res.FAmount>10000?(res.FAmount>100000000?res.FAmount/100000000:res.FAmount/10000):res.FAmount);
+            this.dw=res.FAmount>10000?(res.FAmount>100000000?'亿元':'万元'):'元'
+          }else{
+            this.startVal=this.endVal;
+            this.endVal=0;
+            this.dw='元'
           }
           this.apartData.Mst.unshift({ PhId: '', FProjName: '全部' })
 
@@ -1530,7 +1544,7 @@ export default {
     paySubmit: function (val) {
       this.$router.push({ name: 'paycenter', params: { phid: val } })
     }
-  }
+  },
 }
 </script>
 

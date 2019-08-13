@@ -30,9 +30,7 @@ export function printTable(vm){
 /**/
 //表格滚动事件
 export function tableScroll(el,vm) {
-  console.log(vm,el)
   let scObj = vm.$refs[el];
-  console.log(scObj)
   let topHeight=scObj.scrollTop;
   let childList=scObj.firstElementChild.firstElementChild.childNodes;
   if(topHeight>0){

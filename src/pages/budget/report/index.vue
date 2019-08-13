@@ -6,25 +6,25 @@
          <!-- 预算按钮事件 -->
          <template v-if="navActive==0">
            <template v-if="!edit">
-             <div @click.stop="editFuc" class="handle">
+             <div v-if="!budgetHide" @click.stop="editFuc" class="handle">
                <div class="topIcon">
                  <img src="@/assets/images/dy.png" alt="">
                </div>
                编辑
              </div>
-             <div @click.stop="$refs.budget.reportBudget" class="handle" style="width:80px">
+             <div v-if="!budgetHide" @click.stop="$refs.budget.reportBudget" class="handle" style="width:80px">
                <div class="topIcon" >
                  <img src="@/assets/images/dy.png" alt="">
                </div>
                上报预算
              </div>
-             <div @click.stop="exportTables" class="handle">
+             <div @click.stop="$refs.budget.printOrexcelTable(1)" class="handle">
                <div class="topIcon">
                  <img src="@/assets/images/dy.png" alt="">
                </div>
                导出
              </div>
-             <div @click.stop="$refs.budget.printTable" class="handle">
+             <div @click.stop="$refs.budget.printOrexcelTable(0)" class="handle">
                <div class="topIcon">
                  <img src="@/assets/images/dy.png" alt="">
                </div>
@@ -38,7 +38,7 @@
                </div>
                保存
              </div>
-             <div @click.stop="$refs.budget.save(1)" class="handle" style="width:80px">
+             <div @click.stop="$refs.budget.reportBudget" class="handle" style="width:80px">
                <div class="topIcon">
                  <img src="@/assets/images/dy.png" alt="">
                </div>
@@ -61,7 +61,7 @@
              </div>
              导出
            </div>
-           <div @click.stop="printTables" class="handle">
+           <div @click.stop="$refs.proexpend.printTables" class="handle">
              <div class="topIcon">
                <img src="@/assets/images/dy.png" alt="">
              </div>
@@ -138,7 +138,7 @@
       </div>
       <div class="rightArea">
         <section v-if="navActive==0">
-          <budget v-if="navActive==0" ref="budget"></budget>
+          <budget v-if="navActive==0" @hideTil="hideTil" ref="budget"></budget>
         </section>
         <section v-if="navActive==1">
           <proexpend v-if="navActive==1" ref="proexpend"></proexpend>
@@ -177,7 +177,8 @@
         navActive:0,
         //当为预算表时，编辑按钮切换,默认false,非编辑
         edit: false,
-
+        //预算已上报时，隐藏上报和编辑按钮
+        budgetHide:false,
       }
     },
 
@@ -189,6 +190,10 @@
       editFuc: function() {
         this.edit=!this.edit;
         this.$refs.budget.editFuc();
+      },
+      //当预算已上报时，进行修改，隐藏编辑上报按钮
+      hideTil: function(){
+        this.budgetHide=true;
       }
     }
   }
