@@ -102,7 +102,7 @@
 
     <div>
       <div class="container content-body"
-           style="min-width: 1300px;overflow: auto">
+           style="min-width: 1300px;overflow: auto;min-height:750px">
         <div class="formArea">
           <!--搜索栏-->
           <div class="btnArea"
@@ -340,7 +340,19 @@
            class="applyDetailTitle">
         <span>新增项目</span>
       </div>
-      <prerojectnewproject v-if="addDialog"></prerojectnewproject>
+      <prerojectnewproject v-if="addDialog" @refresh='refresh()'></prerojectnewproject>
+    </el-dialog>
+    <el-dialog append-to-body
+               modal-append-to-body
+               :visible.sync="editDialog"
+               width="90%"
+               :close-on-click-modal="false"
+               class="applyDetailDialog">
+      <div slot="title"
+           class="applyDetailTitle">
+        <span>修改项目</span>
+      </div>
+      <edit  v-if="editDialog" :data="editDetail"></edit>
     </el-dialog>
     <el-dialog append-to-body
                modal-append-to-body
@@ -368,9 +380,10 @@ import Prerojectnewproject from "../../components/preProjectDialog/index";
 import ItemPrint from "../../components/preProjectDialog/itemPrint";
 import Auditfollow from "../../components/auditFollow/auditfollow";
 import { mapState } from 'vuex'
+import Edit from "../../components/preProjectDialog/edit";
 export default {
   name: "preBuildProject",
-  components: { Auditfollow, ItemPrint, Prerojectnewproject, SearchInput, ItemTable, DataTable, TopHandle },
+  components: {Edit, Auditfollow, ItemPrint, Prerojectnewproject, SearchInput, ItemTable, DataTable, TopHandle },
   data () {
     let that = this
     return {
@@ -456,6 +469,7 @@ export default {
       },
       search: '',
       addDialog: false,
+      editDialog:false,
       detailDialog: false,
       openfollow: false,
       page: {
@@ -464,8 +478,9 @@ export default {
         pageSize: 20,
         pageSizes: [20, 30, 50, 100]
       },
-      itemDetail: {},
-      selection: []
+      itemDetail: {},//缓存详情行的值
+      selection: [],//选中表格行的值
+      editDetail:{}//缓存修改行的值
 
     }
   },
@@ -484,6 +499,7 @@ export default {
   mounted () {
     this.getExpenseCategoryList()
     this.getTableData()
+    console.log(this.OrgCode,this.Orgid)
   },
   methods: {
     //get获取表格数据
@@ -577,6 +593,7 @@ export default {
     //
     rowSelect (selection, row) {
       this.selection = selection
+      console.log(selection)
     },
     rowSelectAll (selection) {
       this.selection = selection
@@ -616,7 +633,14 @@ export default {
       this.addDialog = true
     },
     edit () {
-      this.addDialog = true
+      if (this.selection.length === 0){
+        this.$msgBox.error('请选择需要修改的单据')
+      } else if (this.selection.length === 1){
+        this.editDetail = this.selection[0]
+        this.editDialog = true
+      } else {
+        this.$msgBox.error('只能选择一条单据进行修改')
+      }
     },
     deleteItem () {
       if (this.selection.length === 0) {
@@ -628,7 +652,8 @@ export default {
       } else {
         let data = {
           FProjCode: this.selection[0].FProjCode,
-          FProjPhId: this.selection[0].PhId
+          FProjPhId: this.selection[0].PhId,
+          PersistentState:'3'
         };
         this.postAxios('/GXM/ProjectMstApi/PostDeleteProject', data).then(res => {
           if (res.Status === 'success') {
@@ -642,6 +667,7 @@ export default {
         })
       }
     },
+    //显示详情
     showDetail (scope) {
       let data = {
         FProjPhId: scope.row.PhId
@@ -664,6 +690,12 @@ export default {
     },
     //搜索框查询事件
     searchInput () {
+      this.getTableData()
+    },
+    //刷新
+    refresh(val){
+      this.$msgBox.show('新增成功')
+      this.addDialog = false
       this.getTableData()
     }
   }

@@ -36,7 +36,7 @@ export default {
     },
     maxWord:{
       type: String,
-      default:600
+      default:250
     }
   },
   data() {
