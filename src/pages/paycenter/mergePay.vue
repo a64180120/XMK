@@ -14,7 +14,7 @@
       </div>
       <!-- 合并支付 -->
       <div class="dialogContainer"
-           v-show="false">
+           v-show="showMergePay">
         <div class="payCenterDialog">
           <div class="content">
             <img src="@/assets/images/mergepay.png"
@@ -81,7 +81,7 @@
       </div>
       <!-- 支付口令 -->
       <div class="dialogContainer"
-           v-show="true">
+           v-show="showPassword">
         <div class="payCenterDialog">
           <div class="content password">
             <img src="@/assets/images/mergepay.png"
