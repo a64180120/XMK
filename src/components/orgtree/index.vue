@@ -114,7 +114,7 @@ export default {
     /*for(var i in orgList){
 
         }*/
-    console.log(this.data)
+    // console.log(this.data)
   },
   methods: {
     selectAll (type) {

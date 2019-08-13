@@ -5,7 +5,7 @@
       <div class="btnCon">
         <div v-if="menuButton.datadic_edit=='True'"
              v-show="disabled"
-             @click.stop="disabled=false"
+             @click.stop="disabled=false;deleteList=[]"
              class="handle">
           <div class="topIcon"><img src="@/assets/images/zj2.png"
                  alt=""></div>
@@ -30,20 +30,31 @@
     <div class="container">
       <div class="type">
         <p>字典类型</p>
-        <ul>
-          <li class="typeTitle">--资金拨付--</li>
-          <li @click="selectType(type)"
-              :class="{active:type.DicType==selected.DicType}"
-              v-for="(type,ind) of typeList"
-              :key="ind">{{type.DicName}}</li>
-          <li class="typeTitle">--预算项目管理--</li>
-          <li @click="selectType(type2)"
-              :class="{active:type2.DicType==selected.DicType}"
-              v-for="(type2) of typeList2"
-              :key="type2.DicType">{{type2.DicName}}</li>
-        </ul>
+        <div>
+          <ul>
+            <li class="typeTitle">--资金拨付--</li>
+            <li @click="selectType(type)"
+                :class="{active:type.DicType==selected.DicType}"
+                v-for="(type,ind) of typeList"
+                :key="ind">{{type.DicName}}</li>
+            <li class="typeTitle">--预算项目管理--</li>
+            <li @click="selectType(type2)"
+                :class="{active:type2.DicType==selected.DicType}"
+                v-for="(type2) of typeList2"
+                :key="type2.DicType">{{type2.DicName}}</li>
+            <li class="typeTitle">--绩效评价--</li>
+            <li @click="selectType(type3)"
+                :class="{active:type3.DicType==selected.DicType}"
+                v-for="(type3) of typeList3"
+                :key="type3.DicType">{{type3.DicName}}</li>
+
+          </ul>
+        </div>
+
       </div>
-      <div v-if="selected.DicType=='PayMethod'||selected.DicType=='PayMethodTwo'||selected.DicType=='TimeLimit'||selected.DicType=='ProjectProper'||selected.DicType=='ProjectLevel'"
+      <!-- <div v-if="selected.DicType=='PayMethod'||selected.DicType=='PayMethodTwo'||selected.DicType=='TimeLimit'||selected.DicType=='ProjectProper'||selected.DicType=='ProjectLevel'"
+           class="content"> -->
+      <div v-if="typeCssList.includes(selected.DicType)"
            class="content">
         <div class="list">
           <div class="listHead">
@@ -198,6 +209,11 @@
           </div>
         </div>
       </div>
+      <div v-else-if="selected.DicType=='PerformEvals'"
+           class="content">
+        <PerformEvals @disableUpdate="disableUpdate"
+                      :disabled="disabled" />
+      </div>
     </div>
     <!--组织树弹窗   visible:显示,,,,@confirm接收选中的值   data组织列表  checked-org当前选中的组织的code列表-->
     <orgtree :visible.sync="orgVisible"
@@ -210,6 +226,7 @@
 <script>
 import Orgtree from "@/components/orgtree/index"
 import { mapState } from 'vuex'
+import PerformEvals from '@/components/setting/PerformEvals'
 import topHandle from '@/components/topNav/topHandle'
 import { GetSysSetList, dictionarySave } from '@/api/systemSetting/dataSafe'
 import { GetAllChildTree } from '@/api/systemSetting/post'
@@ -225,20 +242,40 @@ export default {
       orgSelected: [],
       disabled: true,//不可编辑,修改
       Value: '',//对下补助代码
-      typeList: [
+      typeList: [  //资金拨付字典
         {          DicType: 'PayMethod',
           DicName: '支付方式',
         },
         {          DicType: 'DxbzCode',
           DicName: '对下补助代码维护',
         }],//字典类型列表
-      typeList2: [//字典类型列表2
+      typeList2: [//预算项目管理字典
         { DicType: 'ProjectLevel', DicName: '项目级别' },
 
         { DicType: 'ProjectProper', DicName: '项目属性' },
 
         { DicType: 'TimeLimit', DicName: '续存期限', },
-        { DicType: 'PayMethodTwo', DicName: '支付方式', }],
+        { DicType: 'PayMethodTwo', DicName: '支付方式', },
+        { DicType: 'ProcurementsCatalog', DicName: '采购目录', },
+        { DicType: 'ProcurementsProcedures', DicName: '采购程序', },
+        { DicType: 'ProcurementsType', DicName: '采购类型', }
+      ],
+      typeList3: [//绩效评价字典
+        { DicType: 'PerformEvals', DicName: '绩效指标' },
+        { DicType: 'TargetClasses', DicName: '指标类别' }
+      ],
+      typeCssList: [
+        'PayMethod',
+        'ProjectLevel',
+        'ProjectProper',
+        'TimeLimit',
+        'PayMethodTwo',
+        'ProcurementsCatalog',
+        'ProcurementsProcedures',
+        'ProcurementsType',
+        'TargetClasses',
+        // 'PerformEvals',
+      ],
       typeInfoList: [
       ],//类型信息列表
       deleteList: [],//删除的数据
@@ -345,6 +382,9 @@ export default {
       this.selected = type;
       this.disabled = true;
       this.getData();
+    },
+    disableUpdate () {
+      this.disabled = false;
     },
     //输入框限定***
     clearNoNum (val) {
@@ -456,7 +496,8 @@ export default {
   },
   components: {
     topHandle,
-    Orgtree
+    Orgtree,
+    PerformEvals
   },
   filters: {
     orgname (arr) {
@@ -511,10 +552,16 @@ export default {
       font-size: 0.18rem;
       font-weight: 700;
     }
-    > ul {
+    > div {
+      height: 100%;
+      padding-top: 40px;
+    }
+    > div > ul {
       padding: 10px;
       font-size: 0.16rem;
-
+      height: 100%;
+      margin-top: -40px;
+      overflow: auto;
       > li {
         height: 30px;
         line-height: 30px;
