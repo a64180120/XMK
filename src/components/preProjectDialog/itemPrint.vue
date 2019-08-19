@@ -2,13 +2,13 @@
   <!-- <el-dialog append-to-body :visible="true" width="1000px" :close-on-click-modal="false">
     <tb-data></tb-data>
   </el-dialog>-->
-  <section class="item-print">
+  <section class="item-print" ref="printTable">
     <el-row>
       <el-col :span="24" style="margin-top:10px;margin-bottom: 10px">
         <slot name="btn">
           <div class="top-btn">
             <el-button class="btn" size="mini">取消</el-button>
-            <el-button class="btn" size="mini">打印</el-button>
+            <el-button class="btn" size="mini" @click="printTable()">打印</el-button>
           </div>
         </slot>
       </el-col>
@@ -18,8 +18,8 @@
       <h2 style="text-align:right;">单据号： {{data.ProjectMst.PhId}}</h2>
       <div class="content">
         <div class="list">
-          <div class="tableBody">
-            <table>
+          <div class="tableBody" >
+            <table class="printTable" >
               <colgroup>
                 <col width="18%" />
                 <col width="6%" />
@@ -47,7 +47,7 @@
                 </tr>
                 <tr>
                   <td>项目属性</td>
-                  <td colspan="7">{{data.ProjectMst.FProjAttr}}</td>
+                  <td colspan="7">{{data.ProjectMst.FProjAttr_EXName}}</td>
                 </tr>
                 <!-- 项目预算明细行 -->
                 <tr>
@@ -89,7 +89,7 @@
                   <td class="trtd">{{item.FAmount | NumFormat}}</td>
                 </tr>
                 <tr v-if="data.ProjectDtlFundAppls.length === 0">
-                  <td class="no-data" colspan="7">暂无数据</td>
+                  <td class="no-data" colspan="7" style="text-align: center">暂无数据</td>
                 </tr>
                 <!-- 项目实施进度计划 -->
                 <tr>
@@ -109,14 +109,13 @@
                 </tr>
                 <!-- 绩效目标 -->
                 <tr>
-                  <td v-if="data.ProjectDtlTextContents.length !==0" :rowspan="data.ProjectDtlTextContents.length + 1">绩效目标</td>
-                  <td v-if="data.ProjectDtlTextContents.length ===0" :rowspan="1 + 1">绩效目标</td>
+                  <td rowspan=" 2">绩效目标</td>
                   <td colspan="4">年度目标</td>
                   <td colspan="3">长期目标</td>
                 </tr>
-                <tr v-if="data.ProjectDtlTextContents.length !== 0" v-for="(item,idx) in data.ProjectDtlTextContents">
-                  <td colspan="4" class="tltd">{{item.FLTPerformGoal}}</td>
-                  <td class="tltd" colspan="3">{{item.FAnnualPerformGoal}}</td>
+                <tr v-if="data.ProjectDtlTextContents.length !== 0" >
+                  <td colspan="4" class="tltd">{{data.ProjectDtlTextContents.FLTPerformGoal}}</td>
+                  <td class="tltd" colspan="3">{{data.ProjectDtlTextContents.FAnnualPerformGoal}}</td>
                 </tr>
                 <tr v-if="data.ProjectDtlTextContents.length === 0">
                   <td colspan="7" class="no-data">暂无数据</td>
@@ -197,6 +196,14 @@ export default {
       let checkedCount = value.length
       this.checkAll = checkedCount === this.list.length
       this.isIndeterminate = checkedCount > 0 && checkedCount < this.list.length
+    },
+    //打印表格
+    printTable(){
+      let print = document.getElementsByClassName('printTable')[0].innerHTML;
+      let dom = this.$refs.printTable
+      // window.print()
+      // window.location.reload()
+      this.$print(dom)
     }
   }
 }
@@ -249,6 +256,7 @@ export default {
           bottom: 10px;
           table {
             border: 1px solid $borderColor_ccc;
+            border-collapse:collapse;
           }
           td {
             border-radius: 0;

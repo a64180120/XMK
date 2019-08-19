@@ -1588,7 +1588,7 @@ export default {
   transition: transform 0.3s linear;
   color: #c0c4cc;
   position: absolute;
-  right: 20px;
+  right: 5px;
   cursor: pointer;
 }
 .rightPanel .showTil .el-icon-arrow-up {
@@ -1604,6 +1604,7 @@ export default {
 .showTil {
   border-bottom: 1px solid #ccc;
   padding: 0 0 10px 0;
+  position: relative;
 }
 .fullTable .rightPanel {
   right: -280px;
@@ -1626,8 +1627,8 @@ export default {
   right: 285px;
   top: 47%;
   font-size: 33px;
-  text-shadow: -2px 0 4px red;
-  color: #fff;
+  text-shadow: -2px 0 4px #88b927;
+  color: #88b927;
   transition: all 0.3s linear;
   animation: ad 1s infinite linear;
   cursor: pointer;

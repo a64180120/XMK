@@ -22,7 +22,7 @@
                        alt=""></div>
                 <div>预立项</div>
               </li>
-              <li>
+              <li @click="routerTo('/projectBuild')">
                 <div><img src="@/assets/images/xmlix.png"
                        alt=""></div>
                 <div>项目立项</div>
@@ -64,7 +64,7 @@
                        alt=""></div>
                 <div>年初申报</div>
               </li>
-              <li>
+              <li @click="routerTo('/midyearDeclare')">
                 <div><img src="@/assets/images/nztz.png"
                        alt=""></div>
                 <div>年中调整</div>

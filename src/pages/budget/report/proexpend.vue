@@ -312,7 +312,7 @@
                     <td>列名</td>
                     <td>是否显示</td>
                   </tr>
-                  <tr v-for="item in tableContent">
+                  <tr v-for="(item,index) in tableContent" v-if="index<tableContent.length-1">
                     <td>{{item.title}}</td>
                     <td><el-checkbox v-model="item.isShow"></el-checkbox></td>
                   </tr>
@@ -333,7 +333,7 @@
               <el-button class="btn" size="mini" slot="reference">列表显示</el-button>
             </el-popover>
           </li>
-          <li><el-button class="btn" size="mini" @click="tableType=tableType==0?'1':'0'">切换表格</el-button></li>
+         <!-- <li><el-button class="btn" size="mini" @click="tableType=tableType==0?'1':'0'">切换表格</el-button></li>-->
         </ul>
       </div>
     </div>
@@ -344,11 +344,11 @@
           <table >
             <thead>
             <th><input type="checkbox" v-model="checkeAll" />序号</th>
-            <th v-for="item in tableContent" v-if="item.isShow&&item.title">
+            <th v-for="item in tableContent" v-if="item.isSort&&item.title">
               <span>{{item.title}}</span>
               <span class="upOrDown">
-              <i class="el-icon-arrow-up"></i>
-              <i class="el-icon-arrow-down"></i>
+              <i :class="{'el-icon-arrow-up':true,'isactive':order&&order.split(' ')[0]==item.prop&&order.split(' ')[1]=='desc'}" @click="order=item.prop+' desc'"></i>
+              <i :class="{'el-icon-arrow-down':true,'isactive':order&&order.split(' ')[0]==item.prop&&order.split(' ')[1]=='asc'}" @click="order=item.prop+' asc'"></i>
             </span>
             </th>
             </thead>
@@ -480,6 +480,8 @@
           {title:'审批状态',isSort:true,isShow:true,prop:'FApproveStatus'},
           {memory:false}
         ],
+        //表格排序
+        order:'',
         //切换列表,0-普通列表，1-面板列表
         tableType:0,
         //列表数据
@@ -508,14 +510,16 @@
       })
     },
     mounted(){
+      debugger
         let sin=this.getCookie('seniorSearch');
         if(sin!=undefined){
           this.seniorSearch=JSON.parse(sin);
         }
-      let tableRow=this.getCookie('tableRow');
-      if(tableRow!=undefined){
-        this.tableContent=JSON.parse(tableRow);
-      }
+        let tableRow=this.getCookie('tableRow');
+        if(tableRow!=undefined){
+          this.tableContent=JSON.parse(tableRow);
+          console.log(JSON.parse(tableRow))
+        }
         this.getData();
         //获取部门
         this.getDataC();
@@ -547,6 +551,12 @@
       checkeAll: function(val) {
         for(var i in this.dataList){
           this.dataList[i]['checked']=val
+        }
+      },
+      order: function(val1,val2){
+        console.log(val1,val2)
+        if(val1!=val2){
+          this.getData();
         }
       }
     },
@@ -580,7 +590,8 @@
           FApproveStatus:this.searchData.approval, //(选填，审批状态0-全部；1-待上报；2-审批中；3-审批通过；4-未通过)、
           FExpenseCategory:this.searchData.payType,
           PageIndex:this.pageSearch.pageIndex-1,
-          PageSize:this.pageSearch.pageSize
+          PageSize:this.pageSearch.pageSize,
+          OrderBy:this.order//排序类型
         };
         for(var i in this.seniorSearch){
           if(i!='memory'&&i!='FTime'){

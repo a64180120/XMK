@@ -72,16 +72,22 @@ const staticRoute = [
         meta: { requireAuth: true, type: 'page', name: '预立项' }
       },
       {
+        path: '/preprojectApproval',
+        component: () =>
+          import(/* webpackChunkName:'preBuildProject'*/ '../pages/bgnyearApproval/preprojectApproval'),
+        meta: { requireAuth: true, type: 'page', name: '预立项审批' }
+      },
+      {
         path: '/projectBuild',
         component: () =>
           import(/* webpackChunkName:'preBuildProject'*/ '../pages/projectBuild/projectBuild'),
         meta: { requireAuth: true, type: 'page', name: '项目立项' }
       },
       {
-        path: '/projectList',
+        path: '/midyearDeclare',
         component: () =>
-          import(/* webpackChunkName:'projectList'*/ '../pages/preproject/projectList'),
-        meta: { requireAuth: true, type: 'page', name: '项目查询' }
+          import(/* webpackChunkName:'preBuildProject'*/ '../pages/midyearDeclare/midyearDeclare'),
+        meta: { requireAuth: true, type: 'page', name: '年中申报' }
       },
       {
         path: '/yearreport',
@@ -94,6 +100,12 @@ const staticRoute = [
         component: () =>
           import(/* webpackChunkName:'progresscontrol'*/ '../pages/budget/progresscontrol'),
         meta: { requireAuth: true, type: 'page', name: '进度控制' }
+      },
+      {
+        path: '/projectspent',
+        component: () =>
+          import(/* webpackChunkName:'progresscontrol'*/ '../pages/projectSpent/index'),
+        meta: { requireAuth: true, type: 'page', name: '项目用款' }
       }
     ]
   },

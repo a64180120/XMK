@@ -16,59 +16,65 @@
       <el-row>
         <el-col :span="24">
           <span>采购内容：</span>
-          <el-input></el-input>
+          <el-input v-model="data.FContent" size="small"></el-input>
         </el-col>
       </el-row>
       <el-row>
         <el-col :span="8">
           <span>采购目录：</span>
-          <el-input></el-input>
+          <el-select v-model="data.FCatalogCode" size="small">
+            <el-option v-for="(item,idx) in Catalogs" :label="item.FName" :key="idx" :value="item.FCode"></el-option>
+          </el-select>
         </el-col>
         <el-col :span="8">
           <span class="pl-10">采购类型：</span>
-          <el-input></el-input>
+          <el-select v-model="data.FTypeCode" size="small" style="float: left;padding: 0 2px">
+            <el-option v-for="(item,idx) in Type" :label="item.FName" :key="idx" :value="item.FCode"></el-option>
+          </el-select>
         </el-col>
         <el-col :span="8">
           <span class="pl-10">采购程序：</span>
-          <el-input></el-input>
+          <el-select v-model="data.FProcedureCode" size="small">
+            <el-option v-for="(item,idx) in Procedures" :label="item.FName" :key="idx" :value="item.FCode"></el-option>
+          </el-select>
         </el-col>
       </el-row>
       <el-row>
         <el-col :span="8">
           <span>采购数量：</span>
-          <el-input></el-input>
+          <el-input v-model="data.FQty" size="small" ></el-input>
         </el-col>
         <el-col :span="8">
           <span class="pl-10">计量单位：</span>
-          <el-input></el-input>
+          <el-input v-model="data.FMeasUnit" size="small"></el-input>
         </el-col>
         <el-col :span="8">
           <span class="pl-10">预计单价：</span>
-          <el-input></el-input>
+          <el-input v-model="data.FPrice" size="small"></el-input>
         </el-col>
       </el-row>
       <el-row>
         <el-col :span="24">
           <span style="line-height:normal;">技术参数及配置标准：</span>
-          <el-input type="textarea" show-word-limit maxlength="600" :rows="5" v-model="textarea"></el-input>
+          <el-input type="textarea"  show-word-limit maxlength="200" :rows="5" v-model="data.FSpecification" placeholder="限250字以内（必填）"></el-input>
         </el-col>
       </el-row>
       <el-row>
         <el-col :span="24">
           <span style="line-height:normal;">备注：</span>
-          <el-input type="textarea" show-word-limit maxlength="600" :rows="5" v-model="textarea"></el-input>
+          <el-input type="textarea" show-word-limit maxlength="200" :rows="5" v-model="data.FRemark" placeholder="限250字以内（必填）"></el-input>
         </el-col>
       </el-row>
       <el-row>
-        <el-col :span="8">
+        <el-col :span="9">
           <span>采购时间：</span>
-          <el-date-picker type="date" placeholder="选择日期"></el-date-picker>
+          <el-date-picker  size="small" type="date" value-format="yyyy-MM-dd" v-model="data.FEstimatedPurTime" placeholder="选择日期"></el-date-picker>
         </el-col>
       </el-row>
       <el-row>
-        <el-col :span="8">
+        <el-col :span="9">
           <span>总计金额：</span>
-          <el-input></el-input>
+          <el-input v-model="data.FAmount" disabled  size="small"></el-input>
         </el-col>
       </el-row>
       <el-row>
@@ -91,8 +97,8 @@
             <div class="listBody">
               <ul>
                 <li>{{1}}</li>
-                <li>{{data.fundSorce}}</li>
-                <li></li>
+                <li>{{suFund}}</li>
+                <li>{{data.FAmount}}</li>
               </ul>
             </div>
           </div>
@@ -103,22 +109,74 @@
 </template>
 
 <script>
+  import { mapState } from 'vuex'
 export default {
   name: 'setBuy',
   components: {},
   props: {
     data: {
       type: Object
+    },
+    fund:{
+      type: Array,
+      default:function () {
+        return []
+      }
     }
   },
   data() {
     return {
-      textarea: ''
+      textarea: '',
+      Type:[],//采购类型，
+      Catalogs:[],//采购目录
+      Procedures:[]//采购程序
     }
   },
-  mounted() {},
-  methods: {},
-  computed: {}
+  computed:{
+    ...mapState({
+      year: state => state.user.year,
+      Orgid: state => state.user.orgid,
+      UserCode: state => state.user.usercode,
+      UserId: state => state.user.userid,
+      OrgCode: state => state.user.orgcode
+    }),
+    //找出资金来源对应的名称
+    suFund(){
+      for (let i in this.fund){
+        if (this.fund[i].DM === this.data.FSourceOfFunds) {
+            return this.fund[i].MC
+        }
+      }
+    }
+  },
+  mounted() {
+    this.data
+    this.getAboutProcurements()
+  },
+  methods: {
+    //1、获取采购相关的列表
+    getAboutProcurements(){
+      let data= {
+        orgid:this.Orgid,//组织id
+        orgCode:this.OrgCode,//组织code
+        ProcurType:4 //1-Catalog采购目录,2-Procedures采购程序,3-Type采购类型，4全部）
+
+      }
+        this.getAxios('/GQT/QTSysSetApi/GetAboutProcurements',data).then(res=>{
+          if (res.Status ==='success'){
+            this.Type = res.Types
+            this.Catalogs = res.Catalogs
+            this.Procedures = res.Procedures
+            console.log(res)
+          }else {
+            this.$msgBox.error("请求出错")
+          }
+        }).catch(err=>{
+          this.$msgBox.error("请求出错")
+        })
+    },
+
+  },
 }
 </script>
 <style lang="scss" scoped>
@@ -153,7 +211,8 @@ export default {
     }
     > .el-input,
     > .el-textarea,
-    > .el-date-editor {
+    > .el-date-editor,
+    > .el-select{
       margin-left: -100px;
       width: 100%;
     }
@@ -227,6 +286,12 @@ export default {
     }
   }
 }
+</style>
+<style scoped>
+  .tree-main {
+    height: 300px;
+    overflow-y:auto ;
+  }
 </style>
 
 

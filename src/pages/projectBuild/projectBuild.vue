@@ -227,31 +227,51 @@
                       <div class="context">
                         <ul>
                           <li>
-                            <span @click="showDetail(scope.row)">项目属性：{{scope.row.FProjAttr}}</span>
+                            <span @click="showDetail(scope.row)">项目属性：{{scope.row.FProjAttr_EXName?scope.row.FProjAttr_EXName:'无'}}</span>
                           </li>
                           <li>
-                            <span>存续期限：{{scope.row.FDuration}}</span>
+                            <span>存续期限：{{scope.row.FDuration_EXName?scope.row.FDuration_EXName:'无'}}</span>
                           </li>
                           <li>
-                            <span>项目级别：{{scope.row.name3}}</span>
+                            <span>项目级别：{{scope.row.FLevel_EXName?scope.row.FLevel_EXName:'无'}}</span>
                           </li>
                           <li>
                             <span>起止日期：{{scope.row.FStartDate.replace('T00:00:00','')}}至{{scope.row.FEndDate.replace('T00:00:00','')}}</span>
                           </li>
                           <li>
-                            <span>支出类别：{{scope.row.FExpenseCategory_EXName}}</span>
+                            <span>支出类别：{{scope.row.FExpenseCategory_EXName?scope.row.FExpenseCategory_EXName:'无'}}</span>
                           </li>
                           <li>
-                            <span>效绩评价：{{scope.row.FIfPerformanceAppraisal}}</span>
+                            <span>效绩评价：{{scope.row.FIfPerformanceAppraisal ===1?'否':'是'}}</span>
                           </li>
                           <li>
-                            <span>申报部门：{{scope.row.FDeclarationDept_EXName}}</span>
+                            <span>申报部门：{{scope.row.FDeclarationDept_EXName?scope.row.FDeclarationDept_EXName:'无'}}</span>
                           </li>
                           <li>
-                            <span>预算部门：{{scope.row.FBudgetDept_EXName}}</span>
+                            <span>预算部门：{{scope.row.FBudgetDept_EXName?scope.row.FBudgetDept_EXName:'无'}}</span>
                           </li>
                           <li>
-                            <span>申报日期：{{scope.row.FDateofDeclaration}}</span>
+                            <span>申报日期：{{scope.row.FDateofDeclaration?scope.row.FDateofDeclaration:'无'}}</span>
+                          </li>
+                          <li>
+                            <span>申报进度：
+                              <span v-if="scope.row.FType+scope.row.FVerNo ==='c0001'">年初新增</span>
+                              <span v-else-if="scope.row.FType+scope.row.FVerNo ==='c0002'">年中调整</span>
+                              <span v-else-if="scope.row.FType+scope.row.FVerNo ==='z0001'">年中新增</span>
+                              <span v-else>无</span>
+                            </span>
+                          </li>
+                          <li>
+                            <span>项目状态：
+                              <span v-if="scope.row.FProjStatus ===1">预立项</span>
+                              <span v-else-if="scope.row.FProjStatus ===2">项目立项</span>
+                              <span v-else-if="scope.row.FProjStatus ===3">项目执行</span>
+                              <span v-else-if="scope.row.FProjStatus ===4">项目调整</span>
+                              <span v-else-if="scope.row.FProjStatus ===5">项目暂停</span>
+                              <span v-else-if="scope.row.FProjStatus ===6">项目终止</span>
+                              <span v-else-if="scope.row.FProjStatus ===7">项目关闭</span>
+                              <span v-else>无</span>
+                            </span>
                           </li>
                         </ul>
                       </div>
@@ -264,8 +284,25 @@
                                  align="center">
                   <template slot-scope="scope">
                     <div class="status-row">
-                      <div class="status-titile">{{scope.row.FApproveStatus}}(预立项)</div>
-                      <div class="status-context">{{scope.row.FApproveStatus}}</div>
+                      <div class="status-titile">
+                        <span v-if="scope.row.FApproveStatus ==1">待审批</span>
+                        <span v-if="scope.row.FApproveStatus ==2">审批中</span>
+                        <span v-if="scope.row.FApproveStatus ==3">审批通过</span>
+                        <span v-if="scope.row.FApproveStatus ==4">已退回</span>
+                        <span v-if="scope.row.FProjStatus ===1">(预立项)</span>
+                        <span v-if="scope.row.FProjStatus ===2">(项目立项)</span>
+                        <span v-if="scope.row.FProjStatus ===3">(项目执行)</span>
+                        <span v-if="scope.row.FProjStatus ===4">(项目调整)</span>
+                        <span v-if="scope.row.FProjStatus ===5">(项目暂停)</span>
+                        <span v-if="scope.row.FProjStatus ===6">(项目终止)</span>
+                        <span v-if="scope.row.FProjStatus ===7">(项目关闭)</span>
+                      </div>
+                      <div class="status-context">
+                        <span v-if="scope.row.FApproveStatus ==1">待审批</span>
+                        <span v-if="scope.row.FApproveStatus ==2">审批中</span>
+                        <span v-if="scope.row.FApproveStatus ==3">审批通过</span>
+                        <span v-if="scope.row.FApproveStatus ==4">已退回</span>
+                      </div>
                     </div>
                   </template>
                 </el-table-column>
@@ -450,6 +487,7 @@ export default {
         if (res.Record) {
           this.table.tableData = res.Record
           this.page.total = res.totalRows
+          console.log(res.Record)
         } else {
           this.$msgBox.error(res.Msg)
         }

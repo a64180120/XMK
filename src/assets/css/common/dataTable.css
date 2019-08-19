@@ -310,12 +310,12 @@
   text-align: center;
 }
 .itemTable_proBuildProject .status-row .status-context{
-  width: 50px;
-  height: 50px;
+  width: 70px;
+  height: 70px;
   display: inline-block;
   border: 2px solid #3495E8;
-  border-radius: 25px;
-  line-height: 50px;
+  border-radius: 35px;
+  line-height: 70px;
   color:#3495E8 ;
   font-size: 0.14rem;
 }
