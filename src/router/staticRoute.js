@@ -94,6 +94,12 @@ const staticRoute = [
         component: () =>
           import(/* webpackChunkName:'progresscontrol'*/ '../pages/budget/progresscontrol'),
         meta: { requireAuth: true, type: 'page', name: '进度控制' }
+      },
+      {
+        path: '/projectspent',
+        component: () =>
+          import(/* webpackChunkName:'progresscontrol'*/ '../pages/projectSpent/index'),
+        meta: { requireAuth: true, type: 'page', name: '项目用款' }
       }
     ]
   },
