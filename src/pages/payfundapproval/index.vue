@@ -776,6 +776,7 @@ export default {
     },
     //拉去审批流数据查看
     getAuditfollow (data) {
+      debugger
       let that = this
       this.getAxios('/GAppvalRecord/GetAppvalRecordList', data)
         .then(res => {

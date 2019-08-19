@@ -139,7 +139,6 @@ export default {
 }
 
 .img-view {
-  padding: 30px 20px;
   width: 100%;
   position: relative;
   > .img-body {

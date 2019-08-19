@@ -134,74 +134,74 @@ export default {
       var obj = e.target
       var key = e.key
       console.log(key)
-      if (obj.value != '') {
-        //
-        console.log(obj.value)
-        if (index == this.maxlength - 1) {
-          if (this.value.length == this.maxlength) {
-            if (key == 'Backspace') {
-              if (
-                index == this.maxlength - 1 &&
-                this.value.length == this.maxlength
-              ) {
-                obj.value = ''
-                this.up(this.value.substring(0, this.value.length - 1))
-              } else {
-                this.up(this.value.substring(0, this.value.length - 1))
-                if (index != 0) {
-                  this.$refs.input[index - 1].value = ''
-                  // this.$refs.input[index - 1].setSelectionRange(1, 1)
-                  this.$refs.input[index - 1].focus()
+      setTimeout(() => {
+        if (obj.value != '') {
+          //
+          console.log(obj.value)
+          if (index == this.maxlength - 1) {
+            if (this.value.length == this.maxlength) {
+              if (key == 'Backspace') {
+                if (
+                  index == this.maxlength - 1 &&
+                  this.value.length == this.maxlength
+                ) {
+                  obj.value = ''
+                  this.up(this.value.substring(0, this.value.length - 1))
+                } else {
+                  this.up(this.value.substring(0, this.value.length - 1))
+                  if (index != 0) {
+                    this.$refs.input[index - 1].value = ''
+                    // this.$refs.input[index - 1].setSelectionRange(1, 1)
+                    this.$refs.input[index - 1].focus()
+                  }
                 }
+                // this.value = this.value.substring(0, this.value.length - 1)
+              } else if (key == 'Enter') {
+                obj.blur()
+                this.enter()
               }
-              // this.value = this.value.substring(0, this.value.length - 1)
-            } else if (key == 'Enter') {
-              obj.blur()
-              this.enter()
+              return
             }
-            return
           }
-        }
-        if (!/^[0-9]$/.test(obj.value)) {
-          obj.value = ''
-        }
-      } else if (/^[0-9]$/.test(key)) {
-        if (this.value.length < this.maxlength) {
-          this.up(this.value + (key + ''))
-          if (this.canSee) {
-            obj.value = key
+          if (!/^[0-9]$/.test(obj.value)) {
+            obj.value = ''
+          }
+        } else if (/^[0-9]$/.test(key)) {
+          if (this.value.length < this.maxlength) {
+            this.up(this.value + (key + ''))
+            if (this.canSee) {
+              obj.value = key
+            } else {
+              obj.value = '●'
+            }
+            if (index < this.maxlength - 1) {
+              this.$refs.input[index + 1].focus()
+              // this.$refs.input[index + 1].setSelectionRange(1, 1)
+            }
+          }
+        } else if (key == 'Backspace') {
+          if (
+            index == this.maxlength - 1 &&
+            this.value.length == this.maxlength
+          ) {
+            obj.value = ''
+            this.up(this.value.substring(0, this.value.length - 1))
           } else {
-            obj.value = '●'
+            this.up(this.value.substring(0, this.value.length - 1))
+            if (index != 0) {
+              this.$refs.input[index - 1].value = ''
+              // this.$refs.input[index - 1].setSelectionRange(1, 1)
+              this.$refs.input[index - 1].focus()
+            }
           }
-          if (index < this.maxlength - 1) {
-            this.$refs.input[index + 1].focus()
-            // this.$refs.input[index + 1].setSelectionRange(1, 1)
-          }
-        }
-      } else if (key == 'Backspace') {
-        if (
-          index == this.maxlength - 1 &&
-          this.value.length == this.maxlength
-        ) {
-          obj.value = ''
-          this.up(this.value.substring(0, this.value.length - 1))
+          // this.value = this.value.substring(0, this.value.length - 1)
+        } else if (key == 'Enter') {
+          obj.blur()
+          this.enter()
         } else {
-          this.up(this.value.substring(0, this.value.length - 1))
-          if (index != 0) {
-            this.$refs.input[index - 1].value = ''
-            // this.$refs.input[index - 1].setSelectionRange(1, 1)
-            this.$refs.input[index - 1].focus()
-          }
+          obj.value = ''
         }
-        // this.value = this.value.substring(0, this.value.length - 1)
-      } else if (key == 'Enter') {
-        obj.blur()
-        this.enter()
-      } else if (obj.value != '') {
-        // 防止输完密码后，输入别的内容将最后一位删除
-      } else {
-        obj.value = ''
-      }
+      }, 0)
     },
     up(newVal) {
       this.$emit('update:value', newVal)

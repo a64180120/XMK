@@ -21,12 +21,12 @@
           <li class="handle"
               @click="deleteItem()">
             <div>
-              <img src="@/assets/images/ss_d.png">
+              <img src="@/assets/images/zj3.png">
             </div>
             <span>删除</span>
           </li>
           <li class="handle"
-              @click="openAuditfollow()">
+              @click="">
             <div>
               <img src="@/assets/images/xz.png">
             </div>
@@ -34,7 +34,7 @@
           </li>
           <li v-if="formList.swatchBtn ==='3'"
               class="handle"
-              @click="openAuditfollow()">
+              @click="">
             <div>
               <img src="@/assets/images/xz.png">
             </div>
@@ -42,7 +42,7 @@
           </li>
           <li v-if="formList.swatchBtn ==='3'"
               class="handle"
-              @click="openAuditfollow()">
+              @click="">
             <div>
               <img src="@/assets/images/xz.png">
             </div>
@@ -50,7 +50,7 @@
           </li>
           <li v-if="formList.swatchBtn ==='1'"
               class="handle"
-              @click="openAuditfollow()">
+              @click="subApproval()">
             <div>
               <img src="@/assets/images/sp.png">
             </div>
@@ -59,7 +59,7 @@
 
           <li v-if="formList.swatchBtn ==='1'"
               class="handle"
-              @click="openAuditfollow()">
+              @click="unSubApproval()">
             <div>
               <img src="@/assets/images/ss_d.png">
             </div>
@@ -67,7 +67,7 @@
           </li>
           <li v-if="formList.swatchBtn ==='2'||formList.swatchBtn ==='2'"
               class="handle"
-              @click="openAuditfollow()">
+              @click="">
             <div>
               <img src="@/assets/images/ss_d.png">
             </div>
@@ -75,21 +75,21 @@
           </li>
           <li v-if="formList.swatchBtn ==='1'||formList.swatchBtn ==='2'"
               class="handle"
-              @click="openAuditfollow()">
+              @click="abolish()">
             <div>
-              <img src="@/assets/images/ss_d.png">
+              <img src="@/assets/images/zf.png">
             </div>
             <span>作废</span>
           </li>
           <li class="handle"
-              @click="openAuditfollow()">
+              @click="">
             <div>
               <img src="@/assets/images/dy.png">
             </div>
             <span>申请表打印</span>
           </li>
           <li class="handle"
-              @click="openAuditfollow()">
+              @click="">
             <div>
               <img src="@/assets/images/dy.png">
             </div>
@@ -102,7 +102,7 @@
 
     <div>
       <div class="container content-body"
-           style="min-width: 1300px;overflow: auto">
+           style="min-width: 1300px;overflow: auto;min-height:750px">
         <div class="formArea">
           <!--搜索栏-->
           <div class="btnArea"
@@ -162,8 +162,79 @@
                            @click="swatchTable">切换</el-button>
               </el-form-item>
               <el-form-item style="float: right">
-                <search-input v-model="formList.FProjName"
-                              @btnClick="searchInput()"></search-input>
+<!--                <search-input v-model="formList.FProjName"-->
+<!--                              @btnClick="searchInput()"></search-input>-->
+                <el-input size="mini" v-model="formList.FProjName" clearable ></el-input>
+                  <el-button size="mini" @click="searchInput()" type="primary">搜索</el-button>
+                <el-popover palcement="bottom" width="500" trigger="click" v-model="popvisiable">
+                  <div class="seniorSearch">
+                    <div>
+                      <span>高级查询</span>
+                      <span class="el-icon-close" @click="popvisiable=false"></span>
+                    </div>
+                    <table>
+                      <colgroup>
+                        <col width="15%">
+                        <col width="15%">
+                        <col width="5%">
+                        <col width="15%">
+                        <col width="15%">
+                        <col width="35%">
+                      </colgroup>
+                      <tr>
+                        <td>项目名称</td>
+                        <td colspan="5"><!--<el-input size="mini"  v-model="seniorSearch.FDeclarationDept"  placeholder="请输入申报部门"></el-input>-->
+                          <el-input size="mini" v-model="seniorSearch.FProjName" placeholder="请输入项目编码"></el-input>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>项目编码</td>
+                        <td colspan="5"><el-input size="mini"  v-model="seniorSearch.FProjCode" placeholder="请输入项目名称"></el-input></td>
+                      </tr>
+                      <tr>
+                        <td>申报部门</td>
+                        <td colspan="3"><el-input size="mini" v-model="seniorSearch.FDeclarationDept" placeholder="请输入项目编码"></el-input></td>
+                        <td>预算部门</td>
+                        <td colspan="3"><el-input size="mini"  v-model="seniorSearch.FBudgetDept" placeholder="请输入项目名称"></el-input></td>
+                      </tr>
+                      <tr>
+                        <td>项目金额</td>
+                        <td><el-input size="mini" v-model="seniorSearch.FProjAmountBegin"></el-input></td>
+                        <td>至</td>
+                        <td><el-input size="mini"  v-model="seniorSearch.FProjAmountEnd"></el-input></td>
+                        <td>绩效评价</td>
+                        <td colspan="3"><el-input size="mini"  v-model="seniorSearch.FIfPerformanceAppraisal" placeholder="请输入续存期限"></el-input></td>
+                      </tr>
+                      <tr>
+                        <!-- <td>项目级别</td>
+                         <td colspan="3"><el-input size="mini" v-model="seniorSearch.PLevel" placeholder="请输入项目级别"></el-input></td>-->
+                        <td>起止日期</td>
+                        <td colspan="5">
+                          <el-date-picker size="mini"
+                                          style="width: 100%;"
+                                          v-model="seniorSearch.FTime"
+                                          type="daterange"
+                                          range-separator="至"
+                                          start-placeholder="开始日期"
+                                          end-placeholder="结束日期">
+                          </el-date-picker>
+                        </td>
+                      </tr>
+                    </table>
+                    <div>
+                      <ul>
+                        <li>
+                          <el-button class="btn" size="mini">清空</el-button>
+                        </li>
+                        <li>
+                          <el-button class="btn" size="mini">搜索</el-button>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+
+                  <el-button type="success" size="mini" slot="reference">高级</el-button>
+                </el-popover>
               </el-form-item>
             </el-form>
           </div>
@@ -263,13 +334,13 @@
                       <div class="context">
                         <ul>
                           <li>
-                            <span @click="showDetail(scope.row)">项目属性：{{scope.row.FProjAttr}}</span>
+                            <span @click="showDetail(scope.row)">项目属性：{{scope.row.FProjAttr_EXName}}</span>
                           </li>
                           <li>
-                            <span>存续期限：{{scope.row.FDuration}}</span>
+                            <span>存续期限：{{scope.row.FDuration_EXName}}</span>
                           </li>
                           <li>
-                            <span>项目级别：{{scope.row.name3}}</span>
+                            <span>项目级别：{{scope.row.FLevel_EXName}}</span>
                           </li>
                           <li>
                             <span>起止日期：{{scope.row.FStartDate.replace('T00:00:00','')}}至{{scope.row.FEndDate.replace('T00:00:00','')}}</span>
@@ -278,7 +349,7 @@
                             <span>支出类别：{{scope.row.FExpenseCategory_EXName}}</span>
                           </li>
                           <li>
-                            <span>效绩评价：{{scope.row.FIfPerformanceAppraisal}}</span>
+                            <span>效绩评价：{{scope.row.FIfPerformanceAppraisal ===1?'否':'是'}}</span>
                           </li>
                           <li>
                             <span>申报部门：{{scope.row.FDeclarationDept_EXName}}</span>
@@ -288,6 +359,26 @@
                           </li>
                           <li>
                             <span>申报日期：{{scope.row.FDateofDeclaration}}</span>
+                          </li>
+                          <li>
+                            <span>申报进度：
+                              <span v-if="scope.row.FType+scope.row.FVerNo ==='c0001'">年初新增</span>
+                              <span v-else-if="scope.row.FType+scope.row.FVerNo ==='c0002'">年中调整</span>
+                              <span v-else-if="scope.row.FType+scope.row.FVerNo ==='z0001'">年中新增</span>
+                              <span v-else>无</span>
+                            </span>
+                          </li>
+                          <li>
+                            <span>项目状态：
+                              <span v-if="scope.row.FProjStatus ===1">预立项</span>
+                              <span v-else-if="scope.row.FProjStatus ===2">项目立项</span>
+                              <span v-else-if="scope.row.FProjStatus ===3">项目执行</span>
+                              <span v-else-if="scope.row.FProjStatus ===4">项目调整</span>
+                              <span v-else-if="scope.row.FProjStatus ===5">项目暂停</span>
+                              <span v-else-if="scope.row.FProjStatus ===6">项目终止</span>
+                              <span v-else-if="scope.row.FProjStatus ===7">项目关闭</span>
+                              <span v-else>无</span>
+                            </span>
                           </li>
                         </ul>
                       </div>
@@ -305,7 +396,13 @@
                         <span v-if="scope.row.FApproveStatus ==2">审批中</span>
                         <span v-if="scope.row.FApproveStatus ==3">审批通过</span>
                         <span v-if="scope.row.FApproveStatus ==4">已退回</span>
-                        (预立项)</div>
+                        (<span v-if="scope.row.FProjStatus ===1">预立项</span>
+                        <span v-if="scope.row.FProjStatus ===2">项目立项</span>
+                        <span v-if="scope.row.FProjStatus ===3">项目执行</span>
+                        <span v-if="scope.row.FProjStatus ===4">项目调整</span>
+                        <span v-if="scope.row.FProjStatus ===5">项目暂停</span>
+                        <span v-if="scope.row.FProjStatus ===6">项目终止</span>
+                        <span v-if="scope.row.FProjStatus ===7">项目关闭</span>)</div>
                       <div class="status-context">
                         <span v-if="scope.row.FApproveStatus ==1">待审批</span>
                         <span v-if="scope.row.FApproveStatus ==2">审批中</span>
@@ -340,7 +437,20 @@
            class="applyDetailTitle">
         <span>新增项目</span>
       </div>
-      <prerojectnewproject v-if="addDialog"></prerojectnewproject>
+      <prerojectnewproject v-if="addDialog" @refresh='refresh'></prerojectnewproject>
+    </el-dialog>
+    <el-dialog append-to-body
+               modal-append-to-body
+               :visible.sync="editDialog" v-if="editDialog"
+
+               width="90%"
+               :close-on-click-modal="false"
+               class="applyDetailDialog">
+      <div slot="title"
+           class="applyDetailTitle">
+        <span>修改项目</span>
+      </div>
+      <edit  :data="editDetail" @refresh="refresh"></edit>
     </el-dialog>
     <el-dialog append-to-body
                modal-append-to-body
@@ -355,7 +465,15 @@
       <item-print :data="itemDetail"></item-print>
 
     </el-dialog>
+    <!--送审-->
+    <go-approval v-if="approvalDataS.openDialog"
+                 :data="approvalDataS"
+                 @delete="handleDelete"></go-approval>
     <auditfollow :visible.sync="openfollow"></auditfollow>
+    <!--查看审批流程-->
+    <auditfollow :visible.sync="auditDialog"
+                 auditType="004"
+                 :auditMsg="auditMsg"></auditfollow>
   </section>
 </template>
 
@@ -368,9 +486,13 @@ import Prerojectnewproject from "../../components/preProjectDialog/index";
 import ItemPrint from "../../components/preProjectDialog/itemPrint";
 import Auditfollow from "../../components/auditFollow/auditfollow";
 import { mapState } from 'vuex'
+import Edit from "../../components/preProjectDialog/edit";
+import GoApproval from "./component/goApproval";
 export default {
   name: "preBuildProject",
-  components: { Auditfollow, ItemPrint, Prerojectnewproject, SearchInput, ItemTable, DataTable, TopHandle },
+  components: {
+    GoApproval,
+    Edit, Auditfollow, ItemPrint, Prerojectnewproject, SearchInput, ItemTable, DataTable, TopHandle },
   data () {
     let that = this
     return {
@@ -424,18 +546,35 @@ export default {
             align: 'center',
             other: 'status-click',
             format: function (scope) {
+              let MC = '';
+              if (scope.row.FProjStatus ===1) {
+                MC = '预立项'
+              } else if (scope.row.FProjStatus ===2) {
+                MC = '项目立项'
+              } else if (scope.row.FProjStatus ===3) {
+                MC = '项目执行'
+              } else if (scope.row.FProjStatus ===4) {
+                MC = '项目调整'
+              } else if (scope.row.FProjStatus ===5) {
+                MC = '项目暂停'
+              } else if (scope.row.FProjStatus ===6) {
+                MC = '项目终止'
+              } else if (scope.row.FProjStatus ===7) {
+                MC = '项目关闭'
+              }
               if (scope.row.FApproveStatus == 1) {
-                return '<span>' + '待审批(预立项)' + '</span>'
+                return '<span>' + '待审批('+MC+')' + '</span>'
               } else if (scope.row.FApproveStatus == 2) {
-                return '<span>' + '审批中(预立项)' + '</span>'
+                return '<span>' + '审批中('+MC+')' + '</span>'
               } else if (scope.row.FApproveStatus == 3) {
-                return '<span>' + '审批通过(预立项)' + '</span>'
+                return '<span>' + '审批通过('+MC+')' + '</span>'
               } else if (scope.row.FApproveStatus == 4) {
-                return '<span>' + '审批退回(预立项)' + '</span>'
+                return '<span>' + '审批退回('+MC+')' + '</span>'
               }
             },
             fn: function (scope) {
               console.log(scope)
+              that.getAppvalProcList(scope.row)
             }
           }],
         selection: true
@@ -454,8 +593,30 @@ export default {
         approvalStatus: '0',
         FProjName: ''
       },
+      popvisiable:"",
+      seniorSearch:{//高级筛选
+        FProjName:'',//项目名称
+        FProjCode:'',//项目编码
+        FDeclarationDept:'',//申报部门
+        FBudgetDept:'',//预算部门
+        FProjAmountBegin:'',//金额开始
+        FProjAmountEnd:'',//金额结束
+        FIfPerformanceAppraisal:'',//是否绩效评价
+        FTime:[],//起止日期
+      },
+      bmList:[],
+      baseList:{
+        ProjectPropers:[]
+      },
+      FIfPerformanceAppraisal:'',
+      payTypeList:"",
+      approvalList:'',
+
+
+
       search: '',
       addDialog: false,
+      editDialog:false,
       detailDialog: false,
       openfollow: false,
       page: {
@@ -464,8 +625,17 @@ export default {
         pageSize: 20,
         pageSizes: [20, 30, 50, 100]
       },
-      itemDetail: {},
-      selection: []
+      itemDetail: {},//缓存详情行的值
+      selection: [],//选中表格行的值
+      editDetail:{},//缓存修改行的值
+      //送审
+      approvalDataS: {
+        openDialog: false,
+        data: {},
+        subData: [] //审批流获取
+      },
+      auditMsg:[],//审批流数据
+      auditDialog:false
 
     }
   },
@@ -503,6 +673,7 @@ export default {
         if (res.Record) {
           this.table.tableData = res.Record
           this.page.total = res.totalRows
+          console.log(res.Record)
         } else {
           this.$msgBox.error(res.Msg)
         }
@@ -577,6 +748,7 @@ export default {
     //
     rowSelect (selection, row) {
       this.selection = selection
+      console.log(selection)
     },
     rowSelectAll (selection) {
       this.selection = selection
@@ -616,7 +788,14 @@ export default {
       this.addDialog = true
     },
     edit () {
-      this.addDialog = true
+      if (this.selection.length === 0){
+        this.$msgBox.error('请选择需要修改的单据')
+      } else if (this.selection.length === 1){
+        this.editDetail = this.selection[0]
+        this.editDialog = true
+      } else {
+        this.$msgBox.error('只能选择一条单据进行修改')
+      }
     },
     deleteItem () {
       if (this.selection.length === 0) {
@@ -626,22 +805,33 @@ export default {
         this.$msgBox.error('只能选择一行数据进行删除')
         return
       } else {
-        let data = {
-          FProjCode: this.selection[0].FProjCode,
-          FProjPhId: this.selection[0].PhId
-        };
-        this.postAxios('/GXM/ProjectMstApi/PostDeleteProject', data).then(res => {
-          if (res.Status === 'success') {
-            this.$msgBox.show('删除成功')
-            this.getTableData()
-          } else {
-            this.$msgBox.error(res.Msg)
-          }
-        }).catch(err => {
-          this.$msgBox.error('请求失败')
+        this.$confirm('确定删除该记录？','提示',{
+          confirmButtonText:'确认',
+          cancelButtonText:'取消'
+        }).then(()=>{
+          let data = {
+            FProjCode: this.selection[0].FProjCode,
+            FProjPhId: this.selection[0].PhId,
+            PersistentState:'3'
+          };
+          this.postAxios('/GXM/ProjectMstApi/PostDeleteProject', data).then(res => {
+            if (res.Status === 'success') {
+              this.$msgBox.show('删除成功')
+              this.getTableData()
+              this.selection =[]
+            } else {
+              this.$msgBox.error(res.Msg)
+              this.selection =[]
+            }
+          }).catch(err => {
+            this.$msgBox.error('请求失败')
+          })
+        }).catch(()=>{
+
         })
       }
     },
+    //显示详情
     showDetail (scope) {
       let data = {
         FProjPhId: scope.row.PhId
@@ -665,6 +855,107 @@ export default {
     //搜索框查询事件
     searchInput () {
       this.getTableData()
+    },
+    //刷新
+    refresh(val,stu){
+      if (stu ==='add'){
+        this.addDialog = false
+      }else if (stu ==='edit') {
+        this.editDialog = false
+      }
+      this.getTableData()
+    },
+    //送审
+    subApproval(){
+      if (this.selection.length === 0){
+        this.$msgBox.error('请选择数据进行送审')
+      }else if (this.selection.length ===1) {
+        this.approvalDataS.openDialog = true
+        this.approvalDataS.data = this.selection
+        console.log(this.selection[0].PhId)
+      }else {
+        this.$msgBox.error('不支持多行送审，请单行选择')
+      }
+    },
+    //取消送审
+    unSubApproval(){
+      if (this.selection.length === 0){
+        this.$msgBox.error('请选择数据进行取消送审')
+      }else if (this.selection.length ===1) {
+        let arr = [];
+        for (let i in this.selection){
+          arr[i] =  this.selection[i].PhId
+        }
+        let data = {
+          FBilltype:'004',
+          RefbillPhidList:arr,
+          OperaPhid:this.UserId
+        }
+        this.postAxios('/GAppvalRecord/PostCancelAppvalRecord',data).then(res=>{
+          if (res.Status ==='success'){
+            this.$msgBox.error('取消成功')
+            this.getTableData()
+          } else {
+            this.$msgBox.error(res.Msg)
+          }
+        }).catch(err=>{
+
+        })
+      }else {
+        this.$msgBox.error('不支持多行送审，请单行选择')
+      }
+    },
+    //作废
+    abolish(){
+      if (this.selection.length === 0){
+        this.$msgBox.error('请选择数据进行作废')
+      }else if (this.selection.length ===1) {
+        let arr = [];
+        for (let i in this.selection){
+          arr[i] =  this.selection[i].PhId
+        }
+        let data = {
+          fPhIdList:arr,
+        }
+        this.postAxios('/GXM/ProjectMstApi/PostCancetProjectList',data).then(res=>{
+          if (res.Status ==='success'){
+            this.$msgBox.error('作废成功')
+            this.getTableData()
+          } else {
+            this.$msgBox.error(res.Msg)
+          }
+        }).catch(err=>{
+
+        })
+      }else {
+        this.$msgBox.error('不支持多行作废，请单行选择')
+      }
+    },
+    //获取审批流程
+    getAppvalProcList(row){
+      let arr = []
+      arr[0] = row.PhId
+      let data = {
+        FBilltype:'004',
+        RefbillPhid:row.PhId
+      }
+        this.getAxios('/GAppvalRecord/GetAppvalRecordList',data).then(res=>{
+
+            if (res.Status === 'success'){
+              this.auditDialog = true
+              this.auditMsg = res.Data
+              console.log(res.Data)
+            } else {
+              this.$msgBox.error(res.Msg)
+            }
+        }).catch(err=>{
+
+        })
+    },
+
+    handleDelete(){
+      this.approvalDataS.openDialog = false
+        this.getTableData()
     }
   }
 }
@@ -725,4 +1016,48 @@ export default {
 }
 </style>
 <style lang="scss" scoped>
+  .seniorSearch{
+    padding: 5px;
+    >div{
+      &:nth-of-type(1){
+        border-bottom: 2px solid #00B8EE;
+        color: #00B8EE;
+        font-size: .2rem;
+      }
+      &:nth-of-type(2){
+        padding: 10px 0 0 0;
+        border-top: 1px solid #ccc;
+        >ul{
+          display: inline-block;
+          float: right;
+          >li{
+            display: inline-block;
+            margin-left: 5px;
+            &:nth-of-type(1){
+              >.btn{
+                background-color: #fff;
+                color: #00B8EE;
+              }
+
+            }
+          }
+        }
+      }
+      >span:nth-of-type(2){
+        float: right;
+      }
+    }
+
+    table{
+      width: 100%;
+      td{
+        padding: 8px 5px;
+      }
+    }
+  }
+  .seniorSearch{
+    td{
+      text-align: center;
+    }
+  }
 </style>
