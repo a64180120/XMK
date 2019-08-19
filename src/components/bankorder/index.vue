@@ -263,7 +263,7 @@ export default {
       }
       this.getData()
       this.$nextTick(function () {
-        debugger
+         
         this.$refs.orgtree.setCurrentNode({ OCode: this.checkedOrg.OCode })
       })
     }
