@@ -165,8 +165,76 @@
 <!--                <search-input v-model="formList.FProjName"-->
 <!--                              @btnClick="searchInput()"></search-input>-->
                 <el-input size="mini" v-model="formList.FProjName" clearable ></el-input>
-                <el-button size="mini" @click="searchInput()" type="primary">搜索</el-button>
-                <el-button size="mini" type="success">高级</el-button>
+                  <el-button size="mini" @click="searchInput()" type="primary">搜索</el-button>
+                <el-popover palcement="bottom" width="500" trigger="click" v-model="popvisiable">
+                  <div class="seniorSearch">
+                    <div>
+                      <span>高级查询</span>
+                      <span class="el-icon-close" @click="popvisiable=false"></span>
+                    </div>
+                    <table>
+                      <colgroup>
+                        <col width="15%">
+                        <col width="15%">
+                        <col width="5%">
+                        <col width="15%">
+                        <col width="15%">
+                        <col width="35%">
+                      </colgroup>
+                      <tr>
+                        <td>项目名称</td>
+                        <td colspan="5"><!--<el-input size="mini"  v-model="seniorSearch.FDeclarationDept"  placeholder="请输入申报部门"></el-input>-->
+                          <el-input size="mini" v-model="seniorSearch.FProjName" placeholder="请输入项目编码"></el-input>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>项目编码</td>
+                        <td colspan="5"><el-input size="mini"  v-model="seniorSearch.FProjCode" placeholder="请输入项目名称"></el-input></td>
+                      </tr>
+                      <tr>
+                        <td>申报部门</td>
+                        <td colspan="3"><el-input size="mini" v-model="seniorSearch.FDeclarationDept" placeholder="请输入项目编码"></el-input></td>
+                        <td>预算部门</td>
+                        <td colspan="3"><el-input size="mini"  v-model="seniorSearch.FBudgetDept" placeholder="请输入项目名称"></el-input></td>
+                      </tr>
+                      <tr>
+                        <td>项目金额</td>
+                        <td><el-input size="mini" v-model="seniorSearch.FProjAmountBegin"></el-input></td>
+                        <td>至</td>
+                        <td><el-input size="mini"  v-model="seniorSearch.FProjAmountEnd"></el-input></td>
+                        <td>绩效评价</td>
+                        <td colspan="3"><el-input size="mini"  v-model="seniorSearch.FIfPerformanceAppraisal" placeholder="请输入续存期限"></el-input></td>
+                      </tr>
+                      <tr>
+                        <!-- <td>项目级别</td>
+                         <td colspan="3"><el-input size="mini" v-model="seniorSearch.PLevel" placeholder="请输入项目级别"></el-input></td>-->
+                        <td>起止日期</td>
+                        <td colspan="5">
+                          <el-date-picker size="mini"
+                                          style="width: 100%;"
+                                          v-model="seniorSearch.FTime"
+                                          type="daterange"
+                                          range-separator="至"
+                                          start-placeholder="开始日期"
+                                          end-placeholder="结束日期">
+                          </el-date-picker>
+                        </td>
+                      </tr>
+                    </table>
+                    <div>
+                      <ul>
+                        <li>
+                          <el-button class="btn" size="mini">清空</el-button>
+                        </li>
+                        <li>
+                          <el-button class="btn" size="mini">搜索</el-button>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+
+                  <el-button type="success" size="mini" slot="reference">高级</el-button>
+                </el-popover>
               </el-form-item>
             </el-form>
           </div>
@@ -525,6 +593,27 @@ export default {
         approvalStatus: '0',
         FProjName: ''
       },
+      popvisiable:"",
+      seniorSearch:{//高级筛选
+        FProjName:'',//项目名称
+        FProjCode:'',//项目编码
+        FDeclarationDept:'',//申报部门
+        FBudgetDept:'',//预算部门
+        FProjAmountBegin:'',//金额开始
+        FProjAmountEnd:'',//金额结束
+        FIfPerformanceAppraisal:'',//是否绩效评价
+        FTime:[],//起止日期
+      },
+      bmList:[],
+      baseList:{
+        ProjectPropers:[]
+      },
+      FIfPerformanceAppraisal:'',
+      payTypeList:"",
+      approvalList:'',
+
+
+
       search: '',
       addDialog: false,
       editDialog:false,
@@ -927,4 +1016,48 @@ export default {
 }
 </style>
 <style lang="scss" scoped>
+  .seniorSearch{
+    padding: 5px;
+    >div{
+      &:nth-of-type(1){
+        border-bottom: 2px solid #00B8EE;
+        color: #00B8EE;
+        font-size: .2rem;
+      }
+      &:nth-of-type(2){
+        padding: 10px 0 0 0;
+        border-top: 1px solid #ccc;
+        >ul{
+          display: inline-block;
+          float: right;
+          >li{
+            display: inline-block;
+            margin-left: 5px;
+            &:nth-of-type(1){
+              >.btn{
+                background-color: #fff;
+                color: #00B8EE;
+              }
+
+            }
+          }
+        }
+      }
+      >span:nth-of-type(2){
+        float: right;
+      }
+    }
+
+    table{
+      width: 100%;
+      td{
+        padding: 8px 5px;
+      }
+    }
+  }
+  .seniorSearch{
+    td{
+      text-align: center;
+    }
+  }
 </style>
