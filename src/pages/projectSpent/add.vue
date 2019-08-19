@@ -191,6 +191,12 @@
     export default {
         name: "add",
       props:{
+        isadd: {
+          type: Boolean,
+          default() {
+           return true
+          }
+        },
           bm: {
             type: Object,
             default(){
@@ -287,15 +293,14 @@
         }
       },
       mounted(){
-        this.getData();
-        console.log(111111111111)
-        console.log(this.bm);
-        console.log(111111111111)
-        console.log(this.ysbm);
+        this.getDataPro();
         this.formDate.FDeclarationunit=this.ysbm.orgCode;
         this.formDate.FBudgetDept=this.ysbm.deptCode;
         this.formDate.FDeclarationDept=this.bm.OCode;
         this.formDate.FYear=this.year;
+        if( !this.isadd ){
+          this.getData();
+        }
       },
       methods:{
           //附件上传
@@ -314,8 +319,19 @@
         minusData: function(index) {
           this.dataList.splice(index,1);
         },
-        //获取项目列表
+        //获取申报项目信息--id 单据主键
         getData: function() {
+          let url='GYS/ExpenseMstApi/GetExpenseMstInfo';
+          let param={ id:this.phid };
+          this.getAxios( url,param ).then( res=>{
+            console.log('======项目申报信息=======')
+            console.log(res);
+          }).catch( err=>{
+            console.log(err)
+          })
+        },
+        //获取项目列表
+        getDataPro: function() {
           var url = 'GYS/BudgetMstApi/GetYS_expense'
           let param = {
             FBudgetDept:this.ysbm.deptCode,//申报部门,
@@ -415,7 +431,14 @@
             beforeFReturnamount:0
           };
           this.postAxios(url,data).then( res=>{
-            console.log(res);
+            if( res.Status=='success' ){
+              this.$msgBox.show({
+                content:  res.Msg,
+                fn:()=>{
+                  this.$emit( 'updata' ) ;
+                }
+              })
+            }
           }).catch( err=>{
             console.log(err);
           })

@@ -427,8 +427,8 @@
                :title="applyproTitle"
                :visible.sync="applyproType"
                :close-on-click-modal="false">
-      <add v-if="applyproType" :bm="apartData.bm" :ysbm="depMsg"
-                @delete="handleDelete"></add>
+      <add v-if="applyproType" :bm="apartData.bm" :ysbm="depMsg" :isadd="isAdd" :phid="checkList[0].PhId"
+                @updata="handleUpdata('applyproType')"></add>
     </el-dialog>
     <!--送审-->
     <go-approval v-if="approvalDataS.openDialog"
@@ -508,19 +508,19 @@
         payType: ['', 0, 1, 2, 9],
         approvalList: [
           { value: '', label: '全部' },
-          { value: 0, label: '待送审' },
-          { value: 1, label: '审批中' },
-          { value: 2, label: '审批未通过' },
-          { value: 9, label: '审批通过' }
+          { value: 1, label: '待送审' },
+          { value: 2, label: '审批中' },
+          { value: 4, label: '已退回' },
+          { value: 3, label: '审批通过' }
         ],
 
         bmList: [], //部门列表
 
         spTypeList: {
-          '0': '待送审',
-          '1': '审批中',
-          '2': '未通过',
-          '9': '审批通过'
+          '1': '待送审',
+          '2': '审批中',
+          '4': '已退回',
+          '3': '审批通过'
         },
         payTypeList: {
           '0': '待支付',
@@ -967,6 +967,12 @@
         this.applyNum = num + ''
         this.applyBillType = type
       },
+      //关闭弹窗，并刷新页面 --logName:弹窗显示隐藏对应的字段，传入以复用此方法
+      handleUpdata: function(logName) {
+        debugger
+        this[logName] = false;
+        this.getData();
+      },
       //删除事件
       handleDelete: function (val) {
         if (val.flag) {
@@ -987,7 +993,7 @@
       //申报
       SB: function () {
         if (this.apartData.Mst.length == 0) {
-          this.$msgBox.error('当前部门无预算支出项目，无法发起资金拨付申报。')
+          this.$msgBox.error('当前部门无预算支出项目，无法发起项目用款申请。')
           return
         }
         this.isAdd = true
@@ -1006,19 +1012,19 @@
             content: '一次只允许修改一条单据。'
           })
         } else {
-          if (checkedList[0].FApproval != 0 && checkedList[0].FApproval != 2) {
+          if (checkedList[0].FApproval == 2 && checkedList[0].FApproval == 3) {
             this.$msgBox.show({
-              content: '只允许修改待送审及未通过项目。'
+              content: '只允许修改待送审及已退回项目。'
             })
-          } else if (checkedList[0].FDelete == 1) {
+          } else if (checkedList[0].FDelete == 4) {
             this.$msgBox.show({
-              content: '该项目已作废，无法修改。'
+              content: '该项目已进行额度返还，无法修改。'
             })
           } else {
             this.applyNum = checkedList[0].PhId + ''
             this.isAdd = false
             this.$forceUpdate(this.isAdd)
-            this.applyproTitle = '修改申报'
+            this.applyproTitle = '项目支出预算申报-修改'
             this.applyproType = true
           }
         }
@@ -1034,30 +1040,44 @@
             content: '不支持多单据删除，请选择单条单据。'
           })
         }else{
-
-          if (checkedList[0].FApproval != 0 && checkedList[0].FApproval != 2) {
+          if (checkedList[0].FApproval == 2 && checkedList[0].FApproval == 3) {
             this.$msgBox.show({
               content: '审批中及审批通过的单据不允许删除。'
             })
-            return
-          }
-          this.$confirm('确认删除该资金拨付申报单?', '提示', {
-            confirmButtonText: '确定',
-            cancelBtnText: '取消',
-            type: 'warning'
-          })
-            .then(() => {
-              this.deleteJk(checkedList[0].PhId)
+          }else if( checkedList[0].FApproval == 4 ){
+            this.$confirm('确认删除该额度核销项目用款单?', '提示', {
+              confirmButtonText: '确定',
+              cancelBtnText: '取消',
+              type: 'warning'
             })
-            .catch(() => { })
+              .then(() => {
+                this.deleteJk(checkedList[0].PhId,1)
+              })
+              .catch(() => { })
+            /*this.$msgBox.show({
+              content: '已进行额度核销的单据不允许删除。'
+            })*/
+          }else{
+            this.$confirm('确认删除该项目用款单?', '提示', {
+              confirmButtonText: '确定',
+              cancelBtnText: '取消',
+              type: 'warning'
+            })
+              .then(() => {
+                this.deleteJk(checkedList[0].PhId,0)
+              })
+              .catch(() => { })
+          }
+
         }
       },
-      //删除接口
-      deleteJk: function (phidList) {
+      //删除接口--单条单据删除,phid-单据phid;type:0-普通单据  1-额度核销单据
+      deleteJk: function (phid,type) {
         let param = {
-          fPhIdList: phidList
+          id: phid
         }
-        this.postAxios('GYS/ExpenseMstApi/GetDelete', param)
+        let url=(type==0?'GYS/ExpenseMstApi/GetDelete':'GYS/ExpenseMstApi/GetDeleteReturn');
+        this.getAxios(url, param)
           .then(res => {
             if (res.Status == 'success') {
               this.$msgBox.show({
@@ -1177,51 +1197,6 @@
             })
         }
       },
-      //生成支付单
-     /* SC: function (checkedList) {
-        if (this.approvalDataS.subData.length != 0) {
-          this.$msgBox.show({
-            content:
-              '当前部门已创建审批流，请送审后在审批页面进行生成支付单操作。'
-          })
-          return
-        }
-        let data = [],
-          mCount = 0
-        if (checkedList.length == 0) {
-          this.$msgBox.show({
-            content: '请选择要生成支付单的单据（可多选）。'
-          })
-          return
-        }
-        for (var i in checkedList) {
-          if (checkedList[i].FApproval != 0) {
-            this.$msgBox.show({
-              content: '只允许待送审单据生成支付单。'
-            })
-            return
-          } else {
-            mCount += Math.floor(checkedList[i].FAmountTotal * 100)
-            data.push(checkedList[i].PhId)
-          }
-        }
-        this.$confirm(
-          '合计支付' + mCount / 100 + '元，确定生成支付单？',
-          '提示',
-          {
-            confirmButtonText: '确定',
-            cancelBtnText: '取消',
-            type: 'warning'
-          }
-        )
-          .then(() => {
-            this.postBill(data)
-          })
-          .catch(() => {
-            this.approvalDataS.openDialog = false
-            this.$emit('delete', { flag: true, type: 'applyBill' })
-          })
-      },*/
 
      //核销
       hx: function( checkedList ){
@@ -1259,7 +1234,7 @@
             }
             checkedListPhId.push(checkedList[i].PhId)
           }
-          this.$confirm('确认作废该资金拨付申报单?', '提示', {
+          this.$confirm('确认作废该项目用款申请单?', '提示', {
             confirmButtonText: '确定',
             cancelBtnText: '取消',
             type: 'warning'
