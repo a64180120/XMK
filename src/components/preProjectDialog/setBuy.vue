@@ -150,6 +150,7 @@ export default {
     }
   },
   mounted() {
+    this.data
     this.getAboutProcurements()
   },
   methods: {

@@ -109,14 +109,13 @@
                 </tr>
                 <!-- 绩效目标 -->
                 <tr>
-                  <td v-if="data.ProjectDtlTextContents.length !==0" :rowspan="data.ProjectDtlTextContents.length + 1">绩效目标</td>
-                  <td v-if="data.ProjectDtlTextContents.length ===0" :rowspan="1 + 1">绩效目标</td>
+                  <td rowspan=" 2">绩效目标</td>
                   <td colspan="4">年度目标</td>
                   <td colspan="3">长期目标</td>
                 </tr>
-                <tr v-if="data.ProjectDtlTextContents.length !== 0" v-for="(item,idx) in data.ProjectDtlTextContents">
-                  <td colspan="4" class="tltd">{{item.FLTPerformGoal}}</td>
-                  <td class="tltd" colspan="3">{{item.FAnnualPerformGoal}}</td>
+                <tr v-if="data.ProjectDtlTextContents.length !== 0" >
+                  <td colspan="4" class="tltd">{{data.ProjectDtlTextContents.FLTPerformGoal}}</td>
+                  <td class="tltd" colspan="3">{{data.ProjectDtlTextContents.FAnnualPerformGoal}}</td>
                 </tr>
                 <tr v-if="data.ProjectDtlTextContents.length === 0">
                   <td colspan="7" class="no-data">暂无数据</td>

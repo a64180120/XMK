@@ -20,7 +20,6 @@
                          :value="year-2"></el-option>
             </el-select>
           </p>
-          <span>当前阶段：年初申报</span>
         </div>
         <slot name="btn">
           <div class="top-btn">
@@ -55,13 +54,13 @@
             </div>
             <!-- <el-input size="small" v-model="projSurvey.FProjName" placeholder="请填写项目名称（必填）"></el-input> -->
           </li>
-          <li :class="[projSurvey.ProjectLevels === '' && projSurveyNull.ProjectLevels?'null-projS':'']">
+          <li :class="[projSurvey.FLevel === '' && projSurveyNull.FLevel?'null-projS':'']">
             <span>项目级别：</span>
-            <el-select v-model="projSurvey.ProjectLevels"
+            <el-select v-model="projSurvey.FLevel"
                        size="small"
-                       @blur="projSurveyNull.ProjectLevels = true"
+                       @blur="projSurveyNull.FLevel = true"
                        placeholder="必选">
-              <el-option v-for="(item,idx) in projGroup.ProjectLevelsGroup"
+              <el-option v-for="(item,idx) in projGroup.FLevelGroup"
                          :key="idx"
                          :label="item.TypeName"
                          :value="item.TypeCode"></el-option>
@@ -184,9 +183,9 @@
                         :autosize="{minRows:4}"
                         :rows="5"
                         placeholder="限250字以内（必填）"
-                        v-model="projScience.applyBasis"
-                        @blur="projScienceNull.applyBasis=true"
-                        :class="[projScience.applyBasis === '' && projScienceNull.applyBasis?'null-projSc':'']"></el-input>
+                        v-model="projScience.FProjBasis"
+                        @blur="projScienceNull.FProjBasis=true"
+                        :class="[projScience.FProjBasis === '' && projScienceNull.FProjBasis?'null-projSc':'']"></el-input>
             </li>
             <li>
               <span>可行性：</span>
@@ -227,6 +226,7 @@
                   <li>金额（元）</li>
                   <li>资金来源</li>
                   <li>支付方式</li>
+                  <li>支出功能分类科目</li>
                   <li>集中采购</li>
                   <li>测算过程及其他说明事项</li>
                 </ul>
@@ -271,6 +271,16 @@
                                  :key="idx"
                                  :label="item.TypeName"
                                  :value="item.TypeCode"></el-option>
+                    </el-select>
+                  </li>
+                  <li>
+                    <el-select v-model="item.FQtZcgnfl"
+                               size="small"
+                               placeholder="必选">
+                      <el-option v-for="(item,idx) in projGroup.FQtZcgnflGroup"
+                                 :key="idx"
+                                 :label="item.KMMC"
+                                 :value="item.KMDM"></el-option>
                     </el-select>
                   </li>
                   <li>
@@ -503,6 +513,20 @@
             </div>
           </div>
         </div>
+        <!--底部信息-->
+        <div class="bottom-info">
+          <ul>
+            <li>
+              <span>当前阶段：年初申报</span>
+            </li>
+            <li>
+              <span>申报日期：{{new Date().getFullYear()+'-'+(new Date().getMonth()+1)+'-'+new Date().getDate() }}</span>
+            </li>
+            <li>
+              <span>申报人：{{UserName}}</span>
+            </li>
+          </ul>
+        </div>
       </div>
     </el-row>
     <el-dialog modal-append-to-body
@@ -545,7 +569,7 @@ export default {
       projSurvey: {
         FProjName: '', //项目名称
         FDeclarationDept: '', //申报部门
-        ProjectLevels: '', //项目级别
+        FLevel: '', //项目级别
         FBudgetDept: '', //预算部门
         ProjectPropers: '', //项目属性
         TimeLimits: '', //存续期限
@@ -556,7 +580,7 @@ export default {
       //进入新增页面时 不让项目概况输入框因为无值变为为输入项
       projSurveyNull:{
         FProjName:false,
-        ProjectLevels:false,
+        FLevel:false,
         FDeclarationDept:false,
         FBudgetDept:false,
         ProjectPropers:false,
@@ -567,7 +591,7 @@ export default {
       //项目概况下拉框项内容
       projGroup: {
         FDeclarationDeptGroup: [],//申报部门
-        ProjectLevelsGroup: [],//项目级别
+        FLevelGroup: [],//项目级别
         FBudgetDeptGroup: [],
         ProjectPropersGroup: [],//项目属性
         TimeLimitsGroup: [],//存续期限
@@ -581,19 +605,20 @@ export default {
             name: '否',
             code: 2
           }
-        ]
+        ],
+        FQtZcgnflGroup:[]
       },
       //项目科研四大文本框内容
       projScience: {
         FFunctionalOverview: '', //部门职能概述
-        applyBasis: '', //申报依据
+        FProjBasis: '', //申报依据
         FFeasibility: '', //可行性
         FNecessity: '' //必要性
       },
       //进入新增页面时 不让项目科研输入框因为无值变为未输入项
       projScienceNull:{
         FFunctionalOverview:false,
-        applyBasis:false,
+        FProjBasis:false,
         FFeasibility:false,
         FNecessity:false
       },
@@ -622,7 +647,7 @@ export default {
             FAmount: 0
           }
         ], //资金源组
-        fundPayGroup: [] //支付方式下拉项组
+        fundPayGroup: [], //支付方式下拉项组
       },
       //预算明细表
       budgetdetailData: [
@@ -867,10 +892,11 @@ export default {
         .then(res => {
           this.budgetDetail.fundPayGroup = res.PayMethodTwos
           this.budgetDetail.FSourceOfFundsGroup = res.SourceOfFunds
-          this.projGroup.ProjectLevelsGroup = res.ProjectLevels
+          this.projGroup.FLevelGroup = res.ProjectLevels
           this.projGroup.ProjectPropersGroup = res.ProjectPropers
           this.projGroup.TimeLimitsGroup = res.TimeLimits
           this.projGroup.ExpenseCategoriesGroup = res.ExpenseCategories
+          this.projGroup.FQtZcgnflGroup = res.Zcgnfls
           console.log(res)
         })
         .catch(err => { })
@@ -1153,7 +1179,7 @@ export default {
         ProjectMst: {
           FYear:'2019',//年度（当前年度）必填
           FProjName: this.projSurvey.FProjName,//项目名称
-          FLevel: this.projSurvey.ProjectLevels,//项目级别  无
+          FLevel: this.projSurvey.FLevel,//项目级别  无
           FDeclarationDept: this.projSurvey.FDeclarationDept,//申报部门,
           FBudgetDept: this.projSurvey.FBudgetDept,//预算部门
           FProjAttr: this.projSurvey.ProjectPropers,//项目属性
@@ -1192,7 +1218,7 @@ export default {
         UserId:this.UserId,
         ProjectDtlTextContents:{
           FFunctionalOverview: this.projScience.FFunctionalOverview,//部门职能概述
-          FProjBasis: this.projScience.applyBasis,//申报依据
+          FProjBasis: this.projScience.FProjBasis,//申报依据
           FFeasibility: this.projScience.FFeasibility,//可行性
           FNecessity: this.projScience.FNecessity,//必要性
           FLTPerformGoal:this.target.cqTarget,//长期目标
@@ -1201,14 +1227,14 @@ export default {
       }
       //提交时判断项目概况是否已经填写完
       for(let i in this.projSurvey){
-        if (this.projSurvey[i] ===''){
+        if (i ===''){
           this.projSurveyNull[i] = true
           this.addNull = false //不能提交表单
         }
       }
       //提交时判断项目科研是否已经填写完成
       for(let i in this.projScience){
-        if (this.projScience[i] === '') {
+        if (i === '') {
           this.projScienceNull[i] = true
           this.addNull = false //不能提交表单
         }
@@ -1221,16 +1247,19 @@ export default {
         }
       }
 
-      //提交时判断判断效绩目标表格是否拉取到
-      if (this.projSurvey.FIfPerformanceAppraisal == 1 && this.target.targetType !==''){
-        this.targetNull.targetType = true
-        this.addNull = false //不能提交表单
-      }
+      // //提交时判断判断效绩目标表格是否拉取到
+      // if (this.projSurvey.FIfPerformanceAppraisal == 1 ){
+      //   if (this.target.targetType ===''){
+      //     this.targetNull.targetType = true
+      //     this.addNull = false //不能提交表单
+      //   }
+      // }
       if (this.addNull) {
 
         this.postAxios('/GXM/ProjectMstApi/PostSaveProject', data).then((res) => {
           if (res.Status ==='success'){
-            this.$emit("refresh",res)
+            this.$msgBox.show('新增成功')
+            this.$emit("refresh",res,'add')
             console.log(res)
           }else {
             this.$msgBox.error('新增失败'+res.Msg)
@@ -1516,7 +1545,7 @@ export default {
     .right-box-container {
       border-radius: 0.05rem;
       background: #fff;
-      height: 97%;
+      height: 90%;
       float: right;
       padding: 10px;
       position: absolute;
@@ -1592,7 +1621,7 @@ export default {
               }
 
               &:nth-of-type(2) {
-                width: 20%;
+                width: 16%;
               }
 
               &:nth-of-type(3) {
@@ -1608,13 +1637,15 @@ export default {
               }
 
               &:nth-of-type(6) {
-                width: 14%;
+                width: 12%;
               }
 
               &:nth-of-type(7) {
-                width: 24%;
+                 width: 12%;
+               }
+              &:nth-of-type(8) {
+                width: 18%;
               }
-
               > label {
                 line-height: 40px;
                 margin-right: 10px;
@@ -1878,6 +1909,24 @@ export default {
               border-left-color: $borderColor_ccc;
 
             }
+          }
+        }
+      }
+    }
+    .bottom-info{
+      position: absolute;
+      height: 20px;
+      right: 30px;
+      bottom: 30px;
+      ul{
+        list-style: none;
+        margin-left: 10px;
+        li{
+          display: inline-block;
+          float: left;
+          margin-left: 20px;
+          span{
+            color: #ff9800
           }
         }
       }

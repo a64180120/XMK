@@ -20,6 +20,7 @@
                          :value="year-2"></el-option>
             </el-select>
           </p>
+          <span>当前阶段：年中新增</span>
         </div>
         <slot name="btn">
           <div class="top-btn">
@@ -40,7 +41,7 @@
       <div class="left-box">
         <div class="tb">项目概况</div>
         <ul>
-          <li :class="[projSurvey.FProjName === ''?'null-projS':'']">
+          <li :class="[projSurvey.FProjName === '' && projSurveyNull.FProjName?'null-projS':'']">
             <span>项目名称：</span>
             <div @click="openTextarea(projSurvey,'FProjName')"
                  class="opentextarea"
@@ -54,10 +55,11 @@
             </div>
             <!-- <el-input size="small" v-model="projSurvey.FProjName" placeholder="请填写项目名称（必填）"></el-input> -->
           </li>
-          <li>
+          <li :class="[projSurvey.FLevel === '' && projSurveyNull.FLevel?'null-projS':'']">
             <span>项目级别：</span>
             <el-select v-model="projSurvey.FLevel"
                        size="small"
+                       @blur="projSurveyNull.FLevel = true"
                        placeholder="必选">
               <el-option v-for="(item,idx) in projGroup.FLevelGroup"
                          :key="idx"
@@ -65,10 +67,11 @@
                          :value="item.TypeCode"></el-option>
             </el-select>
           </li>
-          <li>
+          <li :class="[projSurvey.FDeclarationDept === '' && projSurveyNull.FDeclarationDept?'null-projS':'']">
             <span>申报部门：</span>
             <el-select v-model="projSurvey.FDeclarationDept"
                        size="small"
+                       @blur="projSurveyNull.FDeclarationDept = true"
                        placeholder="必选">
               <el-option v-for="(item,idx) in projGroup.FDeclarationDeptGroup"
                          :key="idx"
@@ -76,10 +79,11 @@
                          :value="item.deptCode"></el-option>
             </el-select>
           </li>
-          <li>
+          <li :class="[projSurvey.FBudgetDept === '' && projSurveyNull.FBudgetDept?'null-projS':'']">
             <span>预算部门：</span>
             <el-select v-model="projSurvey.FBudgetDept"
                        size="small"
+                       @blur="projSurveyNull.FBudgetDept = true"
                        placeholder="必选">
               <el-option v-for="(item,idx) in projGroup.FBudgetDeptGroup"
                          :key="idx"
@@ -87,10 +91,11 @@
                          :value="item.OCode"></el-option>
             </el-select>
           </li>
-          <li>
+          <li :class="[projSurvey.ProjectPropers === '' && projSurveyNull.ProjectPropers?'null-projS':'']">
             <span>项目属性：</span>
             <el-select v-model="projSurvey.ProjectPropers"
                        size="small"
+                       @blur="projSurveyNull.ProjectPropers = true"
                        placeholder="必选">
               <el-option v-for="(item,idx) in projGroup.ProjectPropersGroup"
                          :key="idx"
@@ -98,10 +103,11 @@
                          :value="item.TypeCode"></el-option>
             </el-select>
           </li>
-          <li>
+          <li :class="[projSurvey.TimeLimits === '' && projSurveyNull.TimeLimits?'null-projS':'']">
             <span>存续期限：</span>
             <el-select v-model="projSurvey.TimeLimits"
                        size="small"
+                       @blur="projSurveyNull.TimeLimits = true"
                        placeholder="必选">
               <el-option v-for="(item,idx) in projGroup.TimeLimitsGroup"
                          :key="idx"
@@ -109,10 +115,11 @@
                          :value="item.TypeCode"></el-option>
             </el-select>
           </li>
-          <li>
+          <li :class="[projSurvey.ExpenseCategories === '' && projSurveyNull.ExpenseCategories?'null-projS':'']">
             <span>支出类别：</span>
             <el-select v-model="projSurvey.ExpenseCategories"
                        size="small"
+                       @blur="projSurveyNull.ExpenseCategories = true"
                        placeholder="必选">
               <el-option v-for="(item,idx) in projGroup.ExpenseCategoriesGroup"
                          :key="idx"
@@ -120,13 +127,13 @@
                          :value="item.Dm"></el-option>
             </el-select>
           </li>
-          <li >
+          <li :class="[projSurvey.sedTime === '' && projSurveyNull.sedTime?'null-projS':'']">
             <span>起止日期：</span>
             <el-date-picker size="small"
                             v-model="projSurvey.sedTime"
                             type="daterange"
+                            @blur="projSurveyNull.sedTime = true"
                             range-separator="至"
-                            :clearable="false"
                             start-placeholder="开始日期"
                             end-placeholder="结束日期"></el-date-picker>
           </li>
@@ -165,7 +172,9 @@
                         :autosize="{minRows:4}"
                         :rows="5"
                         placeholder="限500字以内（必填）"
-                        v-model="projScience.FFunctionalOverview"></el-input>
+                        v-model="projScience.FFunctionalOverview"
+                        @blur="projScienceNull.FFunctionalOverview=true"
+                        :class="[projScience.FFunctionalOverview === '' && projScienceNull.FFunctionalOverview?'null-projSc':'']"></el-input>
             </li>
             <li>
               <span>申报依据：</span>
@@ -175,7 +184,9 @@
                         :autosize="{minRows:4}"
                         :rows="5"
                         placeholder="限250字以内（必填）"
-                        v-model="projScience.FProjBasis"></el-input>
+                        v-model="projScience.FProjBasis"
+                        @blur="projScienceNull.FProjBasis=true"
+                        :class="[projScience.FProjBasis === '' && projScienceNull.FProjBasis?'null-projSc':'']"></el-input>
             </li>
             <li>
               <span>可行性：</span>
@@ -185,7 +196,9 @@
                         :autosize="{minRows:4}"
                         :rows="5"
                         placeholder="限250字以内（必填）"
-                        v-model="projScience.FFeasibility"></el-input>
+                        v-model="projScience.FFeasibility"
+                        @blur="projScienceNull.FFeasibility=true"
+                        :class="[projScience.FFeasibility === '' && projScienceNull.FFeasibility?'null-projSc':'']"></el-input>
             </li>
             <li>
               <span>必要性：</span>
@@ -195,7 +208,9 @@
                         :autosize="{minRows:4}"
                         :rows="5"
                         placeholder="限250字以内（必填）"
-                        v-model="projScience.FNecessity"></el-input>
+                        v-model="projScience.FNecessity"
+                        @blur="projScienceNull.FNecessity=true"
+                        :class="[projScience.FNecessity === '' && projScienceNull.FNecessity?'null-projSc':'']"></el-input>
             </li>
           </ul>
           <!-- 预算明细 -->
@@ -212,7 +227,8 @@
                   <li>金额（元）</li>
                   <li>资金来源</li>
                   <li>支付方式</li>
-                  <li>支出功能分类科目</li>
+                  <li>预算科目</li>
+                  <li>支出渠道</li>
                   <li>集中采购</li>
                   <li>测算过程及其他说明事项</li>
                 </ul>
@@ -260,13 +276,23 @@
                     </el-select>
                   </li>
                   <li>
-                    <el-select v-model="item.FQtZcgnfl"
+                    <el-select v-model="item.FBudgetAccounts"
                                size="small"
                                placeholder="必选">
-                      <el-option v-for="(item,idx) in projGroup.FQtZcgnflGroup"
+                      <el-option v-for="(item,idx) in projGroup.BudgetAccountsGroup"
                                  :key="idx"
                                  :label="item.KMMC"
                                  :value="item.KMDM"></el-option>
+                    </el-select>
+                  </li>
+                  <li>
+                    <el-select v-model="item.FExpensesChannel"
+                               size="small"
+                               placeholder="必选">
+                      <el-option v-for="(item,idx) in projGroup.Vc2mListGroup"
+                                 :key="idx"
+                                 :label="item.Dymc"
+                                 :value="item.DYDM"></el-option>
                     </el-select>
                   </li>
                   <li>
@@ -345,7 +371,7 @@
                     :class="[delRow == index?'select-row':'']">
                   <li>{{index+1}}</li>
                   <li>
-                    <el-input v-model="item.FImplContent"
+                    <el-input v-model="item.FName"
                               placeholder="必填" />
                   </li>
                   <li class="enable">
@@ -362,7 +388,7 @@
                              alt />
                       </div>
                       <div>
-                        <img @click="del(item,index)"
+                        <img @click="del(index)"
                              src="@/assets/images/jian.png"
                              alt />
                       </div>
@@ -380,19 +406,23 @@
                 <span>年度绩效目标：</span>
                 <el-input type="textarea"
                           show-word-limit
-                          maxlength="250"
+                          maxlength="500"
                           :rows="6"
-                          placeholder="限250字以内（必填）"
-                          v-model="target.ndTagetL"></el-input>
+                          placeholder="限500字以内（必填）"
+                          v-model="target.ndTagetL"
+                          @blur="targetNull.ndTagetL=true"
+                          :class="[target.ndTagetL === '' && targetNull.ndTagetL?'null-projSc':'']"></el-input>
               </div>
               <div>
                 <span>长期绩效目标：</span>
                 <el-input type="textarea"
                           show-word-limit
-                          maxlength="250"
+                          maxlength="500"
                           :rows="6"
-                          placeholder="限250字以内（必填）"
-                          v-model="target.cqTarget"></el-input>
+                          placeholder="限600字以内（必填）"
+                          v-model="target.cqTarget"
+                          @blur="targetNull.cqTarget=true"
+                          :class="[target.cqTarget === '' && targetNull.cqTarget?'null-projSc':'']"></el-input>
               </div>
             </div>
             <div class="line2" v-show="projSurvey.FIfPerformanceAppraisal =='1'">
@@ -406,8 +436,9 @@
 
                   </el-tree>
                 </div>
-                <div  slot="reference" style="width: 300px;border-bottom: 1px solid #e3e3e3">
-                  <span>{{target.targetType.FName}}</span>
+                <div  slot="reference" style="width: 300px;border-bottom: 1px solid #e3e3e3" :style="{borderBottomColor:target.targetType.FName ==='' &&targetNull.targetType ?'red':'#e3e3e3'}">
+                  <span v-if="target.targetType.FName ===''" style="color: #e3e3e3">请选择</span>
+                  <span v-if="target.targetType.FName !==''">{{target.targetType.FName}}</span>
                 </div>
               </el-popover>
             </div>
@@ -494,19 +525,6 @@
             </div>
           </div>
         </div>
-        <div class="bottom-info">
-          <ul>
-            <li>
-              <span>当前阶段：年初申报</span>
-            </li>
-            <li>
-              <span>申报日期：{{new Date().getFullYear()+'-'+(new Date().getMonth()+1)+'-'+new Date().getDate() }}</span>
-            </li>
-            <li>
-              <span>申报人：{{UserName}}</span>
-            </li>
-          </ul>
-        </div>
       </div>
     </el-row>
     <el-dialog modal-append-to-body
@@ -531,21 +549,14 @@
 </template>
 
 <script>
-  import addBr from './addBr'
-  import setBuy from './setBuy'
-  import textareaDialog from './textareaDialog'
+  import addBr from '../../../components/preProjectDialog/addBr'
+  import setBuy from '../../../components/preProjectDialog/setBuy'
+  import textareaDialog from '../../../components/preProjectDialog/textareaDialog'
   import { mapState } from 'vuex'
 
   export default {
-    name: 'edit',
-    props: {
-      data:{
-        type:Object,
-        default:function () {
-          return {}
-        }
-      }
-    },
+    name: 'add',
+    props: {},
     components: { addBr, setBuy, textareaDialog },
     data () {
       return {
@@ -564,6 +575,17 @@
           sedTime: '', //起止日期
           FIfPerformanceAppraisal: 2//是否绩效评价	(Yes = 1,No = 2)（绩效目标里的绩效指标是否显示）（默认否）
         },
+        //进入新增页面时 不让项目概况输入框因为无值变为为输入项
+        projSurveyNull:{
+          FProjName:false,
+          FLevel:false,
+          FDeclarationDept:false,
+          FBudgetDept:false,
+          ProjectPropers:false,
+          TimeLimits:false,
+          ExpenseCategories:false,
+          sedTime:false
+        },
         //项目概况下拉框项内容
         projGroup: {
           FDeclarationDeptGroup: [],//申报部门
@@ -581,7 +603,9 @@
               name: '否',
               code: 2
             }
-          ]
+          ],//绩效评价
+          BudgetAccountsGroup:[],//预算科目集合
+          Vc2mListGroup:[],//预算科目集合
         },
         //项目科研四大文本框内容
         projScience: {
@@ -590,10 +614,38 @@
           FFeasibility: '', //可行性
           FNecessity: '' //必要性
         },
+        //进入新增页面时 不让项目科研输入框因为无值变为未输入项
+        projScienceNull:{
+          FFunctionalOverview:false,
+          FProjBasis:false,
+          FFeasibility:false,
+          FNecessity:false
+        },
         //预算明细表数据
         budgetDetail: {
           copyLine: false, //复制行
-          FSourceOfFundsGroup: [], //资金源组
+          FSourceOfFundsGroup: [
+            {
+              label: '全总预算拨款-工会经费',
+              value: 0,
+              FAmount: 0
+            },
+            {
+              label: '全总预算拨款-中央财政拨款',
+              value: 1,
+              FAmount: 0
+            },
+            {
+              label: '省总预算拨款-工会经费',
+              value: 2,
+              FAmount: 0
+            },
+            {
+              label: '省总预算拨款-省财政拨款',
+              value: 3,
+              FAmount: 0
+            }
+          ], //资金源组
           fundPayGroup: [] //支付方式下拉项组
         },
         //预算明细表
@@ -664,13 +716,20 @@
           //绩效指标类别节点选择后的值
           targetType:{
             FCode:'',
-            FName:'请选择'
+            FName:''
           },
           //绩效目标节点选择后请求的表格值
           targetTableData:[],
           ndTagetL:"",
           cqTarget:""
         },
+        //进入新增页面时 不让绩效目标输入框输入框因为无值变为未输入项
+        targetNull:{
+          ndTagetL:false,
+          cqTarget:false,
+          targetType:false
+        },
+
         inp: '',
         yearSelect: '',
         value1: '',
@@ -708,25 +767,7 @@
         delRow: '-1',
         nowIndex:-1,//绩效目标表格鼠标移动上去的当前值
 
-
-        PurchaseDtls:[],//集中采购
-        PurDtl4SOFs:{},//资金来源
-
-
-        dataDtl:{},
-
-        //主表
-        projectMst:{},
-        //缓存预算明细的删除项
-        delBdData:[],
-        //缓存实施计划的删除项
-        delIppData:[],
-
-        //判断是否是原始指标明细数据
-        isOldTTData:true,
-        //缓存被替换的原始指标明细
-        oldTTData:[]
-
+        addNull:true,//判断是否由于没有空值而决定能否提交 false不能提交  true 可以提交
       }
     },
     computed: {
@@ -795,102 +836,14 @@
     },
     mounted () {
       this.yearSelect = this.year;
-      this.getProjectMst();
       this.getDeclareList();
       this.getAllBasicData();
       this.getTargetTypeTree();
       this.getBudegDepart();
       //
+
     },
     methods: {
-      //请求当前行详细
-
-      getProjectMst(){
-        let data = {
-          FProjPhId: this.data.PhId
-        }
-        this.getAxios('/GXM/ProjectMstApi/GetProjectMst', data).then(res => {
-          this.dataDtl  = res;
-          //项目概况赋值
-          this.projectMst = res.ProjectMst;
-          this.projSurvey.FProjName = res.ProjectMst.FProjName;
-          this.projSurvey.FDeclarationDept = res.ProjectMst.FDeclarationDept;
-          this.projSurvey.FLevel = res.ProjectMst.FLevel;
-          this.projSurvey.FBudgetDept = res.ProjectMst.FBudgetDept;
-          this.projSurvey.ProjectPropers = res.ProjectMst.FProjAttr;
-          this.projSurvey.TimeLimits = res.ProjectMst.FDuration;
-          this.projSurvey.ExpenseCategories = res.ProjectMst.FExpenseCategory;
-          this.projSurvey.sedTime = [res.ProjectMst.FStartDate,res.ProjectMst.FEndDate];
-          this.projSurvey.FIfPerformanceAppraisal = res.ProjectMst.FIfPerformanceAppraisal;
-          //项目科研四大文本框内容
-          this.projScience = {
-              FFunctionalOverview: res.ProjectDtlTextContents.FFunctionalOverview, //部门职能概述
-              FProjBasis: res.ProjectDtlTextContents.FProjBasis, //申报依据
-              FFeasibility:  res.ProjectDtlTextContents.FFeasibility, //可行性
-              FNecessity:  res.ProjectDtlTextContents.FNecessity //必要性
-          };
-          //预算明细表数据
-          for (let i in res.ProjectDtlBudgetDtls) {
-            res.ProjectDtlBudgetDtls[i].FAmount = res.ProjectDtlBudgetDtls[i].FAmount.toString()
-            let decimals = 2;
-            let decPoint='.';
-            let thousandsSep = ','
-            if (!res.ProjectDtlBudgetDtls[i].FAmount) return '0.00'
-            res.ProjectDtlBudgetDtls[i].FAmount = (res.ProjectDtlBudgetDtls[i].FAmount + '').replace(/[^0-9+-Ee.]/g, '')
-            let n = !isFinite(+res.ProjectDtlBudgetDtls[i].FAmount) ? 0 : +res.ProjectDtlBudgetDtls[i].FAmount
-            let prec = !isFinite(+decimals) ? 0 : Math.abs(decimals)
-            let sep = typeof thousandsSep === 'undefined' ? ',' : thousandsSep
-            let dec = typeof decPoint === 'undefined' ? '.' : decPoint
-            let s = ''
-
-            let toFixedFix = function (n, prec) {
-              return '' + n.toFixed(2)
-            }
-            s = (prec ? toFixedFix(n, prec) : '' + n).split('.')
-            let re = /(-?\d+)(\d{3})/
-            while (re.test(s[0])) {
-              s[0] = s[0].replace(re, '$1' + sep + '$2')
-            }
-            if ((s[1] || '').length < prec) {
-              s[1] = s[1] || ''
-              s[1] += new Array(prec - s[1].length + 1).join('0')
-            }
-            res.ProjectDtlBudgetDtls[i].FAmount =  s.join(dec)
-          }
-          this.budgetdetailData =res.ProjectDtlBudgetDtls
-
-          //实施计划
-          this.ImplPlanPanelData = res.ProjectDtlImplPlans
-          for (let i in res.ProjectDtlImplPlans){
-            this.ImplPlanPanelData[i].FImplContent = res.ProjectDtlImplPlans[i].FImplContent;
-            this.ImplPlanPanelData[i].sedTime = [res.ProjectDtlImplPlans[i].FStartDate,res.ProjectDtlImplPlans[i].FEndDate];
-            this.ImplPlanPanelData[i].FName = res.ProjectDtlImplPlans[i].FName;
-          }
-          //集中采购数据
-          this.PurchaseDtls = res.ProjectDtlPurchaseDtls;
-          //集中采购 资金来源
-          this.PurDtl4SOFs = res.ProjectDtlPurDtl4SOFs;
-          //绩效目标
-
-          if (res.ProjectDtlTextContents!==null){
-            this.target.ndTagetL = res.ProjectDtlTextContents.FAnnualPerformGoal
-            this.target.cqTarget = res.ProjectDtlTextContents.FLTPerformGoal
-          }
-
-          //效绩目标表格
-          this.target.targetTableData = res.ProjectDtlPerformTargets
-          //绩效指标类别
-          if (res.ProjectDtlPerformTargets.length !==0){
-            this.target.targetType.FName = res.ProjectDtlPerformTargets[0].FTargetTypeCode_EXName
-            this.target.targetType.FCode = res.ProjectDtlPerformTargets[0].FTargetTypeCode
-          }
-          console.log('拉取到的：',res)
-        }).catch(err => {
-          this.$emit('refresh')
-          this.$msgBox.error('请求失败')
-        })
-      },
-
       //获取预算部门
       getBudegDepart(){
         let data  = {
@@ -900,7 +853,6 @@
         this.getAxios('/GQT/CorrespondenceSettingsApi/GetDeptByUnit',data).then(res=>{
           console.log(res)
           this.projGroup.FBudgetDeptGroup = res.Record
-
         }).catch(err=>{
           console.log(err)
         })
@@ -912,8 +864,10 @@
           usercode: this.UserCode ? this.UserCode : '9999',
           orgid: this.Orgid
         }
+        let that= this
         this.getAxios('/GQT/CorrespondenceSettingsApi/GetFDeclarationUnit', data)
           .then(res => {
+            console.log(res)
             if (res.Status === 'success') {
               let arr = {
                 deptCode:res.deptCode,
@@ -940,8 +894,9 @@
             this.projGroup.FLevelGroup = res.ProjectLevels
             this.projGroup.ProjectPropersGroup = res.ProjectPropers
             this.projGroup.TimeLimitsGroup = res.TimeLimits
-            this.projGroup.ExpenseCategoriesGroup = res.ExpenseCategories;
-            this.projGroup.FQtZcgnflGroup = res.Zcgnfls
+            this.projGroup.ExpenseCategoriesGroup = res.ExpenseCategories
+            this.projGroup.BudgetAccountsGroup = res.BudgetAccounts
+            this.projGroup.Vc2mListGroup = res.Vc2mList
             console.log(res)
           })
           .catch(err => { })
@@ -959,30 +914,9 @@
           console.log(err)
         })
       },
-      addBudgetdetail (val) {
-        let data = (new Date()).getTime();
-        let item = JSON.parse(JSON.stringify(val));
-        item.FImplContent = item.FName;
-        item.PhId = '';
-        if ( this.budgetDetail.copyLine) {
-          for (let i in this.PurchaseDtls) {
-            if (this.PurchaseDtls[i].FDtlCode === item.FDtlCode){
-              item.FContent = this.PurchaseDtls[i].FContent
-              item.FName = this.PurchaseDtls[i].FName
-              item.FPrice = this.PurchaseDtls[i].FPrice
-              item.FProcedureCode = this.PurchaseDtls[i].FProcedureCode
-              item.FQty = this.PurchaseDtls[i].FQty
-              item.FRemark = this.PurchaseDtls[i].FRemark
-              item.FSpecification = this.PurchaseDtls[i].FSpecification
-              item.FTypeCode = this.PurchaseDtls[i].FTypeCode
-              item.FCatalogCode = this.PurchaseDtls[i].FCatalogCode
-              item.FDtlCode = ''
-            }
-          }
-        }
-        if (this.projSurvey.sedTime){
-          item.sedTime = this.projSurvey.sedTime
-        }
+      addBudgetdetail (item) {
+        let data = (new Date()).getTime()
+        console.log(data)
         let newItem = Object.assign(
           {},
           this.budgetDetail.copyLine
@@ -993,7 +927,7 @@
               FQty2:'',//人数
               FPrice:'',//单价
               FNum:"",//数量
-              FAmount: "0.00",//金额	必填
+              FAmount: '',//金额	必填
               FBudgetAmount:"",//FAmount一样	必填
               FSourceOfFunds: '',//资金来源	FSourceOfFunds_EXName资金来源名称	必填
               FBudgetAccounts:'',//预算科目	FBudgetAccounts_EXName	预算科目名称	立项时出现且必填
@@ -1006,7 +940,6 @@
               FAmountAfterEdit:'',//调整后金额
               id: (new Date()).getTime(), //使用时间搓作唯一标识，
               sedTime:this.projSurvey.sedTime ? this.projSurvey.sedTime : '',
-              FImplContent:"",//实施内容	必填
 
 //采购明细类容
               FDtlCode:"",//明细项目代码	必填（明细项目带入）新增不用
@@ -1024,7 +957,6 @@
         newItem.id = data
         this.budgetdetailData.push(newItem)
         this.cacheAddData.push(newItem)
-        if (this.budgetdetailData.length>0)
         if (this.budgetDetail.copyLine) {
           this.valueChange()
         }
@@ -1032,33 +964,11 @@
       delBudgetdetail (val, index) {
         let id = val.id
         let status = false
-        if (val.PhId){
-          for (let i in this.budgetdetailData) {
-            if(val.PhId === this.budgetdetailData[i].PhId){
-              this.budgetdetailData[i].PersistentState = 3;
-              let arr  = JSON.parse(JSON.stringify(this.budgetdetailData[i]));
-              this.delBdData.push(arr);
-              this.budgetdetailData.splice(i,1)
-            }
-          }
-          for (let i in this.PurchaseDtls) {
-            if (val.FDtlCode === this.PurchaseDtls[i].FDtlCode){
-              this.PurchaseDtls.splice(i,1)
-            }
-          }
-          for (let i in this.PurDtl4SOFs) {
-            if (val.FDtlCode === this.PurDtl4SOFs[i].FDtlCode){
-              this.PurDtl4SOFs.splice(i,1)
-            }
-          }
-        }
         //将实施计划删除行标记
-        if (val.id){
-          for (let key in this.ImplPlanPanelData) {
-            if (id === this.ImplPlanPanelData[key].id) {
-              this.delRow = key
-              status = true
-            }
+        for (let key in this.ImplPlanPanelData) {
+          if (id === this.ImplPlanPanelData[key].id) {
+            this.delRow = key
+            status = true
           }
         }
         if (this.budgetdetailData.length !== 1 && status) {
@@ -1079,10 +989,7 @@
           })
         }
       },
-      add (val) {
-        let item = JSON.parse(JSON.stringify(val));
-        item.PhId = '';
-        console.log(item)
+      add (item) {
         let newItem = Object.assign(
           {},
           this.copyLine
@@ -1099,19 +1006,12 @@
         )
         this.ImplPlanPanelData.push(newItem)
       },
-      del (item,index) {
+      del (index) {
+        console.log(this.ImplPlanPanelData)
         if (this.ImplPlanPanelData.length === 1) {
           this.ImplPlanPanelData[0] = {}
         } else {
-          this.delRow = -1
-          if (item.PhId){
-            this.ImplPlanPanelData.splice(index, 1);
-            item.PersistentState=3;
-            this.delIppData.push(item)
-          }else {
-            this.ImplPlanPanelData.splice(index, 1)
-          }
-
+          this.ImplPlanPanelData.splice(index, 1)
         }
       },
       clearNum (item, e, isFocus) {
@@ -1162,29 +1062,17 @@
         item.FAmount = a
       },
       setBuy (item) {
+        console.log(item)
         if (item.FSourceOfFunds === '') {
           this.$msgBox.error('请先设置资金来源！')
           return
         }
-        this.setBuyDialog.openDialog = true;
-        let arr = []
-        if(item.FDtlCode){
-          for (let i  in this.PurchaseDtls){
-            if (item.FDtlCode === this.PurchaseDtls[i].FDtlCode){
-              arr[0] = this.PurchaseDtls[i];
-              arr[0].FSourceOfFunds = item.FSourceOfFunds;
-              arr[0].FAmount = item.FAmount;
-            }
-          };
-        }else {
-          arr[0] = item
-        }
-        arr[0] =  JSON.parse(JSON.stringify(arr[0]));
-        console.log(arr[0])
-        this.setBuyDialog.data = arr[0]
+        this.setBuyDialog.openDialog = true
+        this.setBuyDialog.data = item
       },
       openTextarea (item, property) {
         if (property ==='FProjName'){
+          this.projSurveyNull.FProjName = true
           this.maxWord = '100'
         }
         if (property === 'FOtherInstructions'){
@@ -1214,147 +1102,173 @@
           this.budgetdetailData[0].FPaymentMethod !== '' ||
           this.budgetdetailData[0].FSourceOfFunds !== '' ||
           this.budgetdetailData[0].FOtherInstructions !== '';
+        //第二个tab跳第一个tab才触发
+        // if (index === 2 && this.tabOldIndex == 1){
+        //   //1、当预算明细不为空，实施明细为空时
+        //    if (!ImpStatus && budgetStatus){
+        //      if (!this.tabStatus.fristSwatchTab){
+        //        this.$confirm('实施计划已存在，是否更新？','提示',{
+        //          confirmButtonText:'是',
+        //          cancelButtonText:'否',
+        //          type: "warning",
+        //          center:true,
+        //          closeOnPressEscape:false
+        //        }).then(()=>{
+        //          let [...arr] = this.budgetdetailData
+        //          this.ImplPlanPanelData = [...arr]
+        //          this.tabStatus.fristSwatchTab = true
+        //          this.cacheAddData = []//确认后清空缓存新增加的数据
+        //        }).catch(()=>{
+        //          this.tabindex = 1
+        //        })
+        //      }
+        //    }else {
+        //      if (this.cacheAddData.length !== 0 ){//判断缓存新增的数据是否为空，不为空就讲新加的合计到实施计划上
+        //        this.ImplPlanPanelData =  [...this.ImplPlanPanelData,...this.cacheAddData]
+        //        this.cacheAddData = []//确认后清空缓存新增加的数据
+        //      }
+        //    }
+        // }
 
       },
       //保存
       submit () {
-        console.log(this.target.targetTableData)
-        //预算主表对象
-        let projectMst = this.dataDtl.ProjectMst;
-        projectMst.FProjName = this.projSurvey.FProjName;
-        projectMst.FDeclarationDept = this.projSurvey.FDeclarationDept;
-        projectMst.FLevel = this.projSurvey.FLevel;
-        projectMst.FBudgetDept = this.projSurvey.FBudgetDept;
-        projectMst.FProjAttr = this.projSurvey.ProjectPropers;
-        projectMst.FDuration = this.projSurvey.TimeLimits;
-        projectMst.FExpenseCategory = this.projSurvey.ExpenseCategories;
-        projectMst.FStartDate = this.projSurvey.sedTime[0];
-        projectMst.FEndDate = this.projSurvey.sedTime[1];
-        projectMst.FIfPerformanceAppraisal = this.projSurvey.FIfPerformanceAppraisal;
-        projectMst.BusinessPrimaryKeys = ''
-        projectMst.Creator = ''
-        projectMst.CurOrgId = ''
-        projectMst.Editor = ''
-        projectMst.ExtendObjects = ''
-        projectMst.ForeignKeys = ''
-        projectMst.NgInsertDt = ''
-        projectMst.NgUpdateDt = ''
-        projectMst.PropertyBytes = ''
-        projectMst._OldIdValue_ = ''
-        //
-        let projectDtlTextContents = this.dataDtl.ProjectDtlTextContents;
-        projectDtlTextContents.FAnnualPerformGoal = this.target.ndTagetL;
-        projectDtlTextContents.FLTPerformGoal = this.target.cqTarget;
-        projectDtlTextContents.FFunctionalOverview = this.projScience.FFunctionalOverview;
-        projectDtlTextContents.FProjBasis = this.projScience.FProjBasis;
-        projectDtlTextContents.FFeasibility = this.projScience.FFeasibility;
-        projectDtlTextContents.FNecessity = this.projScience.FNecessity;
-        projectDtlTextContents.BusinessPrimaryKeys = ''
-        projectDtlTextContents.Creator = ''
-        projectDtlTextContents.CurOrgId = ''
-        projectDtlTextContents.Editor = ''
-        projectDtlTextContents.ExtendObjects = ''
-        projectDtlTextContents.ForeignKeys = ''
-        projectDtlTextContents.NgInsertDt = ''
-        projectDtlTextContents.NgUpdateDt = ''
-        projectDtlTextContents.PropertyBytes = ''
-        projectDtlTextContents._OldIdValue_ = ''
-        //预算明细的采购
-        let addPurchaseDtls = []
-        let addPurDtl4SOFs = []
+        //提交前将表单设置为能提交状态
+        this.addNull = true
+        //赋值实施计划提交的参数
+        let implPlans = [];
+        let PurchaseDtl = [];
+        let PurDtl4SOFs = [];
+        let targetDtl= [];
         for (let i in this.budgetdetailData){
-          if (this.budgetdetailData[i].id){
-            addPurchaseDtls.push({
-              FDtlCode:'',//明细项目代码	必填（明细项目带入）
-              FName:this.budgetdetailData[i].FName,//明细项目名称	必填（明细项目带入）
-              FContent:this.budgetdetailData[i].FContent,
-              FCatalogCode:this.budgetdetailData[i].FCatalogCode,
-              FTypeCode:this.budgetdetailData[i].FTypeCode,
-              FProcedureCode:this.budgetdetailData[i].FProcedureCode,
-              FMeasUnit:this.budgetdetailData[i].FMeasUnit,
-              FQty:this.budgetdetailData[i].FQty,
-              FPrice:this.budgetdetailData[i].FPrice,
-              FAmount:this.budgetdetailData[i].FAmount,
-              FSpecification:this.budgetdetailData[i].FSpecification,
-              FRemark:this.budgetdetailData[i].FRemark,
-              FEstimatedPurTime:this.budgetdetailData[i].FEstimatedPurTime,
-            });
-            addPurDtl4SOFs.push({
-              FDtlCode:'',//明细项目代码	必填（明细项目带入）
-              FName:this.budgetdetailData[i].FName,//明细项目名称	必填（明细项目带入）
-              FSourceOfFunds:this.budgetdetailData[i].FSourceOfFunds,
-              FAmount:this.budgetdetailData[i].FAmount
-            })
+          PurchaseDtl[i] = {
+            FDtlCode:'',//明细项目代码	必填（明细项目带入）
+            FName:this.budgetdetailData[i].FName,//明细项目名称	必填（明细项目带入）
+            FContent:this.budgetdetailData[i].FContent,
+            FCatalogCode:this.budgetdetailData[i].FCatalogCode,
+            FTypeCode:this.budgetdetailData[i].FTypeCode,
+            FProcedureCode:this.budgetdetailData[i].FProcedureCode,
+            FMeasUnit:this.budgetdetailData[i].FMeasUnit,
+            FQty:this.budgetdetailData[i].FQty,
+            FPrice:this.budgetdetailData[i].FPrice,
+            FAmount:this.budgetdetailData[i].FAmount,
+            FSpecification:this.budgetdetailData[i].FSpecification,
+            FRemark:this.budgetdetailData[i].FRemark,
+            FEstimatedPurTime:this.budgetdetailData[i].FEstimatedPurTime,
+          };
+          PurDtl4SOFs[i] ={
+            FDtlCode:'',//明细项目代码	必填（明细项目带入）
+            FName:this.budgetdetailData[i].FName,//明细项目名称	必填（明细项目带入）
+            FSourceOfFunds:this.budgetdetailData[i].FSourceOfFunds,
+            FAmount:this.budgetdetailData[i].FAmount
           }
         }
-        for (let i in this.PurchaseDtls) {
-          this.PurchaseDtls[i].PhId = ''
-          this.PurchaseDtls[i].BusinessPrimaryKeys = ''
-          this.PurchaseDtls[i].Creator = ''
-          this.PurchaseDtls[i].CurOrgId = ''
-          this.PurchaseDtls[i].Editor = ''
-          this.PurchaseDtls[i].ExtendObjects = ''
-          this.PurchaseDtls[i].ForeignKeys = ''
-          this.PurchaseDtls[i].NgInsertDt = ''
-          this.PurchaseDtls[i].NgUpdateDt = ''
-          this.PurchaseDtls[i].PropertyBytes = ''
-          this.PurchaseDtls[i]._OldIdValue_ = ''
+        for(let key in this.ImplPlanPanelData){
+          implPlans[key] = {
+            FImplContent:this.ImplPlanPanelData[key].FName,
+            FStartDate:this.ImplPlanPanelData[key].sedTime[0],
+            FEndDate:this.ImplPlanPanelData[key].sedTime[1]
+          }
         }
-        for (let i in this.PurDtl4SOFs) {
-          this.PurDtl4SOFs[i].PhId = ''
-          this.PurDtl4SOFs[i].BusinessPrimaryKeys = ''
-          this.PurDtl4SOFs[i].Creator = ''
-          this.PurDtl4SOFs[i].CurOrgId = ''
-          this.PurDtl4SOFs[i].Editor = ''
-          this.PurDtl4SOFs[i].ExtendObjects = ''
-          this.PurDtl4SOFs[i].ForeignKeys = ''
-          this.PurDtl4SOFs[i].NgInsertDt = ''
-          this.PurDtl4SOFs[i].NgUpdateDt = ''
-          this.PurDtl4SOFs[i].PropertyBytes = ''
-          this.PurDtl4SOFs[i]._OldIdValue_ = ''
-        }
-        //更改对应事件
-        for(let i in this.ImplPlanPanelData){
-            if (this.ImplPlanPanelData[i].sedTime){
-              this.ImplPlanPanelData[i].FEndDate = this.ImplPlanPanelData[i].sedTime[1]
-              this.ImplPlanPanelData[i].FStartDate = this.ImplPlanPanelData[i].sedTime[1]
-            }
+        targetDtl =JSON.parse(JSON.stringify(this.target.targetTableData))
+        for (let i in targetDtl) {
+          targetDtl[i].PhId='0'
         }
         let data = {
           //预算主表对象
-          ProjectMst:projectMst,
-
-
+          ProjectMst: {
+            FYear:'2019',//年度（当前年度）必填
+            FProjName: this.projSurvey.FProjName,//项目名称
+            FLevel: this.projSurvey.FLevel,//项目级别  无
+            FDeclarationDept: this.projSurvey.FDeclarationDept,//申报部门,
+            FBudgetDept: this.projSurvey.FBudgetDept,//预算部门
+            FProjAttr: this.projSurvey.ProjectPropers,//项目属性
+            FDuration: this.projSurvey.TimeLimits,//存续期限
+            FExpenseCategory: this.projSurvey.ExpenseCategories,//支出类别
+            FStartDate: this.projSurvey.sedTime[0],//开始日期
+            FEndDate: this.projSurvey.sedTime[1],//结束日期
+            FIfPerformanceAppraisal: this.projSurvey.FIfPerformanceAppraisal,//是否绩效评价	(Yes = 1,No = 2)（绩效目标里的绩效指标是否显示）（默认否）
+            FDeclarationUnit:this.OrgCode,//申报单位（组织树选择的组织code）
+            FDeclarationUnit_EXName:this.OrgName,//申报单位名称	必填
+            FProjStatus:'1',// 1、预立项，2项目立项、3项目执行、4项目调整、5项目暂停、6项目终止、7项目关闭
+            FDateofDeclaration:new Date(), //申报日期（新建单据的时间）	必填
+            FDeclarer:this.UserName,//申报人（直接传当前操作员名称）	必填
+            FProjAmount:this.TotalAmount,//项目金额（明细相加的总金额）	必填
+            FType:'c',//单据类型（c,z）	必填
+            FVerNo:'0001',//调整版本号(0001,0002)	必填
+            FVerNoFVerNo:'c0001',//(c0001:年初新增;c0002:年中调整;z0001:年中新增)
+            FApproveStatus:'1',//1必填（新增单据默认1）、2审批中、3审批通过、4已退回
+            FApprover:'',
+            FApproveDate:'',
+            FBudgetAmount:this.TotalAmount,
+            // FIfPurchase:'1',//是否集中采购	(Yes = 1,No = 2)	必填
+            FPerformType:this.target.targetType.FCode,//绩效评价类型代码
+            FPerformEvalType_EXName:this.target.targetType.FName//绩效评价类型代码名称
+          },
           //预算明细
-          // ProjectDtlBudgetDtls:this.dataDtl.ProjectDtlBudgetDtls,
-          ProjectDtlBudgetDtls:[...this.budgetdetailData,...this.delBdData],
+          ProjectDtlBudgetDtls: this.budgetdetailData,
           //实施计划
-          ProjectDtlImplPlans: [...this.ImplPlanPanelData,...this.delIppData],
+          ProjectDtlImplPlans: implPlans,
           //绩效指标
-          ProjectDtlPerformTargets:[...this.oldTTData,...this.target.targetTableData],
+          ProjectDtlPerformTargets:targetDtl,
           //预算明细的采购
-          ProjectDtlPurchaseDtls:[...this.PurchaseDtls,...addPurchaseDtls],
-          ProjectDtlPurDtl4SOFs:[...this.PurDtl4SOFs,...addPurDtl4SOFs],
+          ProjectDtlPurchaseDtls:PurchaseDtl,
+          ProjectDtlPurDtl4SOFs:PurDtl4SOFs,
           //用户ID
           UserId:this.UserId,
-          ProjectDtlTextContents:projectDtlTextContents,
+          ProjectDtlTextContents:{
+            FFunctionalOverview: this.projScience.FFunctionalOverview,//部门职能概述
+            FProjBasis: this.projScience.FProjBasis,//申报依据
+            FFeasibility: this.projScience.FFeasibility,//可行性
+            FNecessity: this.projScience.FNecessity,//必要性
+            FLTPerformGoal:this.target.cqTarget,//长期目标
+            FAnnualPerformGoal:this.target.ndTagetL//年度目标
+          }
+        }
+        //提交时判断项目概况是否已经填写完
+        for(let i in this.projSurvey){
+          if (this.projSurvey[i] ===''){
+            this.projSurveyNull[i] = true
+            this.addNull = false //不能提交表单
+          }
+        }
+        //提交时判断项目科研是否已经填写完成
+        for(let i in this.projScience){
+          if (this.projScience[i] === '') {
+            this.projScienceNull[i] = true
+            this.addNull = false //不能提交表单
+          }
+        }
+        //提交时判断判断效绩目标表格是否拉取到
+        for(let i in this.target){
+          if (this.target[i] === '' && this.target[i] !=='targetType'){
+            this.targetNull[i] = true
+            this.addNull = false //不能提交表单
+          }
+        }
+
+        //提交时判断判断效绩目标表格是否拉取到
+        if (this.projSurvey.FIfPerformanceAppraisal == 1 && this.target.targetType !==''){
+          this.targetNull.targetType = true
+          this.addNull = false //不能提交表单
+        }
+        if (this.addNull) {
+
+          // this.postAxios('/GXM/ProjectMstApi/PostSaveProject', data).then((res) => {
+          //   if (res.Status ==='success'){
+          //     this.$emit("refresh",res,'add')
+          //     console.log(res)
+          //   }else {
+          //     this.$msgBox.error('新增失败'+res.Msg)
+          //   }
+          // }).catch(err => {
+          //
+          // })
+        }else {
+          this.$msgBox.error('请将必须输入项填写完整再保存')
         }
         console.log(data)
-        this.postAxios('/GXM/ProjectMstApi/PostSaveProject', data).then((res) => {
-          if (res.Status ==='success'){
-            let that =this
-            this.$msgBox.show({
-              content:'修改成功',
-              fn:function () {
-                that.$emit("refresh",res,'edit')
-              }
-            })
-          }else {
-            this.$msgBox.error('修改失败'+res.Msg)
-          }
-        }).catch(err => {
-          this.$msgBox.error('请求错误'+res.Msg)
-        })
+
       },
       //输入框值改变
       valueChange (item) {
@@ -1391,10 +1305,9 @@
         } else {
           if (this.cacheAddData.length !== 0) {//判断缓存新增的数据是否为空，不为空就讲新加的合计到实施计划上
             let arr = JSON.parse(JSON.stringify([...this.cacheAddData]))
-            arr[0].FImplContent = arr[0].FName
             this.ImplPlanPanelData = [...this.ImplPlanPanelData, ...arr]
             this.cacheAddData = []//确认后清空缓存新增加的数据
-            this.$confirm('明细项目发生变化2，是否完善实施计划？', '提示', {
+            this.$confirm('明细项目发生变化，是否完善实施计划？', '提示', {
               confirmButtonText: '是',
               cancelButtonText: '否',
               type: "warning",
@@ -1408,29 +1321,16 @@
               this.cacheAddData = []//确认后清空缓存新增加的数据
             })
           } else {
-            let that= this
-            this.$confirm('明细项目发生变化1，是否完善实施计划？', '提示', {
+            this.$confirm('明细项目发生变化，是否完善实施计划？', '提示', {
               confirmButtonText: '是',
               cancelButtonText: '否',
               type: "warning",
               center: true,
               closeOnPressEscape: false
             }).then(() => {
-              if (!item.id){
-
-                for (let key in that.ImplPlanPanelData){
-                  if ( item.PhId ===that.ImplPlanPanelData[key].PhId){
-                    console.log(that.ImplPlanPanelData[key].PhId)
-                    that.ImplPlanPanelData[key].FImplContent = item.FName
-                    that.ImplPlanPanelData[key].FName = item.FName
-                  }
-                }
-              } else {
-                for (let key in this.ImplPlanPanelData){
-                  if ( item.id ===this.ImplPlanPanelData[key].id){
-                    this.ImplPlanPanelData[key].FName = item.FName
-                    that.ImplPlanPanelData[key].FImplContent = item.FName
-                  }
+              for (let key in this.ImplPlanPanelData){
+                if ( item.id ===this.ImplPlanPanelData[key].id){
+                  this.ImplPlanPanelData[key].FName = item.FName
                 }
               }
               this.tabindex = 2
@@ -1458,20 +1358,8 @@
         };
         this.getAxios('/GQT/QTSysSetApi/GetPerformEvalTargets',data).then(res=>{
           if (res){
-            if (this.isOldTTData){
-               let arr = JSON.parse(JSON.stringify(this.target.targetTableData))
-              for (let i in arr){
-                arr[i].PersistentState=3
-              }
-              this.oldTTData = arr
-              this.isOldTTData = false
-            }
             this.target.targetTableData = res.Data
-            for (let i in this.target.targetTableData) {
-              this.target.targetTableData[i].PhId = ''
-            }
             console.log(this.target.targetTableData)
-
           }else {
             this.$msgBox.error('请求出错')
           }
@@ -1654,7 +1542,7 @@
       .right-box-container {
         border-radius: 0.05rem;
         background: #fff;
-        height: 90%;
+        height: 97%;
         float: right;
         padding: 10px;
         position: absolute;
@@ -1730,32 +1618,34 @@
                 }
 
                 &:nth-of-type(2) {
-                  width: 16%;
+                  width: 10%;
                 }
 
                 &:nth-of-type(3) {
-                  width: 12%;
+                  width: 10%;
                 }
 
                 &:nth-of-type(4) {
-                  width: 13%;
+                  width: 10%;
                 }
 
                 &:nth-of-type(5) {
-                  width: 11%;
+                  width: 10%;
                 }
 
                 &:nth-of-type(6) {
-                  width: 12%;
+                  width: 10%;
                 }
 
                 &:nth-of-type(7) {
-                  width: 12%;
+                  width: 10%;
                 }
                 &:nth-of-type(8) {
-                  width: 18%;
+                  width: 14%;
                 }
-
+                &:nth-of-type(9) {
+                  width: 16%;
+                }
                 > label {
                   line-height: 40px;
                   margin-right: 10px;
@@ -2023,24 +1913,6 @@
           }
         }
       }
-      .bottom-info{
-        position: absolute;
-        height: 20px;
-        right: 30px;
-        bottom: 30px;
-        ul{
-          list-style: none;
-          margin-left: 10px;
-          li{
-            display: inline-block;
-            float: left;
-            margin-left: 20px;
-            span{
-              color: #ff9800
-            }
-          }
-        }
-      }
     }
     .select-row {
       > li {
@@ -2053,9 +1925,12 @@
   .td-ipt>>> .el-input__inner{
     border: none;
   }
-  /*设置必填项*/
+  /*设置未填项样式*/
   .null-projS{
     border-bottom: 1px #ef5b47 solid !important;
+  }
+  .null-projSc >>> .el-textarea__inner{
+    border:1px #ef5b47 solid !important;
   }
 </style>
 <style lang="stylus">
@@ -2105,5 +1980,3 @@
     .el-dialog__body
       padding-top 0
 </style>
-
-

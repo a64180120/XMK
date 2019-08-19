@@ -22,7 +22,7 @@
               <li></li>
               <li style="height: 45px">
                 <div v-if="payfundClass"
-                     class="pay-title">资金拨付单</div>
+                     class="pay-title">{{topTitle}}</div>
                 <div v-else
                      class="pay-title"></div>
               </li>
@@ -135,6 +135,10 @@ export default {
       default () {
         return []
       }
+    },
+    auditType:{
+      type:String,
+      default:'001'
     }
   },
   data () {
@@ -150,32 +154,59 @@ export default {
       paylistClass: false,//支付单移入移出类名
       inPayfund: false,//下一审批在资金拨付流程中
       inPaylist: false,//下一审批在支付单流程中
-      nowNum: -1//下一审批所在位置
+      nowNum: -1,//下一审批所在位置
+      topTitle:''
     }
   },
   watch: {
     auditMsg: {
       handler (val) {
         this.nowNum = -1
-        this.payfundData = val.filter(item => item.FBilltype === '001');
-        this.paylistData = val.filter(item => item.FBilltype === '002');
-        this.paylistStartNum = this.payfundData.length;
-        for (let key in val) {
-          if (val[key].FApproval === 1) {
-            if (val[key].FBilltype === '001') {
-              this.inPayfund = true;
-              this.inPaylist = false;
-              this.nowNum = parseInt(key) + 1
-              break
-            } else if (val[key].FBilltype === '002') {
-              this.inPayfund = false;
-              this.inPaylist = true;
-              this.nowNum = parseInt(key) + 1 - parseInt(this.paylistStartNum)
-              break
+        if (this.auditType === '001' ||this.auditType === '002') {
+          this.topTitle = '资金拨付单'
+          this.payfundData = val.filter(item => item.FBilltype === '001');
+          this.paylistData = val.filter(item => item.FBilltype === '002');
+        } else if (this.auditType === '003') {
+          this.payfundData = val.filter(item => item.FBilltype === '003');
+        } else if (this.auditType === '004') {
+          this.payfundData = val.filter(item => item.FBilltype === '004');
+        }
+
+        if (this.auditType === '001' ||this.auditType === '002') {
+          this.paylistStartNum = this.payfundData.length;
+
+          for (let key in val) {
+            if (val[key].FApproval === 1) {
+              if (val[key].FBilltype === '001') {
+                this.inPayfund = true;
+                this.inPaylist = false;
+                this.nowNum = parseInt(key) + 1
+                break
+              } else if (val[key].FBilltype === '002') {
+                this.inPayfund = false;
+                this.inPaylist = true;
+                this.nowNum = parseInt(key) + 1 - parseInt(this.paylistStartNum)
+                break
+              }
+              console.log(this.nowNum)
             }
-            console.log(this.nowNum)
+          }
+        } else if (this.auditType === '003'){
+
+        } else if (this.auditType === '004') {
+          for (let key in val) {
+            if (val[key].FApproval === 1) {
+              if (val[key].FBilltype === '004') {
+                this.inPayfund = true;
+                this.inPaylist = false;
+                this.nowNum = parseInt(key) + 1
+                break
+              }
+              console.log(this.nowNum)
+            }
           }
         }
+
         // console.log(this.nowNum)
         for (let key in val) {
 

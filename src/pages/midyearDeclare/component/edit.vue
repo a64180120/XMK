@@ -20,6 +20,7 @@
                          :value="year-2"></el-option>
             </el-select>
           </p>
+          <span>当前阶段：年中申报</span>
         </div>
         <slot name="btn">
           <div class="top-btn">
@@ -212,7 +213,8 @@
                   <li>金额（元）</li>
                   <li>资金来源</li>
                   <li>支付方式</li>
-                  <li>支出功能分类科目</li>
+                  <li>集中采购</li>
+                  <li>支出渠道</li>
                   <li>集中采购</li>
                   <li>测算过程及其他说明事项</li>
                 </ul>
@@ -260,13 +262,23 @@
                     </el-select>
                   </li>
                   <li>
-                    <el-select v-model="item.FQtZcgnfl"
+                    <el-select v-model="item.FBudgetAccounts"
                                size="small"
                                placeholder="必选">
-                      <el-option v-for="(item,idx) in projGroup.FQtZcgnflGroup"
+                      <el-option v-for="(item,idx) in projGroup.BudgetAccountsGroup"
                                  :key="idx"
                                  :label="item.KMMC"
                                  :value="item.KMDM"></el-option>
+                    </el-select>
+                  </li>
+                  <li>
+                    <el-select v-model="item.FExpensesChannel"
+                               size="small"
+                               placeholder="必选">
+                      <el-option v-for="(item,idx) in projGroup.Vc2mListGroup"
+                                 :key="idx"
+                                 :label="item.Dymc"
+                                 :value="item.DYDM"></el-option>
                     </el-select>
                   </li>
                   <li>
@@ -362,7 +374,7 @@
                              alt />
                       </div>
                       <div>
-                        <img @click="del(item,index)"
+                        <img @click="del(index)"
                              src="@/assets/images/jian.png"
                              alt />
                       </div>
@@ -494,19 +506,6 @@
             </div>
           </div>
         </div>
-        <div class="bottom-info">
-          <ul>
-            <li>
-              <span>当前阶段：年初申报</span>
-            </li>
-            <li>
-              <span>申报日期：{{new Date().getFullYear()+'-'+(new Date().getMonth()+1)+'-'+new Date().getDate() }}</span>
-            </li>
-            <li>
-              <span>申报人：{{UserName}}</span>
-            </li>
-          </ul>
-        </div>
       </div>
     </el-row>
     <el-dialog modal-append-to-body
@@ -531,9 +530,9 @@
 </template>
 
 <script>
-  import addBr from './addBr'
-  import setBuy from './setBuy'
-  import textareaDialog from './textareaDialog'
+  import addBr from '../../../components/preProjectDialog/addBr'
+  import setBuy from '../../../components/preProjectDialog/setBuy'
+  import textareaDialog from '../../../components/preProjectDialog/textareaDialog'
   import { mapState } from 'vuex'
 
   export default {
@@ -562,7 +561,9 @@
           TimeLimits: '', //存续期限
           ExpenseCategories: '', //支出类别
           sedTime: '', //起止日期
-          FIfPerformanceAppraisal: 2//是否绩效评价	(Yes = 1,No = 2)（绩效目标里的绩效指标是否显示）（默认否）
+          FIfPerformanceAppraisal: 2,//是否绩效评价	(Yes = 1,No = 2)（绩效目标里的绩效指标是否显示）（默认否）
+          BudgetAccountsGroup:[],//预算科目集合
+          Vc2mListGroup:[],//预算科目集合
         },
         //项目概况下拉框项内容
         projGroup: {
@@ -709,24 +710,10 @@
         nowIndex:-1,//绩效目标表格鼠标移动上去的当前值
 
 
-        PurchaseDtls:[],//集中采购
+        PurchaseDtls:{},//集中采购
         PurDtl4SOFs:{},//资金来源
 
-
-        dataDtl:{},
-
-        //主表
-        projectMst:{},
-        //缓存预算明细的删除项
-        delBdData:[],
-        //缓存实施计划的删除项
-        delIppData:[],
-
-        //判断是否是原始指标明细数据
-        isOldTTData:true,
-        //缓存被替换的原始指标明细
-        oldTTData:[]
-
+        dataDtl:{}
       }
     },
     computed: {
@@ -810,24 +797,27 @@
           FProjPhId: this.data.PhId
         }
         this.getAxios('/GXM/ProjectMstApi/GetProjectMst', data).then(res => {
-          this.dataDtl  = res;
+          this.dataDtl  = res
           //项目概况赋值
-          this.projectMst = res.ProjectMst;
-          this.projSurvey.FProjName = res.ProjectMst.FProjName;
-          this.projSurvey.FDeclarationDept = res.ProjectMst.FDeclarationDept;
-          this.projSurvey.FLevel = res.ProjectMst.FLevel;
-          this.projSurvey.FBudgetDept = res.ProjectMst.FBudgetDept;
-          this.projSurvey.ProjectPropers = res.ProjectMst.FProjAttr;
-          this.projSurvey.TimeLimits = res.ProjectMst.FDuration;
-          this.projSurvey.ExpenseCategories = res.ProjectMst.FExpenseCategory;
-          this.projSurvey.sedTime = [res.ProjectMst.FStartDate,res.ProjectMst.FEndDate];
-          this.projSurvey.FIfPerformanceAppraisal = res.ProjectMst.FIfPerformanceAppraisal;
+          this.projSurvey = {
+            FProjName: res.ProjectMst.FProjName, //项目名称
+            FDeclarationDept: res.ProjectMst.FDeclarationDept, //申报部门
+            FLevel: '', //项目级别
+            FBudgetDept: res.ProjectMst.FBudgetDept, //预算部门
+            ProjectPropers: res.ProjectMst.FProjAttr, //项目属性
+            TimeLimits: res.ProjectMst.FDuration, //存续期限
+            ExpenseCategories: res.ProjectMst.FExpenseCategory, //支出类别
+            sedTime: [res.ProjectMst.FStartDate,res.ProjectMst.FEndDate], //起止日期
+            FIfPerformanceAppraisal: res.ProjectMst.FIfPerformanceAppraisal,//是否绩效评价	(Yes = 1,No = 2)（绩效目标里的绩效指标是否显示）（默认否）
+            FLevel:res.ProjectMst.FLevel,
+            PhId:res.ProjectMst.PhId
+          };
           //项目科研四大文本框内容
           this.projScience = {
-              FFunctionalOverview: res.ProjectDtlTextContents.FFunctionalOverview, //部门职能概述
-              FProjBasis: res.ProjectDtlTextContents.FProjBasis, //申报依据
-              FFeasibility:  res.ProjectDtlTextContents.FFeasibility, //可行性
-              FNecessity:  res.ProjectDtlTextContents.FNecessity //必要性
+            FFunctionalOverview: res.ProjectDtlTextContents.FFunctionalOverview, //部门职能概述
+            FProjBasis: res.ProjectDtlTextContents.FProjBasis, //申报依据
+            FFeasibility:  res.ProjectDtlTextContents.FFeasibility, //可行性
+            FNecessity:  res.ProjectDtlTextContents.FNecessity //必要性
           };
           //预算明细表数据
           for (let i in res.ProjectDtlBudgetDtls) {
@@ -860,11 +850,30 @@
           this.budgetdetailData =res.ProjectDtlBudgetDtls
 
           //实施计划
-          this.ImplPlanPanelData = res.ProjectDtlImplPlans
           for (let i in res.ProjectDtlImplPlans){
-            this.ImplPlanPanelData[i].FImplContent = res.ProjectDtlImplPlans[i].FImplContent;
-            this.ImplPlanPanelData[i].sedTime = [res.ProjectDtlImplPlans[i].FStartDate,res.ProjectDtlImplPlans[i].FEndDate];
-            this.ImplPlanPanelData[i].FName = res.ProjectDtlImplPlans[i].FName;
+            this.$set( this.ImplPlanPanelData,i,{
+              FImplContent:res.ProjectDtlImplPlans[i].FImplContent,
+              sedTime:[res.ProjectDtlImplPlans[i].FStartDate,res.ProjectDtlImplPlans[i].FEndDate],
+              FName: res.ProjectDtlImplPlans[i].FImplContent,
+              FAmount: '',
+              FSourceOfFunds: '',
+              FPaymentMethod: '',
+              FOtherInstructions: '',
+              FIfPurchase: "2",
+              PhId:res.ProjectDtlImplPlans[i].PhId
+              // id: (new Date()).getTime() //使用时间搓作唯一标识
+            })
+            // this.ImplPlanPanelData[i] = {
+            //   FImplContent:res.ProjectDtlImplPlans[i].FImplContent,
+            //   sedTime:'',
+            //   FName: '',
+            //   FAmount: '',
+            //   FSourceOfFunds: '',
+            //   FPaymentMethod: '',
+            //   FOtherInstructions: '',
+            //   FIfPurchase: "2",
+            //   id: (new Date()).getTime() //使用时间搓作唯一标识
+            // }
           }
           //集中采购数据
           this.PurchaseDtls = res.ProjectDtlPurchaseDtls;
@@ -884,9 +893,8 @@
             this.target.targetType.FName = res.ProjectDtlPerformTargets[0].FTargetTypeCode_EXName
             this.target.targetType.FCode = res.ProjectDtlPerformTargets[0].FTargetTypeCode
           }
-          console.log('拉取到的：',res)
+          console.log(res)
         }).catch(err => {
-          this.$emit('refresh')
           this.$msgBox.error('请求失败')
         })
       },
@@ -940,8 +948,9 @@
             this.projGroup.FLevelGroup = res.ProjectLevels
             this.projGroup.ProjectPropersGroup = res.ProjectPropers
             this.projGroup.TimeLimitsGroup = res.TimeLimits
-            this.projGroup.ExpenseCategoriesGroup = res.ExpenseCategories;
-            this.projGroup.FQtZcgnflGroup = res.Zcgnfls
+            this.projGroup.ExpenseCategoriesGroup = res.ExpenseCategories
+            this.projGroup.BudgetAccountsGroup = res.BudgetAccounts
+            this.projGroup.Vc2mListGroup = res.Vc2mList
             console.log(res)
           })
           .catch(err => { })
@@ -959,27 +968,9 @@
           console.log(err)
         })
       },
-      addBudgetdetail (val) {
-        let data = (new Date()).getTime();
-        let item = JSON.parse(JSON.stringify(val));
-        item.FImplContent = item.FName;
-        item.PhId = '';
-        if ( this.budgetDetail.copyLine) {
-          for (let i in this.PurchaseDtls) {
-            if (this.PurchaseDtls[i].FDtlCode === item.FDtlCode){
-              item.FContent = this.PurchaseDtls[i].FContent
-              item.FName = this.PurchaseDtls[i].FName
-              item.FPrice = this.PurchaseDtls[i].FPrice
-              item.FProcedureCode = this.PurchaseDtls[i].FProcedureCode
-              item.FQty = this.PurchaseDtls[i].FQty
-              item.FRemark = this.PurchaseDtls[i].FRemark
-              item.FSpecification = this.PurchaseDtls[i].FSpecification
-              item.FTypeCode = this.PurchaseDtls[i].FTypeCode
-              item.FCatalogCode = this.PurchaseDtls[i].FCatalogCode
-              item.FDtlCode = ''
-            }
-          }
-        }
+      addBudgetdetail (item) {
+        let data = (new Date()).getTime()
+        item.FImplContent = item.FName
         if (this.projSurvey.sedTime){
           item.sedTime = this.projSurvey.sedTime
         }
@@ -1024,7 +1015,6 @@
         newItem.id = data
         this.budgetdetailData.push(newItem)
         this.cacheAddData.push(newItem)
-        if (this.budgetdetailData.length>0)
         if (this.budgetDetail.copyLine) {
           this.valueChange()
         }
@@ -1032,33 +1022,11 @@
       delBudgetdetail (val, index) {
         let id = val.id
         let status = false
-        if (val.PhId){
-          for (let i in this.budgetdetailData) {
-            if(val.PhId === this.budgetdetailData[i].PhId){
-              this.budgetdetailData[i].PersistentState = 3;
-              let arr  = JSON.parse(JSON.stringify(this.budgetdetailData[i]));
-              this.delBdData.push(arr);
-              this.budgetdetailData.splice(i,1)
-            }
-          }
-          for (let i in this.PurchaseDtls) {
-            if (val.FDtlCode === this.PurchaseDtls[i].FDtlCode){
-              this.PurchaseDtls.splice(i,1)
-            }
-          }
-          for (let i in this.PurDtl4SOFs) {
-            if (val.FDtlCode === this.PurDtl4SOFs[i].FDtlCode){
-              this.PurDtl4SOFs.splice(i,1)
-            }
-          }
-        }
         //将实施计划删除行标记
-        if (val.id){
-          for (let key in this.ImplPlanPanelData) {
-            if (id === this.ImplPlanPanelData[key].id) {
-              this.delRow = key
-              status = true
-            }
+        for (let key in this.ImplPlanPanelData) {
+          if (id === this.ImplPlanPanelData[key].id) {
+            this.delRow = key
+            status = true
           }
         }
         if (this.budgetdetailData.length !== 1 && status) {
@@ -1079,10 +1047,7 @@
           })
         }
       },
-      add (val) {
-        let item = JSON.parse(JSON.stringify(val));
-        item.PhId = '';
-        console.log(item)
+      add (item) {
         let newItem = Object.assign(
           {},
           this.copyLine
@@ -1099,19 +1064,13 @@
         )
         this.ImplPlanPanelData.push(newItem)
       },
-      del (item,index) {
+      del (index) {
+        console.log(this.ImplPlanPanelData)
         if (this.ImplPlanPanelData.length === 1) {
           this.ImplPlanPanelData[0] = {}
         } else {
+          this.ImplPlanPanelData.splice(index, 1)
           this.delRow = -1
-          if (item.PhId){
-            this.ImplPlanPanelData.splice(index, 1);
-            item.PersistentState=3;
-            this.delIppData.push(item)
-          }else {
-            this.ImplPlanPanelData.splice(index, 1)
-          }
-
         }
       },
       clearNum (item, e, isFocus) {
@@ -1166,20 +1125,15 @@
           this.$msgBox.error('请先设置资金来源！')
           return
         }
-        this.setBuyDialog.openDialog = true;
+        this.setBuyDialog.openDialog = true
         let arr = []
-        if(item.FDtlCode){
-          for (let i  in this.PurchaseDtls){
-            if (item.FDtlCode === this.PurchaseDtls[i].FDtlCode){
-              arr[0] = this.PurchaseDtls[i];
-              arr[0].FSourceOfFunds = item.FSourceOfFunds;
-              arr[0].FAmount = item.FAmount;
-            }
-          };
-        }else {
-          arr[0] = item
-        }
-        arr[0] =  JSON.parse(JSON.stringify(arr[0]));
+        for (let i  in this.PurchaseDtls){
+          if (item.FDtlCode === this.PurchaseDtls[i].FDtlCode){
+            arr[0] = this.PurchaseDtls[i];
+            arr[0].FSourceOfFunds = item.FSourceOfFunds;
+            arr[0].FAmount = item.FAmount;
+          }
+        };
         console.log(arr[0])
         this.setBuyDialog.data = arr[0]
       },
@@ -1214,34 +1168,49 @@
           this.budgetdetailData[0].FPaymentMethod !== '' ||
           this.budgetdetailData[0].FSourceOfFunds !== '' ||
           this.budgetdetailData[0].FOtherInstructions !== '';
+        //第二个tab跳第一个tab才触发
+        // if (index === 2 && this.tabOldIndex == 1){
+        //   //1、当预算明细不为空，实施明细为空时
+        //    if (!ImpStatus && budgetStatus){
+        //      if (!this.tabStatus.fristSwatchTab){
+        //        this.$confirm('实施计划已存在，是否更新？','提示',{
+        //          confirmButtonText:'是',
+        //          cancelButtonText:'否',
+        //          type: "warning",
+        //          center:true,
+        //          closeOnPressEscape:false
+        //        }).then(()=>{
+        //          let [...arr] = this.budgetdetailData
+        //          this.ImplPlanPanelData = [...arr]
+        //          this.tabStatus.fristSwatchTab = true
+        //          this.cacheAddData = []//确认后清空缓存新增加的数据
+        //        }).catch(()=>{
+        //          this.tabindex = 1
+        //        })
+        //      }
+        //    }else {
+        //      if (this.cacheAddData.length !== 0 ){//判断缓存新增的数据是否为空，不为空就讲新加的合计到实施计划上
+        //        this.ImplPlanPanelData =  [...this.ImplPlanPanelData,...this.cacheAddData]
+        //        this.cacheAddData = []//确认后清空缓存新增加的数据
+        //      }
+        //    }
+        // }
 
       },
       //保存
       submit () {
-        console.log(this.target.targetTableData)
         //预算主表对象
         let projectMst = this.dataDtl.ProjectMst;
         projectMst.FProjName = this.projSurvey.FProjName;
         projectMst.FDeclarationDept = this.projSurvey.FDeclarationDept;
         projectMst.FLevel = this.projSurvey.FLevel;
         projectMst.FBudgetDept = this.projSurvey.FBudgetDept;
-        projectMst.FProjAttr = this.projSurvey.ProjectPropers;
-        projectMst.FDuration = this.projSurvey.TimeLimits;
-        projectMst.FExpenseCategory = this.projSurvey.ExpenseCategories;
-        projectMst.FStartDate = this.projSurvey.sedTime[0];
-        projectMst.FEndDate = this.projSurvey.sedTime[1];
+        projectMst.ProjectPropers = this.projSurvey.ProjectPropers;
+        projectMst.TimeLimits = this.projSurvey.TimeLimits;
+        projectMst.ExpenseCategories = this.projSurvey.ExpenseCategories;
+        projectMst.sedTime = this.projSurvey.sedTime;
         projectMst.FIfPerformanceAppraisal = this.projSurvey.FIfPerformanceAppraisal;
-        projectMst.BusinessPrimaryKeys = ''
-        projectMst.Creator = ''
-        projectMst.CurOrgId = ''
-        projectMst.Editor = ''
-        projectMst.ExtendObjects = ''
-        projectMst.ForeignKeys = ''
-        projectMst.NgInsertDt = ''
-        projectMst.NgUpdateDt = ''
-        projectMst.PropertyBytes = ''
-        projectMst._OldIdValue_ = ''
-        //
+
         let projectDtlTextContents = this.dataDtl.ProjectDtlTextContents;
         projectDtlTextContents.FAnnualPerformGoal = this.target.ndTagetL;
         projectDtlTextContents.FLTPerformGoal = this.target.cqTarget;
@@ -1249,92 +1218,23 @@
         projectDtlTextContents.FProjBasis = this.projScience.FProjBasis;
         projectDtlTextContents.FFeasibility = this.projScience.FFeasibility;
         projectDtlTextContents.FNecessity = this.projScience.FNecessity;
-        projectDtlTextContents.BusinessPrimaryKeys = ''
-        projectDtlTextContents.Creator = ''
-        projectDtlTextContents.CurOrgId = ''
-        projectDtlTextContents.Editor = ''
-        projectDtlTextContents.ExtendObjects = ''
-        projectDtlTextContents.ForeignKeys = ''
-        projectDtlTextContents.NgInsertDt = ''
-        projectDtlTextContents.NgUpdateDt = ''
-        projectDtlTextContents.PropertyBytes = ''
-        projectDtlTextContents._OldIdValue_ = ''
-        //预算明细的采购
-        let addPurchaseDtls = []
-        let addPurDtl4SOFs = []
-        for (let i in this.budgetdetailData){
-          if (this.budgetdetailData[i].id){
-            addPurchaseDtls.push({
-              FDtlCode:'',//明细项目代码	必填（明细项目带入）
-              FName:this.budgetdetailData[i].FName,//明细项目名称	必填（明细项目带入）
-              FContent:this.budgetdetailData[i].FContent,
-              FCatalogCode:this.budgetdetailData[i].FCatalogCode,
-              FTypeCode:this.budgetdetailData[i].FTypeCode,
-              FProcedureCode:this.budgetdetailData[i].FProcedureCode,
-              FMeasUnit:this.budgetdetailData[i].FMeasUnit,
-              FQty:this.budgetdetailData[i].FQty,
-              FPrice:this.budgetdetailData[i].FPrice,
-              FAmount:this.budgetdetailData[i].FAmount,
-              FSpecification:this.budgetdetailData[i].FSpecification,
-              FRemark:this.budgetdetailData[i].FRemark,
-              FEstimatedPurTime:this.budgetdetailData[i].FEstimatedPurTime,
-            });
-            addPurDtl4SOFs.push({
-              FDtlCode:'',//明细项目代码	必填（明细项目带入）
-              FName:this.budgetdetailData[i].FName,//明细项目名称	必填（明细项目带入）
-              FSourceOfFunds:this.budgetdetailData[i].FSourceOfFunds,
-              FAmount:this.budgetdetailData[i].FAmount
-            })
-          }
-        }
-        for (let i in this.PurchaseDtls) {
-          this.PurchaseDtls[i].PhId = ''
-          this.PurchaseDtls[i].BusinessPrimaryKeys = ''
-          this.PurchaseDtls[i].Creator = ''
-          this.PurchaseDtls[i].CurOrgId = ''
-          this.PurchaseDtls[i].Editor = ''
-          this.PurchaseDtls[i].ExtendObjects = ''
-          this.PurchaseDtls[i].ForeignKeys = ''
-          this.PurchaseDtls[i].NgInsertDt = ''
-          this.PurchaseDtls[i].NgUpdateDt = ''
-          this.PurchaseDtls[i].PropertyBytes = ''
-          this.PurchaseDtls[i]._OldIdValue_ = ''
-        }
-        for (let i in this.PurDtl4SOFs) {
-          this.PurDtl4SOFs[i].PhId = ''
-          this.PurDtl4SOFs[i].BusinessPrimaryKeys = ''
-          this.PurDtl4SOFs[i].Creator = ''
-          this.PurDtl4SOFs[i].CurOrgId = ''
-          this.PurDtl4SOFs[i].Editor = ''
-          this.PurDtl4SOFs[i].ExtendObjects = ''
-          this.PurDtl4SOFs[i].ForeignKeys = ''
-          this.PurDtl4SOFs[i].NgInsertDt = ''
-          this.PurDtl4SOFs[i].NgUpdateDt = ''
-          this.PurDtl4SOFs[i].PropertyBytes = ''
-          this.PurDtl4SOFs[i]._OldIdValue_ = ''
-        }
-        //更改对应事件
-        for(let i in this.ImplPlanPanelData){
-            if (this.ImplPlanPanelData[i].sedTime){
-              this.ImplPlanPanelData[i].FEndDate = this.ImplPlanPanelData[i].sedTime[1]
-              this.ImplPlanPanelData[i].FStartDate = this.ImplPlanPanelData[i].sedTime[1]
-            }
-        }
+
+
+
         let data = {
           //预算主表对象
           ProjectMst:projectMst,
 
 
           //预算明细
-          // ProjectDtlBudgetDtls:this.dataDtl.ProjectDtlBudgetDtls,
-          ProjectDtlBudgetDtls:[...this.budgetdetailData,...this.delBdData],
+          ProjectDtlBudgetDtls:this.dataDtl.ProjectDtlBudgetDtls,
           //实施计划
-          ProjectDtlImplPlans: [...this.ImplPlanPanelData,...this.delIppData],
+          ProjectDtlImplPlans: this.dataDtl.ProjectDtlImplPlans,
           //绩效指标
-          ProjectDtlPerformTargets:[...this.oldTTData,...this.target.targetTableData],
+          ProjectDtlPerformTargets: this.dataDtl.ProjectDtlPerformTargets,
           //预算明细的采购
-          ProjectDtlPurchaseDtls:[...this.PurchaseDtls,...addPurchaseDtls],
-          ProjectDtlPurDtl4SOFs:[...this.PurDtl4SOFs,...addPurDtl4SOFs],
+          ProjectDtlPurchaseDtls:this.dataDtl.ProjectDtlPurchaseDtls,
+          ProjectDtlPurDtl4SOFs:this.dataDtl.ProjectDtlPurDtl4SOFs,
           //用户ID
           UserId:this.UserId,
           ProjectDtlTextContents:projectDtlTextContents,
@@ -1342,13 +1242,8 @@
         console.log(data)
         this.postAxios('/GXM/ProjectMstApi/PostSaveProject', data).then((res) => {
           if (res.Status ==='success'){
-            let that =this
-            this.$msgBox.show({
-              content:'修改成功',
-              fn:function () {
-                that.$emit("refresh",res,'edit')
-              }
-            })
+            this.$emit("refresh",res,'edit')
+            console.log(res)
           }else {
             this.$msgBox.error('修改失败'+res.Msg)
           }
@@ -1458,20 +1353,8 @@
         };
         this.getAxios('/GQT/QTSysSetApi/GetPerformEvalTargets',data).then(res=>{
           if (res){
-            if (this.isOldTTData){
-               let arr = JSON.parse(JSON.stringify(this.target.targetTableData))
-              for (let i in arr){
-                arr[i].PersistentState=3
-              }
-              this.oldTTData = arr
-              this.isOldTTData = false
-            }
             this.target.targetTableData = res.Data
-            for (let i in this.target.targetTableData) {
-              this.target.targetTableData[i].PhId = ''
-            }
             console.log(this.target.targetTableData)
-
           }else {
             this.$msgBox.error('请求出错')
           }
@@ -1654,7 +1537,7 @@
       .right-box-container {
         border-radius: 0.05rem;
         background: #fff;
-        height: 90%;
+        height: 97%;
         float: right;
         padding: 10px;
         position: absolute;
@@ -1730,30 +1613,33 @@
                 }
 
                 &:nth-of-type(2) {
-                  width: 16%;
+                  width: 10%;
                 }
 
                 &:nth-of-type(3) {
-                  width: 12%;
+                  width: 10%;
                 }
 
                 &:nth-of-type(4) {
-                  width: 13%;
+                  width: 10%;
                 }
 
                 &:nth-of-type(5) {
-                  width: 11%;
+                  width: 10%;
                 }
 
                 &:nth-of-type(6) {
-                  width: 12%;
+                  width: 10%;
                 }
 
                 &:nth-of-type(7) {
-                  width: 12%;
+                  width: 10%;
                 }
                 &:nth-of-type(8) {
-                  width: 18%;
+                  width: 14%;
+                }
+                &:nth-of-type(9) {
+                  width: 16%;
                 }
 
                 > label {
@@ -2023,24 +1909,6 @@
           }
         }
       }
-      .bottom-info{
-        position: absolute;
-        height: 20px;
-        right: 30px;
-        bottom: 30px;
-        ul{
-          list-style: none;
-          margin-left: 10px;
-          li{
-            display: inline-block;
-            float: left;
-            margin-left: 20px;
-            span{
-              color: #ff9800
-            }
-          }
-        }
-      }
     }
     .select-row {
       > li {
@@ -2105,5 +1973,3 @@
     .el-dialog__body
       padding-top 0
 </style>
-
-

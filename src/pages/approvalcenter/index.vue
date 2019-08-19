@@ -120,7 +120,7 @@ export default {
       // }).catch(err =>{
       //   console.log(err)
       // })
-      this.getAxios('/GAppvalRecord/GetRecordListNum', data).then(res => {
+      this.getAxios('/GSP/GAppvalRecord/GetRecordListNum', data).then(res => {
         this.myApproval = res.Data;
         this.approvaled = res.Data
         console.log(res)
@@ -138,7 +138,7 @@ export default {
        * '001':'资金拨付单',
        '002':'支付单',
        '003':'项目用款单',
-       '004':'预算审核单',
+       '004':'年初调整',
        '005':'项目申报单'
        */
       let path = '';
@@ -149,7 +149,7 @@ export default {
       } else if (item.Value === '003') {
         path = ''
       } else if (item.Value === '004') {
-        path = ''
+        path = '/preprojectApproval'
       } else if (item.Value === '005') {
         path = ''
       } else {
@@ -173,7 +173,7 @@ export default {
         path = '/paylistapproval'//支付单页面路由
       } else if (item.Value === '003') {
         path = ''
-      } else if (item.Value === '004') {
+      } else if (item.Value === '004') { //年初调整页面路由
         path = ''
       } else if (item.Value === '005') {
         path = ''
