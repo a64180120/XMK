@@ -97,7 +97,8 @@
           </div>
           <div class="typeHandle">
             <div>
-              <div v-if="menuButton.approvalflow_typeadd=='True'"
+              <div style="    margin-left: 0;"
+                   v-if="menuButton.approvalflow_typeadd=='True'"
                    @click.stop="showAuditTypeAdd('add')"
                    class="typeAdd">
                 <img src="@/assets/images/add.png"

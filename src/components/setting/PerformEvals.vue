@@ -31,15 +31,19 @@
 
       <div class="handleBtn">
         <div>
-          <div class="typeAdd">
+          <div @click="targetUpdateShow('add')"
+               style="margin-left: 0;"
+               class="typeAdd">
             <img src="@/assets/images/add.png"
                  alt=""> <span>新增</span>
           </div>
-          <div class="typeUpdate">
+          <div @click="targetUpdateShow('update')"
+               class="typeUpdate">
             <img src="@/assets/images/update.png"
                  alt=""> <span>修改</span>
           </div>
-          <div class="typeDelete">
+          <div @click="targetUpdateShow('delete')"
+               class="typeDelete">
             <img src="@/assets/images/del.png"
                  alt=""> <span>删除</span>
           </div>
@@ -62,7 +66,8 @@
         </div>
 
       </div>
-      <div class="list listBodyCon">
+      <div :class="{listBodyConUpdate:!disabled}"
+           class="list listBodyCon">
         <div class="listBody">
           <div @click.stop="addInfo(0)"
                v-if="infoList.length==0"
@@ -147,14 +152,42 @@
             </li>
           </ul>
         </div>
-
+        <div class="handleBtn"
+             v-show="!disabled">
+          <span @click.stop="$emit('refresh')"
+                class="whiteBtn">取消</span>
+          <span @click.stop="$emit('update')"
+                class="btn">保存</span>
+        </div>
       </div>
     </div>
+    <fDialog title='指标类型'
+             :visible.sync="targetTypeShow">
+      <div class="auditTypeAdd">
+        <ul class="typelist">
+          <li>
+            <div>指标名称</div>
+            <div>
+              <el-input maxlength="20"
+                        v-model="targetName"
+                        placeholder="请输入指标名称(必填)"></el-input>
+            </div>
+          </li>
+          <li class="btnCon">
+            <span @click.stop="targetTypeShow=false"
+                  class="whiteBtn">取消</span>
+            <span @click="targetUpdate"
+                  class="btn">确定</span>
+          </li>
+        </ul>
+      </div>
+    </fDialog>
   </div>
 </template>
 <script>
+import fDialog from "@/components/attechment/dialog"
 import { mapState } from 'vuex'
-import { GetTargetTypeTree, GetPerformEvalTargets, PostUpdateTargetType, PostUpdateTargets, GetPerformEvals, UpdatePerformEvals } from '@/api/systemSetting/dataSafe'
+import { GetTargetTypeTree, GetSysSetList, GetPerformEvalTargets, PostUpdateTargetType, PostUpdateTargets, GetPerformEvals, UpdatePerformEvals } from '@/api/systemSetting/dataSafe'
 export default {
   name: 'PerformEvals',
   props: {
@@ -172,9 +205,14 @@ export default {
   data () {
     return {
       options: [],//指标类别列表
+
+      targetTypeShow: false,//显示类型弹窗
+      targetType: false,//新增or修改
+      targetName: '',//新增修改类型的名字
       org: {},//当前组织
       typeList: [],//类型列表
       infoList: [],//绩效指标列表
+      deleteList: [],//删除的列表
       type: {},//当前类型
       typeProps: {
         children: 'Children',
@@ -197,10 +235,15 @@ export default {
 
     }
 
-    this.getType();
+    this.refresh();
 
   },
   methods: {
+    refresh () {
+      this.getTargetClasses();
+      this.getType();
+
+    },
     //获取类型
     getType () {
       let data = {
@@ -213,7 +256,7 @@ export default {
           this.$msgBox(res.Msg)
         } else {
           res.FCode = '0000'
-          this.typeList = [res]
+          this.typeList = [res]  //sb  wgg  一会对象一会数组
           if (this.typeList[0].Children.length) {
 
             this.type = this.typeList[0].Children[0]
@@ -235,16 +278,17 @@ export default {
         orgCode: this.org.OCode,
         TargetTypeCode: this.type.FCode
       }
+      console.log(data)
       GetPerformEvalTargets(data).then(res => {
         if (res.Status == 'error') {
-          this.$msgBox(res.Msg)
+          this.$msgBox.error(res.Msg)
         } else {
           this.infoList = res.Data
-
+          this.deleteList = []
         }
       }).catch(err => {
         console.log(err)
-        this.$msgBox('获取指标信息列表失败!')
+        this.$msgBox.error('获取指标信息列表失败!')
       })
     },
     orgTreeShow () {//组织树高亮
@@ -272,6 +316,81 @@ export default {
           <span>{node.label}</span>
 
         </span>);
+    },
+    //指标类别
+    getTargetClasses () {
+      let data = {
+        orgid: this.$store.state.user.orgid,
+        uid: this.$store.state.user.userid,
+        //uid:266190618000001,
+        DicType: 'TargetClasses'
+      }
+      GetSysSetList(data).then(res => {
+        if (res.Status == 'error') {
+          this.$msgBox.error(res.Msg)
+
+        } else {
+          this.options = res.Data
+          console.log(this.options)
+        }
+      }).catch(err => {
+        console.log(err)
+        this.$msgBox.error('获取指标类别失败!')
+      })
+    },
+    //显示类型新增修改弹窗
+    targetUpdateShow (str) {
+
+      if (str == 'add') {
+        this.targetName = ''
+        this.targetTypeShow = true;
+      } else if (str == 'update') {
+        this.targetName = this.type.FName;
+        this.targetTypeShow = true;
+      } else if (str == 'delete') {
+        this.targetTypeAdd = str
+        this.$confirm('此操作将永久删除该申报，是否继续？', '提示', {
+          confirmButtonText: '确定',
+          cancelBtnText: '取消',
+          type: 'warning'
+        }).then(() => { this.targetUpdate() })
+      }
+      this.targetTypeAdd = str
+
+    },
+    targetUpdate () {
+
+      let str = this.targetTypeAdd
+      if (str == 'add') {
+        let data = {
+          orgid: this.orgid,
+          orgcode: this.orgcode,
+          fname: this.targetName,
+          PersistentState: 1
+
+        }
+        this.$refs.typetree.insertAfter(data, this.type);
+      } else if (str == 'update') {
+        this.type.FName = this.targetName;
+        this.type.PersistentState = 2
+      } else if (str == 'delete') {
+        this.type.PersistentState = 3
+      }
+      let info = {
+        orgid: this.orgid,
+        orgcode: this.orgcode,
+        infoData: this.typeList[0]      }
+      PostUpdateTargetType(info).then(res => {
+
+        this.$msgBox.show(res.Msg);
+        this.targetTypeShow = false;
+        this.refresh();
+
+      }).catch(err => {
+        console.log(err)
+        this.$msgBox.error('保存数据出错!')
+      })
+      console.log(this.typeList, this.type)
     },
     //选择类型
     typeChange (val) {
@@ -304,12 +423,13 @@ export default {
       )
 
     },
-    deleteInfo () {
-
+    deleteInfo (n, item) {
+      this.deleteList.push(item);
+      this.infoList.splice(n, 1)
     }
   },
   components: {
-
+    fDialog
   }
 }
 </script>
@@ -359,7 +479,7 @@ export default {
           display: inline-block;
           cursor: pointer;
           margin-left: 15px;
-          font-size: 0.16rem;
+          font-size: 0.14rem;
           > span {
             position: relative;
             top: 2px;
@@ -457,6 +577,9 @@ export default {
     height: 100%;
     padding-bottom: 40px;
   }
+  .listBodyConUpdate {
+    padding-bottom: 70px;
+  }
   .listBody {
     overflow-y: scroll;
     overflow-x: hidden;
@@ -464,6 +587,7 @@ export default {
     height: 100%;
     > ul {
       position: relative;
+      height: 40px;
       > li {
         overflow: hidden;
       }
@@ -527,6 +651,40 @@ export default {
         display: block;
       }
     }
+  }
+}
+.auditTypeAdd {
+  width: 450px;
+  .typelist {
+    > li {
+      height: 40px;
+      line-height: 40px;
+      margin-top: 10px;
+      > div {
+        float: left;
+        width: 75%;
+        &:first-of-type {
+          width: 20%;
+        }
+        > div {
+          width: 100%;
+        }
+      }
+    }
+  }
+  .btnCon {
+    > span {
+      width: 70px;
+      margin-right: 10px;
+    }
+  }
+}
+.handleBtn {
+  text-align: right;
+  padding-right: 80px;
+  margin-top: 7px;
+  > span {
+    margin-left: 20px;
   }
 }
 </style>
