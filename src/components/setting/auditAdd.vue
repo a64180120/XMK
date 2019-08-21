@@ -138,7 +138,8 @@
                   placeholder="请输入下限金额(选填)"></el-input>
         <span>元</span>
       </div>
-      <div class="projectType">
+      <!-- 等接口写好再放出来 -->
+      <!-- <div class="projectType">
         <div>项目类型:</div>
         <div>
           <el-select v-model="projectType"
@@ -150,7 +151,7 @@
                        :value="item.Value"></el-option>
           </el-select>
         </div>
-      </div>
+      </div> -->
     </div>
     <p class="statusBtn">
       <span @click.stop="liucheng((parseInt(selected)-1))"
