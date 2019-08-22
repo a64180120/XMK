@@ -344,7 +344,7 @@
           <table >
             <thead>
             <th><input type="checkbox" v-model="checkeAll" />序号</th>
-            <th v-for="item in tableContent" v-if="item.isSort&&item.title">
+            <th v-for="item in tableContent" v-if="item.isShow&&item.title">
               <span>{{item.title}}</span>
               <span class="upOrDown">
               <i :class="{'el-icon-arrow-up':true,'isactive':order&&order.split(' ')[0]==item.prop&&order.split(' ')[1]=='desc'}" @click="order=item.prop+' desc'"></i>
@@ -510,16 +510,17 @@
       })
     },
     mounted(){
-      debugger
         let sin=this.getCookie('seniorSearch');
         if(sin!=undefined){
           this.seniorSearch=JSON.parse(sin);
         }
         let tableRow=this.getCookie('tableRow');
+        console.log(JSON.parse(tableRow))
         if(tableRow!=undefined){
           this.tableContent=JSON.parse(tableRow);
-          console.log(JSON.parse(tableRow))
         }
+      console.log('this.tableContent')
+        console.log(this.tableContent)
         this.getData();
         //获取部门
         this.getDataC();
