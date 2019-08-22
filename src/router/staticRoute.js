@@ -151,6 +151,19 @@ const staticRoute = [
         component: () =>
           import(/* webpackChunkName:'paypassword'*/ '../pages/systemsetting/dataSafe/paypassword'),
         meta: { requireAuth: true, type: 'page', name: '支付口令设置' }
+      },
+      {
+        path: 'pageandcontrol',
+        component: () =>
+          import(/* webpackChunkName:'pageandcontrol'*/ '../pages/systemsetting/pageandcontrol'),
+        meta: { requireAuth: true, type: 'page', name: '页面与控制项维护' }
+      },
+
+      {
+        path: 'coderules',
+        component: () =>
+          import(/* webpackChunkName:'coderules'*/ '../pages/systemsetting/dataSafe/coderules'),
+        meta: { requireAuth: true, type: 'page', name: '业务单据编码规则' }
       }
     ]
   }

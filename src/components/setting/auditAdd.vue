@@ -138,6 +138,20 @@
                   placeholder="请输入下限金额(选填)"></el-input>
         <span>元</span>
       </div>
+      <!-- 等接口写好再放出来 -->
+      <!-- <div class="projectType">
+        <div>项目类型:</div>
+        <div>
+          <el-select v-model="projectType"
+                     multiple
+                     placeholder="项目类型(选填)">
+            <el-option v-for="item in options"
+                       :key="item.Value"
+                       :label="item.TypeName"
+                       :value="item.Value"></el-option>
+          </el-select>
+        </div>
+      </div> -->
     </div>
     <p class="statusBtn">
       <span @click.stop="liucheng((parseInt(selected)-1))"
@@ -223,7 +237,8 @@ export default {
         code: false,
         type: false
       },
-      message: {}
+      message: {},
+      projectType: ''
     }
   },
   computed: {
@@ -749,6 +764,12 @@ export default {
   white-space: nowrap;
 }
 .condition {
+  .projectType {
+    margin-top: 20px;
+    > div {
+      display: inline-block;
+    }
+  }
 }
 </style>
 <style>
@@ -758,6 +779,12 @@ export default {
 }
 .condition .el-input {
   width: 30%;
+}
+.condition .projectType .el-input {
+  width: 100%;
+}
+.condition .projectType .el-select {
+  width: 490px;
 }
 .auditInfo .el-input input,
 .condition .el-input input {

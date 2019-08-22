@@ -223,7 +223,7 @@ export default {
             this.$refs.nextApprovaler.toggleAllSelection()
           })
         }
-        if (val.length == 1 ) {
+        if (val.length == 1) {
           this.$nextTick(() => {
             this.$refs.nextApprovaler.toggleAllSelection()
           })
@@ -391,6 +391,9 @@ export default {
   padding: 5px 0;
   color: #ffffff;
   font-size: 0.14rem;
+}
+.table-next >>> .cell {
+  overflow: visible;
 }
 .table-next >>> tr td {
   padding: 5px 0;

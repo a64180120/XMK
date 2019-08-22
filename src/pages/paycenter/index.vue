@@ -73,7 +73,7 @@
                style="left: 160px;">
             <div>
               <ul>
-                <li>
+                <li v-show='false'>
                   <span>支付单据</span>
                   <el-select @change="selectType"
                              collapse-tags
