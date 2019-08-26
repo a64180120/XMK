@@ -179,7 +179,7 @@ export default {
       if (budg.length !== 0 ){
         let amount = 0
         for (let key in budg){
-          amount = amount + budg[key].FAmount
+          amount = amount + parseFloat(budg[key].FAmount)
         }
         return amount
       }else {

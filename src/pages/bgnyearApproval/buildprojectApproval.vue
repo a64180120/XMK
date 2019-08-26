@@ -396,7 +396,7 @@
       </div>
     </div>
     <!--查看审批流程-->
-    <auditfollow :visible.sync="visible" @closefollow="closeFollow" :auditMsg="auditMsg" audit-type="004"></auditfollow>
+    <auditfollow :visible.sync="visible" @closefollow="closeFollow" :auditMsg="auditMsg" audit-type="005"></auditfollow>
     <!--组织树-->
     <orgtree :data="orgtreeData" :checkedOrg="checkedOrg" :visible.sync="orgType" @confirm="getOrg"></orgtree>
     <!--审批弹框-->
@@ -404,7 +404,7 @@
                      ref="prepaDialog"
                      @refresh="loadData"
                      @subSuc="plSubSuc()"
-                      b-type="004"></pre-p-a-dialog>
+                     b-type="005"></pre-p-a-dialog>
     <!--查看详情弹框-->
     <el-dialog append-to-body
                modal-append-to-body
@@ -436,7 +436,7 @@
   import PrePADialog from "./component/prePADialog";
   import ItemDetail from "./component/itemDetail";
   export default {
-    name: 'index',
+    name: 'buildprojectApproval',
     components: {
       ItemDetail,
       PrePADialog,
@@ -451,7 +451,7 @@
     data() {
       return {
         payListVisible: false,
-        BType: '004', //单据类型 资金拨付 001  申报单 002
+        BType: '005', //单据类型 资金拨付 001  申报单 002
         checkedAll: false, //是否全选
         IsIndeterminate: false, //列表中是否有选中的值并且不是全选
         check: [], //列表所有选中状态

@@ -35,7 +35,6 @@
             <el-button class="btn"
                        size="mini">上传附件</el-button>
             <el-button class="btn"
-                       @click="preview()"
                        size="mini">填报预览</el-button>
           </div>
         </slot>
@@ -43,11 +42,11 @@
       <div class="left-box">
         <div class="tb">项目概况</div>
         <ul>
-          <li :class="[projSurvey.FProjName === ''?'null-projS':'']">
+          <li >
             <span>项目名称：</span>
-            <div @click="openTextarea(projSurvey,'FProjName')"
+            <div
                  class="opentextarea"
-                 style="width:100%;text-align:left;line-height:32px;padding-left:15px;">
+                 style="width:100%;text-align:left;line-height:32px;padding-left:15px;color: #C0C4CC ;background-color: #F5F7FA">
               <el-tooltip v-if="projSurvey.FProjName"
                           :content="projSurvey.FProjName">
                 <span style="font-size:0.14rem;">{{projSurvey.FProjName}}</span>
@@ -60,6 +59,7 @@
           <li>
             <span>项目级别：</span>
             <el-select v-model="projSurvey.FLevel"
+                       disabled
                        size="small"
                        placeholder="必选">
               <el-option v-for="(item,idx) in projGroup.FLevelGroup"
@@ -72,6 +72,7 @@
             <span>申报部门：</span>
             <el-select v-model="projSurvey.FDeclarationDept"
                        size="small"
+                       disabled
                        placeholder="必选">
               <el-option v-for="(item,idx) in projGroup.FDeclarationDeptGroup"
                          :key="idx"
@@ -83,6 +84,7 @@
             <span>预算部门：</span>
             <el-select v-model="projSurvey.FBudgetDept"
                        size="small"
+                       disabled
                        placeholder="必选">
               <el-option v-for="(item,idx) in projGroup.FBudgetDeptGroup"
                          :key="idx"
@@ -94,6 +96,7 @@
             <span>项目属性：</span>
             <el-select v-model="projSurvey.ProjectPropers"
                        size="small"
+                       disabled
                        placeholder="必选">
               <el-option v-for="(item,idx) in projGroup.ProjectPropersGroup"
                          :key="idx"
@@ -105,6 +108,7 @@
             <span>存续期限：</span>
             <el-select v-model="projSurvey.TimeLimits"
                        size="small"
+                       disabled
                        placeholder="必选">
               <el-option v-for="(item,idx) in projGroup.TimeLimitsGroup"
                          :key="idx"
@@ -116,6 +120,7 @@
             <span>支出类别：</span>
             <el-select v-model="projSurvey.ExpenseCategories"
                        size="small"
+                       disabled
                        placeholder="必选">
               <el-option v-for="(item,idx) in projGroup.ExpenseCategoriesGroup"
                          :key="idx"
@@ -128,6 +133,7 @@
             <el-date-picker size="small"
                             v-model="projSurvey.sedTime"
                             type="daterange"
+                            disabled
                             range-separator="至"
                             :clearable="false"
                             start-placeholder="开始日期"
@@ -137,6 +143,7 @@
             <span>绩效评价：</span>
             <el-select v-model="projSurvey.FIfPerformanceAppraisal"
                        size="small"
+                       disabled
                        placeholder="必选">
               <el-option v-for="(item,idx) in projGroup.FIfPerformanceAppraisalGroup"
                          :key="idx"
@@ -163,6 +170,7 @@
             <li>
               <span>部门职能概述：</span>
               <el-input type="textarea"
+                        disabled
                         show-word-limit
                         maxlength="500"
                         :autosize="{minRows:4}"
@@ -174,6 +182,7 @@
               <span>申报依据：</span>
               <el-input type="textarea"
                         show-word-limit
+                        disabled
                         maxlength="250"
                         :autosize="{minRows:4}"
                         :rows="5"
@@ -184,6 +193,7 @@
               <span>可行性：</span>
               <el-input type="textarea"
                         show-word-limit
+                        disabled
                         maxlength="250"
                         :autosize="{minRows:4}"
                         :rows="5"
@@ -194,6 +204,7 @@
               <span>必要性：</span>
               <el-input type="textarea"
                         show-word-limit
+                        disabled
                         maxlength="250"
                         :autosize="{minRows:4}"
                         :rows="5"
@@ -205,7 +216,7 @@
           <div v-show="tabindex == 1"
                class="budgetdetail">
             <div style="text-align:left;">
-              <el-checkbox v-model="budgetDetail.copyLine">复制行</el-checkbox>
+              <el-checkbox disabled v-model="budgetDetail.copyLine">复制行</el-checkbox>
             </div>
             <div class="list">
               <div class="listHead">
@@ -215,6 +226,8 @@
                   <li>金额（元）</li>
                   <li>资金来源</li>
                   <li>支付方式</li>
+                  <li>预算科目</li>
+                  <li>支出渠道</li>
                   <li>支出功能分类科目</li>
                   <li>集中采购</li>
                   <li>测算过程及其他说明事项</li>
@@ -231,11 +244,13 @@
                   <li>{{index+1}}</li>
                   <li>
                     <el-input v-model="item.FName"
+                              disabled
                               @change="valueChange(item)"
                               placeholder="必填" />
                   </li>
                   <li>
                     <el-input @focus="clearNum(item,$event,1)"
+                              disabled
                               @keyup.native="clearNum(item,$event)"
                               @blur="filterMoney(item,index)"
                               class="money"
@@ -245,6 +260,7 @@
                   <li>
                     <el-select v-model="item.FSourceOfFunds"
                                size="small"
+                               disabled
                                placeholder="必选">
                       <el-option v-for="(item,idx) in budgetDetail.FSourceOfFundsGroup"
                                  :key="idx"
@@ -255,6 +271,7 @@
                   <li>
                     <el-select v-model="item.FPaymentMethod"
                                size="small"
+                               disabled
                                placeholder="必选">
                       <el-option v-for="(item,idx) in budgetDetail.fundPayGroup"
                                  :key="idx"
@@ -263,8 +280,29 @@
                     </el-select>
                   </li>
                   <li>
+                    <el-select v-model="item.FBudgetAccounts"
+                               size="small"
+                               placeholder="必选">
+                      <el-option v-for="(item,idx) in budgetDetail.BudgetAccountsGroup"
+                                 :key="idx"
+                                 :label="item.KMMC"
+                                 :value="item.KMDM"></el-option>
+                    </el-select>
+                  </li>
+                  <li>
+                    <el-select v-model="item.FExpensesChannel"
+                               size="small"
+                               placeholder="必选">
+                      <el-option v-for="(item,idx) in budgetDetail.Vc2mListGroup"
+                                 :key="idx"
+                                 :label="item.Dymc"
+                                 :value="item.DYDM"></el-option>
+                    </el-select>
+                  </li>
+                  <li>
                     <el-select v-model="item.FQtZcgnfl"
                                size="small"
+                               disabled
                                placeholder="必选">
                       <el-option v-for="(item,idx) in projGroup.FQtZcgnflGroup"
                                  :key="idx"
@@ -274,33 +312,36 @@
                   </li>
                   <li>
                     <el-radio v-model="item.FIfPurchase"
+                              disabled
                               :label="1">是</el-radio>
                     <el-radio v-model="item.FIfPurchase"
+                              disabled
                               :label="2">否</el-radio>
-                    <i @click="item.FIfPurchase =='1'?setBuy(item):''"
-                       :class="{'el-icon-setting':true,'canSetting':item.FIfPurchase=='1'?true:false}"></i>
+                    <i @click=""
+                       :class="{'el-icon-setting':true,'canSetting':false}"></i>
                   </li>
-                  <li class="enable"
-                      @click="openTextarea(item,'FOtherInstructions')">
+                  <li class="enable">
+                    <!--@click="openTextarea(item,'FOtherInstructions')"-->
                     <el-input v-model="item.FOtherInstructions"
+                              disabled
                               placeholder="必填" />
 
                     <el-tooltip v-if="item.FOtherInstructions"
                                 :content="item.FOtherInstructions">
                       <span style="display: inline-block;max-width: 100%;">{{item.FOtherInstructions}}</span>
                     </el-tooltip>
-                    <div class="icon active">
-                      <div>
-                        <img @click.stop="addBudgetdetail(item)"
-                             src="@/assets/images/jia.png"
-                             alt />
-                      </div>
-                      <div>
-                        <img @click.stop="delBudgetdetail(item,index)"
-                             src="@/assets/images/jian.png"
-                             alt />
-                      </div>
-                    </div>
+<!--                    <div class="icon active">-->
+<!--                      <div>-->
+<!--                        <img @click.stop="addBudgetdetail(item)"-->
+<!--                             src="@/assets/images/jia.png"-->
+<!--                             alt />-->
+<!--                      </div>-->
+<!--                      <div>-->
+<!--                        <img @click.stop="delBudgetdetail(item,index)"-->
+<!--                             src="@/assets/images/jian.png"-->
+<!--                             alt />-->
+<!--                      </div>-->
+<!--                    </div>-->
                   </li>
                 </ul>
               </div>
@@ -327,7 +368,7 @@
           <div v-show="tabindex == 2"
                class="budgetdetail">
             <div style="text-align:left;">
-              <el-checkbox v-model="copyLine">复制行</el-checkbox>
+              <el-checkbox disabled v-model="copyLine">复制行</el-checkbox>
             </div>
             <div class="list plan">
               <div class="listHead">
@@ -348,28 +389,29 @@
                     :class="[delRow == index?'select-row':'']">
                   <li>{{index+1}}</li>
                   <li>
-                    <el-input v-model="item.FImplContent"
+                    <el-input v-model="item.FImplContent" disabled
                               placeholder="必填" />
                   </li>
                   <li class="enable">
                     <el-date-picker size="small"
+                                    disabled
                                     v-model="item.sedTime"
                                     type="daterange"
                                     range-separator="至"
                                     start-placeholder="开始日期"
                                     end-placeholder="结束日期"></el-date-picker>
-                    <div class="icon active">
-                      <div>
-                        <img @click="add(item)"
-                             src="@/assets/images/jia.png"
-                             alt />
-                      </div>
-                      <div>
-                        <img @click="del(item,index)"
-                             src="@/assets/images/jian.png"
-                             alt />
-                      </div>
-                    </div>
+<!--                    <div class="icon active">-->
+<!--                      <div>-->
+<!--                        <img @click="add(item)"-->
+<!--                             src="@/assets/images/jia.png"-->
+<!--                             alt />-->
+<!--                      </div>-->
+<!--                      <div>-->
+<!--                        <img @click="del(item,index)"-->
+<!--                             src="@/assets/images/jian.png"-->
+<!--                             alt />-->
+<!--                      </div>-->
+<!--                    </div>-->
                   </li>
                 </ul>
               </div>
@@ -382,6 +424,7 @@
               <div>
                 <span>年度绩效目标：</span>
                 <el-input type="textarea"
+                          disabled
                           show-word-limit
                           maxlength="250"
                           :rows="6"
@@ -392,6 +435,7 @@
                 <span>长期绩效目标：</span>
                 <el-input type="textarea"
                           show-word-limit
+                          disabled
                           maxlength="250"
                           :rows="6"
                           placeholder="限250字以内（必填）"
@@ -405,7 +449,7 @@
                   <el-tree
                     :data="targetTreeData"
                     :props="targetTreeProps"
-                    :default-expand-all="true" @node-click="nodeClick">
+                    :default-expand-all="true">
 
                   </el-tree>
                 </div>
@@ -461,30 +505,30 @@
                     </td>
                     <td v-for="(itemType) in tarType" :rowspan="itemType.sum" v-if="idx==itemType.beginIdx">{{item.FTargetClassCode_EXName}}</td>
                     <td>
-                      <el-input class="td-ipt" v-model="item.FTargetName"></el-input>
+                      <el-input disabled class="td-ipt" v-model="item.FTargetName"></el-input>
                     </td>
                     <td>
-                      <el-input class="td-ipt" v-model="item.FTargetValue"></el-input>
+                      <el-input disabled class="td-ipt" v-model="item.FTargetValue"></el-input>
                     </td>
                     <td>
-                      <el-input class="td-ipt" @change="targetWeight()" v-model="item.FTargetWeight"></el-input>
+                      <el-input disabled class="td-ipt" @change="targetWeight()" v-model="item.FTargetWeight"></el-input>
                     </td>
                     <td @mouseenter="mouseEnter(idx)">
-                      <el-input class="td-ipt" v-model="item.FTargetDescribe"></el-input>
+                      <el-input disabled class="td-ipt" v-model="item.FTargetDescribe"></el-input>
                     </td>
                     <td class="enable" >
-                      <div v-show="nowIndex == idx" class="icon active">
-                        <div>
-                          <img @click="addTargetItem(item,idx)"
-                               src="@/assets/images/jia.png"
-                               alt />
-                        </div>
-                        <div>
-                          <img @click="delTargetItem(idx)"
-                               src="@/assets/images/jian.png"
-                               alt />
-                        </div>
-                      </div>
+<!--                      <div v-show="nowIndex == idx" class="icon active">-->
+<!--                        <div>-->
+<!--                          <img @click="addTargetItem(item,idx)"-->
+<!--                               src="@/assets/images/jia.png"-->
+<!--                               alt />-->
+<!--                        </div>-->
+<!--                        <div>-->
+<!--                          <img @click="delTargetItem(idx)"-->
+<!--                               src="@/assets/images/jian.png"-->
+<!--                               alt />-->
+<!--                        </div>-->
+<!--                      </div>-->
                     </td>
                   </tr>
                   <tr v-if="target.targetTableData.length ==0">
@@ -503,7 +547,7 @@
               <span>当前阶段：年初申报</span>
             </li>
             <li>
-              <span>申报日期：{{new Date().getFullYear()+'-'+(new Date().getMonth()+1)+'-'+new Date().getDate() }}</span>
+              <span>申报日期：{{dataDtl && dataDtl.ProjectMst && dataDtl.ProjectMst.FApproveDate?dataDtl.ProjectMst.FApproveDate:'无'}}</span>
             </li>
             <li>
               <span>申报人：{{UserName}}</span>
@@ -533,30 +577,18 @@
     <go-approval v-if="approvalDataS.openDialog"
                  :data="approvalDataS"
                  @delete="handleDelete"></go-approval>
-    <el-dialog append-to-body
-               modal-append-to-body
-               :visible.sync="detailDialog"
-               width="50%"
-               :close-on-click-modal="false"
-               class="applyDetailDialog">
-      <div slot="title"
-           class="applyDetailTitle">
-        <span>填报预览</span>
-      </div>
-      <item-print :data="itemDetail"></item-print>
-    </el-dialog>
   </section>
 </template>
 
 <script>
-  import addBr from './addBr'
-  import setBuy from './setBuy'
-  import textareaDialog from './textareaDialog'
+  import addBr from '../../../components/preProjectDialog/addBr'
+  import setBuy from '../../../components/preProjectDialog/setBuy'
+  import textareaDialog from '../../../components/preProjectDialog/textareaDialog'
   import { mapState } from 'vuex'
-  import GoApproval from "../../pages/preproject/component/goApproval";
-  import ItemPrint from "./itemPrint";
+  import GoApproval from "./goApproval";
+
   export default {
-    name: 'edit',
+    name: 'budgetEdit',
     props: {
       data:{
         type:Object,
@@ -565,7 +597,7 @@
         }
       }
     },
-    components: {ItemPrint,GoApproval, addBr, setBuy, textareaDialog },
+    components: {GoApproval, addBr, setBuy, textareaDialog },
     data () {
       return {
         timeClearable: false,
@@ -613,7 +645,9 @@
         budgetDetail: {
           copyLine: false, //复制行
           FSourceOfFundsGroup: [], //资金源组
-          fundPayGroup: [] //支付方式下拉项组
+          fundPayGroup: [] ,//支付方式下拉项组
+          BudgetAccountsGroup:[],//预算科目
+          Vc2mListGroup:[]//支出渠道集合
         },
         //预算明细表
         budgetdetailData: [
@@ -695,7 +729,7 @@
         value1: '',
         textarea: '',
         type: '',
-        tabindex: 0,//当前的tab页
+        tabindex: 1,//当前的tab页
         tabOldIndex: 0,//前一个Tab页码
         copyLine: false,
         tabsList: ['项目科研', '预算明细', '实施计划', '绩效目标'],
@@ -745,15 +779,12 @@
         isOldTTData:true,
         //缓存被替换的原始指标明细
         oldTTData:[],
+//审批弹框
         approvalDataS:{
           openDialog:false,
           data:{},
           subData:[]//获取审批流
-        },
-
-        //报表预览
-        detailDialog:false,
-        itemDetail:{}
+        }
       }
     },
     computed: {
@@ -851,10 +882,10 @@
           this.projSurvey.FIfPerformanceAppraisal = res.ProjectMst.FIfPerformanceAppraisal;
           //项目科研四大文本框内容
           this.projScience = {
-              FFunctionalOverview: res.ProjectDtlTextContents.FFunctionalOverview, //部门职能概述
-              FProjBasis: res.ProjectDtlTextContents.FProjBasis, //申报依据
-              FFeasibility:  res.ProjectDtlTextContents.FFeasibility, //可行性
-              FNecessity:  res.ProjectDtlTextContents.FNecessity //必要性
+            FFunctionalOverview: res.ProjectDtlTextContents.FFunctionalOverview, //部门职能概述
+            FProjBasis: res.ProjectDtlTextContents.FProjBasis, //申报依据
+            FFeasibility:  res.ProjectDtlTextContents.FFeasibility, //可行性
+            FNecessity:  res.ProjectDtlTextContents.FNecessity //必要性
           };
           //预算明细表数据
           for (let i in res.ProjectDtlBudgetDtls) {
@@ -963,6 +994,8 @@
         this.getAxios('/GQT/QTSysSetApi/GetAllBasicData', data)
           .then(res => {
             this.budgetDetail.fundPayGroup = res.PayMethodTwos
+            this.budgetDetail.BudgetAccountsGroup = res.BudgetAccounts
+            this.budgetDetail.Vc2mListGroup = res.Vc2mList
             this.budgetDetail.FSourceOfFundsGroup = res.SourceOfFunds
             this.projGroup.FLevelGroup = res.ProjectLevels
             this.projGroup.ProjectPropersGroup = res.ProjectPropers
@@ -1052,9 +1085,9 @@
         this.budgetdetailData.push(newItem)
         this.cacheAddData.push(newItem)
         if (this.budgetdetailData.length>0)
-        if (this.budgetDetail.copyLine) {
-          this.valueChange()
-        }
+          if (this.budgetDetail.copyLine) {
+            this.valueChange()
+          }
       },
       delBudgetdetail (val, index) {
         let id = val.id
@@ -1342,17 +1375,20 @@
         }
         //更改对应事件
         for(let i in this.ImplPlanPanelData){
-            if (this.ImplPlanPanelData[i].sedTime){
-              this.ImplPlanPanelData[i].FEndDate = this.ImplPlanPanelData[i].sedTime[1]
-              this.ImplPlanPanelData[i].FStartDate = this.ImplPlanPanelData[i].sedTime[1]
-            }
+          if (this.ImplPlanPanelData[i].sedTime){
+            this.ImplPlanPanelData[i].FEndDate = this.ImplPlanPanelData[i].sedTime[1]
+            this.ImplPlanPanelData[i].FStartDate = this.ImplPlanPanelData[i].sedTime[1]
+          }
         }
-        let fas = '';
-        if (type ==='bc' || type ==='bcss'){
-          projectMst.FApproveStatus = '1'
-        } else if (type ==='zc'){
-          projectMst.FApproveStatus = '5'
+
+        if (projectMst.FApproveStatus === '1'){
+          if (type ==='bc' || type ==='bcss'){
+            projectMst.FApproveStatus = '1'
+          } else if (type ==='zc'){
+            projectMst.FApproveStatus = '5'
+          }
         }
+
         let data = {
           //预算主表对象
           ProjectMst:projectMst,
@@ -1375,32 +1411,29 @@
         console.log(data)
         this.postAxios('/GXM/ProjectMstApi/PostSaveProject', data).then((res) => {
           if (res.Status ==='success'){
+
+
             if(type === 'bc'){
               let that =this
               this.$msgBox.show({
-                content:'修改成功',
+                content:'预算修正成功',
                 fn:function () {
-                  that.$emit("refresh",res,'edit')
+                  that.$emit("refresh",res,'budgetEdit')
                 }
               })
-            } else if (type === 'bcss'){
+            } else if (type === 'bcss') {
               let arr = [];
               arr.push({
                 PhId:res.KeyCodes[0]
               })
               this.approvalDataS.openDialog = true
               this.approvalDataS.data = arr
-            } else if(type === 'zc'){
-              let that =this
-              this.$msgBox.show({
-                content:'暂存成功',
-                fn:function () {
-                  that.$emit("refresh",res,'edit')
-                }
-              })
+            }else if (type ==='zc') {
+              this.$msgBox.show('预算修正暂存成功')
+              this.$emit("refresh",res,'budgetEdit')
             }
           }else {
-            this.$msgBox.error('修改失败'+res.Msg)
+            this.$msgBox.error('预算修正失败'+res.Msg)
           }
         }).catch(err => {
           this.$msgBox.error('请求错误'+res.Msg)
@@ -1509,7 +1542,7 @@
         this.getAxios('/GQT/QTSysSetApi/GetPerformEvalTargets',data).then(res=>{
           if (res){
             if (this.isOldTTData){
-               let arr = JSON.parse(JSON.stringify(this.target.targetTableData))
+              let arr = JSON.parse(JSON.stringify(this.target.targetTableData))
               for (let i in arr){
                 arr[i].PersistentState=3
               }
@@ -1574,53 +1607,7 @@
       //审批弹框关闭时的回调
       handleDelete(data){
         this.approvalDataS.openDialog = false
-        this.$emit("refresh",'','edit')
-      },
-
-      //填报预览
-      preview(){
-        let ProjectDtlBudget = []
-        let ProjectDtlImpl = []
-        for (let i in this.budgetdetailData){
-          ProjectDtlBudget.push({
-            FName:this.budgetdetailData[i].FName,
-            FAmount:this.budgetdetailData[i].FAmount,
-            FPaymentMethod_EXName:this.budgetdetailData[i].FPaymentMethod?this.budgetDetail.fundPayGroup.filter(item => item.TypeCode ===this.budgetdetailData[i].FPaymentMethod )[0].TypeName:'',
-            FOtherInstructions:this.budgetdetailData[i].FOtherInstructions,
-          })
-        }
-        for (let i in this.ImplPlanPanelData) {
-          ProjectDtlImpl.push({
-            FImplContent:this.ImplPlanPanelData[i].FImplContent,
-            FStartDate:this.ImplPlanPanelData[i].sedTime[0],
-            FEndDate:this.ImplPlanPanelData[i].sedTime[1]
-          })
-        }
-        let data = {
-          ProjectDtlBudgetDtls:ProjectDtlBudget,
-          ProjectDtlFundAppls:[],
-          ProjectDtlImplPlans:ProjectDtlImpl,
-          ProjectDtlPerformTargets:{},
-          ProjectDtlPurDtl4SOFs:{},
-          ProjectDtlPurchaseDtls:{},
-          ProjectDtlTextContents:{
-            FLTPerformGoal:this.target.cqTarget,
-            FAnnualPerformGoal:this.target.ndTagetL
-          },
-          ProjectMst:{
-            FProjName:this.projSurvey.FProjName,
-            PhId:'无',
-            FDeclarationDept_EXName:this.projSurvey.FDeclarationDept?this.projGroup.FDeclarationDeptGroup.filter(item => item.deptCode ===this.projSurvey.FDeclarationDept )[0].deptName:'',
-            FDateofDeclaration:(new Date()).getDate(),
-            FDeclarer:this.UserName,
-            FProjCode:'无',
-            FProjAttr_EXName:this.projSurvey.ProjectPropers?this.projGroup.ProjectPropersGroup.filter(item => item.TypeCode ===this.projSurvey.ProjectPropers )[0].TypeName:'',
-            FMeetingTime:'无',
-            FMeetiingSummaryNo:'无'
-          }
-        }
-        this.itemDetail = data
-        this.detailDialog = true
+        this.$emit("refresh",'','budgetEdit')
       }
     }
   }
@@ -1826,35 +1813,40 @@
                 font-size: 0.16rem;
 
                 &:first-of-type {
-                  width: 6%;
+                  width: 4%;
                   border-left: 1px solid $borderColor_ccc;
                 }
 
                 &:nth-of-type(2) {
-                  width: 16%;
+                  width: 12%;
                 }
 
                 &:nth-of-type(3) {
-                  width: 12%;
+                  width: 10%;
                 }
 
                 &:nth-of-type(4) {
-                  width: 13%;
+                  width: 10%;
                 }
 
                 &:nth-of-type(5) {
-                  width: 11%;
+                  width: 10%;
                 }
 
                 &:nth-of-type(6) {
-                  width: 12%;
+                  width: 10%;
                 }
-
                 &:nth-of-type(7) {
-                  width: 12%;
+                  width: 10%;
                 }
                 &:nth-of-type(8) {
-                  width: 18%;
+                  width: 10%;
+                }
+                &:nth-of-type(9) {
+                  width: 12%;
+                }
+                &:nth-of-type(10) {
+                  width: 12%;
                 }
 
                 > label {

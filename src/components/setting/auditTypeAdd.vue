@@ -50,8 +50,8 @@ export default {
                 {Value:'001',label:'资金拨付单'},
                 {Value:'002',label:'支付单'},
                 {Value:'003',label:'项目用款单'},
-                {Value:'004',label:'年初申报'},
-                {Value:'005',label:'项目申报单'}
+                {Value:'004',label:'预立项'},
+                {Value:'005',label:'项目立项'}
             ]
         }
     },

@@ -25,15 +25,18 @@
           <div class="top-btn">
             <el-button class="btn"
                        size="mini"
-                       @click="submit()">保存</el-button>
+                       @click="submit('bc')">保存</el-button>
             <el-button class="btn"
-                       size="mini">保存并送审</el-button>
+                       size="mini"
+                       @click="submit('bcss')">保存并送审</el-button>
             <el-button class="btn"
-                       size="mini">暂存</el-button>
+                       size="mini"
+                       @click="submit('zc')">暂存</el-button>
             <el-button class="btn"
                        size="mini">上传附件</el-button>
             <el-button class="btn"
-                       size="mini">填报预览</el-button>
+                       size="mini"
+                       @click="preview()">填报预览</el-button>
           </div>
         </slot>
       </el-col>
@@ -547,6 +550,21 @@
                        :maxWord="maxWord"
                        :data="textareaDialogData"></textarea-dialog>
     </el-dialog>
+    <go-approval v-if="approvalDataS.openDialog"
+                 :data="approvalDataS"
+                 @delete="handleDelete"></go-approval>
+    <el-dialog append-to-body
+               modal-append-to-body
+               :visible.sync="detailDialog"
+               width="50%"
+               :close-on-click-modal="false"
+               class="applyDetailDialog">
+      <div slot="title"
+           class="applyDetailTitle">
+        <span>填报预览</span>
+      </div>
+      <item-print :data="itemDetail"></item-print>
+    </el-dialog>
   </section>
 </template>
 
@@ -555,11 +573,13 @@ import addBr from './addBr'
 import setBuy from './setBuy'
 import textareaDialog from './textareaDialog'
 import { mapState } from 'vuex'
+import GoApproval from "../../pages/preproject/component/goApproval";
+import ItemPrint from "./itemPrint";
 
 export default {
   name: 'prerojectnewproject',
   props: {},
-  components: { addBr, setBuy, textareaDialog },
+  components: {ItemPrint, GoApproval, addBr, setBuy, textareaDialog },
   data () {
     return {
       timeClearable: false,
@@ -769,6 +789,14 @@ export default {
       nowIndex:-1,//绩效目标表格鼠标移动上去的当前值
 
       addNull:true,//判断是否由于没有空值而决定能否提交 false不能提交  true 可以提交
+      approvalDataS:{
+        openDialog:false,
+        data:{},
+        subData:[]//获取审批流
+      },
+      //报表预览
+      detailDialog:false,
+      itemDetail:{}
     }
   },
   computed: {
@@ -852,10 +880,9 @@ export default {
         uid:this.UserId
       }
       this.getAxios('/GQT/CorrespondenceSettingsApi/GetDeptByUnit',data).then(res=>{
-        console.log(res)
         this.projGroup.FBudgetDeptGroup = res.Record
       }).catch(err=>{
-        console.log(err)
+        this.$msgBox.error('请求错误')
       })
     },
     //获取申报部门集合
@@ -1132,7 +1159,7 @@ export default {
 
     },
     //保存
-    submit () {
+    submit (type) {
       //提交前将表单设置为能提交状态
       this.addNull = true
       //赋值实施计划提交的参数
@@ -1174,6 +1201,12 @@ export default {
       for (let i in targetDtl) {
         targetDtl[i].PhId='0'
       }
+      let fas = ''
+      if (type ==='bc'|| type ==='bcss'){
+        fas = 1
+      }else if (type ==='zc'){
+        fas = 5
+      }
       let data = {
         //预算主表对象
         ProjectMst: {
@@ -1197,7 +1230,7 @@ export default {
           FType:'c',//单据类型（c,z）	必填
           FVerNo:'0001',//调整版本号(0001,0002)	必填
           FVerNoFVerNo:'c0001',//(c0001:年初新增;c0002:年中调整;z0001:年中新增)
-          FApproveStatus:'1',//1必填（新增单据默认1）、2审批中、3审批通过、4已退回
+          FApproveStatus:fas,//1必填（新增单据默认1）、2审批中、3审批通过、4已退回、5暂存
           FApprover:'',
           FApproveDate:'',
           FBudgetAmount:this.TotalAmount,
@@ -1258,8 +1291,20 @@ export default {
 
         this.postAxios('/GXM/ProjectMstApi/PostSaveProject', data).then((res) => {
           if (res.Status ==='success'){
-            this.$msgBox.show('新增成功')
-            this.$emit("refresh",res,'add')
+            if(type === 'bc'){
+              this.$msgBox.show('新增成功')
+              this.$emit("refresh",res,'add')
+            } else if (type ==='bcss') {
+              let arr = [];
+              arr.push({
+                PhId:res.KeyCodes[0]
+              })
+              this.approvalDataS.openDialog = true
+              this.approvalDataS.data = arr
+            } else if (type ==='zc') {
+              this.$msgBox.show('暂存成功')
+              this.$emit("refresh",res,'add')
+            }
             console.log(res)
           }else {
             this.$msgBox.error('新增失败'+res.Msg)
@@ -1411,6 +1456,57 @@ export default {
       if (sum !== 100){
         this.$msgBox.show('权重值已改变，所有权重值相加必须等于100，当前值为:'+sum)
       }
+    },
+    //审批弹框关闭时的回调
+    handleDelete(data){
+      debugger
+      this.approvalDataS.openDialog = false
+      this.$emit("refresh",'','add')
+    },
+    //填报预览
+    preview(){
+      let ProjectDtlBudget = []
+      let ProjectDtlImpl = []
+      for (let i in this.budgetdetailData){
+        ProjectDtlBudget.push({
+          FName:this.budgetdetailData[i].FName,
+          FAmount:this.budgetdetailData[i].FAmount.replace(',',''),
+          FPaymentMethod_EXName:this.budgetdetailData[i].FPaymentMethod?this.budgetDetail.fundPayGroup.filter(item => item.TypeCode ===this.budgetdetailData[i].FPaymentMethod )[0].TypeName:'',
+          FOtherInstructions:this.budgetdetailData[i].FOtherInstructions,
+        })
+      }
+      for (let i in this.ImplPlanPanelData) {
+        ProjectDtlImpl.push({
+          FImplContent:this.ImplPlanPanelData[i].FName,
+          FStartDate:this.ImplPlanPanelData[i].sedTime[0],
+          FEndDate:this.ImplPlanPanelData[i].sedTime[1]
+        })
+      }
+      let data = {
+        ProjectDtlBudgetDtls:ProjectDtlBudget,
+        ProjectDtlFundAppls:[],
+        ProjectDtlImplPlans:ProjectDtlImpl,
+        ProjectDtlPerformTargets:{},
+        ProjectDtlPurDtl4SOFs:{},
+        ProjectDtlPurchaseDtls:{},
+        ProjectDtlTextContents:{
+          FLTPerformGoal:this.target.cqTarget,
+          FAnnualPerformGoal:this.target.ndTagetL
+        },
+        ProjectMst:{
+          FProjName:this.projSurvey.FProjName,
+          PhId:'无',
+          FDeclarationDept_EXName:this.projSurvey.FDeclarationDept?this.projGroup.FDeclarationDeptGroup.filter(item => item.deptCode ===this.projSurvey.FDeclarationDept )[0].deptName:'',
+          FDateofDeclaration:(new Date()).getDate(),
+          FDeclarer:this.UserName,
+          FProjCode:'无',
+          FProjAttr_EXName:this.projSurvey.ProjectPropers?this.projGroup.ProjectPropersGroup.filter(item => item.TypeCode ===this.projSurvey.ProjectPropers )[0].TypeName:'',
+          FMeetingTime:'无',
+          FMeetiingSummaryNo:'无'
+        }
+      }
+      this.itemDetail = data
+        this.detailDialog = true
     }
   }
 }
@@ -1949,6 +2045,17 @@ export default {
   }
   .null-projSc >>> .el-textarea__inner{
     border:1px #ef5b47 solid !important;
+  }
+  .applyDetailDialog >>> .el-dialog__header {
+    padding: 10px 0 0 0;
+  }
+  .applyDetailDialog >>> .el-dialog__body {
+    padding: 0 20px;
+  }
+  .applyDetailTitle {
+    text-align: left;
+    border-bottom: 1px solid #eaeaea;
+    height: 30px;
   }
 </style>
 <style lang="stylus">
