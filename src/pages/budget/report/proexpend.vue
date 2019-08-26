@@ -333,7 +333,7 @@
               <el-button class="btn" size="mini" slot="reference">列表显示</el-button>
             </el-popover>
           </li>
-         <!-- <li><el-button class="btn" size="mini" @click="tableType=tableType==0?'1':'0'">切换表格</el-button></li>-->
+          <li><el-button class="btn" size="mini" @click="tableType=tableType==0?'1':'0'">切换表格</el-button></li>
         </ul>
       </div>
     </div>
@@ -386,7 +386,7 @@
       <!--面板表格-->
       <template v-else>
         <div class="tbArea_panel">
-          <paneltable v-if="tableType!=0" :moneyType="searchData.moneyType"></paneltable>
+          <paneltable v-if="tableType!=0" :moneyType="searchData.moneyType" :dataList="dataList"></paneltable>
         </div>
       </template>
 

@@ -1,73 +1,110 @@
 <template>
-    <section class="itemTable_proBuildProject panelTable">
-      <el-table
-        :data="table1.tableData"
-        :row-class-name="rowClassName"
-        :cell-class-name="itemCellClassName"
-        :header-cell-class-name="itemHanderCellClassName"
-        :highlight-current-row="highlightCurrentRow"
-        style="overflow: visible;position: static;padding-top: 50px"
-      >
-        <el-table-column type="selection"></el-table-column>
-        <el-table-column
-          prop="item"
-          align="center"
-          label="预立项项目信息">
-          <template   slot-scope="scope">
-            <div>
-              <div class="top-content">
-                <div class="top-left">项目编码：{{scope.row.item.projectCode}}</div>
-                <div class="top-center">项目名称：{{scope.row.item.projectName}}</div>
-                <div class="top-right">
-                  <div class="card" v-if="moneyType==0">{{scope.row.item.projectMoney | NumFormat}}元</div>
-                  <div class="card" v-if="moneyType==1">{{scope.row.item.projectMoney/10000 |NumFormat}}万元</div>
-                </div>
-              </div>
-              <div class="context">
-                <ul>
-                  <li>
-                    <span>项目属性：{{scope.row.item.name1}}</span><!-- @click="showDetail(scope.row)"-->
-                  </li>
-                  <li>
-                    <span>存续期限：{{scope.row.item.name2}}</span>
-                  </li>
-                  <li>
-                    <span>项目级别：{{scope.row.item.name3}}</span>
-                  </li>
-                  <li>
-                    <span>项目级别：{{scope.row.item.name4}}</span>
-                  </li>
-                  <li>
-                    <span>项目级别：{{scope.row.item.name5}}</span>
-                  </li>
-                  <li>
-                    <span>项目级别：{{scope.row.item.name6}}</span>
-                  </li>
-                  <li>
-                    <span>项目级别：{{scope.row.item.name7}}</span>
-                  </li>
-                  <li>
-                    <span>项目级别：{{scope.row.item.name8}}</span>
-                  </li>
-                  <li>
-                    <span>项目级别：{{scope.row.item.name9}}</span>
-                  </li>
-                </ul>
+  <section class="itemTable_proBuildProject panelTable">
+    <el-table :data="dataList"
+              @select="rowSelect"
+              @select-all="rowSelectAll"
+              :row-class-name="rowClassName"
+              :cell-class-name="itemCellClassName"
+              :header-cell-class-name="itemHanderCellClassName"
+              :highlight-current-row="highlightCurrentRow"
+              style="overflow: visible;position: static;padding-top: 50px">
+      <el-table-column type="selection"></el-table-column>
+      <el-table-column prop="item"
+                       align="center"
+                       label="预立项项目信息">
+        <template slot-scope="scope">
+          <div>
+            <div class="top-content">
+              <div class="top-left">项目编码：{{scope.row.FProjCode}}</div>
+              <div class="top-center">项目名称：{{scope.row.FProjName}}</div>
+              <div class="top-right">
+                <div class="card"
+                     v-if="moneyType == '0'">{{scope.row.FProjAmount | NumFormat}}元</div>
+                <div class="card"
+                     v-else>{{(scope.row.FProjAmount/10000).toLocaleString()}}万元</div>
               </div>
             </div>
-          </template>
-        </el-table-column>
-        <el-table-column prop="status" width="150" label="审批状态" align="center">
-          <template  slot-scope="scope">
-            <div class="status-row" >
-              <div class="status-titile">{{scope.row.status}}(预立项)</div>
-              <div class="status-context">{{scope.row.status}}</div>
+            <div class="context">
+              <ul>
+                <li>
+                  <span @click="showDetail(scope.row)">项目属性：{{scope.row.FProjAttr}}</span>
+                </li>
+                <li>
+                  <span>存续期限：{{scope.row.FDuration}}</span>
+                </li>
+                <li>
+                  <span>项目级别：{{scope.row.name3}}</span>
+                </li>
+                <li>
+                  <span>起止日期：{{scope.row.FStartDate.replace('T00:00:00','')}}至{{scope.row.FEndDate.replace('T00:00:00','')}}</span>
+                </li>
+                <li>
+                  <span>支出类别：{{scope.row.FExpenseCategory_EXName}}</span>
+                </li>
+                <li>
+                  <span>效绩评价：{{scope.row.FIfPerformanceAppraisal}}</span>
+                </li>
+                <li>
+                  <span>申报部门：{{scope.row.FDeclarationDept_EXName}}</span>
+                </li>
+                <li>
+                  <span>预算部门：{{scope.row.FBudgetDept_EXName}}</span>
+                </li>
+                <li>
+                  <span>申报日期：{{scope.row.FDateofDeclaration}}</span>
+                </li>
+                <li>
+                            <span>申报进度：
+                              <span v-if="scope.row.FType+scope.row.FVerNo ==='c0001'">年初新增</span>
+                              <span v-if="scope.row.FType+scope.row.FVerNo ==='c0002'">年中调整</span>
+                              <span v-if="scope.row.FType+scope.row.FVerNo ==='z0001'">年中新增</span>
+                            </span>
+                </li>
+                <li>
+                            <span>项目状态：
+                              <span v-if="scope.row.FProjStatus ===1">预立项</span>
+                              <span v-if="scope.row.FProjStatus ===2">项目立项</span>
+                              <span v-if="scope.row.FProjStatus ===3">项目执行</span>
+                              <span v-if="scope.row.FProjStatus ===4">项目调整</span>
+                              <span v-if="scope.row.FProjStatus ===5">项目暂停</span>
+                              <span v-if="scope.row.FProjStatus ===6">项目终止</span>
+                              <span v-if="scope.row.FProjStatus ===7">项目关闭</span>
+                            </span>
+                </li>
+              </ul>
             </div>
-          </template>
-        </el-table-column>
-      </el-table>
-    </section>
-
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column prop="status"
+                       width="160"
+                       label="审批状态"
+                       align="center">
+        <template slot-scope="scope">
+          <div class="status-row">
+            <div class="status-titile">
+              <span v-if="scope.row.FApproveStatus ==1">待审批</span>
+              <span v-if="scope.row.FApproveStatus ==2">审批中</span>
+              <span v-if="scope.row.FApproveStatus ==3">审批通过</span>
+              <span v-if="scope.row.FApproveStatus ==4">已退回</span>
+              (<span v-if="scope.row.FProjStatus ===1">预立项</span>
+              <span v-if="scope.row.FProjStatus ===2">项目立项</span>
+              <span v-if="scope.row.FProjStatus ===3">项目执行</span>
+              <span v-if="scope.row.FProjStatus ===4">项目调整</span>
+              <span v-if="scope.row.FProjStatus ===5">项目暂停</span>
+              <span v-if="scope.row.FProjStatus ===6">项目终止</span>
+              <span v-if="scope.row.FProjStatus ===7">项目关闭</span>)</div>
+            <div class="status-context">
+              <span v-if="scope.row.FApproveStatus ==1">待审批</span>
+              <span v-if="scope.row.FApproveStatus ==2">审批中</span>
+              <span v-if="scope.row.FApproveStatus ==3">审批通过</span>
+              <span v-if="scope.row.FApproveStatus ==4">已退回</span>
+            </div>
+          </div>
+        </template>
+      </el-table-column>
+    </el-table>
+  </section>
 </template>
 
 <script>
@@ -80,6 +117,12 @@
           default(){
             return 0
           }
+        },
+        dataList: {
+          type: Array,
+          default() {
+            return []
+          }
         }
       },
       data(){
@@ -91,7 +134,12 @@
             },
           }
       },
+      mounted(){
+          console.log('=========表格数据==========')
+          console.log(this.dataList)
+      },
       created(){
+
         let a = {
           item:{
             projectCode:"1313",
@@ -168,6 +216,35 @@
           }else {
             return 'thead-cell'
           }
+        },
+        rowSelect (selection, row) {
+          this.selection = selection
+          console.log(selection)
+        },
+        rowSelectAll (selection) {
+          this.selection = selection
+        },
+        //自定义列数据替换的回调
+        formatter (scope) {
+          let column = scope.column.label;
+          let index = -1
+          for (let key in this.table.column) {
+            if (this.table.column[key].label === column) {
+              index = key
+            }
+          }
+          return this.table.column[index].format(scope)
+        },
+        //自定义单元格的回调
+        cellClick (scope) {
+          let column = scope.column.label;
+          let index = -1
+          for (let key in this.table.column) {
+            if (this.table.column[key].label === column) {
+              index = key
+            }
+          }
+          return this.table.column[index].fn(scope)
         },
       }
     }
