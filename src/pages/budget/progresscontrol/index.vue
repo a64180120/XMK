@@ -6,27 +6,28 @@
         <div v-if="!update"
              @click.stop="update=true"
              class="handle">
-          <div class="topIcon"><img src="@/assets/images/xz.png"
+          <div class="topIcon"><img src="@/assets/images/zj2.png"
                  alt=""></div>
           编辑
         </div>
         <div v-if="update"
              @click.stop="save"
              class="handle">
-          <div class="topIcon"><img src="@/assets/images/xz.png"
+          <div class="topIcon"><img src="@/assets/images/bc.png"
                  alt=""></div>
           保存
         </div>
         <div v-if="update"
              @click.stop="getData();update=false"
              class="handle">
-          <div class="topIcon"><img src="@/assets/images/xz.png"
+          <div class="topIcon"><img src="@/assets/images/qx.png"
                  alt=""></div>
           取消
         </div>
-        <div @click.stop="settingShow"
+        <div style="width:70px"
+             @click.stop="settingShow"
              class="handle">
-          <div class="topIcon"><img src="@/assets/images/xz.png"
+          <div class="topIcon"><img src="@/assets/images/pl.png"
                  alt=""></div>
           批量设置
         </div>
@@ -58,6 +59,7 @@
         <template>
           <el-table :data="tableData"
                     :height="tableH"
+                    header-row-class-name="headerClass"
                     style="width: 100%">
             <el-table-column prop="FDeptName"
                              label="部门名称"
@@ -81,7 +83,7 @@
               </el-table-column>
               <el-table-column prop="name"
                                label="起止时间"
-                               width="280"
+                               width="290"
                                header-align="center">
                 <template slot-scope="scope">
                   <div v-show="update"
@@ -132,7 +134,7 @@
               </el-table-column>
               <el-table-column prop="name"
                                label="起止时间"
-                               width="280"
+                               width="290"
                                header-align="center">
                 <template slot-scope="scope">
                   <div v-show="update"
@@ -577,6 +579,11 @@ export default {
     padding-top: 0;
     padding-bottom: 20px;
   }
+}
+.headerClass > th,
+.headerClass {
+  background: $btnColor !important;
+  color: #fff;
 }
 </style>
 <style>

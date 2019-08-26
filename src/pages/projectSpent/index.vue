@@ -61,7 +61,7 @@
           作废
         </div>-->
         <div @click.stop="showAuditAdd('hx')"
-             class="handle">
+             class="handle" style="width: 65px;">
           <div class="topIcon">
             <img src="@/assets/images/ss.png"
                  alt />
@@ -69,7 +69,7 @@
           额度核销
         </div>
         <div @click.stop="showAuditAdd('cs')"
-             class="handle">
+             class="handle" style="width: 165px;">
           <div class="topIcon">
             <img src="@/assets/images/ss.png"
                  alt />
@@ -98,13 +98,13 @@
           </div>-->
 
           <i class="el-icon-d-arrow-left iicon"
-             style="position:absolute;left:130px;"
+             style="position:absolute;left:0px;"
              @click.stop="unionStateScroll(false)"></i>
           <i class="el-icon-d-arrow-right iicon"
              style="position:absolute;right:275px;"
              @click.stop="unionStateScroll(true)"></i>
           <div class="scrollNav"
-               style="left: 160px;">
+               style="left: 30px;">
             <div>
               <ul>
                 <li>
@@ -258,14 +258,14 @@
 
                   <td class="atype"
                       style="position: relative;overflow: visible"
-                      @click.stop="item.FDelete==1?'':openAuditfollow(item,index)">
-                    <div v-if="isMe&&item.IsApprovalNow==1&&item.FDelete!=1&&menu['fund_check']"
+                      @click.stop="openAuditfollow(item,index)">
+                    <!--<div v-if="isMe&&item.IsApprovalNow==1&&item.FDelete!=1&&menu['fund_check']"
                          style="color: red;"
                          class="iconMsg"
                          @click.stop="item.FDelete==1?'':approvalSubmit(item)">
                       <i class="el-icon-chat-round"></i>
                       <span>审批</span>
-                    </div>
+                    </div>-->
                     <el-tooltip :content="spTypeList[item.FApprovestatus]"
                                 popper-class="tooltipCla"
                                 placement="bottom-start">
@@ -427,7 +427,7 @@
                :title="applyproTitle"
                :visible.sync="applyproType"
                :close-on-click-modal="false">
-      <add v-if="applyproType" :bm="apartData.bm" :ysbm="depMsg" :isadd="isAdd" :phid="checkList[0].PhId"
+      <add v-if="applyproType" :bm="apartData.bm" :ysbm="depMsg" :isadd="isAdd" :phid="applyNum"
                 @updata="handleUpdata('applyproType')"></add>
     </el-dialog>
     <!--送审-->
@@ -504,14 +504,15 @@
           searchValue: ''
         },
         date: [],
-        approvalType: ['', 0, 1, 2, 9],
+        approvalType: ['', 1, 2, 3, 4, 5],
         payType: ['', 0, 1, 2, 9],
         approvalList: [
           { value: '', label: '全部' },
           { value: 1, label: '待送审' },
           { value: 2, label: '审批中' },
-          { value: 4, label: '已退回' },
-          { value: 3, label: '审批通过' }
+          { value: 3, label: '审批通过' },
+          { value: 4, label: '额度返还' },
+          { value: 5, label: '已退回' },
         ],
 
         bmList: [], //部门列表
@@ -519,8 +520,9 @@
         spTypeList: {
           '1': '待送审',
           '2': '审批中',
-          '4': '已退回',
-          '3': '审批通过'
+          '3': '审批通过',
+          '4': '额度返还',
+          '5':'已退回'
         },
         payTypeList: {
           '0': '待支付',
@@ -771,7 +773,7 @@
         })
         return checkedList
       },
-      //q切换右侧项目是进行并状态数据切换
+      //切换右侧项目是进行并状态数据切换
       getChartList: function (index) {
         let da=this.apartData.Mst[index];
         console.log(da);
@@ -929,7 +931,7 @@
           MinAmount: this.money.smoney == 0 ? '' : this.money.smoney,
           MaxAmount: this.money.emoney == 0 ? '' : this.money.emoney,
           UserCode:this.usercode,
-          FDeclarationDept:this.depMsg.deptCode//预算部门
+          FDeclarationDept:this.searchData.bmType/*this.depMsg.deptCode*///预算部门
           /*FBudgetDept:this.depMsg.deptCode,//申报部门,
           FDeclarationunit:this.orgcode||this.depMsg.orgCode,//申报单位
           FDeclarationDept: this.apartData['bm'].OCode,//预算部门
@@ -1022,7 +1024,7 @@
             })
           } else {
             this.applyNum = checkedList[0].PhId + ''
-            this.isAdd = false
+            this.isAdd = false;
             this.$forceUpdate(this.isAdd)
             this.applyproTitle = '项目支出预算申报-修改'
             this.applyproType = true
@@ -1054,9 +1056,6 @@
                 this.deleteJk(checkedList[0].PhId,1)
               })
               .catch(() => { })
-            /*this.$msgBox.show({
-              content: '已进行额度核销的单据不允许删除。'
-            })*/
           }else{
             this.$confirm('确认删除该项目用款单?', '提示', {
               confirmButtonText: '确定',
@@ -1127,9 +1126,36 @@
             if (this.menu['fund_check']) {
               let data = []
               for (var i in checkedList) {
+                if (checkedList[0].FApproval == 2 && checkedList[0].FApproval == 3) {
+                  this.$msgBox.show({
+                    content: '审批中及审批通过的单据不允许删除。'
+                  })
+                }else if( checkedList[0].FApproval == 4 ){
+                  this.$confirm('确认删除该额度核销项目用款单?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelBtnText: '取消',
+                    type: 'warning'
+                  })
+                    .then(() => {
+                      this.deleteJk(checkedList[0].PhId,1)
+                    })
+                    .catch(() => { })
+                }else{
+                  this.$confirm('确认删除该项目用款单?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelBtnText: '取消',
+                    type: 'warning'
+                  })
+                    .then(() => {
+                      this.deleteJk(checkedList[0].PhId,0)
+                    })
+                    .catch(() => { })
+                }
+
+
                 if (
-                  checkedList[i].FApproval != 0 &&
-                  checkedList[i].FApproval != 2
+                  checkedList[i].FApproval == 2 &&
+                  checkedList[i].FApproval == 3
                 ) {
                   this.$msgBox.show({
                     content: '只允许送审待送审及未通过单据。'
@@ -1306,7 +1332,7 @@
           })
           return
         }
-        if (item.FApproval == 0) {
+        if (item.FApprovestatus == 1) {
           this.visible = false
           this.$confirm('当前项目未送审，无法查看审批流。是否送审？', '提示', {
             confirmButtonText: '确定',

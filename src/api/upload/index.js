@@ -17,8 +17,9 @@ export function printTable(vm){
   let print = document.createElement("div");
   print.setAttribute('class','print');
   print.style.padding='10px 20px 10px 20px';
+  debugger
   //获取页面显示的打印表格的表头
-  let dm = vm.$refs.printArea.parentElement.parentElement.firstElementChild.nextElementSibling.childNodes[0].childNodes[2].cloneNode(true);
+  let dm = vm.$refs.printArea.parentElement.parentElement.firstElementChild.childNodes[0].childNodes[2].cloneNode(true);
   //获取页面的表格内容
   let cop = vm.$refs.printArea.cloneNode(true);
   //表格内容拼接表头

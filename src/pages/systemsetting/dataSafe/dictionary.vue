@@ -11,20 +11,7 @@
                  alt=""></div>
           修改
         </div>
-        <div v-show="!disabled"
-             @click.stop="update"
-             class="handle">
-          <div class="topIcon"><img src="@/assets/images/zj2.png"
-                 alt=""></div>
-          保存
-        </div>
-        <div v-show="!disabled"
-             @click.stop="getData();disabled=true;"
-             class="handle">
-          <div class="topIcon"><img src="@/assets/images/zj2.png"
-                 alt=""></div>
-          取消
-        </div>
+
       </div>
     </topHandle>
     <div class="container">
@@ -69,7 +56,8 @@
           </div>
 
         </div>
-        <div class="list listBodyCon">
+        <div :class="{listBodyConUpdate:!disabled}"
+             class="list listBodyCon">
           <div class="listBody">
             <div @click.stop="addInfo(0)"
                  v-if="typeInfoList.length==0"
@@ -78,16 +66,18 @@
                 v-for="(item,n) of typeInfoList"
                 :key="n">
               <li>{{n+1}}</li>
-              <li :class="{gray:!disabled&&ucode!='Admin'}">
-                <div v-show="!(!disabled&&ucode=='Admin')">{{item.TypeCode}}</div>
+              <li :class="{gray:!disabled&&item.Issystem==1&&ucode!='Admin'}">
+                <div v-show="disabled || item.Issystem==1&&ucode!='Admin'">{{item.TypeCode}}</div>
                 <!-- <div v-show="disabled || item.Issystem==1">{{item.TypeCode}}</div>  -->
-                <div v-show="!disabled&&ucode=='Admin'">
-                  <el-input v-model="item.TypeCode"
+                <div v-show="!disabled&&(item.Issystem!=1||ucode=='Admin')">
+                  <el-input maxlength="8"
+                            v-model="item.TypeCode"
                             placeholder="请输入类型编码"></el-input>
                 </div>
               </li>
               <li :class="{gray:!disabled&&item.Issystem==1&&ucode!='Admin'}">
-                <div v-show="disabled || item.Issystem==1&&ucode!='Admin'">{{item.TypeName}}</div>
+                <div :title="item.TypeName"
+                     v-show="disabled || item.Issystem==1&&ucode!='Admin'">{{item.TypeName}}</div>
                 <div v-show="!disabled&&(item.Issystem!=1||ucode=='Admin')">
                   <el-input v-model="item.TypeName"
                             placeholder="请输入类型名称"></el-input>
@@ -138,6 +128,13 @@
               </li>
             </ul>
           </div>
+          <div class="handleBtn"
+               v-show="!disabled">
+            <span @click.stop="refresh"
+                  class="whiteBtn">取消</span>
+            <span @click.stop="update"
+                  class="btn">保存</span>
+          </div>
 
         </div>
 
@@ -153,6 +150,13 @@
                       placeholder="请输入补助代码"
                       @keyup.native="clearNoNum('Value')"
                       v-model="Value"></el-input>
+          </div>
+          <div class="handleBtn"
+               v-show="!disabled">
+            <span @click.stop="refresh"
+                  class="whiteBtn">取消</span>
+            <span @click.stop="update"
+                  class="btn">保存</span>
           </div>
         </div>
         <div v-else
@@ -211,7 +215,10 @@
       </div>
       <div v-else-if="selected.DicType=='PerformEvals'"
            class="content">
-        <PerformEvals @disableUpdate="disableUpdate"
+        <PerformEvals ref="PerformEvals"
+                      @refresh="refresh"
+                      @update="update"
+                      @disableUpdate="disableUpdate"
                       :disabled="disabled" />
       </div>
     </div>
@@ -256,6 +263,8 @@ export default {
 
         { DicType: 'TimeLimit', DicName: '续存期限', },
         { DicType: 'PayMethodTwo', DicName: '支付方式', },
+        { DicType: 'Zcgnfl', DicName: '支出功能分类', },
+
         { DicType: 'ProcurementsCatalog', DicName: '采购目录', },
         { DicType: 'ProcurementsProcedures', DicName: '采购程序', },
         { DicType: 'ProcurementsType', DicName: '采购类型', }
@@ -274,6 +283,7 @@ export default {
         'ProcurementsProcedures',
         'ProcurementsType',
         'TargetClasses',
+        'Zcgnfl'
         // 'PerformEvals',
       ],
       typeInfoList: [
@@ -307,7 +317,15 @@ export default {
   methods: {
     refresh () {
       this.disabled = true;
-      this.getData();
+      if (this.selected.DicType == 'PerformEvals') {  //绩效指标
+        if (this.$refs.PerformEvals) {
+          this.$refs.PerformEvals.refresh()
+        }
+        // this.$nextTick()
+
+      } else {
+        this.getData();
+      }
     },
     getData () {
       let data = {
@@ -380,8 +398,7 @@ export default {
     },
     selectType (type) {
       this.selected = type;
-      this.disabled = true;
-      this.getData();
+      this.refresh();
     },
     disableUpdate () {
       this.disabled = false;
@@ -617,6 +634,7 @@ export default {
         border-width: 0 1px 1px 0;
         height: 40px;
         line-height: 40px;
+
         font-size: 0.16rem;
         &:first-of-type {
           width: 10%;
@@ -627,12 +645,15 @@ export default {
         }
         &:nth-of-type(3) {
           width: 20%;
+          overflow: hidden;
         }
         &:nth-of-type(4) {
           width: 20%;
+          overflow: hidden;
         }
         &:nth-of-type(5) {
           width: 15%;
+          overflow: hidden;
         }
         &:nth-of-type(6) {
           width: 20%;
@@ -657,6 +678,9 @@ export default {
   .listBodyCon {
     height: 100%;
     padding-bottom: 40px;
+  }
+  .listBodyConUpdate {
+    padding-bottom: 70px;
   }
   .listBody {
     overflow-y: scroll;
@@ -778,6 +802,14 @@ export default {
         height: 16px;
       }
     }
+  }
+}
+.handleBtn {
+  text-align: right;
+  padding-right: 80px;
+  margin-top: 7px;
+  > span {
+    margin-left: 20px;
   }
 }
 </style>

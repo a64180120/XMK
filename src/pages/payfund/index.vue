@@ -39,7 +39,7 @@
         </div>
         <div v-if="menu['fund_uncheck']"
              @click.stop="showAuditAdd('QXSS')"
-             class="handle">
+             class="handle"  style="width: 65px;">
           <div class="topIcon">
             <img src="@/assets/images/ss_d.png"
                  alt />
@@ -1691,6 +1691,7 @@ td p {
 .self_hyz .el-select__tags {
   position: absolute;
   left: 0;
+  max-width: 140px!important;
 }
 .sinor li {
   margin-bottom: 15px;

@@ -19,7 +19,7 @@
           class="navitem active"
           v-for="(item,index) of navlist"
           :key="index">
-        <div @click.stop="routerto(item.path)">
+        <div @click.stop="routerto(item.path,index)">
           <!-- <img v-show="!item.active&&choosed!=index" src="../../assets/images/1_03.png" alt="">
                     <img v-show="choosed==index||item.active" src="../../assets/images/2_03.png" alt=""> -->
           <div :class="item.icon+' navIcon'"></div>
@@ -59,7 +59,17 @@ export default {
           name: '数据与安全维护',
           children: [
             { name: '数据字典', path: '/dictionary' },
-            { name: '支付口令设置', path: '/paypassword' }
+            { name: '支付口令设置', path: '/paypassword' },
+            { name: '业务单据编码规则', path: '/coderules' }
+          ]
+        },
+        {
+          icon: 'pageControl',
+          name: '页面与控制项维护',
+          path: '/pageandcontrol',
+          children: [
+
+
           ]
         }
       ],
@@ -171,6 +181,10 @@ $activeColor: #59abf1;
           background: url("../../assets/images/2_14.png");
           background-size: cover;
         }
+        .pageControl {
+          background: url("../../assets/images/2_18.png");
+          background-size: cover;
+        }
       }
     }
     .choose {
@@ -182,6 +196,10 @@ $activeColor: #59abf1;
       }
       .navdata {
         background: url("../../assets/images/2_14.png");
+        background-size: cover;
+      }
+      .pageControl {
+        background: url("../../assets/images/2_18.png");
         background-size: cover;
       }
     }
@@ -199,6 +217,13 @@ $activeColor: #59abf1;
   .navdata {
     background: url("../../assets/images/1_14.png");
     background-size: cover;
+  }
+  .pageControl {
+    background: url("../../assets/images/1_18.png");
+    background-size: cover;
+  }
+  .pageControl + span {
+    font-size: 0.15rem;
   }
 }
 </style>

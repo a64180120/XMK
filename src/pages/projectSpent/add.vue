@@ -11,7 +11,7 @@
           <div style="text-align: left;padding-left: 25px">
             <span style="letter-spacing: 9px">单据名称</span>
             <el-input style="display: inline-block;width: 635px;" size="mini" v-model="formDate.FProjname"></el-input>
-            <el-upload
+            <!--<el-upload
               class="avatar-uploader"
               action="https://www.dmeo.com/posts/"
               :show-file-list="false"
@@ -19,7 +19,7 @@
               :before-upload="beforeAvatarUpload">
               <img v-if="imageUrl" :src="imageUrl" class="avatar">
               <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-            </el-upload>
+            </el-upload>-->
           </div>
           <div class="msgPanel">
             <div class="typeTitle">部门信息</div>
@@ -131,7 +131,7 @@
               </tr>
             </thead>
             <tbody>
-            <tr v-for="(item,index) in dataList">
+            <tr v-for="(item,index) in dataList" v-if="item.PersistentState!=3">
               <td>{{index+1}}</td>
               <td><input v-model="item.FName"/></td>
               <td @click="openDtl(index)">{{item.FDtlName}}</td>
@@ -197,6 +197,12 @@
            return true
           }
         },
+        phid: {
+          type: String,
+          default(){
+            return ''
+          }
+        },
           bm: {
             type: Object,
             default(){
@@ -232,6 +238,7 @@
                 FReturnamount:0//返还金额
               }
             ],
+            delDataList: [],
             formDate:{
               FYear:'',//项目年度
               FProjcode:'',
@@ -282,7 +289,6 @@
       },
       watch: {
         pListIndex:function(val){
-          console.log(this.pList[val])
           this.chooseBm=this.pList[val];
           this.formDate.FProjcode=this.pList[val].FProjCode;
           this.formDate.FProjname=this.pList[val].FProjName;
@@ -293,14 +299,16 @@
         }
       },
       mounted(){
-        this.getDataPro();
-        this.formDate.FDeclarationunit=this.ysbm.orgCode;
-        this.formDate.FBudgetDept=this.ysbm.deptCode;
-        this.formDate.FDeclarationDept=this.bm.OCode;
-        this.formDate.FYear=this.year;
         if( !this.isadd ){
           this.getData();
+        }else{
+          this.formDate.FDeclarationunit=this.ysbm.orgCode;
+          this.formDate.FBudgetDept=this.ysbm.deptCode;
+          this.formDate.FDeclarationDept=this.bm.OCode;
+          this.formDate.FYear=this.year;
+          this.getDataPro();
         }
+
       },
       methods:{
           //附件上传
@@ -317,6 +325,10 @@
         },
         //列表删行
         minusData: function(index) {
+          if(this.dataList[index].PhId!=undefined){
+            this.dataList[index].PersistentState=3;
+            this.delDataList.push(this.dataList.slice(index,index+1));
+          }
           this.dataList.splice(index,1);
         },
         //获取申报项目信息--id 单据主键
@@ -324,8 +336,9 @@
           let url='GYS/ExpenseMstApi/GetExpenseMstInfo';
           let param={ id:this.phid };
           this.getAxios( url,param ).then( res=>{
-            console.log('======项目申报信息=======')
-            console.log(res);
+            this.formDate=res.ExpenseMst;
+            this.dataList=res.ExpenseDtls;
+            this.getDataPro();
           }).catch( err=>{
             console.log(err)
           })
@@ -341,9 +354,18 @@
           }
           this.getAxios(url, param)
             .then(res => {
-              console.log(res)
               this.pList=res.Record;
-              this.pListIndex=0;
+              //this.$set(this.pList,'',res.Record);
+              if( this.isadd ){
+                this.pListIndex=0;
+              }else{
+                for(var val=0; val<this.pList.length; val++){
+                  if( this.formDate.FProjcode==this.pList[val].FProjCode ){
+                    this.pListIndex = val;
+                  }
+                }
+              }
+
               /*this.getProMst( res.Record[0].PhId )*/
             })
             .catch(err => {
@@ -365,7 +387,6 @@
             }
             this.budgetDtls=res.budgetDtls;
             this.formDate.FExpenseCategory=res.FExpenseCategory;
-            console.log(res)
             this.maxMoney=res.Yskm_Amount;//科目可申报上限，与明细配合
           }).catch( err=>{
             console.log(err)
@@ -378,7 +399,6 @@
         },
         //确认选择明细
         confirmDtl: function() {
-          console.log(this.choosedDtl);
           this.dataList[this.openDtlIndex].FDtlName=this.choosedDtl.FName; //明细项目名称；
           //this.dataList[this.openDtlIndex].FAmount=this.choosedDtl.FAmount; //预计支出金额；
           this.dataList[this.openDtlIndex].FSourceoffunds=this.choosedDtl.FSourceOfFunds;//资金来源；
@@ -408,9 +428,8 @@
               content:  this.dataList[index].FBudgetaccounts + this.dataList[index].FBudgetaccounts_EXName + "科目剩余"
                 + this.maxMoney[this.dataList[index].FBudgetaccounts] + "元可用！当前输入超过可用余额，已自动为您调整为最大可申报金额"
             })
-            console.log(overMoney ,this.dataList[index].FAmount)
-            this.countMoney();
           }
+          this.countMoney();
         },
         //金额合计
         countMoney: function() {
@@ -418,15 +437,16 @@
           for( var i in this.dataList ){
             count=((+count)*100+(+this.dataList[i].FAmount)*100)/100;
           }
-          this.FSurplusamount=count;
+          this.formDate.FSurplusamount=count;
         },
         //保存单据
         saveBill: function() {
           let url='GYS/ExpenseMstApi/PostSave';
           this.formDate.FDateofdeclaration=new Date();
+          let exDtls=this.dataList.concat(...this.delDataList);
           let data={
             ExpenseMst: this.formDate,
-            ExpenseDtls: this.dataList,
+            ExpenseDtls: exDtls,
             beforeSum:0,
             beforeFReturnamount:0
           };

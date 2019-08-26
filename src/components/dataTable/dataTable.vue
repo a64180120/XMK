@@ -88,7 +88,7 @@
         },
         //单元格点击事件的回调
         cellClick(a,b,c,d){
-          debugger
+           
           this.context.add()
           this.column[d].function(a,b,c,d,this.context)
           this.context.add()
