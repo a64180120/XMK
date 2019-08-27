@@ -90,6 +90,12 @@ const staticRoute = [
         meta: { requireAuth: true, type: 'page', name: '项目立项审批' }
       },
       {
+        path: '/projectList',
+        component: () =>
+          import(/* webpackChunkName:'preBuildProject'*/ '../pages/projectList/projectList'),
+        meta: { requireAuth: true, type: 'page', name: '项目查询' }
+      },
+      {
         path: '/midyearDeclare',
         component: () =>
           import(/* webpackChunkName:'preBuildProject'*/ '../pages/midyearDeclare/midyearDeclare'),

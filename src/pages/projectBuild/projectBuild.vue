@@ -84,7 +84,7 @@
     </top-handle>
 
     <div>
-      <div class="container content-body">
+      <div class="container content-body" style="min-width: 1300px;overflow: auto;min-height:750px">
         <div class="formArea">
           <!--搜索栏-->
           <div class="btnArea"
@@ -229,7 +229,9 @@
                         :highlight-current-row="highlightCurrentRow"
                         style="overflow: visible;position: static;padding-top: 50px">
                 <el-table-column v-if="table.selection"
-                                 type="selection"></el-table-column>
+                                 type="selection" width="30"></el-table-column>
+                <el-table-column
+                  type="index" width="35"></el-table-column>
                 <el-table-column v-for="(item,idx) in table.column"
                                  :prop="item.prop"
                                  :label="item.label"
@@ -293,7 +295,9 @@
                         :header-cell-class-name="itemHanderCellClassName"
                         :highlight-current-row="highlightCurrentRow"
                         style="overflow: visible;position: static;padding-top: 50px">
-                <el-table-column type="selection"></el-table-column>
+                <el-table-column type="selection" width="30"></el-table-column>
+                <el-table-column
+                  type="index" width="35"></el-table-column>
                 <el-table-column prop="item"
                                  align="center"
                                  label="项目立项项目信息">
@@ -440,7 +444,7 @@
            style="text-align: left;border-bottom: 1px solid #eaeaea">
         <span>申报表打印</span>
       </div>
-      <item-print :data="itemDetail"></item-print>
+      <item-print :data="itemDetail" @closeDetail="itemlDialog = false"></item-print>
     </el-dialog>
     <auditfollow :visible.sync="openfollow"></auditfollow>
 
@@ -747,7 +751,9 @@ export default {
         length = this.table.column.length - 1      }
       if (columnIndex === 0) {
         return 'frist-column'
-      } else if (columnIndex === length) {
+      }else if(columnIndex === 1){
+        return 'secend-column'
+      }else if (columnIndex === length +1) {
         return 'last-column'
       } else {
         return 'middle-column'
@@ -757,6 +763,8 @@ export default {
     handerCellClassName ({ row, column, rowIndex, columnIndex }) {
       if (columnIndex === this.table.column.length) {
         return 'thead-last-cell'
+      }else if (columnIndex === 0){
+        return 'thead-frist'
       } else {
         return 'thead-cell'
       }
@@ -765,7 +773,9 @@ export default {
     itemCellClassName ({ row, column, rowIndex, columnIndex }) {
       if (columnIndex === 0) {
         return 'frist-column'
-      } else if (columnIndex === 2) {
+      }else if(columnIndex === 1){
+        return 'secend-column'
+      } else if (columnIndex === 3) {
         return 'last-column'
       } else {
         return 'middle-column'
@@ -773,8 +783,10 @@ export default {
     },
     //表头单元格回调
     itemHanderCellClassName ({ row, column, rowIndex, columnIndex }) {
-      if (columnIndex === 2) {
+      if (columnIndex === 3) {
         return 'thead-last-cell'
+      }else if (columnIndex === 0){
+        return 'thead-frist'
       } else {
         return 'thead-cell'
       }
@@ -908,10 +920,12 @@ export default {
     },
     //搜索框查询事件
     searchInput () {
+      this.page.currentPage = 1
       this.getTableData()
     },
     //高级搜索框清空
     seniorReset(){
+      this.page.currentPage = 1
       this.seniorSearch = {//高级筛选
         FProjName:'',//项目名称
         FProjCode:'',//项目编码
@@ -936,10 +950,13 @@ export default {
       if (this.selection.length === 0){
         this.$msgBox.error('请选择单据进行项目执行确认')
       }else if (this.selection.length === 1){
+        if (this.selection[0].FIfYsxz ===0) {
+          this.$msgBox.error('请先预算修正再进行项目执行确认')
+          return
+        }
           let data = {
             id:this.selection[0].PhId
           }
-          console.log(typeof this.selection[0].FApproveStatus,typeof this.selection[0].FProjStatus)
           if(this.selection[0].FApproveStatus === '3' && this.selection[0].FProjStatus === 2){
             this.getAxios('GXM/ProjectMstApi/GetSaveBudgetMst',data).then(res=>{
               if(res.Status ==='success'){
@@ -979,8 +996,9 @@ export default {
         this.$msgBox.error('请选择数据进行送审')
       }else if (this.selection.length ===1) {
         console.log(this.selection[0])
-        if (this.selection[0]) {
-
+        if (this.selection[0].FIfYsxz === 0) {
+            this.$msgBox.error('请先预算修正再送审')
+          return
         }
         this.approvalDataS.openDialog = true
         this.approvalDataS.data = this.selection

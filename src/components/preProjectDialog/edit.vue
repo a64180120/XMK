@@ -7,19 +7,19 @@
       <el-col :span="24"
               style="margin-top:10px;margin-bottom: 10px">
         <div class="btn-left">
-          <p style="display:inline-block;margin-right:10px;">
-            <span>项目年度：</span>
-            <el-select v-model="yearSelect"
-                       size="small"
-                       placeholder="必选">
-              <el-option :label="year"
-                         :value="year"></el-option>
-              <el-option :label="year-1"
-                         :value="year-1"></el-option>
-              <el-option :label="year-2"
-                         :value="year-2"></el-option>
-            </el-select>
-          </p>
+          <div class="bottom-info">
+            <ul>
+              <li>
+                <span>当前阶段：年初申报</span>
+              </li>
+              <li>
+                <span>申报日期：{{new Date().getFullYear()+'-'+(new Date().getMonth()+1)+'-'+new Date().getDate() }}</span>
+              </li>
+              <li>
+                <span>申报人：{{UserName}}</span>
+              </li>
+            </ul>
+          </div>
         </div>
         <slot name="btn">
           <div class="top-btn">
@@ -121,6 +121,19 @@
                          :key="idx"
                          :label="item.Mc"
                          :value="item.Dm"></el-option>
+            </el-select>
+          </li>
+          <li>
+            <span>项目年度：</span>
+            <el-select v-model="yearSelect"
+                       size="small"
+                       placeholder="必选">
+              <el-option :label="year"
+                         :value="year"></el-option>
+              <el-option :label="year-1"
+                         :value="year-1"></el-option>
+              <el-option :label="year-2"
+                         :value="year-2"></el-option>
             </el-select>
           </li>
           <li >
@@ -315,10 +328,11 @@
               <div class="listBottom-right">
                 <span>其中:</span>
                 <ul>
-                  <li v-for="(item,idx) in budgetDetail.FSourceOfFundsGroup">
+                  <li  v-if=" budgetDetail.FSourceOfFundsGroup.length !==0" v-for="(item,idx) in budgetDetail.FSourceOfFundsGroup">
                     <span class="title">{{item.MC}}</span>
                     <span class="money">{{budgetdetailData.filter(i=>i.FSourceOfFunds===item.DM).reduce((prev,cur)=>prev+parseFloat((Number((cur.FAmount).replace(/[,]/g, ''))).toFixed(2)),0) | NumFormat}}</span>
                   </li>
+                  <li v-else style="text-align: center;color: #eaeaea"> 暂无数据 </li>
                 </ul>
               </div>
             </div>
@@ -496,19 +510,6 @@
               </div>
             </div>
           </div>
-        </div>
-        <div class="bottom-info">
-          <ul>
-            <li>
-              <span>当前阶段：年初申报</span>
-            </li>
-            <li>
-              <span>申报日期：{{new Date().getFullYear()+'-'+(new Date().getMonth()+1)+'-'+new Date().getDate() }}</span>
-            </li>
-            <li>
-              <span>申报人：{{UserName}}</span>
-            </li>
-          </ul>
         </div>
       </div>
     </el-row>
@@ -821,7 +822,6 @@
       }
     },
     mounted () {
-      this.yearSelect = this.year;
       this.getProjectMst();
       this.getDeclareList();
       this.getAllBasicData();
@@ -840,6 +840,7 @@
           this.dataDtl  = res;
           //项目概况赋值
           this.projectMst = res.ProjectMst;
+          this.yearSelect = res.ProjectMst.FYear;
           this.projSurvey.FProjName = res.ProjectMst.FProjName;
           this.projSurvey.FDeclarationDept = res.ProjectMst.FDeclarationDept;
           this.projSurvey.FLevel = res.ProjectMst.FLevel;
@@ -1643,6 +1644,22 @@
       font-size: 0.16rem;
       line-height: 28px;
       color: $yellowColor;
+      .bottom-info{
+        height: 20px;
+        ul{
+          list-style: none;
+          margin-left: 10px;
+          li{
+            display: inline-block;
+            float: left;
+            margin-left: 20px;
+            span{
+              color: #ff9800
+            }
+          }
+        }
+      }
+
     }
 
     .top-btn {
@@ -1917,7 +1934,8 @@
             overflow-y: scroll;
             padding-right: 25px;
             height: 100%;
-
+            border-bottom: 1px solid #e3e3e3;
+            border-bottom: 1px solid #e3e3e3;
             ul li:not(:first-of-type) {
               font-size: 0;
             }

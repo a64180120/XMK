@@ -4,14 +4,15 @@
                 @refresh="refresh()">
       <div class="top">
         <ul>
-          <li v-if="formList.swatchBtn !== '3'" class="handle"
-              @click="add()">
+          <li v-if="formList.swatchBtn !== '3' &&MenuButton.ProjectMstList_Vue_add ==='True'" class="handle"
+              @click="add()"
+              >
             <div>
               <img src="@/assets/images/xz.png">
             </div>
             <span>新增</span>
           </li>
-          <li v-if="formList.swatchBtn !== '3'" class="handle"
+          <li v-if="formList.swatchBtn !== '3'&&MenuButton.ProjectMstList_Vue_edit ==='True'" class="handle"
               @click="edit()">
             <div>
               <img src="@/assets/images/zj2.png">
@@ -19,20 +20,21 @@
             <span>修改</span>
           </li>
           <li class="handle"
+              v-if="MenuButton.ProjectMstList_Vue_delete ==='True'"
               @click="deleteItem()">
             <div>
               <img src="@/assets/images/zj3.png">
             </div>
             <span>删除</span>
           </li>
-          <li v-if="formList.swatchBtn !== '3'" class="handle"
+          <li v-if="formList.swatchBtn !== '3' && MenuButton.ProjectMstList_Vue_copy ==='True'" class="handle"
               @click="copyList()">
             <div>
               <img src="@/assets/images/xz.png">
             </div>
             <span>复制</span>
           </li>
-          <li v-if="formList.swatchBtn ==='3'"
+          <li v-if="formList.swatchBtn ==='3'&& MenuButton.ProjectMstList_Vue_transfer ==='True'"
               class="handle"
               @click="transferItem()">
             <div>
@@ -40,7 +42,7 @@
             </div>
             <span>转立项</span>
           </li>
-          <li v-if="formList.swatchBtn ==='3'"
+          <li v-if="formList.swatchBtn ==='3'&& MenuButton.ProjectMstList_Vue_reject ==='True' "
               class="handle"
               @click="rejectItem()">
             <div>
@@ -48,7 +50,7 @@
             </div>
             <span>驳回</span>
           </li>
-          <li v-if="formList.swatchBtn ==='1'"
+          <li v-if="formList.swatchBtn ==='1'&& MenuButton.ProjectMstList_Vue_check ==='True'  "
               class="handle"
               @click="subApproval()">
             <div>
@@ -57,7 +59,7 @@
             <span>送审</span>
           </li>
 
-          <li v-if="formList.swatchBtn ==='1'"
+          <li v-if="formList.swatchBtn ==='1'&& MenuButton.ProjectMstList_Vue_uncheck ==='True' "
               class="handle"
               @click="unSubApproval()">
             <div>
@@ -65,7 +67,7 @@
             </div>
             <span>取消送审</span>
           </li>
-          <li v-if="formList.swatchBtn ==='2'||formList.swatchBtn ==='2'"
+          <li v-if="(formList.swatchBtn ==='2'||formList.swatchBtn ==='2')&& MenuButton.ProjectMstList_Vue_report ==='True'"
               class="handle"
               @click="report()">
             <div>
@@ -73,7 +75,7 @@
             </div>
             <span>上报</span>
           </li>
-          <li v-if="formList.swatchBtn ==='1'||formList.swatchBtn ==='2'"
+          <li v-if="(formList.swatchBtn ==='1'||formList.swatchBtn ==='2')&& MenuButton.ProjectMstList_Vue_invalid ==='True'"
               class="handle"
               @click="abolish()">
             <div>
@@ -81,26 +83,45 @@
             </div>
             <span>作废</span>
           </li>
-          <li class="handle"
-              @click="">
-            <div>
-              <img src="@/assets/images/dy.png">
-            </div>
-            <span>申请表打印</span>
-          </li>
-          <li class="handle"
-              @click="">
-            <div>
-              <img src="@/assets/images/dy.png">
-            </div>
-            <span>汇总表打印</span>
-          </li>
-          <li class="handle"
-              @click="swatchTable">
-            <div>
-              <img style="height: 34px" src="@/assets/images/list.png">
-            </div>
-            <span>列表样式</span>
+          <li v-if="formList.swatchBtn ==='1'||formList.swatchBtn ==='2'"
+              class="handle"
+              @click="moreTip()">
+            <el-popover placement="bottom-end" width="500">
+              <div class="inner-top">
+                <ul>
+                  <li class="handle"
+                      v-if="MenuButton.ProjectMstList_Vue_printfSB ==='True'"
+                      @click="">
+                    <div>
+                      <img src="@/assets/images/dy.png">
+                    </div>
+                    <span>申请表打印</span>
+                  </li>
+                  <li class="handle"
+                      v-if="MenuButton.ProjectMstList_Vue_printfHZ ==='True'"
+                      @click="">
+                    <div>
+                      <img src="@/assets/images/dy.png">
+                    </div>
+                    <span>汇总表打印</span>
+                  </li>
+                  <li class="handle"
+                      @click="swatchTable">
+                    <div>
+                      <img style="height: 34px" src="@/assets/images/list.png">
+                    </div>
+                    <span>列表样式</span>
+                  </li>
+                </ul>
+              </div>
+
+              <div slot="reference">
+                <div>
+                  <img src="@/assets/images/nav.svg">
+                </div>
+                <span>更多</span>
+              </div>
+            </el-popover>
           </li>
         </ul>
 
@@ -267,9 +288,11 @@
                         :highlight-current-row="highlightCurrentRow"
                         style="overflow: visible;position: static;padding-top: 50px">
                 <el-table-column v-if="table.selection"
-                                 type="selection">
+                                 type="selection" width="30">
 
                 </el-table-column>
+                <el-table-column
+                                 type="index" width="35"></el-table-column>
                 <el-table-column v-for="(item,idx) in table.column"
                                  :prop="item.prop"
                                  :label="item.label"
@@ -289,9 +312,9 @@
                          class="table-column-height"
                          :style="{textAlign:item.align}">
                       <span v-if="formList.year =='1'"
-                            :style="{textAlign:item.align}">{{scope.row[item.prop] |NumFormat}}元</span>
+                            :style="{textAlign:item.align}">￥{{scope.row[item.prop] |NumFormat}}元</span>
                       <span v-else
-                            :style="{textAlign:item.align}">{{scope.row[item.prop] / 10000}}万元</span>
+                            :style="{textAlign:item.align}">￥{{scope.row[item.prop] / 10000|NumFormat }}万元</span>
                     </div>
                     <div v-else-if="item.other ==='start-end'"
                          class="table-column-height"
@@ -332,7 +355,9 @@
                         :header-cell-class-name="itemHanderCellClassName"
                         :highlight-current-row="highlightCurrentRow"
                         style="overflow: visible;position: static;padding-top: 50px">
-                <el-table-column type="selection"></el-table-column>
+                <el-table-column type="selection" width="30"></el-table-column>
+                <el-table-column
+                  type="index" class="index" width="35"></el-table-column>
                 <el-table-column prop="item"
                                  align="center"
                                  label="预立项项目信息">
@@ -340,16 +365,16 @@
                     <div>
                       <div class="top-content">
                         <div class="top-left">项目编码：<span class="top-left-code" @click="showDetail(scope)">{{scope.row.FProjCode}}</span></div>
-                        <div class="top-center">项目名称：
+                        <div class="top-center" style="text-align: left">项目名称：
                           <el-tooltip :content="scope.row.FProjName">
                             <span style="font-family: 宋体">{{scope.row.FProjName}}</span>
                           </el-tooltip>
                         </div>
                         <div class="top-right">
                           <div class="card"
-                               v-if="formList.year == '1'">{{scope.row.FProjAmount | NumFormat}}元</div>
+                               v-if="formList.year == '1'">￥{{scope.row.FProjAmount | NumFormat}}元</div>
                           <div class="card"
-                               v-if="formList.year == '2'">{{(scope.row.FProjAmount/10000)}}万元</div>
+                               v-if="formList.year == '2'">￥{{(scope.row.FProjAmount/10000) | NumFormat}}万元</div>
                         </div>
                       </div>
                       <div class="context">
@@ -364,8 +389,7 @@
                             <span>项目级别：{{scope.row.FLevel_EXName}}</span>
                           </li>
                           <li>
-                            <span>起止日期：
-                               <el-tooltip :content="scope.row.FStartDate.replace('T00:00:00','')+'至'+scope.row.FEndDate.replace('T00:00:00','')">
+                            <span>起止日期：<el-tooltip :content="scope.row.FStartDate.replace('T00:00:00','')+'至'+scope.row.FEndDate.replace('T00:00:00','')">
                                   <span>{{scope.row.FStartDate.replace('T00:00:00','')}}至{{scope.row.FEndDate.replace('T00:00:00','')}}</span>
                               </el-tooltip>
                             </span>
@@ -386,16 +410,14 @@
                             <span>申报日期：{{scope.row.FDateofDeclaration.replace('T',' ')}}</span>
                           </li>
                           <li>
-                            <span>申报进度：
-                              <span v-if="scope.row.FType+scope.row.FVerNo ==='c0001'">年初新增</span>
+                            <span>申报进度：<span v-if="scope.row.FType+scope.row.FVerNo ==='c0001'">年初新增</span>
                               <span v-else-if="scope.row.FType+scope.row.FVerNo ==='c0002'">年中调整</span>
                               <span v-else-if="scope.row.FType+scope.row.FVerNo ==='z0001'">年中新增</span>
                               <span v-else>无</span>
                             </span>
                           </li>
                           <li>
-                            <span>项目状态：
-                              <span v-if="scope.row.FProjStatus ===1">预立项</span>
+                            <span>项目状态：<span v-if="scope.row.FProjStatus ===1">预立项</span>
                               <span v-else-if="scope.row.FProjStatus ===2">项目立项</span>
                               <span v-else-if="scope.row.FProjStatus ===3">项目执行</span>
                               <span v-else-if="scope.row.FProjStatus ===4">项目调整</span>
@@ -426,8 +448,8 @@
                         </span>
                         <span v-else>
                            <span v-if="scope.row.FApproveStatus ==1">待上报</span>
-                           <span v-if="scope.row.FApproveStatus ==2">待审批</span>
-                           <span v-if="scope.row.FApproveStatus ==3">已审批</span>
+                           <span v-if="scope.row.FApproveStatus ==2">审批中</span>
+                           <span v-if="scope.row.FApproveStatus ==3">审批通过</span>
                            <span v-if="scope.row.FApproveStatus ==4">待执行</span>
                            <span v-if="scope.row.FApproveStatus ==5">暂存</span>
                         </span>
@@ -448,8 +470,8 @@
                         </span>
                         <span v-else>
                           <span v-if="scope.row.FApproveStatus ==1">待上报</span>
-                           <span v-if="scope.row.FApproveStatus ==2">待审批</span>
-                           <span v-if="scope.row.FApproveStatus ==3">已审批</span>
+                           <span v-if="scope.row.FApproveStatus ==2">审批中</span>
+                           <span v-if="scope.row.FApproveStatus ==3">审批通过</span>
                            <span v-if="scope.row.FApproveStatus ==4">待执行</span>
                            <span v-if="scope.row.FApproveStatus ==5">暂存</span>
                         </span>
@@ -525,7 +547,7 @@
            class="applyDetailTitle">
         <span>申报表打印</span>
       </div>
-      <item-print :data="itemDetail"></item-print>
+      <item-print :data="itemDetail" @closeDetail="detailDialog = false"></item-print>
 
     </el-dialog>
     <!--送审-->
@@ -650,7 +672,7 @@ export default {
                 if (scope.row.FApproveStatus == 1) {
                   return '<span>' + '待上报('+MC+')' + '</span>'
                 } else if (scope.row.FApproveStatus == 2) {
-                  return '<span>' + '待审批('+MC+')' + '</span>'
+                  return '<span>' + '审批中('+MC+')' + '</span>'
                 } else if (scope.row.FApproveStatus == 3) {
                   return '<span>' + '已审批('+MC+')' + '</span>'
                 } else if (scope.row.FApproveStatus == 4) {
@@ -666,7 +688,8 @@ export default {
               that.getAppvalProcList(scope.row)
             }
           }],
-        selection: true
+        selection: true,
+        index:true
       },
       highlightCurrentRow: false,
       rowNumber: 4,
@@ -743,13 +766,14 @@ export default {
     })
   },
   created () {
+    this.getTableData();
   },
   mounted () {
     this.getWorkFlow()
     this.getExpenseCategoryList()
-    this.getTableData();
     this.getBudegDepart();
     this.getDeclareList();
+    console.log(this.MenuButton)
   },
   methods: {
     //获取过程是否启用工作流
@@ -866,10 +890,13 @@ export default {
     cellClassName ({ row, column, rowIndex, columnIndex }) {
       let length = this.table.column.length
       if (!this.table.selection) {
-        length = this.table.column.length - 1      }
+        length = this.table.column.length - 2      }
       if (columnIndex === 0) {
         return 'frist-column'
-      } else if (columnIndex === length) {
+      }else if(columnIndex === 1){
+        return 'secend-column'
+      }
+      else if (columnIndex === length +1) {
         return 'last-column'
       } else {
         return 'middle-column'
@@ -877,8 +904,10 @@ export default {
     },
     //表头单元格回调
     handerCellClassName ({ row, column, rowIndex, columnIndex }) {
-      if (columnIndex === this.table.column.length) {
+      if (columnIndex === this.table.column.length +1) {
         return 'thead-last-cell'
+      } else if (columnIndex === 0){
+        return 'thead-frist'
       } else {
         return 'thead-cell'
       }
@@ -887,7 +916,10 @@ export default {
     itemCellClassName ({ row, column, rowIndex, columnIndex }) {
       if (columnIndex === 0) {
         return 'frist-column'
-      } else if (columnIndex === 2) {
+      }else if(columnIndex === 1){
+        return 'secend-column'
+      }
+      else if (columnIndex === 3) {
         return 'last-column'
       } else {
         return 'middle-column'
@@ -895,8 +927,10 @@ export default {
     },
     //表头单元格回调
     itemHanderCellClassName ({ row, column, rowIndex, columnIndex }) {
-      if (columnIndex === 2) {
+      if (columnIndex === 3) {
         return 'thead-last-cell'
+      }else if (columnIndex === 0){
+        return 'thead-frist'
       } else {
         return 'thead-cell'
       }
@@ -1259,6 +1293,9 @@ export default {
         })
       }
     },
+    moreTip(){
+
+    }
   }
 }
 </script>
@@ -1283,6 +1320,17 @@ export default {
 }
 .top ul li {
   float: left;
+  margin-left: 48px;
+}
+.inner-top ul li{
+  float: left;
+  margin-right: 48px;
+}
+.inner-top ul li:hover {
+  cursor: pointer;
+}
+.inner-top ul li div {
+  text-align: center;
 }
 .top ul li:hover {
   cursor: pointer;
@@ -1327,6 +1375,9 @@ export default {
   .searchSer{
     border-radius: 0px 4px 4px 0px;
   }
+.applyDetailDialog >>> .el-dialog__header .el-dialog__headerbtn{
+  top: 10px !important;
+}
 </style>
 <style lang="scss" scoped>
   .seniorSearch{

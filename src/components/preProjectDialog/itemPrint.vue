@@ -7,7 +7,7 @@
       <el-col :span="24" style="margin-top:10px;margin-bottom: 10px">
         <slot name="btn">
           <div class="top-btn">
-            <el-button class="btn" size="mini">取消</el-button>
+            <el-button class="btn" size="mini" @click="closeDetail()">取消</el-button>
             <el-button class="btn" size="mini" @click="printTable()">打印</el-button>
           </div>
         </slot>
@@ -197,10 +197,16 @@ export default {
       this.checkAll = checkedCount === this.list.length
       this.isIndeterminate = checkedCount > 0 && checkedCount < this.list.length
     },
+    closeDetail(){
+      this.$emit('closeDetail')
+    },
     //打印表格
     printTable(){
-      let print = document.getElementsByClassName('printTable')[0].innerHTML;
+
       let dom = this.$refs.printTable
+      document.body.innerHTML='';
+      document.body.appendChild(dom)
+
       // window.print()
       // window.location.reload()
       this.$print(dom)
@@ -242,7 +248,7 @@ export default {
         top: 0;
         left: 10px;
         right: 10px;
-        overflow: hidden;
+        /*overflow: hidden;*/
         .tableHead {
           th {
             color: #fff;

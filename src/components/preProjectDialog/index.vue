@@ -7,19 +7,19 @@
       <el-col :span="24"
               style="margin-top:10px;margin-bottom: 10px">
         <div class="btn-left">
-          <p style="display:inline-block;margin-right:10px;">
-            <span>项目年度：</span>
-            <el-select v-model="yearSelect"
-                       size="small"
-                       placeholder="必选">
-              <el-option :label="year"
-                         :value="year"></el-option>
-              <el-option :label="year-1"
-                         :value="year-1"></el-option>
-              <el-option :label="year-2"
-                         :value="year-2"></el-option>
-            </el-select>
-          </p>
+          <div class="bottom-info">
+            <ul>
+              <li>
+                <span>当前阶段：年初申报</span>
+              </li>
+              <li>
+                <span>申报日期：{{new Date().getFullYear()+'-'+(new Date().getMonth()+1)+'-'+new Date().getDate() }}</span>
+              </li>
+              <li>
+                <span>申报人：{{UserName}}</span>
+              </li>
+            </ul>
+          </div>
         </div>
         <slot name="btn">
           <div class="top-btn">
@@ -32,8 +32,15 @@
             <el-button class="btn"
                        size="mini"
                        @click="submit('zc')">暂存</el-button>
-            <el-button class="btn"
-                       size="mini">上传附件</el-button>
+            <el-popover  trigger="hover">
+              <div>
+                <span style="font-size: 0.16rem">附单据<span style="text-decoration: underline">{{0}}</span>张</span>
+              </div>
+              <el-button class="btn"
+                         size="mini"
+                         @click="uploadFile()"
+                          slot="reference">上传附件</el-button>
+            </el-popover>
             <el-button class="btn"
                        size="mini"
                        @click="preview()">填报预览</el-button>
@@ -127,6 +134,19 @@
                          :key="idx"
                          :label="item.Mc"
                          :value="item.Dm"></el-option>
+            </el-select>
+          </li>
+          <li>
+            <span>项目年度：</span>
+            <el-select v-model="yearSelect"
+                       size="small"
+                       placeholder="必选">
+              <el-option :label="year"
+                         :value="year"></el-option>
+              <el-option :label="year-1"
+                         :value="year-1"></el-option>
+              <el-option :label="year-2"
+                         :value="year-2"></el-option>
             </el-select>
           </li>
           <li :class="[projSurvey.sedTime === '' && projSurveyNull.sedTime?'null-projS':'']">
@@ -329,10 +349,11 @@
               <div class="listBottom-right">
                 <span>其中:</span>
                 <ul>
-                  <li v-for="(item,idx) in budgetDetail.FSourceOfFundsGroup">
+                  <li v-if=" budgetDetail.FSourceOfFundsGroup.length !==0" v-for="(item,idx) in budgetDetail.FSourceOfFundsGroup">
                     <span class="title">{{item.MC}}</span>
                     <span class="money">{{budgetdetailData.filter(i=>i.FSourceOfFunds===item.DM).reduce((prev,cur)=>prev+parseFloat((Number((cur.FAmount).replace(/[,]/g, ''))).toFixed(2)),0) | NumFormat}}</span>
                   </li>
+                  <li v-else style="text-align: center;color: #cccbcb"> 暂无数据 </li>
                 </ul>
               </div>
             </div>
@@ -517,19 +538,6 @@
           </div>
         </div>
         <!--底部信息-->
-        <div class="bottom-info">
-          <ul>
-            <li>
-              <span>当前阶段：年初申报</span>
-            </li>
-            <li>
-              <span>申报日期：{{new Date().getFullYear()+'-'+(new Date().getMonth()+1)+'-'+new Date().getDate() }}</span>
-            </li>
-            <li>
-              <span>申报人：{{UserName}}</span>
-            </li>
-          </ul>
-        </div>
       </div>
     </el-row>
     <el-dialog modal-append-to-body
@@ -565,6 +573,16 @@
       </div>
       <item-print :data="itemDetail"></item-print>
     </el-dialog>
+    <el-dialog :visible.sync="uploadVis"
+               modal-append-to-body
+               :append-to-body="true"
+               width="auto"
+               title="附件上传"
+               :close-on-click-modal="false">
+      <file-up v-if="uploadVis"
+               :ind="choosedIndexAndPro"
+               @succe="loadFile"></file-up>
+    </el-dialog>
   </section>
 </template>
 
@@ -575,11 +593,12 @@ import textareaDialog from './textareaDialog'
 import { mapState } from 'vuex'
 import GoApproval from "../../pages/preproject/component/goApproval";
 import ItemPrint from "./itemPrint";
+import FileUp from "../applyPro/fileUp";
 
 export default {
   name: 'prerojectnewproject',
   props: {},
-  components: {ItemPrint, GoApproval, addBr, setBuy, textareaDialog },
+  components: {FileUp, ItemPrint, GoApproval, addBr, setBuy, textareaDialog },
   data () {
     return {
       timeClearable: false,
@@ -796,7 +815,11 @@ export default {
       },
       //报表预览
       detailDialog:false,
-      itemDetail:{}
+      itemDetail:{},
+      uploadVis:false ,//上传附件dialog
+      choosedIndexAndPro:{
+        index: 0, pro: {}
+      }
     }
   },
   computed: {
@@ -1210,7 +1233,7 @@ export default {
       let data = {
         //预算主表对象
         ProjectMst: {
-          FYear:'2019',//年度（当前年度）必填
+          FYear:this.yearSelect,//年度（当前年度）必填
           FProjName: this.projSurvey.FProjName,//项目名称
           FLevel: this.projSurvey.FLevel,//项目级别  无
           FDeclarationDept: this.projSurvey.FDeclarationDept,//申报部门,
@@ -1507,6 +1530,14 @@ export default {
       }
       this.itemDetail = data
         this.detailDialog = true
+    },
+    //上传附件
+    uploadFile(){
+      this.uploadVis = true
+    },
+    loadFile(val){
+       console.log(val);
+      this.uploadVis = false;
     }
   }
 }
@@ -1529,6 +1560,21 @@ export default {
     font-size: 0.16rem;
     line-height: 28px;
     color: $yellowColor;
+    .bottom-info{
+      height: 20px;
+      ul{
+        list-style: none;
+        margin-left: 10px;
+        li{
+          display: inline-block;
+          float: left;
+          margin-left: 20px;
+          span{
+            color: #ff9800
+          }
+        }
+      }
+    }
   }
 
   .top-btn {
@@ -1538,7 +1584,7 @@ export default {
       width: 80px;
 
       &:not(:last-of-type) {
-        margin-right: 15px;
+        /*margin-right: 15px;*/
       }
     }
   }
@@ -1802,7 +1848,7 @@ export default {
           overflow-y: scroll;
           padding-right: 25px;
           height: 100%;
-
+          border-bottom: 1px solid #e3e3e3;
           ul li:not(:first-of-type) {
             font-size: 0;
           }
@@ -2005,24 +2051,6 @@ export default {
               border-left-color: $borderColor_ccc;
 
             }
-          }
-        }
-      }
-    }
-    .bottom-info{
-      position: absolute;
-      height: 20px;
-      right: 30px;
-      bottom: 30px;
-      ul{
-        list-style: none;
-        margin-left: 10px;
-        li{
-          display: inline-block;
-          float: left;
-          margin-left: 20px;
-          span{
-            color: #ff9800
           }
         }
       }

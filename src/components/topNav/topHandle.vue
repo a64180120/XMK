@@ -67,6 +67,14 @@
                   </div>
                   <span>系统设置</span>
                 </li>
+                <li v-if="menuButton.projectmanage	=='True'"
+                    @click.stop="navPage('/projectmanage')">
+                  <div>
+                    <img src="@/assets/images/navsetting.png"
+                         alt>
+                  </div>
+                  <span>预算项目库</span>
+                </li>
               </ul>
 
               <div slot="reference"
