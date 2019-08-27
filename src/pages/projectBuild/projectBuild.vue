@@ -5,42 +5,53 @@
       <div class="top">
         <ul>
           <li class="handle"
-              @click="add()">
+              @click="budgetEdit()">
             <div>
               <img src="@/assets/images/xz.png">
             </div>
             <span>预算修正</span>
           </li>
           <li class="handle"
-              @click="edit()">
+              v-if="WorkFlow === 1"
+              @click="pBApproval()">
             <div>
               <img src="@/assets/images/zj2.png">
             </div>
             <span>送审</span>
           </li>
           <li class="handle"
-              @click.stop="openAuditfollow()">
+              v-if="WorkFlow === 1"
+              @click.stop="unSubApproval()">
             <div>
               <img src="@/assets/images/ss_d.png">
             </div>
             <span>取消送审</span>
           </li>
           <li class="handle"
-              @click="openAuditfollow()">
+              @click="rejectItem()">
             <div>
               <img src="@/assets/images/xz.png">
             </div>
             <span>驳回</span>
           </li>
           <li class="handle"
-              @click="openAuditfollow()">
+              @click="itemDefine()">
             <div>
               <img src="@/assets/images/xz.png">
             </div>
             <span>项目执行确认</span>
           </li>
           <li class="handle"
-              @click="openAuditfollow()">
+              @click="itemDefine()"
+              v-if="WorkFlow === 1">
+            <div>
+              <img src="@/assets/images/xz.png">
+            </div>
+            <span>生成预算</span>
+          </li>
+          <li class="handle"
+              @click="syncFinance()"
+              v-if="WorkFlow === 0">
             <div>
               <img src="@/assets/images/sp.png">
             </div>
@@ -60,29 +71,25 @@
             </div>
             <span>汇总表打印</span>
           </li>
+          <li class="handle"
+              @click="swatchTable">
+            <div>
+              <img style="height: 34px" src="@/assets/images/list.png">
+            </div>
+            <span>列表样式</span>
+          </li>
         </ul>
 
       </div>
     </top-handle>
 
     <div>
-      <div class="container content-body">
+      <div class="container content-body" style="min-width: 1300px;overflow: auto;min-height:750px">
         <div class="formArea">
           <!--搜索栏-->
           <div class="btnArea"
                style="margin-bottom: 15px">
             <el-form :inline="true">
-              <el-form-item label="部门申报/部门审批：">
-                <el-select v-model="formList.type"
-                           size="mini">
-                  <el-option value="1"
-                             label="主业类">主业类</el-option>
-                  <el-option value="2"
-                             label="企事业类">企事业类</el-option>
-                  <el-option value="3"
-                             label="机关行政类">机关行政类</el-option>
-                </el-select>
-              </el-form-item>
               <el-form-item label="单位：">
                 <el-select v-model="formList.year"
                            size="mini">
@@ -116,17 +123,95 @@
                              label="审批中">审批中</el-option>
                   <el-option value="3"
                              label="审批通过">审批通过</el-option>
-                  <el-option value="3"
+                  <el-option value="4"
                              label="未通过">未通过</el-option>
                 </el-select>
-              </el-form-item>
-              <el-form-item>
-                <el-button size="mini"
-                           @click="swatchTable">切换</el-button>
+
               </el-form-item>
               <el-form-item style="float: right">
-                <search-input v-model="formList.FProjName"
-                              @btnClick="searchInput()"></search-input>
+                <el-input size="mini" v-model="formList.FProjName" clearable class="searchIpt"></el-input>
+                <el-button size="mini" @click="searchInput()" type="primary" class="searchBtn">搜索</el-button>
+                <el-popover palcement="bottom" width="500" trigger="click" v-model="popvisiable">
+                  <div class="seniorSearch">
+                    <div>
+                      <span>高级查询</span>
+                      <span class="el-icon-close" @click="popvisiable=false"></span>
+                    </div>
+                    <table>
+                      <colgroup>
+                        <col width="15%">
+                        <col width="15%">
+                        <col width="5%">
+                        <col width="15%">
+                        <col width="15%">
+                        <col width="35%">
+                      </colgroup>
+                      <tr>
+                        <td>项目名称</td>
+                        <td colspan="5"><!--<el-input size="mini"  v-model="seniorSearch.FDeclarationDept"  placeholder="请输入申报部门"></el-input>-->
+                          <el-input size="mini" v-model="seniorSearch.FProjName" placeholder="请输入项目名称"></el-input>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>项目编码</td>
+                        <td colspan="5"><el-input size="mini"  v-model="seniorSearch.FProjCode" placeholder="请输入项目编码"></el-input></td>
+                      </tr>
+                      <tr>
+                        <td>申报部门</td>
+                        <td colspan="3">
+                          <el-select size="mini" v-model="seniorSearch.FDeclarationDept" placeholder="请选择申报部门">
+                            <el-option v-for="(item,idx) in FDeclarationDeptGroup" :value="item.deptCode" :label="item.deptName"></el-option>
+                          </el-select>
+                        </td>
+                        <td>预算部门</td>
+                        <td colspan="3">
+                          <el-select size="mini" v-model="seniorSearch.FBudgetDept" placeholder="请选择预算部门">
+                            <el-option v-for="(item,idx) in FBudgetDeptGroup" :value="item.OCode" :label="item.OName"></el-option>
+                          </el-select>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>项目金额</td>
+                        <td><el-input size="mini" v-model="seniorSearch.FProjAmountBegin"></el-input></td>
+                        <td>至</td>
+                        <td><el-input size="mini"  v-model="seniorSearch.FProjAmountEnd"></el-input></td>
+                        <td>绩效评价</td>
+                        <td colspan="3">
+                          <el-select size="mini" v-model="seniorSearch.FIfPerformanceAppraisal" placeholder="请选择绩效评价">
+                            <el-option v-for="(item,idx) in FIfPerformanceAppraisalGroup" :key="idx" :value="item.value" :label="item.label"></el-option>
+                          </el-select>
+                        </td>
+                      </tr>
+                      <tr>
+                        <!-- <td>项目级别</td>
+                         <td colspan="3"><el-input size="mini" v-model="seniorSearch.PLevel" placeholder="请输入项目级别"></el-input></td>-->
+                        <td>起止日期</td>
+                        <td colspan="5">
+                          <el-date-picker size="mini"
+                                          style="width: 100%;"
+                                          v-model="seniorSearch.FTime"
+                                          type="daterange"
+                                          range-separator="至"
+                                          start-placeholder="开始日期"
+                                          end-placeholder="结束日期">
+                          </el-date-picker>
+                        </td>
+                      </tr>
+                    </table>
+                    <div>
+                      <ul>
+                        <li>
+                          <el-button class="btn" size="mini" @click="seniorReset()">清空</el-button>
+                        </li>
+                        <li>
+                          <el-button class="btn" size="mini" @click="getTableData()">搜索</el-button>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+
+                  <el-button type="success" size="mini" slot="reference" class="searchSer">高级</el-button>
+                </el-popover>
               </el-form-item>
             </el-form>
           </div>
@@ -144,7 +229,9 @@
                         :highlight-current-row="highlightCurrentRow"
                         style="overflow: visible;position: static;padding-top: 50px">
                 <el-table-column v-if="table.selection"
-                                 type="selection"></el-table-column>
+                                 type="selection" width="30"></el-table-column>
+                <el-table-column
+                  type="index" width="35"></el-table-column>
                 <el-table-column v-for="(item,idx) in table.column"
                                  :prop="item.prop"
                                  :label="item.label"
@@ -199,7 +286,7 @@
           </div>
           <div v-else
                class="table-main">
-            <section class="itemTable_proBuildProject">
+            <section class="itemTable_proBuildProject" :style="{paddingRight:paddRight }">
               <el-table :data="table.tableData"
                         :row-class-name="rowClassName"
                         :cell-class-name="itemCellClassName"
@@ -208,15 +295,21 @@
                         :header-cell-class-name="itemHanderCellClassName"
                         :highlight-current-row="highlightCurrentRow"
                         style="overflow: visible;position: static;padding-top: 50px">
-                <el-table-column type="selection"></el-table-column>
+                <el-table-column type="selection" width="30"></el-table-column>
+                <el-table-column
+                  type="index" width="35"></el-table-column>
                 <el-table-column prop="item"
                                  align="center"
-                                 label="预立项项目信息">
+                                 label="项目立项项目信息">
                   <template slot-scope="scope">
                     <div>
                       <div class="top-content">
-                        <div class="top-left">项目编码：{{scope.row.FProjCode}}</div>
-                        <div class="top-center">项目名称：{{scope.row.FProjName}}</div>
+                        <div class="top-left">项目编码：<span class="top-left-code" @click="showDetail(scope)">{{scope.row.FProjCode}}</span></div>
+                        <div class="top-center">项目名称：
+                          <el-tooltip :content="scope.row.FProjName">
+                            <span style="font-family: 宋体">{{scope.row.FProjName}}</span>
+                          </el-tooltip>
+                        </div>
                         <div class="top-right">
                           <div class="card"
                                v-if="formList.year == '1'">{{scope.row.FProjAmount | NumFormat}}元</div>
@@ -236,7 +329,11 @@
                             <span>项目级别：{{scope.row.FLevel_EXName?scope.row.FLevel_EXName:'无'}}</span>
                           </li>
                           <li>
-                            <span>起止日期：{{scope.row.FStartDate.replace('T00:00:00','')}}至{{scope.row.FEndDate.replace('T00:00:00','')}}</span>
+                            <span>起止日期：
+                               <el-tooltip :content="scope.row.FStartDate.replace('T00:00:00','')+'至'+scope.row.FEndDate.replace('T00:00:00','')">
+                                  <span>{{scope.row.FStartDate.replace('T00:00:00','')}}至{{scope.row.FEndDate.replace('T00:00:00','')}}</span>
+                              </el-tooltip>
+                            </span>
                           </li>
                           <li>
                             <span>支出类别：{{scope.row.FExpenseCategory_EXName?scope.row.FExpenseCategory_EXName:'无'}}</span>
@@ -251,7 +348,7 @@
                             <span>预算部门：{{scope.row.FBudgetDept_EXName?scope.row.FBudgetDept_EXName:'无'}}</span>
                           </li>
                           <li>
-                            <span>申报日期：{{scope.row.FDateofDeclaration?scope.row.FDateofDeclaration:'无'}}</span>
+                            <span>申报日期：{{scope.row.FDateofDeclaration?scope.row.FDateofDeclaration.replace('T',' '):'无'}}</span>
                           </li>
                           <li>
                             <span>申报进度：
@@ -289,6 +386,7 @@
                         <span v-if="scope.row.FApproveStatus ==2">审批中</span>
                         <span v-if="scope.row.FApproveStatus ==3">审批通过</span>
                         <span v-if="scope.row.FApproveStatus ==4">已退回</span>
+                        <span v-if="scope.row.FApproveStatus ==5">暂存</span>
                         <span v-if="scope.row.FProjStatus ===1">(预立项)</span>
                         <span v-if="scope.row.FProjStatus ===2">(项目立项)</span>
                         <span v-if="scope.row.FProjStatus ===3">(项目执行)</span>
@@ -297,11 +395,12 @@
                         <span v-if="scope.row.FProjStatus ===6">(项目终止)</span>
                         <span v-if="scope.row.FProjStatus ===7">(项目关闭)</span>
                       </div>
-                      <div class="status-context">
+                      <div class="status-context" @click="getAppvalProcList(scope.row)">
                         <span v-if="scope.row.FApproveStatus ==1">待审批</span>
                         <span v-if="scope.row.FApproveStatus ==2">审批中</span>
                         <span v-if="scope.row.FApproveStatus ==3">审批通过</span>
                         <span v-if="scope.row.FApproveStatus ==4">已退回</span>
+                        <span v-if="scope.row.FApproveStatus ==5">暂存</span>
                       </div>
                     </div>
                   </template>
@@ -323,14 +422,20 @@
     </div>
     <el-dialog append-to-body
                modal-append-to-body
-               :visible.sync="addDialog"
-               width="80%"
+               :visible.sync="budgetEditDialog"
+               width="85%"
+               class="applyDetailDialog"
+               v-if="budgetEditDialog"
                :close-on-click-modal="false">
-      <prerojectnewproject></prerojectnewproject>
+      <div slot="title"
+           class="applyDetailTitle">
+        <span>预算修正</span>
+      </div>
+      <budget-edit :data="budgetEditDetail" @refresh="refresh"></budget-edit>
     </el-dialog>
     <el-dialog append-to-body
                modal-append-to-body
-               :visible.sync="detailDialog"
+               :visible.sync="itemlDialog"
                width="50%"
                :close-on-click-modal="false"
                class="applyDetailDialog">
@@ -339,10 +444,18 @@
            style="text-align: left;border-bottom: 1px solid #eaeaea">
         <span>申报表打印</span>
       </div>
-      <item-print :data="itemDetail"></item-print>
-
+      <item-print :data="itemDetail" @closeDetail="itemlDialog = false"></item-print>
     </el-dialog>
     <auditfollow :visible.sync="openfollow"></auditfollow>
+
+    <!--送审-->
+    <go-approval v-if="approvalDataS.openDialog"
+                 :data="approvalDataS"
+                 @delete="handleDelete" b-type="005"></go-approval>
+    <!--查看审批流程-->
+    <auditfollow :visible.sync="auditDialog"
+                 auditType="005"
+                 :auditMsg="auditMsg"></auditfollow>
   </section>
 </template>
 
@@ -355,12 +468,17 @@ import Prerojectnewproject from "../../components/preProjectDialog/index";
 import ItemPrint from "../../components/preProjectDialog/itemPrint";
 import Auditfollow from "../../components/auditFollow/auditfollow";
 import { mapState } from 'vuex'
+import BudgetEdit from "./component/budgetEdit";
+import GoApproval from "./component/goApproval";
 export default {
   name: "projectBuild",
-  components: { Auditfollow, ItemPrint, Prerojectnewproject, SearchInput, ItemTable, DataTable, TopHandle },
+  components: {
+    GoApproval,
+    BudgetEdit, Auditfollow, ItemPrint, Prerojectnewproject, SearchInput, ItemTable, DataTable, TopHandle },
   data () {
     let that = this
     return {
+      WorkFlow:0,//是否启用审批流
       table: {
         tableData: [],
         column: [
@@ -408,16 +526,33 @@ export default {
             prop: 'FApproveStatus',
             label: '审批状态',
             align: 'center',
+            width: 160,
             other: 'status',
             format: function (scope) {
+              let MC = '';
+              if (scope.row.FProjStatus ===1) {
+                MC = '预立项'
+              } else if (scope.row.FProjStatus ===2) {
+                MC = '项目立项'
+              } else if (scope.row.FProjStatus ===3) {
+                MC = '项目执行'
+              } else if (scope.row.FProjStatus ===4) {
+                MC = '项目调整'
+              } else if (scope.row.FProjStatus ===5) {
+                MC = '项目暂停'
+              } else if (scope.row.FProjStatus ===6) {
+                MC = '项目终止'
+              } else if (scope.row.FProjStatus ===7) {
+                MC = '项目关闭'
+              }
               if (scope.row.FApproveStatus == 1) {
-                return '<span>' + '待审批(预立项)' + '</span>'
+                return '<span>' + '待审批('+MC+')' + '</span>'
               } else if (scope.row.FApproveStatus == 2) {
-                return '<span>' + '审批中(预立项)' + '</span>'
+                return '<span>' + '审批中('+MC+')' + '</span>'
               } else if (scope.row.FApproveStatus == 3) {
-                return '<span>' + '审批通过(预立项)' + '</span>'
+                return '<span>' + '审批通过('+MC+')' + '</span>'
               } else if (scope.row.FApproveStatus == 4) {
-                return '<span>' + '审批退回(预立项)' + '</span>'
+                return '<span>' + '已退回('+MC+')' + '</span>'
               }
             },
             fn: function (scope) {
@@ -438,9 +573,31 @@ export default {
         approvalStatus: '0',
         FProjName: ''
       },
+
+      popvisiable:"",
+      seniorSearch:{//高级筛选
+        FProjName:'',//项目名称
+        FProjCode:'',//项目编码
+        FDeclarationDept:'',//申报部门
+        FBudgetDept:'',//预算部门
+        FProjAmountBegin:'',//金额开始
+        FProjAmountEnd:'',//金额结束
+        FIfPerformanceAppraisal:'',//是否绩效评价
+        FTime:[],//起止日期
+      },
+      FBudgetDeptGroup:[],//预算部门下拉项
+      FDeclarationDeptGroup:[],//申报部门下拉项
+      FIfPerformanceAppraisalGroup:[{
+        value:1,
+        label:"是"
+      },{
+        value:2,
+        label:"否"
+      }],
+
       search: '',
-      addDialog: false,
-      detailDialog: false,
+      itemlDialog:false,
+      budgetEditDialog: false,
       openfollow: false,
       page: {
         currentPage: 1,
@@ -448,9 +605,22 @@ export default {
         pageSize: 20,
         pageSizes: [20, 30, 50, 100]
       },
-      itemDetail: {},
-      selection: [],
+      itemDetail: {},//详情单据数据
+      budgetEditDetail:{},//预算修正数据
+      selection: [],//单据选中项
       payOutType: [],
+
+      //送审
+      approvalDataS: {
+        openDialog: false,
+        data: {},
+        subData: [] //审批流获取
+      },
+
+      auditMsg:[],//审批流数据
+      auditDialog:false,
+
+      paddRight:'10px',
     }
   },
   computed: {
@@ -466,10 +636,60 @@ export default {
   created () {
   },
   mounted () {
+    this.getWorkFlow()
     this.getExpenseCategoryList()
     this.getTableData()
   },
   methods: {
+    //获取过程是否启用工作流
+    getWorkFlow(){
+      let data = {
+        orgCode:this.OrgCode,
+        orgid:this.Orgid,
+        workType:'005'
+      }
+      this.getAxios('/GQT/QTSysSetApi/GetWorkFlow',data).then(res=>{
+          console.log(res)
+      }).catch(err=>{
+
+      })
+    },
+    //获取预算部门
+    getBudegDepart(){
+      let data  = {
+        orgid:this.Orgid,
+        uid:this.UserId
+      }
+      this.getAxios('/GQT/CorrespondenceSettingsApi/GetDeptByUnit',data).then(res=>{
+        this.FBudgetDeptGroup = res.Record
+        console.log( res.Record)
+      }).catch(err=>{
+        this.$msgBox.error('请求错误')
+      })
+    },
+    //获取申报部门集合
+    getDeclareList () {
+      let data = {
+        orgCode: this.OrgCode,
+        usercode: this.UserCode ? this.UserCode : '9999',
+        orgid: this.Orgid
+      }
+      let that= this
+      this.getAxios('/GQT/CorrespondenceSettingsApi/GetFDeclarationUnit', data)
+        .then(res => {
+          console.log(res)
+          if (res.Status === 'success') {
+            let arr = {
+              deptCode:res.deptCode,
+              deptName:res.deptName
+            }
+            this.$set(this.FDeclarationDeptGroup,0,arr)
+          }else {
+            this.$msgBox.error(res.Msg)
+          }
+        })
+        .catch(err => { })
+    },
     //get获取表格数据
     getTableData () {
       let data = {
@@ -477,17 +697,33 @@ export default {
         Ucode: this.UserCode,//用户账号
         Year: this.Year,//年度
         ProjStatus: 2,//（1-预立项 ；2-立项； 其他）
-        FProjName: this.formList.FProjName,//搜索框的值
+        SearchValue: this.formList.FProjName,//搜索框的值
         FExpenseCategory: this.formList.payOutType,//支出类型（0-全部）
         FApproveStatus: this.formList.approvalStatus,//审批状态 （0-全部， 1-待上报， 2-审批中，3-审批通过， 4-已退回）
         PageIndex: this.page.currentPage - 1,  //页码
-        PageSize: this.page.pageSize//每页条数
+        PageSize: this.page.pageSize,//每页条数
+
+        //高级搜索
+        FProjName:this.seniorSearch.FProjName,//高级搜索项目名称
+        FProjCode:this.seniorSearch.FProjCode,//高级搜索项目编码
+        FDeclarationDept:this.seniorSearch.FDeclarationDept,//高级搜索申报部门
+        FBudgetDept:this.seniorSearch.FBudgetDept,//高级搜索预算部门
+        FProjAmountBegin:this.seniorSearch.FProjAmountBegin,//高级搜索项目开始金额
+        FProjAmountEnd:this.seniorSearch.FProjAmountEnd,//高级搜索项目结束金额
+        FIfPerformanceAppraisal:this.seniorSearch.FIfPerformanceAppraisal,//高级搜索绩效评价
+        FStartDate:this.seniorSearch.FTime?this.seniorSearch.FTime[0]:'',//高级搜开始时间
+        FEndDate:this.seniorSearch.FTime?this.seniorSearch.FTime[0]:'',//高级搜索绩结束时间
       };
       this.getAxios('/GXM/ProjectMstApi/GetProjectMstList', data).then(res => {
         if (res.Record) {
           this.table.tableData = res.Record
           this.page.total = res.totalRows
           console.log(res.Record)
+          if (this.selection !== 0){
+            for(let i in this.selection){
+              this.selection.splice(i,1)
+            }
+          }
         } else {
           this.$msgBox.error(res.Msg)
         }
@@ -515,7 +751,9 @@ export default {
         length = this.table.column.length - 1      }
       if (columnIndex === 0) {
         return 'frist-column'
-      } else if (columnIndex === length) {
+      }else if(columnIndex === 1){
+        return 'secend-column'
+      }else if (columnIndex === length +1) {
         return 'last-column'
       } else {
         return 'middle-column'
@@ -525,6 +763,8 @@ export default {
     handerCellClassName ({ row, column, rowIndex, columnIndex }) {
       if (columnIndex === this.table.column.length) {
         return 'thead-last-cell'
+      }else if (columnIndex === 0){
+        return 'thead-frist'
       } else {
         return 'thead-cell'
       }
@@ -533,7 +773,9 @@ export default {
     itemCellClassName ({ row, column, rowIndex, columnIndex }) {
       if (columnIndex === 0) {
         return 'frist-column'
-      } else if (columnIndex === 2) {
+      }else if(columnIndex === 1){
+        return 'secend-column'
+      } else if (columnIndex === 3) {
         return 'last-column'
       } else {
         return 'middle-column'
@@ -541,8 +783,10 @@ export default {
     },
     //表头单元格回调
     itemHanderCellClassName ({ row, column, rowIndex, columnIndex }) {
-      if (columnIndex === 2) {
+      if (columnIndex === 3) {
         return 'thead-last-cell'
+      }else if (columnIndex === 0){
+        return 'thead-frist'
       } else {
         return 'thead-cell'
       }
@@ -606,8 +850,20 @@ export default {
       }
     },
     //新增方法
-    add () {
+    budgetEdit () {
       this.addDialog = true
+      if (this.selection.length === 0){
+        this.$msgBox.error('请选择需要预算修正的单据')
+      } else if (this.selection.length === 1){
+        if(this.selection[0].FApproveStatus ==='1' ||this.selection[0].FApproveStatus ==='5' ||this.selection[0].FApproveStatus ==='4'){
+          this.budgetEditDetail = this.selection[0]
+          this.budgetEditDialog = true
+        }else {
+          this.$msgBox.error("只有暂存、待送审与已退回的数据可以预算修正")
+        }
+      } else {
+        this.$msgBox.error('只能选择一条单据进行预算修正')
+      }
     },
     edit () {
       this.addDialog = true
@@ -642,7 +898,7 @@ export default {
       }
       this.getAxios('/GXM/ProjectMstApi/GetProjectMst', data).then(res => {
         this.itemDetail = res
-        this.detailDialog = true
+        this.itemlDialog = true
         console.log(res)
       }).catch(err => {
         this.$msgBox.error('请求失败')
@@ -653,13 +909,213 @@ export default {
     },
     //选择框改变事件
     query () {
+      console.log(this.formList.approvalStatus)
+      if (this.formList.approvalStatus ==='2'){
+        this.paddRight = '25px'
+      } else {
+        this.paddRight = '25px'
+      }
       this.formList.FProjName = ''
       this.getTableData()
     },
     //搜索框查询事件
     searchInput () {
+      this.page.currentPage = 1
       this.getTableData()
-    }
+    },
+    //高级搜索框清空
+    seniorReset(){
+      this.page.currentPage = 1
+      this.seniorSearch = {//高级筛选
+        FProjName:'',//项目名称
+        FProjCode:'',//项目编码
+        FDeclarationDept:'',//申报部门
+        FBudgetDept:'',//预算部门
+        FProjAmountBegin:'',//金额开始
+        FProjAmountEnd:'',//金额结束
+        FIfPerformanceAppraisal:'',//是否绩效评价
+        FTime:[],//起止日期
+      }
+      this.getTableData()
+    },
+    //刷新
+    refresh(val,stu){
+      if (stu ==='budgetEdit'){
+        this.budgetEditDialog = false
+      }
+      this.getTableData()
+    },
+    //项目执行确认
+    itemDefine(){
+      if (this.selection.length === 0){
+        this.$msgBox.error('请选择单据进行项目执行确认')
+      }else if (this.selection.length === 1){
+        if (this.selection[0].FIfYsxz ===0) {
+          this.$msgBox.error('请先预算修正再进行项目执行确认')
+          return
+        }
+          let data = {
+            id:this.selection[0].PhId
+          }
+          if(this.selection[0].FApproveStatus === '3' && this.selection[0].FProjStatus === 2){
+            this.getAxios('GXM/ProjectMstApi/GetSaveBudgetMst',data).then(res=>{
+              if(res.Status ==='success'){
+                this.$msgBox.show('项目执行确认成功')
+                this.getTableData()
+              }else {
+                this.$msgBox.error(res.Msg)
+              }
+
+            }).catch(err=>{
+              this.$msgBox.error('项目执行确认失败')
+            })
+          }else if (this.selection[0].FApproveStatus === '4' && this.selection[0].FProjStatus === 2){
+            this.getAxios('GXM/ProjectMstApi/GetSaveBudgetMst',data).then(res=>{
+              if(res.Status ==='success'){
+                this.$msgBox.show('项目执行确认成功')
+                this.getTableData()
+              }else {
+                this.$msgBox.error(res.Msg)
+              }
+
+            }).catch(err=>{
+              this.$msgBox.error('项目执行确认失败')
+            })
+          } else {
+            this.$msgBox.error('不存在符合项目确认执行的数据，请重新选择！')
+            this.selection.splice(0,1)
+          }
+
+      }else {
+        this.$msgBox.error('项目执行确认只支持单条数据，请进行单选')
+      }
+    },
+    //送审
+    pBApproval(){
+      if (this.selection.length === 0){
+        this.$msgBox.error('请选择数据进行送审')
+      }else if (this.selection.length ===1) {
+        console.log(this.selection[0])
+        if (this.selection[0].FIfYsxz === 0) {
+            this.$msgBox.error('请先预算修正再送审')
+          return
+        }
+        this.approvalDataS.openDialog = true
+        this.approvalDataS.data = this.selection
+      }else {
+        this.$msgBox.error('不支持多行送审，请单行选择')
+      }
+    },
+    //驳回
+    rejectItem(){
+      if (this.selection.length === 0){
+        this.$msgBox.error('请选择所需要驳回的单据')
+      } else {
+        let arr = []
+        for (let i in this.selection){
+          arr[i] = this.selection[i].PhId
+        }
+        let data = {
+          fPhIdList:arr,
+        }
+        this.postAxios('GXM/ProjectMstApi/PostUnValid',data).then(res=>{
+          this.$msgBox.show('驳回成功'+res.SuccessNum+'条数据，驳回失败'+res.FailNum+'条数据')
+          this.getTableData()
+        }).catch(err =>{
+          console.log(err)
+        })
+      }
+    },
+    //取消送审
+    unSubApproval(){
+      if (this.selection.length === 0){
+        this.$msgBox.error('请选择数据进行取消送审')
+      }else if (this.selection.length ===1) {
+        let arr = [];
+        for (let i in this.selection){
+          arr[i] =  this.selection[i].PhId
+        }
+        let data = {
+          FBilltype:'005',
+          RefbillPhidList:arr,
+          OperaPhid:this.UserId
+        }
+        this.postAxios('/GAppvalRecord/PostCancelAppvalRecord',data).then(res=>{
+          if (res.Status ==='success'){
+            this.$msgBox.show('取消成功')
+            this.getTableData()
+          } else {
+            this.$msgBox.error(res.Msg)
+          }
+        }).catch(err=>{
+
+        })
+      }else {
+        this.$msgBox.error('不支持多行送审，请单行选择')
+      }
+    },
+    handleDelete(){
+      this.approvalDataS.openDialog = false
+      this.getTableData()
+    },
+    //同步
+    syncFinance(){
+      if (this.selection.length !== 0){
+        console.log(this.selection)
+        let stu = false
+        let arr = []
+        for (let i in  this.selection){
+          if (this.selection[i].FApproveStatus == "3" &&this.selection[i].FProjStatus == 2  && this.selection[i].FSaveToOldG6h == 0) {
+            stu = true
+          } else {
+            stu = false
+            break
+          }
+          arr[i] = this.selection[i].PhId
+
+        }
+        let data = {
+          fPhIdList:arr
+        }
+        console.log(data)
+        if (stu){
+          this.postAxios('/GXM/ProjectMstApi/PostAddData',data).then(res=>{
+              console.log(res)
+          }).catch(err =>{
+            console.log(err)
+          })
+        } else {
+          this.$msgBox.error('所选择不符合同步条件！')
+        }
+      } else {
+        this.$msgBox.error('请选择需要同步的数据！')
+      }
+    },
+    //获取审批流程
+    getAppvalProcList(row){
+      if (row.FApproveStatus ==='1'){
+        this.$msgBox.error('单据还未送审，未生成审批流，请先送审')
+        return
+      }
+      let arr = []
+      arr[0] = row.PhId
+      let data = {
+        FBilltype:'005',
+        RefbillPhid:row.PhId
+      }
+      this.getAxios('/GAppvalRecord/GetAppvalRecordList',data).then(res=>{
+
+        if (res.Status === 'success'){
+          this.auditDialog = true
+          this.auditMsg = res.Data
+          console.log(res.Data)
+        } else {
+          this.$msgBox.error(res.Msg)
+        }
+      }).catch(err=>{
+
+      })
+    },
   }
 }
 </script>
@@ -713,6 +1169,75 @@ export default {
   margin-left: 10px;
   line-height: 30px;
 }
+
+.searchIpt >>> .el-input__inner{
+  border-radius: 20px 0 0 20px;
+}
+.searchBtn{
+  margin-left: -5px;
+  margin-right: -5px;
+  border-radius: 0px;
+}
+.searchSer{
+  border-radius: 0px 4px 4px 0px;
+}
 </style>
 <style lang="scss" scoped>
+  .seniorSearch{
+    padding: 5px;
+    >div{
+      &:nth-of-type(1){
+        border-bottom: 2px solid #00B8EE;
+        color: #00B8EE;
+        font-size: .2rem;
+      }
+      &:nth-of-type(2){
+        padding: 10px 0 0 0;
+        border-top: 1px solid #ccc;
+        >ul{
+          display: inline-block;
+          float: right;
+          >li{
+            display: inline-block;
+            margin-left: 5px;
+            &:nth-of-type(1){
+              >.btn{
+                background-color: #fff;
+                color: #00B8EE;
+              }
+
+            }
+          }
+        }
+      }
+      >span:nth-of-type(2){
+        float: right;
+      }
+    }
+
+    table{
+      width: 100%;
+      td{
+        padding: 8px 5px;
+      }
+    }
+  }
+  .seniorSearch{
+    td{
+      text-align: center;
+    }
+  }
+  .top-left-code{
+    color: #409eff;
+    text-decoration: underline;
+  }
+  .top-left-code:hover{
+    cursor: pointer;
+  }
+  .top-center{
+    /*width: 300px;*/
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+  }
 </style>

@@ -31,10 +31,10 @@
   border-right: 1px solid #00b7ee !important;
 }
 .dataTable_proBuildProject .row-class-name td{
-  border-bottom: none!important;
-  border-top: 1px solid #e3e3e3 !important;
-  border-bottom: 1px solid #e3e3e3 !important;
-  border-right: 1px solid #e3e3e3 !important;
+  border-bottom: none;
+  border-top: 1px solid #e3e3e3 ;
+  border-bottom: 1px solid #e3e3e3 ;
+  border-right: 1px solid #e3e3e3 ;
   padding: 5px 0;
 }
 .dataTable_proBuildProject .row-class-name td .cell{
@@ -51,6 +51,19 @@
   border-left: 1px solid #e3e3e3 !important;
   border-top-left-radius: 8px;
   border-bottom-left-radius: 8px;
+  border-right: none !important;
+  padding-right: 5px !important;
+  padding-left: 0px;
+  border-right: none !important;
+}
+.dataTable_proBuildProject .frist-column .cell{
+  text-align: right !important;
+}
+/*第二列数据*/
+.dataTable_proBuildProject .secend-column{
+  padding-left:0 !important;
+  padding-right: 0 !important;
+
 }
 /*最后一列数据*/
 .dataTable_proBuildProject .last-column{
@@ -62,6 +75,15 @@
   border-bottom: none !important;
   background-color: #CACACA !important;
   border-right: 1px solid #ffffff !important;
+}
+.dataTable_proBuildProject .thead-frist{
+  border-bottom: none !important;
+  background-color: #CACACA !important;
+  border-right: 1px solid #CACACA !important;
+  padding-right: 5px !important;
+}
+.dataTable_proBuildProject .thead-frist .cell{
+  text-align: right;
 }
 /*表头单元格*/
 .dataTable_proBuildProject .thead-last-cell{
@@ -142,7 +164,7 @@
   border-bottom: none!important;
   border-top: 1px solid #e3e3e3 !important;
   border-bottom: 1px solid #e3e3e3 !important;
-  border-right: 1px solid #e3e3e3 !important;
+  border-right: 1px solid #e3e3e3;
   padding: 5px 0;
 }
 .itemTable_proBuildProject .row-class-name td .cell{
@@ -159,6 +181,18 @@
   border-left: 1px solid #e3e3e3 !important;
   border-top-left-radius: 8px;
   border-bottom-left-radius: 8px;
+  border-right: none !important;
+  padding-right: 5px !important;
+  padding-left: 0px;
+}
+.itemTable_proBuildProject .frist-column .cell{
+  text-align: right !important;
+}
+/*第二列数据*/
+.itemTable_proBuildProject .secend-column{
+  padding-left:0 !important;
+  padding-right: 0 !important;
+
 }
 /*最后一列数据*/
 .itemTable_proBuildProject .last-column{
@@ -170,6 +204,15 @@
   border-bottom: none !important;
   background-color: #CACACA !important;
   border-right: 1px solid #ffffff !important;
+}
+.itemTable_proBuildProject .thead-frist{
+  border-bottom: none !important;
+  background-color: #CACACA !important;
+  border-right: 1px solid #CACACA !important;
+  padding-right: 5px !important;
+}
+.itemTable_proBuildProject .thead-frist .cell{
+  text-align: right;
 }
 /*表头单元格*/
 .itemTable_proBuildProject .thead-last-cell{
@@ -318,6 +361,9 @@
   line-height: 70px;
   color:#3495E8 ;
   font-size: 0.14rem;
+}
+.itemTable_proBuildProject .status-row .status-context:hover{
+  cursor: pointer;
 }
 .itemTable_proBuildProject .el-table-column--selection .cell{
   padding: 0;

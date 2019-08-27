@@ -3,7 +3,6 @@
     <el-dialog :visible.sync="data.openDialog"
                width="620px"
                :close-on-click-modal="false"
-               @close="cancel()"
                class="dialog goApproval"
                modal-append-to-body
                append-to-body>
@@ -100,7 +99,7 @@
       <div class="approval-btn">
         <el-button size="small"
                    type="primary"
-                   @click="cancel()">{{btnGroup.cancelName}}</el-button>
+                   @click="data.openDialog = false">{{btnGroup.cancelName}}</el-button>
         <el-button size="small"
                    type="primary"
                    @click="submit">{{btnGroup.onfirmName}}</el-button>
@@ -154,7 +153,7 @@
         default: false
       },
       bType: {
-        default: '001'
+        default: '005'
       }
     },
     data () {
@@ -168,7 +167,7 @@
         /*送审数据*/
         param: {
           RefbillPhidList: [], //（单据主键集合）
-          FBilltype: '004', //（单据类型）
+          FBilltype: '005', //（单据类型）
           ProcPhid: '', //（流程主键）
           PostPhid: '', //（岗位主键）
           NextOperators: [], //（下个岗位操作员主键集合）
@@ -222,7 +221,7 @@
         let param = {
           BPhIds: JSON.stringify(arr),
           Orgid: this.orgid, //组织id
-          BType: '004' //单据类型（"001":资金拨付单,"002":支付单,'004':年初申报）
+          BType: '005' //单据类型（"001":资金拨付单,"002":支付单,'004':预立项,'005':项目立项）
         }
         this.getAxios('GSP/GAppvalProc/GetAppvalProcList', param)
           .then(res => {
@@ -267,7 +266,7 @@
             console.log(res)
             if (res.length > 0) {
               for (var i in res) {
-                res[i].FBilltype = '004'
+                res[i].FBilltype = '005'
               }
               this.auditMsg = res
             } else {
@@ -289,7 +288,6 @@
       handleSelectAll (selection) { },
       //取消
       cancel () {
-        this.$emit('delete', { flag: true, type: 'qx' })
         this.openDialog = false
       },
       handleCurrentChange (newRow, oldRow) {
@@ -347,7 +345,7 @@
                   this.openDialog = false
                   this.param = {
                     RefbillPhidList: [], //（单据主键集合）
-                    FBilltype: '004', //（单据类型）
+                    FBilltype: '005', //（单据类型）
                     ProcPhid: '', //（流程主键）
                     PostPhid: '', //（岗位主键）
                     NextOperators: [], //（下个岗位操作员主键集合）

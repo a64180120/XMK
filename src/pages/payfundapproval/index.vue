@@ -82,7 +82,7 @@
                           style="width: 120px"
                           placeholder="全部"></el-input>
               </el-form-item>
-              <el-form-item label="停留时长"
+              <el-form-item v-if="isApproval" label="停留时长"
                             class="top-form-left">
                 <el-input size="mini"
                           v-model="searchForm.StopHour"

@@ -170,6 +170,10 @@ export default {
           this.payfundData = val.filter(item => item.FBilltype === '003');
         } else if (this.auditType === '004') {
           this.payfundData = val.filter(item => item.FBilltype === '004');
+          this.topTitle = '预立项'
+        } else if (this.auditType === '005'){
+          this.payfundData = val.filter(item => item.FBilltype === '005');
+          this.topTitle = '项目立项'
         }
 
         if (this.auditType === '001' ||this.auditType === '002') {
@@ -197,6 +201,18 @@ export default {
           for (let key in val) {
             if (val[key].FApproval === 1) {
               if (val[key].FBilltype === '004') {
+                this.inPayfund = true;
+                this.inPaylist = false;
+                this.nowNum = parseInt(key) + 1
+                break
+              }
+              console.log(this.nowNum)
+            }
+          }
+        } else if(this.auditType === '005'){
+          for (let key in val) {
+            if (val[key].FApproval === 1) {
+              if (val[key].FBilltype === '005') {
                 this.inPayfund = true;
                 this.inPaylist = false;
                 this.nowNum = parseInt(key) + 1
