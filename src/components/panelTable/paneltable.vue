@@ -250,12 +250,12 @@
     }
 </script>
 
-<style>
+<style >
   .panelTable{
     padding: 0 25px 0 0;
   }
   .panelTable .el-table__header-wrapper{
-    top: 50px;
+    top: 58px;
   }
   .panelTable .el-table__header-wrapper:after {
     width: 15px;
@@ -265,5 +265,8 @@
     position: absolute;
     left: -15px;
     top: 0;
+  }
+  .itemTable_proBuildProject{
+    height: 100%;
   }
 </style>

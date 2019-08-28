@@ -202,7 +202,9 @@ export default {
   },
   mounted () {
     this.param.RefbillPhidList = this.data.data
-    this.getAppvalProc()
+    this.getAppvalProc();
+    alert(this.bType);
+    console.log(this.data.data)
   },
   methods: {
     closeAuditFollow () {
@@ -216,7 +218,7 @@ export default {
       let param = {
         BPhIds: JSON.stringify(this.param.RefbillPhidList),
         Orgid: this.bmid, //组织id
-        BType: '001' //单据类型（"001":资金拨付单,"002":支付单）
+        BType: this.bType //单据类型（"001":资金拨付单,"002":支付单）
       }
       this.getAxios('GSP/GAppvalProc/GetAppvalProcList', param)
         .then(res => {

@@ -74,7 +74,7 @@
             <div>
               <ul>
                 <li v-show='false'>
-                  <span>支付单据</span>
+                  <span>支付单据：</span>
                   <el-select @change="selectType"
                              collapse-tags
                              v-model="type"
@@ -87,7 +87,7 @@
                   </el-select>
                 </li>
                 <li>
-                  <span>支付状态</span>
+                  <span>支付状态：</span>
                   <el-select collapse-tags
                              v-model="status"
                              multiple
@@ -100,7 +100,7 @@
                   </el-select>
                 </li>
                 <li>
-                  <span>申报日期</span>
+                  <span>申报日期：</span>
                   <el-date-picker v-model="sbrq"
                                   type="daterange"
                                   range-separator="至"
@@ -111,7 +111,7 @@
                                   @change="rePageGetData"></el-date-picker>
                 </li>
                 <li>
-                  <span>支付日期</span>
+                  <span>支付日期：</span>
                   <el-date-picker v-model="zfrq"
                                   type="daterange"
                                   range-separator="至"

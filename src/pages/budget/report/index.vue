@@ -170,8 +170,8 @@
         navList:[
           {title:'年初收支预算汇总表',url:''},
           {title:'项目支出申报',url:''},
-          {title:'基本支出申报',url:''},
-          {title:'收入预算申报',url:''}
+          /*{title:'基本支出申报',url:''},
+          {title:'收入预算申报',url:''}*/
         ],
         //选中的导航
         navActive:0,
