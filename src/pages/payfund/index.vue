@@ -512,19 +512,20 @@
     <!--查看审批流程-->
     <auditfollow :visible.sync="visible"
                  :auditMsg="auditMsg"></auditfollow>
+
   </div>
 </template>
 
 <script>
-import tophandle from '../../components/topNav/topHandle'
-import pieChart from '../../components/echart/pieChart'
+import tophandle from '@/components/topNav/topHandle'
+import pieChart from '@/components/echart/pieChart'
 /*import num from '../../components/numAct/index'*/
-import Applybill from '../../components/applyBill/applybill'
-import Orgtree from '../../components/orgtree/index'
-import Applypro from '../../components/applyPro/applyPro'
-import goApproval from '../../components/applyPro/goApproval'
-import Auditfollow from '../../components/auditFollow/auditfollow'
-import ApprovalDialog from '../../components/applyPro/approval'
+import Applybill from '@/components/applyBill/applybill'
+import Orgtree from '@/components/orgtree/index'
+import Applypro from '@/components/applyPro/applyPro'
+import goApproval from '@/components/applyPro/goApproval'
+import Auditfollow from '@/components/auditFollow/auditfollow'
+import ApprovalDialog from '@/components/applyPro/approval'
 import { mapState } from 'vuex'
 import { printTable } from '@/api/upload'
 import countTo from 'vue-count-to'
