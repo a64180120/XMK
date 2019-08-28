@@ -3,7 +3,7 @@
     <topHandle :title="'系统管理在线工作平台'"
                @refresh="refresh">
       <div class="btnCon">
-        <div v-if="!menuButton.pageMaintenance_edit"
+        <div v-if="menuButton.pageMaintenance_edit=='True'"
              v-show="disabled"
              @click.stop="disabled=false;deleteList=[]"
              class="handle">
@@ -11,7 +11,7 @@
                  alt=""></div>
           修改
         </div>
-        <div v-if="!menuButton.pageMaintenance_edit"
+        <div v-if="menuButton.pageMaintenance_edit=='True'"
              v-show="!disabled"
              @click.stop="updateInfo"
              class="handle">
@@ -19,7 +19,7 @@
                  alt=""></div>
           保存
         </div>
-        <div v-if="!menuButton.pageMaintenance_edit"
+        <div v-if="menuButton.pageMaintenance_edit=='True'"
              v-show="!disabled"
              @click.stop="refresh"
              class="handle">
