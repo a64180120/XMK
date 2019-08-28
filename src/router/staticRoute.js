@@ -113,6 +113,13 @@ const staticRoute = [
           import(/* webpackChunkName:'progresscontrol'*/ '../pages/budget/progresscontrol'),
         meta: { requireAuth: true, type: 'page', name: '进度控制' }
       },
+
+      {
+        path: '/buggetReport',
+        component: () =>
+          import(/* webpackChunkName:'buggetReport'*/ '../pages/budget/buggetReport'),
+        meta: { requireAuth: true, type: 'page', name: '预算报表' }
+      },
       {
         path: '/projectspent',
         component: () =>
