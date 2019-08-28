@@ -478,27 +478,34 @@
       //get获取表格数据
       getTableData () {
         let data = {
-          OrgCode: this.OrgCode,//组织编码
-          Ucode: this.UserCode,//用户账号
-          Year: this.Year,//年度
-          ProjStatus: 1,//（1-预立项 ；2-立项； 其他）
-          FProjName: this.formList.FProjName,//搜索框的值
-          FExpenseCategory: this.formList.payOutType,//支出类型（0-全部）
-          FApproveStatus: this.formList.approvalStatus,//审批状态 （0-全部， 1-待上报， 2-审批中，3-审批通过， 4-已退回）
+          Ucode:this.UserCode, //用户ID
           PageIndex: this.page.currentPage - 1,  //页码
-          PageSize: this.page.pageSize//每页条数
+          PageSize: this.page.pageSize,//每页条数
+          workType:'z',
+          //高级搜索
+          // FProjName:this.seniorSearch.FProjName,//高级搜索项目名称
+          // FProjCode:this.seniorSearch.FProjCode,//高级搜索项目编码
+          // FDeclarationDept:this.seniorSearch.FDeclarationDept,//高级搜索申报部门
+          // FBudgetDept:this.seniorSearch.FBudgetDept,//高级搜索预算部门
+          // FProjAmountBegin:this.seniorSearch.FProjAmountBegin,//高级搜索项目开始金额
+          // FProjAmountEnd:this.seniorSearch.FProjAmountEnd,//高级搜索项目结束金额
+          // FIfPerformanceAppraisal:this.seniorSearch.FIfPerformanceAppraisal,//高级搜索绩效评价
+          // FStartDate:this.seniorSearch.FTime?this.seniorSearch.FTime[0]:'',//高级搜开始时间
+          // FEndDate:this.seniorSearch.FTime?this.seniorSearch.FTime[0]:'',//高级搜索绩结束时间
         };
-        // this.getAxios('/GXM/ProjectMstApi/GetProjectMstList', data).then(res => {
-        //   if (res.Record) {
-        //     this.table.tableData = res.Record
-        //     this.page.total = res.totalRows
-        //     console.log(res.Record)
-        //   } else {
-        //     this.$msgBox.error(res.Msg)
-        //   }
-        // }).catch(err => {
-        //   this.$msgBox.error("数据获取失败")
-        // })
+        this.getAxios('GYS/BudgetMstApi/GetYSBudgetMstList', data).then(res => {
+          debugger
+          if (res.Record) {
+            this.table.tableData = res.Record
+            this.page.total = res.totalRows
+            console.log(res.Record)
+          } else {
+            this.$msgBox.error(res.Msg)
+          }
+        }).catch(err => {
+          debugger
+          this.$msgBox.error("数据获取失败")
+        })
       },
       //获取支出类型集合
       getExpenseCategoryList () {

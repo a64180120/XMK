@@ -328,11 +328,10 @@
               <div class="listBottom-right">
                 <span>其中:</span>
                 <ul>
-                  <li  v-if=" budgetDetail.FSourceOfFundsGroup.length !==0" v-for="(item,idx) in budgetDetail.FSourceOfFundsGroup">
+                  <li v-for="(item,idx) in budgetDetail.FSourceOfFundsGroup">
                     <span class="title">{{item.MC}}</span>
                     <span class="money">{{budgetdetailData.filter(i=>i.FSourceOfFunds===item.DM).reduce((prev,cur)=>prev+parseFloat((Number((cur.FAmount).replace(/[,]/g, ''))).toFixed(2)),0) | NumFormat}}</span>
                   </li>
-                  <li v-else style="text-align: center;color: #eaeaea"> 暂无数据 </li>
                 </ul>
               </div>
             </div>
@@ -511,6 +510,19 @@
             </div>
           </div>
         </div>
+        <div class="bottom-info">
+          <ul>
+            <li>
+              <span>当前阶段：年初申报</span>
+            </li>
+            <li>
+              <span>申报日期：{{new Date().getFullYear()+'-'+(new Date().getMonth()+1)+'-'+new Date().getDate() }}</span>
+            </li>
+            <li>
+              <span>申报人：{{UserName}}</span>
+            </li>
+          </ul>
+        </div>
       </div>
     </el-row>
     <el-dialog modal-append-to-body
@@ -550,14 +562,15 @@
 </template>
 
 <script>
-  import addBr from './addBr'
-  import setBuy from './setBuy'
-  import textareaDialog from './textareaDialog'
+  import addBr from '../../../components/preProjectDialog/addBr'
+  import setBuy from '../../../components/preProjectDialog/setBuy'
+  import textareaDialog from '../../../components/preProjectDialog/textareaDialog'
   import { mapState } from 'vuex'
-  import GoApproval from "../../pages/preproject/component/goApproval";
-  import ItemPrint from "./itemPrint";
+  import GoApproval from "./goApproval";
+  import ItemPrint from "../../../components/preProjectDialog/itemPrint";
+
   export default {
-    name: 'edit',
+    name: 'copy',
     props: {
       data:{
         type:Object,
@@ -566,7 +579,7 @@
         }
       }
     },
-    components: {ItemPrint,GoApproval, addBr, setBuy, textareaDialog },
+    components: {ItemPrint, GoApproval, addBr, setBuy, textareaDialog },
     data () {
       return {
         timeClearable: false,
@@ -746,12 +759,12 @@
         isOldTTData:true,
         //缓存被替换的原始指标明细
         oldTTData:[],
+        //审批弹框
         approvalDataS:{
           openDialog:false,
           data:{},
           subData:[]//获取审批流
         },
-
         //报表预览
         detailDialog:false,
         itemDetail:{}
@@ -804,7 +817,6 @@
           }
           nameArr[key].sum = sum
         }
-        console.log(nameArr)
         return nameArr
       }
     },
@@ -852,13 +864,14 @@
           this.projSurvey.FIfPerformanceAppraisal = res.ProjectMst.FIfPerformanceAppraisal;
           //项目科研四大文本框内容
           this.projScience = {
-              FFunctionalOverview: res.ProjectDtlTextContents.FFunctionalOverview, //部门职能概述
-              FProjBasis: res.ProjectDtlTextContents.FProjBasis, //申报依据
-              FFeasibility:  res.ProjectDtlTextContents.FFeasibility, //可行性
-              FNecessity:  res.ProjectDtlTextContents.FNecessity //必要性
+            FFunctionalOverview: res.ProjectDtlTextContents.FFunctionalOverview, //部门职能概述
+            FProjBasis: res.ProjectDtlTextContents.FProjBasis, //申报依据
+            FFeasibility:  res.ProjectDtlTextContents.FFeasibility, //可行性
+            FNecessity:  res.ProjectDtlTextContents.FNecessity //必要性
           };
           //预算明细表数据
           for (let i in res.ProjectDtlBudgetDtls) {
+            res.ProjectDtlBudgetDtls[i].PhId=''
             res.ProjectDtlBudgetDtls[i].FAmount = res.ProjectDtlBudgetDtls[i].FAmount.toString()
             let decimals = 2;
             let decPoint='.';
@@ -890,6 +903,7 @@
           //实施计划
           this.ImplPlanPanelData = res.ProjectDtlImplPlans
           for (let i in res.ProjectDtlImplPlans){
+            res.ProjectDtlImplPlans[i].PhId = '';
             this.ImplPlanPanelData[i].FImplContent = res.ProjectDtlImplPlans[i].FImplContent;
             this.ImplPlanPanelData[i].sedTime = [res.ProjectDtlImplPlans[i].FStartDate,res.ProjectDtlImplPlans[i].FEndDate];
             this.ImplPlanPanelData[i].FName = res.ProjectDtlImplPlans[i].FName;
@@ -906,13 +920,13 @@
           }
 
           //效绩目标表格
+
           this.target.targetTableData = res.ProjectDtlPerformTargets
           //绩效指标类别
           if (res.ProjectDtlPerformTargets.length !==0){
             this.target.targetType.FName = res.ProjectDtlPerformTargets[0].FTargetTypeCode_EXName
             this.target.targetType.FCode = res.ProjectDtlPerformTargets[0].FTargetTypeCode
           }
-          console.log('拉取到的：',res)
         }).catch(err => {
           this.$emit('refresh')
           this.$msgBox.error('请求失败')
@@ -926,11 +940,9 @@
           uid:this.UserId
         }
         this.getAxios('/GQT/CorrespondenceSettingsApi/GetDeptByUnit',data).then(res=>{
-          console.log(res)
           this.projGroup.FBudgetDeptGroup = res.Record
 
         }).catch(err=>{
-          console.log(err)
         })
       },
       //获取申报部门集合
@@ -970,7 +982,6 @@
             this.projGroup.TimeLimitsGroup = res.TimeLimits
             this.projGroup.ExpenseCategoriesGroup = res.ExpenseCategories;
             this.projGroup.FQtZcgnflGroup = res.Zcgnfls
-            console.log(res)
           })
           .catch(err => { })
       },
@@ -984,7 +995,6 @@
         this.getAxios('/GQT/QTSysSetApi/GetTargetTypeTree',data).then(res=>{
           this.$set(this.targetTreeData,0,res)
         }).catch(err=>{
-          console.log(err)
         })
       },
       addBudgetdetail (val) {
@@ -1053,9 +1063,9 @@
         this.budgetdetailData.push(newItem)
         this.cacheAddData.push(newItem)
         if (this.budgetdetailData.length>0)
-        if (this.budgetDetail.copyLine) {
-          this.valueChange()
-        }
+          if (this.budgetDetail.copyLine) {
+            this.valueChange()
+          }
       },
       delBudgetdetail (val, index) {
         let id = val.id
@@ -1063,9 +1073,6 @@
         if (val.PhId){
           for (let i in this.budgetdetailData) {
             if(val.PhId === this.budgetdetailData[i].PhId){
-              this.budgetdetailData[i].PersistentState = 3;
-              let arr  = JSON.parse(JSON.stringify(this.budgetdetailData[i]));
-              this.delBdData.push(arr);
               this.budgetdetailData.splice(i,1)
             }
           }
@@ -1110,7 +1117,6 @@
       add (val) {
         let item = JSON.parse(JSON.stringify(val));
         item.PhId = '';
-        console.log(item)
         let newItem = Object.assign(
           {},
           this.copyLine
@@ -1134,8 +1140,6 @@
           this.delRow = -1
           if (item.PhId){
             this.ImplPlanPanelData.splice(index, 1);
-            item.PersistentState=3;
-            this.delIppData.push(item)
           }else {
             this.ImplPlanPanelData.splice(index, 1)
           }
@@ -1161,7 +1165,6 @@
         item.FAmount = obj.value
       },
       filterMoney (item) {
-        console.log(item)
 
         function fil (value, decimals = 2, decPoint = '.', thousandsSep = ',') {
           if (!value) return '0.00'
@@ -1208,7 +1211,6 @@
           arr[0] = item
         }
         arr[0] =  JSON.parse(JSON.stringify(arr[0]));
-        console.log(arr[0])
         this.setBuyDialog.data = arr[0]
       },
       openTextarea (item, property) {
@@ -1227,7 +1229,6 @@
       },
       //tab切换
       swatchTabs (index) {
-        // console.log(this.cacheAddData)
         // this.cacheAddData = []//确认后清空缓存新增加的数据
         this.tabindex = index
         //实施计划第一行是否为空，只要有一列有值就不为空
@@ -1246,7 +1247,6 @@
       },
       //保存
       submit (type) {
-        console.log(this.target.targetTableData)
         //预算主表对象
         let projectMst = this.dataDtl.ProjectMst;
         projectMst.FProjName = this.projSurvey.FProjName;
@@ -1269,6 +1269,7 @@
         projectMst.NgUpdateDt = ''
         projectMst.PropertyBytes = ''
         projectMst._OldIdValue_ = ''
+        projectMst.PhId = ''
         //
         let projectDtlTextContents = this.dataDtl.ProjectDtlTextContents;
         projectDtlTextContents.FAnnualPerformGoal = this.target.ndTagetL;
@@ -1287,6 +1288,7 @@
         projectDtlTextContents.NgUpdateDt = ''
         projectDtlTextContents.PropertyBytes = ''
         projectDtlTextContents._OldIdValue_ = ''
+        projectDtlTextContents.PhId = ''
         //预算明细的采购
         let addPurchaseDtls = []
         let addPurDtl4SOFs = []
@@ -1306,12 +1308,14 @@
               FSpecification:this.budgetdetailData[i].FSpecification,
               FRemark:this.budgetdetailData[i].FRemark,
               FEstimatedPurTime:this.budgetdetailData[i].FEstimatedPurTime,
+              PhId:''
             });
             addPurDtl4SOFs.push({
               FDtlCode:'',//明细项目代码	必填（明细项目带入）
               FName:this.budgetdetailData[i].FName,//明细项目名称	必填（明细项目带入）
               FSourceOfFunds:this.budgetdetailData[i].FSourceOfFunds,
-              FAmount:this.budgetdetailData[i].FAmount
+              FAmount:this.budgetdetailData[i].FAmount,
+              PhId:''
             })
           }
         }
@@ -1343,10 +1347,13 @@
         }
         //更改对应事件
         for(let i in this.ImplPlanPanelData){
-            if (this.ImplPlanPanelData[i].sedTime){
-              this.ImplPlanPanelData[i].FEndDate = this.ImplPlanPanelData[i].sedTime[1]
-              this.ImplPlanPanelData[i].FStartDate = this.ImplPlanPanelData[i].sedTime[1]
-            }
+          if (this.ImplPlanPanelData[i].sedTime){
+            this.ImplPlanPanelData[i].FEndDate = this.ImplPlanPanelData[i].sedTime[1]
+            this.ImplPlanPanelData[i].FStartDate = this.ImplPlanPanelData[i].sedTime[1]
+          }
+        }
+        for (let i in  this.target.targetTableData) {
+          this.target.targetTableData[i].PhId = ''
         }
         let fas = '';
         if (type ==='bc' || type ==='bcss'){
@@ -1361,11 +1368,11 @@
 
           //预算明细
           // ProjectDtlBudgetDtls:this.dataDtl.ProjectDtlBudgetDtls,
-          ProjectDtlBudgetDtls:[...this.budgetdetailData,...this.delBdData],
+          ProjectDtlBudgetDtls:this.budgetdetailData,
           //实施计划
-          ProjectDtlImplPlans: [...this.ImplPlanPanelData,...this.delIppData],
+          ProjectDtlImplPlans: this.ImplPlanPanelData,
           //绩效指标
-          ProjectDtlPerformTargets:[...this.oldTTData,...this.target.targetTableData],
+          ProjectDtlPerformTargets:this.target.targetTableData,
           //预算明细的采购
           ProjectDtlPurchaseDtls:[...this.PurchaseDtls,...addPurchaseDtls],
           ProjectDtlPurDtl4SOFs:[...this.PurDtl4SOFs,...addPurDtl4SOFs],
@@ -1376,32 +1383,29 @@
         console.log(data)
         this.postAxios('/GXM/ProjectMstApi/PostSaveProject', data).then((res) => {
           if (res.Status ==='success'){
+
+
             if(type === 'bc'){
               let that =this
               this.$msgBox.show({
-                content:'修改成功',
+                content:'复制成功',
                 fn:function () {
-                  that.$emit("refresh",res,'edit')
+                  that.$emit("refresh",res,'copy')
                 }
               })
-            } else if (type === 'bcss'){
+            } else if (type === 'bcss') {
               let arr = [];
               arr.push({
                 PhId:res.KeyCodes[0]
               })
               this.approvalDataS.openDialog = true
               this.approvalDataS.data = arr
-            } else if(type === 'zc'){
-              let that =this
-              this.$msgBox.show({
-                content:'暂存成功',
-                fn:function () {
-                  that.$emit("refresh",res,'edit')
-                }
-              })
+            }else if (type ==='zc') {
+              this.$msgBox.show('暂存成功')
+              this.$emit("refresh",res,'copy')
             }
           }else {
-            this.$msgBox.error('修改失败'+res.Msg)
+            this.$msgBox.error('复制失败'+res.Msg)
           }
         }).catch(err => {
           this.$msgBox.error('请求错误'+res.Msg)
@@ -1471,7 +1475,6 @@
 
                 for (let key in that.ImplPlanPanelData){
                   if ( item.PhId ===that.ImplPlanPanelData[key].PhId){
-                    console.log(that.ImplPlanPanelData[key].PhId)
                     that.ImplPlanPanelData[key].FImplContent = item.FName
                     that.ImplPlanPanelData[key].FName = item.FName
                   }
@@ -1509,19 +1512,10 @@
         };
         this.getAxios('/GQT/QTSysSetApi/GetPerformEvalTargets',data).then(res=>{
           if (res){
-            if (this.isOldTTData){
-               let arr = JSON.parse(JSON.stringify(this.target.targetTableData))
-              for (let i in arr){
-                arr[i].PersistentState=3
-              }
-              this.oldTTData = arr
-              this.isOldTTData = false
-            }
             this.target.targetTableData = res.Data
             for (let i in this.target.targetTableData) {
               this.target.targetTableData[i].PhId = ''
             }
-            console.log(this.target.targetTableData)
 
           }else {
             this.$msgBox.error('请求出错')
@@ -1575,9 +1569,8 @@
       //审批弹框关闭时的回调
       handleDelete(data){
         this.approvalDataS.openDialog = false
-        this.$emit("refresh",'','edit')
+        this.$emit("refresh",'','copy')
       },
-
       //填报预览
       preview(){
         let ProjectDtlBudget = []
@@ -1585,7 +1578,7 @@
         for (let i in this.budgetdetailData){
           ProjectDtlBudget.push({
             FName:this.budgetdetailData[i].FName,
-            FAmount:this.budgetdetailData[i].FAmount,
+            FAmount:this.budgetdetailData[i].FAmount.replace(',',''),
             FPaymentMethod_EXName:this.budgetdetailData[i].FPaymentMethod?this.budgetDetail.fundPayGroup.filter(item => item.TypeCode ===this.budgetdetailData[i].FPaymentMethod )[0].TypeName:'',
             FOtherInstructions:this.budgetdetailData[i].FOtherInstructions,
           })
@@ -1659,7 +1652,6 @@
           }
         }
       }
-
     }
 
     .top-btn {
@@ -1934,7 +1926,6 @@
             overflow-y: scroll;
             padding-right: 25px;
             height: 100%;
-            border-bottom: 1px solid #e3e3e3;
             border-bottom: 1px solid #e3e3e3;
             ul li:not(:first-of-type) {
               font-size: 0;
