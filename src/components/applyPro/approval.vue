@@ -31,7 +31,7 @@
                    @click="cancel()">取消</el-button>
         <el-button size="small"
                    type="primary"
-                   @click="submit()">{{isLast&&BType!='002'?'生成支付单':'确认'}}</el-button>
+                   @click="submit()">{{isLast&&BType!='002'&&isAgree !== '2'?'生成支付单':'确认'}}</el-button>
       </div>
       <el-dialog :visible.sync="uploadDialog"
                  width="auto"
@@ -282,7 +282,7 @@ export default {
                 that.$emit('refresh')
               }
             })
-            if (this.isLast && this.BType != '002') {
+            if (this.isLast && this.BType != '002' && isAgree !== '2') {
               this.creatPayList()
             }
           } else {
@@ -354,7 +354,6 @@ export default {
     },
     backAproval (val) {
       this.getAppvalProc()
-      console.log(val)
       if (!val) {
         this.getBackApprovalPost()
         this.isAgree = '2'

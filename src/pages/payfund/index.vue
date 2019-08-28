@@ -135,7 +135,7 @@
                   </el-select>
                 </li>
                 <li>
-                  <span>申报日期</span>
+                  <span>申报日期：</span>
                   <el-date-picker size="mini"
                                   v-model="date"
                                   type="daterange"
@@ -146,7 +146,7 @@
                   </el-date-picker>
                 </li>
                 <li>
-                  <span>申报金额</span>
+                  <span>申报金额：</span>
                   <input style="width:auto;height: 28px;"
                          class="el-input__inner"
                          :precision="2"
@@ -817,7 +817,7 @@ export default {
 
       var pWidth = parseInt(window.getComputedStyle(union).width) //父级宽度
       //return;
-      let gap = unionStateConWidth - pWidth
+      let gap = unionStateConWidth - pWidth+10;
 
       if (!parseInt(unionStateCon.style.right)) {
         unionStateCon.style.right = '0px'
@@ -1665,7 +1665,6 @@ export default {
   height: 30px;
   font-size: 0.12rem;
   top: -4px;
-  background-color: #fff;
   cursor: pointer;
 }
 .iconMsg i {
