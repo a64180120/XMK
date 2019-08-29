@@ -134,12 +134,12 @@
                        size="small"
                        disabled
                        placeholder="必选">
+              <el-option :label="parseInt(year) + 1"
+                         :value="parseInt(year)+1"></el-option>
               <el-option :label="year"
                          :value="year"></el-option>
               <el-option :label="year-1"
                          :value="year-1"></el-option>
-              <el-option :label="year-2"
-                         :value="year-2"></el-option>
             </el-select>
           </li>
           <li >
@@ -1391,8 +1391,8 @@
           }
         }
         debugger
-    for (let i in this.PurchaseDtls){
-      if (this.PurchaseDtls[i].FExpensesChannel === undefined && this.PurchaseDtls[i].FBudgetAccounts === undefined ){
+    for (let i in this.budgetdetailData){
+      if (this.budgetdetailData[i].FExpensesChannel === undefined || this.budgetdetailData[i].FBudgetAccounts === undefined ){
         this.$msgBox.error('请将支出渠道与预算科目补充完整才能提交')
         return
         break
@@ -1993,7 +1993,7 @@
             margin-top: -20px;
 
             .listBottom-left {
-              font-size: 0.36rem;
+              font-size: 0.30rem;
               width: 50%;
               height: 150px;
               display: inline-block;

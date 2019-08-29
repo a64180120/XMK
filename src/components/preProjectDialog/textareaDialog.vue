@@ -9,7 +9,7 @@
   </el-dialog>-->
   <section class="textareadialog">
     <div slot="title" class="dialog-title">
-      <span style="float: left">输入内容</span>
+      <span style="float: left">{{title}}</span>
     </div>
     <div>
       <el-row>
@@ -37,6 +37,10 @@ export default {
     maxWord:{
       type: String,
       default:250
+    },
+    title:{
+      type:String,
+      default: '请输入内容'
     }
   },
   data() {

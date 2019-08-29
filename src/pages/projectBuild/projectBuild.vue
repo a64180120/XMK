@@ -7,7 +7,7 @@
           <li class="handle"
               @click="budgetEdit()">
             <div>
-              <img src="@/assets/images/xz.png">
+              <img style="height: 33px" src="@/assets/images/ysxz-1_17.png">
             </div>
             <span>预算修正</span>
           </li>
@@ -15,7 +15,7 @@
               v-if="WorkFlow === 1"
               @click="pBApproval()">
             <div>
-              <img src="@/assets/images/zj2.png">
+              <img src="@/assets/images/sp.png">
             </div>
             <span>送审</span>
           </li>
@@ -28,16 +28,18 @@
             <span>取消送审</span>
           </li>
           <li class="handle"
+              v-if="WorkFlow === 0"
               @click="rejectItem()">
             <div>
-              <img src="@/assets/images/xz.png">
+              <img style="height: 33px" src="@/assets/images/bh-1_20.png">
             </div>
             <span>驳回</span>
           </li>
           <li class="handle"
+              v-if="WorkFlow === 0"
               @click="itemDefine()">
             <div>
-              <img src="@/assets/images/xz.png">
+              <img style="height: 33px" src="@/assets/images/xmzxqr-1_19.png">
             </div>
             <span>项目执行确认</span>
           </li>
@@ -45,29 +47,28 @@
               @click="itemDefine()"
               v-if="WorkFlow === 1">
             <div>
-              <img src="@/assets/images/xz.png">
+              <img height="33px" src="@/assets/images/scys-1_22.png">
             </div>
             <span>生成预算</span>
           </li>
           <li class="handle"
-              @click="syncFinance()"
-              v-if="WorkFlow === 0">
+              @click="syncFinance()">
             <div>
-              <img src="@/assets/images/sp.png">
+              <img style="height: 33px" src="@/assets/images/tbdcw-1_24.png">
             </div>
             <span>同步到财务</span>
           </li>
           <li class="handle"
               @click="openAuditfollow()">
             <div>
-              <img src="@/assets/images/ss_d.png">
+              <img src="@/assets/images/zlx-1_07.png">
             </div>
             <span>申请表打印</span>
           </li>
           <li class="handle"
               @click="openAuditfollow()">
             <div>
-              <img src="@/assets/images/dy.png">
+              <img src="@/assets/images/zlx-1_07.png">
             </div>
             <span>汇总表打印</span>
           </li>
@@ -84,7 +85,7 @@
     </top-handle>
 
     <div>
-      <div class="container content-body" style="min-width: 1300px;overflow: auto;min-height:750px">
+      <div class="container content-body" style="min-width: 1505px;overflow: auto;min-height:750px">
         <div class="formArea">
           <!--搜索栏-->
           <div class="btnArea"
@@ -253,7 +254,7 @@
                       <span v-if="formList.year =='1'"
                             :style="{textAlign:item.align}">{{scope.row[item.prop] |NumFormat}}元</span>
                       <span v-else
-                            :style="{textAlign:item.align}">{{scope.row[item.prop] / 10000}}万元</span>
+                            :style="{textAlign:item.align}">{{(scope.row[item.prop] / 10000) | NumFormat}}万元</span>
                     </div>
                     <div v-else-if="item.other ==='start-end'"
                          class="table-column-height"
@@ -312,9 +313,9 @@
                         </div>
                         <div class="top-right">
                           <div class="card"
-                               v-if="formList.year == '1'">{{scope.row.FProjAmount | NumFormat}}元</div>
+                               v-if="formList.year == '1'">￥{{scope.row.FProjAmount | NumFormat}}元</div>
                           <div class="card"
-                               v-if="formList.year == '2'">{{(scope.row.FProjAmount/10000).toLocaleString()}}万元</div>
+                               v-if="formList.year == '2'">￥{{(scope.row.FProjAmount/10000)| NumFormat}}万元</div>
                         </div>
                       </div>
                       <div class="context">
@@ -649,7 +650,7 @@ export default {
         workType:'005'
       }
       this.getAxios('/GQT/QTSysSetApi/GetWorkFlow',data).then(res=>{
-          console.log(res)
+          this.WorkFlow =res.Data
       }).catch(err=>{
 
       })
@@ -761,7 +762,7 @@ export default {
     },
     //表头单元格回调
     handerCellClassName ({ row, column, rowIndex, columnIndex }) {
-      if (columnIndex === this.table.column.length) {
+      if (columnIndex === this.table.column.length +1) {
         return 'thead-last-cell'
       }else if (columnIndex === 0){
         return 'thead-frist'
@@ -950,7 +951,8 @@ export default {
       if (this.selection.length === 0){
         this.$msgBox.error('请选择单据进行项目执行确认')
       }else if (this.selection.length === 1){
-        if (this.selection[0].FIfYsxz ===0) {
+        debugger
+        if (this.selection[0].FIfYsxz !== 0) {
           this.$msgBox.error('请先预算修正再进行项目执行确认')
           return
         }
@@ -996,7 +998,8 @@ export default {
         this.$msgBox.error('请选择数据进行送审')
       }else if (this.selection.length ===1) {
         console.log(this.selection[0])
-        if (this.selection[0].FIfYsxz === 0) {
+        debugger
+        if (this.selection[0].FIfYsxz !== 0) {
             this.$msgBox.error('请先预算修正再送审')
           return
         }
@@ -1093,7 +1096,7 @@ export default {
     },
     //获取审批流程
     getAppvalProcList(row){
-      if (row.FApproveStatus ==='1'){
+      if (row.FApproveStatus ==='1' || row.FApproveStatus ==='5'){
         this.$msgBox.error('单据还未送审，未生成审批流，请先送审')
         return
       }

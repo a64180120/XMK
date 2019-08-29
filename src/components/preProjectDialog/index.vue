@@ -25,16 +25,19 @@
           <div class="top-btn">
             <el-button class="btn"
                        size="mini"
+                       style="margin-left: 0"
                        @click="submit('bc')">保存</el-button>
             <el-button class="btn"
+                       style="margin-left: 0"
                        size="mini"
                        @click="submit('bcss')">保存并送审</el-button>
             <el-button class="btn"
                        size="mini"
+                       style="margin-left: 0"
                        @click="submit('zc')">暂存</el-button>
             <el-popover  trigger="hover">
               <div>
-                <span style="font-size: 0.16rem">附单据<span style="text-decoration: underline">{{0}}</span>张</span>
+                <span style="font-size: 0.16rem">附单据<span style="text-decoration: underline">{{choosedIndexAndPro.index}}</span>张</span>
               </div>
               <el-button class="btn"
                          size="mini"
@@ -141,12 +144,12 @@
             <el-select v-model="yearSelect"
                        size="small"
                        placeholder="必选">
+              <el-option :label="parseInt(year) + 1"
+                         :value="parseInt(year)+1"></el-option>
               <el-option :label="year"
                          :value="year"></el-option>
               <el-option :label="year-1"
                          :value="year-1"></el-option>
-              <el-option :label="year-2"
-                         :value="year-2"></el-option>
             </el-select>
           </li>
           <li :class="[projSurvey.sedTime === '' && projSurveyNull.sedTime?'null-projS':'']">
@@ -342,16 +345,18 @@
             <div class="listBottom">
               <!--总计项目金额-->
               <div class="listBottom-left">
-                <span>总计项目金额：</span>
-                <span class="money">{{TotalAmount | NumFormat}}</span>
+                <span>总计项目金额:</span><span class="money">{{TotalAmount | NumFormat}}</span>
               </div>
               <!--细项目金额统计-->
               <div class="listBottom-right">
                 <span>其中:</span>
                 <ul>
                   <li v-if=" budgetDetail.FSourceOfFundsGroup.length !==0" v-for="(item,idx) in budgetDetail.FSourceOfFundsGroup">
-                    <span class="title">{{item.MC}}</span>
-                    <span class="money">{{budgetdetailData.filter(i=>i.FSourceOfFunds===item.DM).reduce((prev,cur)=>prev+parseFloat((Number((cur.FAmount).replace(/[,]/g, ''))).toFixed(2)),0) | NumFormat}}</span>
+                    <span style="width: 100%;overflow: hidden">
+                      <span class="title">{{item.MC}}</span>
+                       <span class="money">{{budgetdetailData.filter(i=>i.FSourceOfFunds===item.DM).reduce((prev,cur)=>prev+parseFloat((Number((cur.FAmount).replace(/[,]/g, ''))).toFixed(2)),0) | NumFormat}}</span>
+                    </span>
+
                   </li>
                   <li v-else style="text-align: center;color: #cccbcb"> 暂无数据 </li>
                 </ul>
@@ -556,7 +561,8 @@
                class="setBuyDialog">
       <textarea-dialog v-if="textareaDialogData.openDialog"
                        :maxWord="maxWord"
-                       :data="textareaDialogData"></textarea-dialog>
+                       :data="textareaDialogData"
+                       :title="textTitle" ></textarea-dialog>
     </el-dialog>
     <go-approval v-if="approvalDataS.openDialog"
                  :data="approvalDataS"
@@ -579,9 +585,8 @@
                width="auto"
                title="附件上传"
                :close-on-click-modal="false">
-      <file-up v-if="uploadVis"
-               :ind="choosedIndexAndPro"
-               @succe="loadFile"></file-up>
+      <file-up
+               @submit="submitFn"></file-up>
     </el-dialog>
   </section>
 </template>
@@ -593,7 +598,7 @@ import textareaDialog from './textareaDialog'
 import { mapState } from 'vuex'
 import GoApproval from "../../pages/preproject/component/goApproval";
 import ItemPrint from "./itemPrint";
-import FileUp from "../applyPro/fileUp";
+import FileUp from "./fileUp";
 
 export default {
   name: 'prerojectnewproject',
@@ -604,6 +609,7 @@ export default {
       timeClearable: false,
       //文本域最大字数
       maxWord: "600",
+      textTitle:"",
       //项目概况
       projSurvey: {
         FProjName: '', //项目名称
@@ -778,7 +784,7 @@ export default {
       tabindex: 0,//当前的tab页
       tabOldIndex: 0,//前一个Tab页码
       copyLine: false,
-      tabsList: ['项目科研', '预算明细', '实施计划', '绩效目标'],
+      tabsList: ['项目可研', '预算明细', '实施计划', '绩效目标'],
       // budgetdetail: [
       //   {
       //     FName: '',
@@ -818,8 +824,11 @@ export default {
       itemDetail:{},
       uploadVis:false ,//上传附件dialog
       choosedIndexAndPro:{
-        index: 0, pro: {}
-      }
+        index: 0,
+        pro: {
+          QtAttachments:[]
+        }
+      },
     }
   },
   computed: {
@@ -1037,6 +1046,10 @@ export default {
           this.delRow = -1
 
         })
+      } else {
+        if (this.budgetdetailData.length !== 1 ){
+          this.budgetdetailData.splice(index, 1)
+        }
       }
     },
     add (item) {
@@ -1124,9 +1137,11 @@ export default {
       if (property ==='FProjName'){
         this.projSurveyNull.FProjName = true
         this.maxWord = '100'
+        this.textTitle = '项目名称'
       }
       if (property === 'FOtherInstructions'){
         this.maxWord = '250'
+        this.textTitle = '测算过程及其他说明事项'
       }
       this.textareaDialogData.data = item
       this.textareaDialogData.property = property
@@ -1230,6 +1245,14 @@ export default {
       }else if (type ==='zc'){
         fas = 5
       }
+      let formData = new FormData
+      let fileList = this.choosedIndexAndPro.pro.QtAttachments
+      debugger
+      if (fileList.length !==0){
+        for (let file of fileList){
+          formData.append('files',file)
+        }
+      }
       let data = {
         //预算主表对象
         ProjectMst: {
@@ -1279,8 +1302,19 @@ export default {
           FNecessity: this.projScience.FNecessity,//必要性
           FLTPerformGoal:this.target.cqTarget,//长期目标
           FAnnualPerformGoal:this.target.ndTagetL//年度目标
-        }
+        },
       }
+      formData.append('UserId',JSON.stringify(data.UserId))
+      for(let i in data.ProjectMst){
+          formData.append(i,data.ProjectMst[i])
+      }
+      formData.append('ProjectDtlBudgetDtls',JSON.stringify(data.ProjectDtlBudgetDtls))
+      formData.append('ProjectDtlImplPlans',JSON.stringify(data.ProjectDtlImplPlans))
+      formData.append('ProjectDtlPerformTargets',JSON.stringify(data.ProjectDtlPerformTargets))
+      formData.append('ProjectMst',JSON.stringify(data.ProjectMst))
+      formData.append('ProjectDtlPurchaseDtls',JSON.stringify(data.ProjectDtlPurchaseDtls))
+      formData.append('ProjectDtlPurDtl4SOFs',JSON.stringify(data.ProjectDtlPurDtl4SOFs))
+      formData.append('ProjectDtlTextContents',JSON.stringify(data.ProjectDtlTextContents))
       //提交时判断项目概况是否已经填写完
       for(let i in this.projSurvey){
         if (i ===''){
@@ -1314,6 +1348,7 @@ export default {
 
         this.postAxios('/GXM/ProjectMstApi/PostSaveProject', data).then((res) => {
           if (res.Status ==='success'){
+            this.upFile(res.KeyCodes[0])
             if(type === 'bc'){
               this.$msgBox.show('新增成功')
               this.$emit("refresh",res,'add')
@@ -1329,6 +1364,8 @@ export default {
               this.$emit("refresh",res,'add')
             }
             console.log(res)
+
+
           }else {
             this.$msgBox.error('新增失败'+res.Msg)
           }
@@ -1357,7 +1394,7 @@ export default {
       //1、当预算明细不为空，实施明细为空时
       if (!ImpStatus && budgetStatus) {
         if (!this.tabStatus.fristSwatchTab) {
-          this.$confirm('实施计划已存在，是否更新？', '提示', {
+          this.$confirm('明细项目发生变化，是否完善实施计划？', '提示', {
             confirmButtonText: '是',
             cancelButtonText: '否',
             type: "warning",
@@ -1535,9 +1572,23 @@ export default {
     uploadFile(){
       this.uploadVis = true
     },
-    loadFile(val){
-       console.log(val);
+    submitFn(val){
+       console.log('++',val);
+       this.choosedIndexAndPro.index = val.length
+        this.choosedIndexAndPro.pro.QtAttachments = val
       this.uploadVis = false;
+    },
+    upFile(code){
+      debugger
+      let formData = new FormData
+      formData.append('PhId',code)
+      let fileList = this.choosedIndexAndPro.pro.QtAttachments;
+      for (let file of fileList){
+        formData.append('files',file.raw)
+      }
+        this.formAxios('/GXM/ProjectMstApi/PostSaveProject2',formData).then(res=>{
+          console.log(res)
+        }).catch()
     }
   }
 }
@@ -1907,7 +1958,7 @@ export default {
           margin-top: -20px;
 
           .listBottom-left {
-            font-size: 0.36rem;
+            font-size: 0.30rem;
             width: 50%;
             height: 150px;
             display: inline-block;
@@ -1919,6 +1970,9 @@ export default {
 
             .money {
               color: #f44336;
+              width: 100%;
+              overflow: hidden;
+              white-space: nowrap;
             }
           }
 

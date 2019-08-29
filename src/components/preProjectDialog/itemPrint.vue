@@ -248,7 +248,7 @@ export default {
         top: 0;
         left: 10px;
         right: 10px;
-        /*overflow: hidden;*/
+        overflow: hidden;
         .tableHead {
           th {
             color: #fff;
