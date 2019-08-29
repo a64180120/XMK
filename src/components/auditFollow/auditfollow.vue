@@ -98,13 +98,14 @@
                  
                  :append-to-body="false"
                  :close-on-click-modal="true"
-                 :modal-append-to-body="true"
+                 :modal-append-to-body="false"
+
                  width="800px"
                  @click.stop="fn()">
         <div slot="title"
              class="dialog-title"
              @click.stop="fn()">
-          <span style="float: left">查看附件</span>
+          <span style="float: left">查看1附件</span>
         </div>
         <img-view :images="imgList"></img-view>
       </el-dialog>

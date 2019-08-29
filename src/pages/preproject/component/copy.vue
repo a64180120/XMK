@@ -32,8 +32,15 @@
             <el-button class="btn"
                        size="mini"
                        @click="submit('zc')">暂存</el-button>
-            <el-button class="btn"
-                       size="mini">上传附件</el-button>
+            <el-popover  trigger="hover">
+              <div>
+                <span style="font-size: 0.16rem">附单据<span style="text-decoration: underline">{{choosedIndexAndPro.index}}</span>张</span>
+              </div>
+              <el-button class="btn"
+                         size="mini"
+                         @click="uploadFile()"
+                         slot="reference">上传附件</el-button>
+            </el-popover>
             <el-button class="btn"
                        @click="preview()"
                        size="mini">填报预览</el-button>
@@ -128,12 +135,12 @@
             <el-select v-model="yearSelect"
                        size="small"
                        placeholder="必选">
+              <el-option :label="parseInt(year) + 1"
+                         :value="parseInt(year)+1"></el-option>
               <el-option :label="year"
                          :value="year"></el-option>
               <el-option :label="year-1"
                          :value="year-1"></el-option>
-              <el-option :label="year-2"
-                         :value="year-2"></el-option>
             </el-select>
           </li>
           <li >
@@ -541,6 +548,7 @@
                class="setBuyDialog">
       <textarea-dialog v-if="textareaDialogData.openDialog"
                        :maxWord="maxWord"
+                       :title="textTitle"
                        :data="textareaDialogData"></textarea-dialog>
     </el-dialog>
     <go-approval v-if="approvalDataS.openDialog"
@@ -558,6 +566,15 @@
       </div>
       <item-print :data="itemDetail"></item-print>
     </el-dialog>
+    <el-dialog :visible.sync="uploadVis"
+               modal-append-to-body
+               :append-to-body="true"
+               width="auto"
+               title="附件上传"
+               :close-on-click-modal="false">
+      <file-up
+        @submit="submitFn" v-if="uploadVis" :fileItem="choosedIndexAndPro.pro.QtAttachments"></file-up>
+    </el-dialog>
   </section>
 </template>
 
@@ -568,6 +585,7 @@
   import { mapState } from 'vuex'
   import GoApproval from "./goApproval";
   import ItemPrint from "../../../components/preProjectDialog/itemPrint";
+  import FileUp from "../../../components/preProjectDialog/fileUp";
 
   export default {
     name: 'copy',
@@ -579,12 +597,13 @@
         }
       }
     },
-    components: {ItemPrint, GoApproval, addBr, setBuy, textareaDialog },
+    components: {FileUp,ItemPrint, GoApproval, addBr, setBuy, textareaDialog },
     data () {
       return {
         timeClearable: false,
         //文本域最大字数
         maxWord: "600",
+        textTitle:"",
         //项目概况
         projSurvey: {
           FProjName: '', //项目名称
@@ -767,7 +786,14 @@
         },
         //报表预览
         detailDialog:false,
-        itemDetail:{}
+        itemDetail:{},
+        uploadVis:false ,//上传附件dialog
+        choosedIndexAndPro:{
+          index: 0,
+          pro: {
+            QtAttachments:[]
+          }
+        },
       }
     },
     computed: {
@@ -849,6 +875,13 @@
           FProjPhId: this.data.PhId
         }
         this.getAxios('/GXM/ProjectMstApi/GetProjectMst', data).then(res => {
+          console.log('==',res)
+           //获取附件
+          this.choosedIndexAndPro.index = res.ProjectAttachments.length
+          this.choosedIndexAndPro.pro.QtAttachments= res.ProjectAttachments
+
+
+
           this.dataDtl  = res;
           //项目概况赋值
           this.projectMst = res.ProjectMst;
@@ -1216,9 +1249,11 @@
       openTextarea (item, property) {
         if (property ==='FProjName'){
           this.maxWord = '100'
+          this.textTitle = '项目名称'
         }
         if (property === 'FOtherInstructions'){
           this.maxWord = '250'
+          this.textTitle = '测算过程及其他说明事项'
         }
         this.textareaDialogData.data = item
         this.textareaDialogData.property = property
@@ -1615,6 +1650,28 @@
         }
         this.itemDetail = data
         this.detailDialog = true
+      },
+      //上传附件
+      uploadFile(){
+        this.uploadVis = true
+      },
+      submitFn(val){
+        console.log('++',val);
+        this.choosedIndexAndPro.index = val.length
+        this.choosedIndexAndPro.pro.QtAttachments = val;
+        this.uploadVis = false;
+      },
+      upFile(code){
+        debugger
+        let formData = new FormData
+        formData.append('PhId',code)
+        let fileList = this.choosedIndexAndPro.pro.QtAttachments;
+        for (let file of fileList){
+          formData.append('files',file.raw)
+        }
+        this.formAxios('/GXM/ProjectMstApi/PostSaveProject2',formData).then(res=>{
+          console.log(res)
+        }).catch()
       }
     }
   }
@@ -1985,7 +2042,7 @@
             margin-top: -20px;
 
             .listBottom-left {
-              font-size: 0.36rem;
+              font-size: 0.30rem;
               width: 50%;
               height: 150px;
               display: inline-block;

@@ -4,7 +4,8 @@
                 @refresh="refresh()">
       <div class="top">
         <ul>
-          <li v-if="formList.swatchBtn !== '3' &&MenuButton.ProjectMstList_Vue_add ==='True'" class="handle"
+          <!--&& MenuButton.ProjectMstList_Vue_add ==='True'-->
+          <li v-if="formList.swatchBtn !== '3' " class="handle"
               @click="add()"
               >
             <div>
@@ -12,7 +13,8 @@
             </div>
             <span>新增</span>
           </li>
-          <li v-if="formList.swatchBtn !== '3'&&MenuButton.ProjectMstList_Vue_edit ==='True'" class="handle"
+          <!--&&MenuButton.ProjectMstList_Vue_edit ==='True'-->
+          <li v-if="formList.swatchBtn !== '3'" class="handle"
               @click="edit()">
             <div>
               <img src="@/assets/images/zj2.png">
@@ -30,7 +32,7 @@
           <li v-if="formList.swatchBtn !== '3' && MenuButton.ProjectMstList_Vue_copy ==='True'" class="handle"
               @click="copyList()">
             <div>
-              <img src="@/assets/images/xz.png">
+              <img style="height: 33px" src="@/assets/images/fz-1_15.png">
             </div>
             <span>复制</span>
           </li>
@@ -38,7 +40,7 @@
               class="handle"
               @click="transferItem()">
             <div>
-              <img src="@/assets/images/xz.png">
+              <img style="height: 33px" src="@/assets/images/zlx-1_07.png">
             </div>
             <span>转立项</span>
           </li>
@@ -46,7 +48,7 @@
               class="handle"
               @click="rejectItem()">
             <div>
-              <img src="@/assets/images/xz.png">
+              <img src="@/assets/images/bh-1_20.png">
             </div>
             <span>驳回</span>
           </li>
@@ -71,7 +73,7 @@
               class="handle"
               @click="report()">
             <div>
-              <img src="@/assets/images/ss_d.png">
+              <img style="height: 33px" src="@/assets/images/sb-1_05.png">
             </div>
             <span>上报</span>
           </li>
@@ -130,7 +132,7 @@
 
     <div>
       <div class="container content-body"
-           style="min-width: 1300px;overflow: auto;min-height:750px">
+           style="min-width: 1505px;overflow: auto;min-height:750px">
         <div class="formArea">
           <!--搜索栏-->
           <div class="btnArea"
@@ -312,9 +314,9 @@
                          class="table-column-height"
                          :style="{textAlign:item.align}">
                       <span v-if="formList.year =='1'"
-                            :style="{textAlign:item.align}">￥{{scope.row[item.prop] |NumFormat}}元</span>
+                            :style="{textAlign:item.align}">{{scope.row[item.prop] |NumFormat}}元</span>
                       <span v-else
-                            :style="{textAlign:item.align}">￥{{scope.row[item.prop] / 10000|NumFormat }}万元</span>
+                            :style="{textAlign:item.align}">{{scope.row[item.prop] / 10000|NumFormat }}万元</span>
                     </div>
                     <div v-else-if="item.other ==='start-end'"
                          class="table-column-height"
@@ -460,7 +462,7 @@
                         <span v-if="scope.row.FProjStatus ===5">项目暂停</span>
                         <span v-if="scope.row.FProjStatus ===6">项目终止</span>
                         <span v-if="scope.row.FProjStatus ===7">项目关闭</span>)</div>
-                      <div class="status-context" @click="getAppvalProcList(scope.row)">
+                      <div class="status-context" @click="WorkFlow === 0 ? '' : getAppvalProcList(scope.row)">
                         <span v-if="formList.swatchBtn === '1'">
                           <span v-if="scope.row.FApproveStatus ==1">待审批</span>
                           <span v-if="scope.row.FApproveStatus ==2">审批中</span>
@@ -542,7 +544,7 @@
                :visible.sync="detailDialog"
                width="50%"
                :close-on-click-modal="false"
-               class="applyDetailDialog">
+               class="detailDialog">
       <div slot="title"
            class="applyDetailTitle">
         <span>申报表打印</span>
@@ -685,7 +687,11 @@ export default {
             },
             fn: function (scope) {
               console.log(scope)
-              that.getAppvalProcList(scope.row)
+              if (that.WorkFlow === 0){
+               return
+              }else {
+                that.getAppvalProcList(scope.row)
+              }
             }
           }],
         selection: true,
@@ -787,8 +793,11 @@ export default {
         
         if (res.Status ==='success') {
           this.WorkFlow =res.Data;
-          if (res.Data === '0') {
-
+          console.log('---', this.WorkFlow)
+          if (res.Data === 0) {
+            this.formList.swatchBtn = "2"
+          }else {
+            this.formList.swatchBtn = "1"
           }
         }
       }).catch(err=>{
@@ -1351,6 +1360,15 @@ export default {
 .applyDetailDialog >>> .el-dialog__body {
   padding: 0 20px;
 }
+.detailDialog >>> .el-dialog__header {
+  padding: 10px 0 0 0;
+}
+.detailDialog >>> .el-dialog__body {
+  padding: 0 20px;
+}
+.applyDetailDialog >>>.el-dialog{
+  min-width: 1500px;
+}
 .applyDetailTitle {
   text-align: left;
   border-bottom: 1px solid #eaeaea;
@@ -1376,6 +1394,9 @@ export default {
     border-radius: 0px 4px 4px 0px;
   }
 .applyDetailDialog >>> .el-dialog__header .el-dialog__headerbtn{
+   top: 10px !important;
+ }
+.detailDialog >>> .el-dialog__header .el-dialog__headerbtn{
   top: 10px !important;
 }
 </style>
