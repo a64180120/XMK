@@ -69,7 +69,7 @@
                        alt=""></div>
                 <div>年中调整</div>
               </li>
-              <li>
+              <li @click="routerTo('/buggetreport')">
                 <div><img src="@/assets/images/ysbb.png"
                        alt=""></div>
                 <div>预算报表</div>
@@ -107,6 +107,7 @@ export default {
 
     },
     routerTo (str) {
+
       this.$router.push({ path: str })
     },
     arrowFn (arrow, type) {

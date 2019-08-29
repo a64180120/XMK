@@ -5,17 +5,17 @@
         <el-col :span="24">
           <div class="top-btn">
             <slot name="btn-group">
-              <el-button v-if="applyBillType!=1&&menu['fund_createpay']"
+              <el-button v-if="applyBillType!=1||menu['fund_createpay']"
                          class="btn"
                          size="mini"
                          style="padding: 0;"
                          @click="creatApply"
                          :disabled="!(record.PaymentMst.FApproval==0&&approvalDataS.subData.length==0)">生成支付单</el-button>
-              <el-button v-if="applyBillType!=1&&menu['fund_check']"
+              <el-button v-if="applyBillType!=1||menu['fund_check']"
                          class="btn"
                          size="mini"
                          @click="postApply"
-                         :disabled="!(record.PaymentMst.FApproval==0||record.PaymentMst.FApproval==2)">送审</el-button>
+                         :disabled="!(record.PaymentMst.FApproval==0||record.PaymentMst.FApproval==2)||menu['fund_check']">送审</el-button>
               <el-button v-if="menu['fund_delete']"
                          class="btn"
                          size="mini"
