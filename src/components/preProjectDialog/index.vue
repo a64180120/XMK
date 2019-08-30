@@ -13,7 +13,7 @@
                 <span>当前阶段：年初申报</span>
               </li>
               <li>
-                <span>申报日期：{{new Date().getFullYear()+'-'+(new Date().getMonth()+1)+'-'+new Date().getDate() }}</span>
+                <span>申报日期：{{(new Date()).getFullYear()+'-'+((new Date()).getMonth()<10?'0'+((new Date()).getMonth()+1):(new Date()).getMonth())+'-'+((new Date()).getDate()<10?'0'+((new Date()).getDate()):(new Date()).getDate())}}</span>
               </li>
               <li>
                 <span>申报人：{{UserName}}</span>
@@ -829,6 +829,9 @@ export default {
           QtAttachments:[]
         }
       },
+      //预算总金额
+      FProjAmount:0,
+      FBudgetAmount:0,
     }
   },
   computed: {
@@ -850,6 +853,8 @@ export default {
         let FAmount = arr[key].FAmount.replace(/[,]/g, '')
         sum += parseFloat(FAmount) || 0
       }
+      this.FProjAmount = sum;
+      this.FBudgetAmount = sum;
       return sum
     },
     //指标类别中每一类占多少
@@ -1247,7 +1252,6 @@ export default {
       }
       let formData = new FormData
       let fileList = this.choosedIndexAndPro.pro.QtAttachments
-      debugger
       if (fileList.length !==0){
         for (let file of fileList){
           formData.append('files',file)
@@ -1519,7 +1523,6 @@ export default {
     },
     //审批弹框关闭时的回调
     handleDelete(data){
-      debugger
       this.approvalDataS.openDialog = false
       this.$emit("refresh",'','add')
     },
@@ -1589,7 +1592,8 @@ export default {
         this.formAxios('/GXM/ProjectMstApi/PostSaveProject2',formData).then(res=>{
           console.log(res)
         }).catch()
-    }
+    },
+
   }
 }
 </script>

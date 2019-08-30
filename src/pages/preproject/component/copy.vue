@@ -13,7 +13,7 @@
                 <span>当前阶段：年初申报</span>
               </li>
               <li>
-                <span>申报日期：{{new Date().getFullYear()+'-'+(new Date().getMonth()+1)+'-'+new Date().getDate() }}</span>
+                <span>申报日期：{{(new Date()).getFullYear()+'-'+((new Date()).getMonth()<10?'0'+((new Date()).getMonth()+1):(new Date()).getMonth())+'-'+((new Date()).getDate()<10?'0'+((new Date()).getDate()):(new Date()).getDate())}}</span>
               </li>
               <li>
                 <span>申报人：{{UserName}}</span>
@@ -1305,6 +1305,7 @@
         projectMst.PropertyBytes = ''
         projectMst._OldIdValue_ = ''
         projectMst.PhId = ''
+        projectMst.FProjCode = ''
         //
         let projectDtlTextContents = this.dataDtl.ProjectDtlTextContents;
         projectDtlTextContents.FAnnualPerformGoal = this.target.ndTagetL;

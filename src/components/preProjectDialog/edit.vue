@@ -13,7 +13,7 @@
                 <span>当前阶段：年初申报</span>
               </li>
               <li>
-                <span>申报日期：{{new Date().getFullYear()+'-'+(new Date().getMonth()+1)+'-'+new Date().getDate() }}</span>
+                <span>申报日期：{{(new Date()).getFullYear()+'-'+((new Date()).getMonth()<10?'0'+((new Date()).getMonth()+1):(new Date()).getMonth())+'-'+((new Date()).getDate()<10?'0'+((new Date()).getDate()):(new Date()).getDate())}}</span>
               </li>
               <li>
                 <span>申报人：{{UserName}}</span>
@@ -779,6 +779,7 @@
             QtAttachments:[]
           }
         },
+        money:0
       }
     },
     computed: {
@@ -794,6 +795,7 @@
       TotalAmount () {
         // let arr = this.budgetdetailData
         // 直接赋值会把defineproperty带入！
+
         let arr = JSON.parse(JSON.stringify(this.budgetdetailData))
         let sum = 0
         for (let key in arr) {
@@ -884,6 +886,8 @@
               FNecessity:  res.ProjectDtlTextContents.FNecessity //必要性
           };
           //预算明细表数据
+
+          console.log('拉取1到的：',res)
           for (let i in res.ProjectDtlBudgetDtls) {
             res.ProjectDtlBudgetDtls[i].FAmount = res.ProjectDtlBudgetDtls[i].FAmount.toString()
             let decimals = 2;
@@ -1273,6 +1277,7 @@
       submit (type) {
         console.log(this.target.targetTableData)
         //预算主表对象
+
         let projectMst = this.dataDtl.ProjectMst;
         projectMst.FProjName = this.projSurvey.FProjName;
         projectMst.FDeclarationDept = this.projSurvey.FDeclarationDept;
@@ -1294,6 +1299,8 @@
         projectMst.NgUpdateDt = ''
         projectMst.PropertyBytes = ''
         projectMst._OldIdValue_ = ''
+        projectMst.FBudgetAmount = this.TotalAmount
+        projectMst.FProjAmount = this.TotalAmount
         //
         let projectDtlTextContents = this.dataDtl.ProjectDtlTextContents;
         projectDtlTextContents.FAnnualPerformGoal = this.target.ndTagetL;
@@ -1327,7 +1334,7 @@
               FMeasUnit:this.budgetdetailData[i].FMeasUnit,
               FQty:this.budgetdetailData[i].FQty,
               FPrice:this.budgetdetailData[i].FPrice,
-              FAmount:this.budgetdetailData[i].FAmount,
+              FAmount:this.budgetdetailData[i].FAmount?this.budgetdetailData[i].FAmount.replace(',',''):'0.00',
               FSpecification:this.budgetdetailData[i].FSpecification,
               FRemark:this.budgetdetailData[i].FRemark,
               FEstimatedPurTime:this.budgetdetailData[i].FEstimatedPurTime,
@@ -1339,6 +1346,9 @@
               FAmount:this.budgetdetailData[i].FAmount
             })
           }
+        }
+        for (let i in this.budgetdetailData) {
+          this.budgetdetailData[i].FAmount = this.budgetdetailData[i].FAmount.replace(/,/g,'')
         }
         for (let i in this.PurchaseDtls) {
           this.PurchaseDtls[i].PhId = ''

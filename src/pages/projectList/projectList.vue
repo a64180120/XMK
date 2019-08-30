@@ -5,7 +5,7 @@
       <div class="top">
         <ul>
           <li class="handle"
-              @click="openAuditfollow()">
+              @click="sumTablePrint()">
             <div>
               <img src="@/assets/images/dy.png">
             </div>
@@ -379,6 +379,9 @@
     <auditfollow :visible.sync="auditDialog"
                  auditType="005"
                  :auditMsg="auditMsg"></auditfollow>
+    <!--汇总表打印-->
+    <sum-tab-print ref="sumTabPrint" :data="sumtabData" :totalAmount="totalFProjAmount"></sum-tab-print>
+
   </section>
 </template>
 
@@ -391,9 +394,11 @@
   import ItemPrint from "../../components/preProjectDialog/itemPrint";
   import Auditfollow from "../../components/auditFollow/auditfollow";
   import { mapState } from 'vuex'
+
+  import SumTabPrint from "../preproject/component/sumTabPrint";
   export default {
     name: "projectBuild",
-    components: {Auditfollow, ItemPrint, Prerojectnewproject, SearchInput, ItemTable, DataTable, TopHandle },
+    components: {SumTabPrint,Auditfollow, ItemPrint, Prerojectnewproject, SearchInput, ItemTable, DataTable, TopHandle },
     data () {
       let that = this
       return {
@@ -402,33 +407,39 @@
           tableData: [],
           column: [
             {
-              prop: 'FDeclarationDept_EXName',
-              label: '申报部门',
+              prop: 'FProjCode',
+              label: '项目编码',
+              align: 'center',
+              width:150,
               other: 'function',
               fn: function (scope) {
                 that.showDetail(scope)
               }
             }, {
-              prop: 'FBudgetDept_EXName',
-              label: '预算部门',
-            }, {
-              prop: 'FProjCode',
-              label: '项目编码',
-              align: 'center',
-            }, {
               prop: 'FProjName',
               label: '项目名称',
               align: 'center'
-            }, {
+            },
+            {
               prop: 'FProjAmount',
               label: '项目金额',
               width: 130,
               other: 'money',
               align: "right"
+            },
+            {
+              prop: 'FDeclarationDept_EXName',
+              label: '申报部门',
+              width:120
             }, {
+              prop: 'FBudgetDept_EXName',
+              label: '预算部门',
+            },
+            {
               prop: 'FExpenseCategory_EXName',
               label: '支出类别',
               align: 'center',
+              width:160
             }, {
               prop1: 'FStartDate',
               prop2: 'FEndDate',
@@ -444,9 +455,9 @@
             }, {
               prop: 'FApproveStatus',
               label: '审批状态',
-              align: 'center',
               width: 160,
-              other: 'status',
+              align: 'center',
+              other: 'status-click',
               format: function (scope) {
                 let MC = '';
                 if (scope.row.FProjStatus ===1) {
@@ -464,18 +475,40 @@
                 } else if (scope.row.FProjStatus ===7) {
                   MC = '项目关闭'
                 }
-                if (scope.row.FApproveStatus == 1) {
-                  return '<span>' + '待审批('+MC+')' + '</span>'
-                } else if (scope.row.FApproveStatus == 2) {
-                  return '<span>' + '审批中('+MC+')' + '</span>'
-                } else if (scope.row.FApproveStatus == 3) {
-                  return '<span>' + '审批通过('+MC+')' + '</span>'
-                } else if (scope.row.FApproveStatus == 4) {
-                  return '<span>' + '已退回('+MC+')' + '</span>'
+                if (that.WorkFlow === 1){
+                  if (scope.row.FApproveStatus == 1) {
+                    return '<span>' + '待送审('+MC+')' + '</span>'
+                  } else if (scope.row.FApproveStatus == 2) {
+                    return '<span>' + '审批中('+MC+')' + '</span>'
+                  } else if (scope.row.FApproveStatus == 3) {
+                    return '<span>' + '审批成功('+MC+')' + '</span>'
+                  } else if (scope.row.FApproveStatus == 4) {
+                    return '<span>' + '退回('+MC+')' + '</span>'
+                  }else if (scope.row.FApproveStatus == 5) {
+                    return '<span>' + '暂存('+MC+')' + '</span>'
+                  }
+                }else{
+                  if (scope.row.FApproveStatus == 1) {
+                    return '<span>' + '部门申报('+MC+')' + '</span>'
+                  } else if (scope.row.FApproveStatus == 2) {
+                    return '<span>' + '汇总审批('+MC+')' + '</span>'
+                  } else if (scope.row.FApproveStatus == 3) {
+                    return '<span>' + '已审批('+MC+')' + '</span>'
+                  } else if (scope.row.FApproveStatus == 4) {
+                    return '<span>' + '待执行('+MC+')' + '</span>'
+                  }else if (scope.row.FApproveStatus == 5) {
+                    return '<span>' + '暂存('+MC+')' + '</span>'
+                  }
                 }
+
               },
               fn: function (scope) {
                 console.log(scope)
+                if (that.WorkFlow === 0){
+                  return
+                }else {
+                  that.getAppvalProcList(scope.row)
+                }
               }
             }],
           selection: true
@@ -540,6 +573,12 @@
         auditDialog:false,
 
         paddRight:'10px',
+
+        //汇总表打印
+        //开关弹框
+        sumtabDialog:false,
+        //汇总数据
+        sumtabData:[],
       }
     },
     computed: {
@@ -873,6 +912,22 @@
         }).catch(err=>{
 
         })
+      },
+
+      //汇总表打印
+      sumTablePrint(){
+        if (this.selection.length ===0){
+          this.$msgBox.error('请选择需要打印的单据！！')
+        }else {
+          this.$refs.sumTabPrint.sumdialog = true
+          this.sumtabData = this.selection;
+          let sum = 0
+          for (let i in this.selection){
+            sum += this.selection[i].FProjAmount
+          }
+          this.totalFProjAmount = sum
+          console.log(this.selection)
+        }
       },
     }
   }

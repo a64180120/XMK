@@ -5,7 +5,7 @@
       <div class="top">
         <ul>
           <!--&& MenuButton.ProjectMstList_Vue_add ==='True'-->
-          <li v-if="formList.swatchBtn !== '3' " class="handle"
+          <li v-if="formList.swatchBtn !== '3'&& MenuButton.ProjectMstList_Vue_add ==='True' " class="handle"
               @click="add()"
               >
             <div>
@@ -14,7 +14,7 @@
             <span>新增</span>
           </li>
           <!--&&MenuButton.ProjectMstList_Vue_edit ==='True'-->
-          <li v-if="formList.swatchBtn !== '3'" class="handle"
+          <li v-if="formList.swatchBtn !== '3'&&MenuButton.ProjectMstList_Vue_edit ==='True'" class="handle"
               @click="edit()">
             <div>
               <img src="@/assets/images/zj2.png">
@@ -93,7 +93,7 @@
                 <ul>
                   <li class="handle"
                       v-if="MenuButton.ProjectMstList_Vue_printfSB ==='True'"
-                      @click="">
+                      @click="applyTablePrint()">
                     <div>
                       <img src="@/assets/images/dy.png">
                     </div>
@@ -101,7 +101,7 @@
                   </li>
                   <li class="handle"
                       v-if="MenuButton.ProjectMstList_Vue_printfHZ ==='True'"
-                      @click="">
+                      @click="sumTablePrint()">
                     <div>
                       <img src="@/assets/images/dy.png">
                     </div>
@@ -174,16 +174,7 @@
                 <el-select v-model="formList.approvalStatus"
                            size="mini"
                            @change="query()">
-                  <el-option value="0"
-                             label="全部">全部</el-option>
-                  <el-option value="1"
-                             label="待上报">待上报</el-option>
-                  <el-option value="2"
-                             label="审批中">审批中</el-option>
-                  <el-option value="3"
-                             label="审批通过">审批通过</el-option>
-                  <el-option value="4"
-                             label="未通过">已退回</el-option>
+                  <el-option v-for="(item,idx) in aplStaGrop" :value="item.value" :label="item.label"></el-option>
                 </el-select>
               </el-form-item>
               <el-form-item style="float: right">
@@ -441,18 +432,18 @@
                   <template slot-scope="scope">
                     <div class="status-row">
                       <div class="status-titile">
-                        <span v-if="formList.swatchBtn === '1'">
-                          <span v-if="scope.row.FApproveStatus ==1">待审批</span>
+                        <span v-if="WorkFlow === 1">
+                          <span v-if="scope.row.FApproveStatus ==1">待送审</span>
                           <span v-if="scope.row.FApproveStatus ==2">审批中</span>
-                          <span v-if="scope.row.FApproveStatus ==3">审批通过</span>
-                          <span v-if="scope.row.FApproveStatus ==4">已退回</span>
+                          <span v-if="scope.row.FApproveStatus ==3">审批成功</span>
+                          <span v-if="scope.row.FApproveStatus ==4">退回</span>
                           <span v-if="scope.row.FApproveStatus ==5">暂存</span>
                         </span>
                         <span v-else>
-                           <span v-if="scope.row.FApproveStatus ==1">待上报</span>
-                           <span v-if="scope.row.FApproveStatus ==2">审批中</span>
+                           <span v-if="scope.row.FApproveStatus ==1">部门申报</span>
+                           <span v-if="scope.row.FApproveStatus ==2">汇总审批</span>
                            <span v-if="scope.row.FApproveStatus ==3">审批通过</span>
-                           <span v-if="scope.row.FApproveStatus ==4">待执行</span>
+                           <span v-if="scope.row.FApproveStatus ==4">已退回</span>
                            <span v-if="scope.row.FApproveStatus ==5">暂存</span>
                         </span>
                         (<span v-if="scope.row.FProjStatus ===1">预立项</span>
@@ -463,16 +454,16 @@
                         <span v-if="scope.row.FProjStatus ===6">项目终止</span>
                         <span v-if="scope.row.FProjStatus ===7">项目关闭</span>)</div>
                       <div class="status-context" @click="WorkFlow === 0 ? '' : getAppvalProcList(scope.row)">
-                        <span v-if="formList.swatchBtn === '1'">
-                          <span v-if="scope.row.FApproveStatus ==1">待审批</span>
+                        <span v-if="WorkFlow === 1">
+                          <span v-if="scope.row.FApproveStatus ==1">待送审</span>
                           <span v-if="scope.row.FApproveStatus ==2">审批中</span>
-                          <span v-if="scope.row.FApproveStatus ==3">审批通过</span>
-                          <span v-if="scope.row.FApproveStatus ==4">已退回</span>
+                          <span v-if="scope.row.FApproveStatus ==3">审批成功</span>
+                          <span v-if="scope.row.FApproveStatus ==4">退回</span>
                           <span v-if="scope.row.FApproveStatus ==5">暂存</span>
                         </span>
                         <span v-else>
-                          <span v-if="scope.row.FApproveStatus ==1">待上报</span>
-                           <span v-if="scope.row.FApproveStatus ==2">审批中</span>
+                          <span v-if="scope.row.FApproveStatus ==1">部门申报 </span>
+                           <span v-if="scope.row.FApproveStatus ==2">汇总审批</span>
                            <span v-if="scope.row.FApproveStatus ==3">审批通过</span>
                            <span v-if="scope.row.FApproveStatus ==4">待执行</span>
                            <span v-if="scope.row.FApproveStatus ==5">暂存</span>
@@ -561,6 +552,10 @@
     <auditfollow :visible.sync="auditDialog"
                  auditType="004"
                  :auditMsg="auditMsg"></auditfollow>
+    <!--汇总表打印-->
+    <sum-tab-print ref="sumTabPrint" :data="sumtabData" :totalAmount="totalFProjAmount"></sum-tab-print>
+    <!--申请表打印-->
+    <apply-tab-print ref="applyTabPrint" :data="applytabData"></apply-tab-print>
   </section>
 </template>
 
@@ -576,9 +571,13 @@ import { mapState } from 'vuex'
 import Edit from "../../components/preProjectDialog/edit";
 import GoApproval from "./component/goApproval";
 import Copy from "./component/copy";
+import SumTabPrint from "./component/sumTabPrint";
+import ApplyTabPrint from "./component/applyTabPrint";
 export default {
   name: "preBuildProject",
   components: {
+    ApplyTabPrint,
+    SumTabPrint,
     Copy,
     GoApproval,
     Edit, Auditfollow, ItemPrint, Prerojectnewproject, SearchInput, ItemTable, DataTable, TopHandle },
@@ -658,23 +657,23 @@ export default {
               } else if (scope.row.FProjStatus ===7) {
                 MC = '项目关闭'
               }
-              if (that.formList.swatchBtn === '1'){
+              if (that.WorkFlow === 1){
                 if (scope.row.FApproveStatus == 1) {
-                  return '<span>' + '待审批('+MC+')' + '</span>'
+                  return '<span>' + '待送审('+MC+')' + '</span>'
                 } else if (scope.row.FApproveStatus == 2) {
                   return '<span>' + '审批中('+MC+')' + '</span>'
                 } else if (scope.row.FApproveStatus == 3) {
-                  return '<span>' + '审批通过('+MC+')' + '</span>'
+                  return '<span>' + '审批成功('+MC+')' + '</span>'
                 } else if (scope.row.FApproveStatus == 4) {
-                  return '<span>' + '已退回('+MC+')' + '</span>'
+                  return '<span>' + '退回('+MC+')' + '</span>'
                 }else if (scope.row.FApproveStatus == 5) {
                   return '<span>' + '暂存('+MC+')' + '</span>'
                 }
               }else{
                 if (scope.row.FApproveStatus == 1) {
-                  return '<span>' + '待上报('+MC+')' + '</span>'
+                  return '<span>' + '部门申报('+MC+')' + '</span>'
                 } else if (scope.row.FApproveStatus == 2) {
-                  return '<span>' + '审批中('+MC+')' + '</span>'
+                  return '<span>' + '汇总审批('+MC+')' + '</span>'
                 } else if (scope.row.FApproveStatus == 3) {
                   return '<span>' + '已审批('+MC+')' + '</span>'
                 } else if (scope.row.FApproveStatus == 4) {
@@ -758,6 +757,18 @@ export default {
       auditDialog:false,
 
       paddRight:'10px',
+      //汇总表打印
+      //开关弹框
+      sumtabDialog:false,
+      //汇总数据
+      sumtabData:[],
+      //汇总金额
+      totalFProjAmount:0,
+
+    //  申请表数据
+      applytabData:[],
+
+      aplStaGrop:[]
 
     }
   },
@@ -798,6 +809,39 @@ export default {
             this.formList.swatchBtn = "2"
           }else {
             this.formList.swatchBtn = "1"
+          }
+          if (res.Data === 0){
+            this.aplStaGrop = [{
+              value:'0',
+              label:'全部'
+            },{
+              value:'1',
+              label:'待执行'
+            },{
+              value:'3',
+              label:'项目执行'
+            }]
+          }else if (res.Data === 1){
+            this.aplStaGrop = [
+              {
+                value:'0',
+                label:'全部'
+              },{
+                value:'1',
+                label:'待上报'
+              },{
+                value:'2',
+                label:'审批中'
+              },{
+                value:'3',
+                label:'审批通过'
+              },{
+                value:'4',
+                label:'已退回'
+              },{
+                value:'5',
+                label:'暂存'
+              }]
           }
         }
       }).catch(err=>{
@@ -1065,9 +1109,9 @@ export default {
     //选择框改变事件
     query () {
       if (this.formList.approvalStatus ==='2'){
-        this.paddRight = '25px'
+        this.paddRight = '22px'
       } else {
-        this.paddRight = '25px'
+        this.paddRight = '30px'
       }
       this.formList.FProjName = ''
       this.getTableData()
@@ -1304,6 +1348,41 @@ export default {
     },
     moreTip(){
 
+    },
+    //汇总表打印
+    sumTablePrint(){
+      if (this.selection.length ===0){
+        this.$msgBox.error('请选择需要打印的单据！！')
+      }else {
+        this.$refs.sumTabPrint.sumdialog = true
+        this.sumtabData = this.selection;
+        let sum = 0
+        for (let i in this.selection){
+            sum += this.selection[i].FProjAmount
+        }
+        this.totalFProjAmount = sum
+        console.log(this.selection)
+      }
+    },
+    //申请表打印
+    applyTablePrint(){
+      if (this.selection.length ===0){
+        this.$msgBox.error('请选择需要打印的单据！！')
+      }else {
+        let data ={
+          fPhIdList:[]
+        }
+        for (let i in this.selection){
+          data.fPhIdList[i] = this.selection[i].PhId
+        }
+        this.postAxios('/GXM/ProjectMstApi/PostPrintData',data).then(res=>{
+          console.log(res)
+          this.$refs.applyTabPrint.applydialog = true
+          this.applytabData = res;
+        }).catch(err=>{
+
+        })
+      }
     }
   }
 }
