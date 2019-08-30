@@ -70,7 +70,7 @@
                 <li v-if="menuButton.projectmanage	=='True'"
                     @click.stop="navPage('/projectmanage')">
                   <div>
-                    <img src="@/assets/images/navsetting.png"
+                    <img src="@/assets/images/yusuan.png"
                          alt>
                   </div>
                   <span>预算项目库</span>
