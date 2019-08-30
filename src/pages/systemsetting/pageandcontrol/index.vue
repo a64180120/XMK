@@ -132,11 +132,11 @@ export default {
       orgVisible: false,
       orgSelected: [],
       options: [
-        { FCode: '001', FName: '资金拨付过程' },
-        { FCode: '002', FName: '支付过程' },
-        { FCode: '003', FName: '项目立项过程' },
-        { FCode: '004', FName: '预立项过程' },
-        { FCode: '005', FName: '立项过程' },
+        { FCode: '001', FName: '资金拨付是否启用部门发起&汇总审批' },
+        { FCode: '002', FName: '支付是否启用部门发起&汇总审批' },
+        { FCode: '003', FName: '用款计划是否启用部门发起&汇总审批' },
+        { FCode: '004', FName: '预立项是否启用部门发起&汇总审批' },
+        { FCode: '005', FName: '项目立项是否启用部门发起&汇总审批' },
       ]
     }
   },
