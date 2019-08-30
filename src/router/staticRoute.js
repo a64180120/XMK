@@ -115,7 +115,7 @@ const staticRoute = [
       },
 
       {
-        path: '/buggetReport',
+        path: '/buggetreport',
         component: () =>
           import(/* webpackChunkName:'buggetReport'*/ '../pages/budget/buggetReport'),
         meta: { requireAuth: true, type: 'page', name: '预算报表' }
