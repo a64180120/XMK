@@ -25,12 +25,16 @@
           <div class="top-btn">
             <el-button class="btn"
                        size="mini"
+                       style="margin-left: 0"
                        @click="submit('bc')">保存</el-button>
             <el-button class="btn"
                        size="mini"
+                       style="margin-left: 0"
+                       v-if="workFlow ===1"
                        @click="submit('bcss')">保存并送审</el-button>
             <el-button class="btn"
                        size="mini"
+                       style="margin-left: 0"
                        @click="submit('zc')">暂存</el-button>
             <el-button class="btn"
                        size="mini">上传附件</el-button>
@@ -597,6 +601,10 @@
         default:function () {
           return {}
         }
+      },
+      workFlow:{
+        type:Number,
+        default:0
       }
     },
     components: {GoApproval, addBr, setBuy, textareaDialog },
@@ -1664,7 +1672,7 @@
         width: 80px;
 
         &:not(:last-of-type) {
-          margin-right: 15px;
+          /*margin-right: 15px;*/
         }
       }
     }

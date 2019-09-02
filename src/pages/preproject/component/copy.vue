@@ -25,12 +25,16 @@
           <div class="top-btn">
             <el-button class="btn"
                        size="mini"
+                       style="margin-left: 0"
                        @click="submit('bc')">保存</el-button>
             <el-button class="btn"
                        size="mini"
+                       style="margin-left: 0"
+                       v-if="workFlow===1"
                        @click="submit('bcss')">保存并送审</el-button>
             <el-button class="btn"
                        size="mini"
+                       style="margin-left: 0"
                        @click="submit('zc')">暂存</el-button>
             <el-popover  trigger="hover">
               <div>
@@ -235,9 +239,21 @@
                   <li>金额（元）</li>
                   <li>资金来源</li>
                   <li>支付方式</li>
-                  <li>支出功能分类科目</li>
-                  <li>集中采购</li>
-                  <li>测算过程及其他说明事项</li>
+                  <li style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis">
+                    <el-tooltip content="支出功能分类科目">
+                         <span>
+                               支出功能分类科目
+                         </span>
+                    </el-tooltip>
+                  </li>
+                  <li v-if="false">集中采购</li>
+                  <li style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis">
+                    <el-tooltip content="测算过程及其他说明事项">
+                         <span>
+                               测算过程及其他说明事项
+                         </span>
+                    </el-tooltip>
+                  </li>
                 </ul>
               </div>
             </div>
@@ -292,7 +308,7 @@
                                  :value="item.KMDM"></el-option>
                     </el-select>
                   </li>
-                  <li>
+                  <li v-if="false">
                     <el-radio v-model="item.FIfPurchase"
                               :label="1">是</el-radio>
                     <el-radio v-model="item.FIfPurchase"
@@ -518,17 +534,6 @@
           </div>
         </div>
         <div class="bottom-info">
-          <ul>
-            <li>
-              <span>当前阶段：年初申报</span>
-            </li>
-            <li>
-              <span>申报日期：{{new Date().getFullYear()+'-'+(new Date().getMonth()+1)+'-'+new Date().getDate() }}</span>
-            </li>
-            <li>
-              <span>申报人：{{UserName}}</span>
-            </li>
-          </ul>
         </div>
       </div>
     </el-row>
@@ -595,6 +600,10 @@
         default:function () {
           return {}
         }
+      },
+      workFlow:{
+        type:Number,
+        default:0
       }
     },
     components: {FileUp,ItemPrint, GoApproval, addBr, setBuy, textareaDialog },
@@ -1329,6 +1338,7 @@
         let addPurchaseDtls = []
         let addPurDtl4SOFs = []
         for (let i in this.budgetdetailData){
+          this.budgetdetailData[i].FDtlCode = '';
           if (this.budgetdetailData[i].id){
             addPurchaseDtls.push({
               FDtlCode:'',//明细项目代码	必填（明细项目带入）
@@ -1352,7 +1362,7 @@
               FSourceOfFunds:this.budgetdetailData[i].FSourceOfFunds,
               FAmount:this.budgetdetailData[i].FAmount,
               PhId:''
-            })
+            });
           }
         }
         for (let i in this.PurchaseDtls) {
@@ -1406,7 +1416,7 @@
           // ProjectDtlBudgetDtls:this.dataDtl.ProjectDtlBudgetDtls,
           ProjectDtlBudgetDtls:this.budgetdetailData,
           //实施计划
-          ProjectDtlImplPlans: this.ImplPlanPanelData,
+          ProjectDtlImplPlans:this.ImplPlanPanelData,
           //绩效指标
           ProjectDtlPerformTargets:this.target.targetTableData,
           //预算明细的采购
@@ -1719,7 +1729,7 @@
         width: 80px;
 
         &:not(:last-of-type) {
-          margin-right: 15px;
+          /*margin-right: 15px;*/
         }
       }
     }
@@ -1914,15 +1924,15 @@
                 }
 
                 &:nth-of-type(6) {
-                  width: 12%;
+                  width: 15%;
                 }
 
                 &:nth-of-type(7) {
-                  width: 12%;
+                  width: 27%;
                 }
-                &:nth-of-type(8) {
-                  width: 18%;
-                }
+                /*&:nth-of-type(8) {*/
+                /*  width: 18%;*/
+                /*}*/
 
                 > label {
                   line-height: 40px;

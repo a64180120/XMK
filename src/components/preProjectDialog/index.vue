@@ -30,6 +30,7 @@
             <el-button class="btn"
                        style="margin-left: 0"
                        size="mini"
+                       v-if="workFlow ===1"
                        @click="submit('bcss')">保存并送审</el-button>
             <el-button class="btn"
                        size="mini"
@@ -71,7 +72,7 @@
             <span>项目级别：</span>
             <el-select v-model="projSurvey.FLevel"
                        size="small"
-                       @blur="projSurveyNull.FLevel = true"
+                       @change="projSurveyNull.FLevel = true"
                        placeholder="必选">
               <el-option v-for="(item,idx) in projGroup.FLevelGroup"
                          :key="idx"
@@ -83,7 +84,7 @@
             <span>申报部门：</span>
             <el-select v-model="projSurvey.FDeclarationDept"
                        size="small"
-                       @blur="projSurveyNull.FDeclarationDept = true"
+                       @change="projSurveyNull.FDeclarationDept = true"
                        placeholder="必选">
               <el-option v-for="(item,idx) in projGroup.FDeclarationDeptGroup"
                          :key="idx"
@@ -95,7 +96,7 @@
             <span>预算部门：</span>
             <el-select v-model="projSurvey.FBudgetDept"
                        size="small"
-                       @blur="projSurveyNull.FBudgetDept = true"
+                       @change="projSurveyNull.FBudgetDept = true"
                        placeholder="必选">
               <el-option v-for="(item,idx) in projGroup.FBudgetDeptGroup"
                          :key="idx"
@@ -107,7 +108,7 @@
             <span>项目属性：</span>
             <el-select v-model="projSurvey.ProjectPropers"
                        size="small"
-                       @blur="projSurveyNull.ProjectPropers = true"
+                       @change="projSurveyNull.ProjectPropers = true"
                        placeholder="必选">
               <el-option v-for="(item,idx) in projGroup.ProjectPropersGroup"
                          :key="idx"
@@ -119,7 +120,7 @@
             <span>存续期限：</span>
             <el-select v-model="projSurvey.TimeLimits"
                        size="small"
-                       @blur="projSurveyNull.TimeLimits = true"
+                       @change="projSurveyNull.TimeLimits = true"
                        placeholder="必选">
               <el-option v-for="(item,idx) in projGroup.TimeLimitsGroup"
                          :key="idx"
@@ -131,7 +132,7 @@
             <span>支出类别：</span>
             <el-select v-model="projSurvey.ExpenseCategories"
                        size="small"
-                       @blur="projSurveyNull.ExpenseCategories = true"
+                       @change="projSurveyNull.ExpenseCategories = true"
                        placeholder="必选">
               <el-option v-for="(item,idx) in projGroup.ExpenseCategoriesGroup"
                          :key="idx"
@@ -252,9 +253,21 @@
                   <li>金额（元）</li>
                   <li>资金来源</li>
                   <li>支付方式</li>
-                  <li>支出功能分类科目</li>
-                  <li>集中采购</li>
-                  <li>测算过程及其他说明事项</li>
+                  <li style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis">
+                    <el-tooltip content="支出功能分类科目">
+                         <span>
+                               支出功能分类科目
+                         </span>
+                    </el-tooltip>
+                  </li>
+                  <li v-if="false">集中采购</li>
+                  <li style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis">
+                    <el-tooltip content="测算过程及其他说明事项">
+                         <span>
+                               测算过程及其他说明事项
+                         </span>
+                    </el-tooltip>
+                  </li>
                 </ul>
               </div>
             </div>
@@ -309,7 +322,7 @@
                                  :value="item.KMDM"></el-option>
                     </el-select>
                   </li>
-                  <li>
+                  <li v-if="false">
                     <el-radio v-model="item.FIfPurchase"
                               :label="1">是</el-radio>
                     <el-radio v-model="item.FIfPurchase"
@@ -602,7 +615,12 @@ import FileUp from "./fileUp";
 
 export default {
   name: 'prerojectnewproject',
-  props: {},
+  props: {
+    workFlow:{
+      type:Number,
+      default:0
+    }
+  },
   components: {FileUp, ItemPrint, GoApproval, addBr, setBuy, textareaDialog },
   data () {
     return {
@@ -613,8 +631,8 @@ export default {
       //项目概况
       projSurvey: {
         FProjName: '', //项目名称
-        FDeclarationDept: '', //申报部门
         FLevel: '', //项目级别
+        FDeclarationDept: '', //申报部门
         FBudgetDept: '', //预算部门
         ProjectPropers: '', //项目属性
         TimeLimits: '', //存续期限
@@ -1319,18 +1337,60 @@ export default {
       formData.append('ProjectDtlPurchaseDtls',JSON.stringify(data.ProjectDtlPurchaseDtls))
       formData.append('ProjectDtlPurDtl4SOFs',JSON.stringify(data.ProjectDtlPurDtl4SOFs))
       formData.append('ProjectDtlTextContents',JSON.stringify(data.ProjectDtlTextContents))
+      debugger
+      let itemName = ''
       //提交时判断项目概况是否已经填写完
       for(let i in this.projSurvey){
-        if (i ===''){
+        if (this.projSurvey[i] === ''){
           this.projSurveyNull[i] = true
           this.addNull = false //不能提交表单
+          //提示哪一项未录入
+          if (!itemName){
+            if( i ==='FProjName'){
+              itemName = '项目名称'
+            }else if (i ==='FLevel'){
+              itemName = '项目级别'
+            }else if (i ==='FDeclarationDept'){
+              itemName = '申报部门'
+            }else if (i ==='FBudgetDept'){
+              itemName = '预算部门'
+            }else if (i ==='ProjectPropers'){
+              itemName = '项目属性'
+            }else if (i ==='TimeLimits'){
+              itemName = '存续期限'
+            }else if (i ==='ExpenseCategories'){
+              itemName = '支出类别'
+            }else if (i ==='sedTime'){
+              itemName = '起止日期'
+            }
+          }
         }
       }
       //提交时判断项目科研是否已经填写完成
       for(let i in this.projScience){
-        if (i === '') {
+        if (this.projScience[i] == '') {
           this.projScienceNull[i] = true
           this.addNull = false //不能提交表单
+          //提示哪一项未录入
+          if (!itemName){
+            if( i ==='FProjName'){
+              itemName = '项目名称'
+            }else if (i ==='FLevel'){
+              itemName = '项目级别'
+            }else if (i ==='FDeclarationDept'){
+              itemName = '申报部门'
+            }else if (i ==='FBudgetDept'){
+              itemName = '预算部门'
+            }else if (i ==='ProjectPropers'){
+              itemName = '项目属性'
+            }else if (i ==='TimeLimits'){
+              itemName = '存储期限'
+            }else if (i ==='ExpenseCategories'){
+              itemName = '支出类别'
+            }else if (i ==='sedTime'){
+              itemName = '起止日期'
+            }
+          }
         }
       }
       //提交时判断判断效绩目标表格是否拉取到
@@ -1338,6 +1398,29 @@ export default {
         if (this.target[i] === '' && this.target[i] !=='targetType'){
           this.targetNull[i] = true
           this.addNull = false //不能提交表单
+          //提示哪一项未录入
+          if (!itemName){
+            if( i ==='FProjName'){
+              itemName = '项目名称'
+            }else if (i ==='FLevel'){
+              itemName = '项目级别'
+            }else if (i ==='FDeclarationDept'){
+              itemName = '申报部门'
+            }else if (i ==='FBudgetDept'){
+              itemName = '预算部门'
+            }else if (i ==='ProjectPropers'){
+              itemName = '项目属性'
+            }else if (i ==='TimeLimits'){
+              itemName = '存储期限'
+            }else if (i ==='ExpenseCategories'){
+              itemName = '支出类别'
+            }else if (i ==='sedTime'){
+              itemName = '起止日期'
+            }
+          }
+        }
+        if (!itemName){
+          itemName = i;
         }
       }
 
@@ -1377,7 +1460,7 @@ export default {
 
         })
       }else {
-        this.$msgBox.error('请将必须输入项填写完整再保存')
+        this.$msgBox.error(itemName+'未录入')
       }
       console.log(data)
 
@@ -1834,15 +1917,15 @@ export default {
               }
 
               &:nth-of-type(6) {
-                width: 12%;
+                width: 15%;
               }
 
               &:nth-of-type(7) {
-                 width: 12%;
+                 width: 27%;
                }
-              &:nth-of-type(8) {
-                width: 18%;
-              }
+              /*&:nth-of-type(8) {*/
+              /*  width: 18%;*/
+              /*}*/
               > label {
                 line-height: 40px;
                 margin-right: 10px;

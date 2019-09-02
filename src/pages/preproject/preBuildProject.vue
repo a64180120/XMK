@@ -95,7 +95,7 @@
                       v-if="MenuButton.ProjectMstList_Vue_printfSB ==='True'"
                       @click="applyTablePrint()">
                     <div>
-                      <img src="@/assets/images/dy.png">
+                      <img src="@/assets/images/sqbdyb-1_07.png">
                     </div>
                     <span>申请表打印</span>
                   </li>
@@ -103,14 +103,14 @@
                       v-if="MenuButton.ProjectMstList_Vue_printfHZ ==='True'"
                       @click="sumTablePrint()">
                     <div>
-                      <img src="@/assets/images/dy.png">
+                      <img src="@/assets/images/sqbdyb-1_07.png">
                     </div>
                     <span>汇总表打印</span>
                   </li>
                   <li class="handle"
                       @click="swatchTable">
                     <div>
-                      <img style="height: 34px" src="@/assets/images/list.png">
+                      <img style="height: 34px" src="@/assets/images/lbysb-1_09.png">
                     </div>
                     <span>列表样式</span>
                   </li>
@@ -119,7 +119,7 @@
 
               <div slot="reference">
                 <div>
-                  <img src="@/assets/images/nav.svg">
+                  <img style="height: 33px" src="@/assets/images/nav.svg">
                 </div>
                 <span>更多</span>
               </div>
@@ -316,7 +316,7 @@
                       <span>{{scope.row[item.prop2].replace('T00:00:00','')}}</span>
                     </div>
                     <div v-else-if="item.other ==='time'">
-                      <span>{{scope.row[item.prop].replace('T',' ')}}</span>
+                      <span>{{scope.row[item.prop].split('T',9)[0]}}</span>
                     </div>
                     <div v-else-if="item.other ==='status-click'">
                       <span v-html="formatter(scope)"
@@ -400,7 +400,7 @@
                             <span>预算部门：{{scope.row.FBudgetDept_EXName}}</span>
                           </li>
                           <li>
-                            <span>申报日期：{{scope.row.FDateofDeclaration.replace('T',' ')}}</span>
+                            <span>申报日期：{{scope.row.FDateofDeclaration.split('T',9)[0]}}</span>
                           </li>
                           <li>
                             <span>申报进度：<span v-if="scope.row.FType+scope.row.FVerNo ==='c0001'">年初新增</span>
@@ -453,7 +453,7 @@
                         <span v-if="scope.row.FProjStatus ===5">项目暂停</span>
                         <span v-if="scope.row.FProjStatus ===6">项目终止</span>
                         <span v-if="scope.row.FProjStatus ===7">项目关闭</span>)</div>
-                      <div class="status-context" @click="WorkFlow === 0 ? '' : getAppvalProcList(scope.row)">
+                      <div class="status-context" @click="getAppvalProcList(scope.row)">
                         <span v-if="WorkFlow === 1">
                           <span v-if="scope.row.FApproveStatus ==1">待送审</span>
                           <span v-if="scope.row.FApproveStatus ==2">审批中</span>
@@ -500,7 +500,7 @@
            class="applyDetailTitle">
         <span>新增项目</span>
       </div>
-      <prerojectnewproject  @refresh='refresh'></prerojectnewproject>
+      <prerojectnewproject  @refresh='refresh' :workFlow="WorkFlow"></prerojectnewproject>
     </el-dialog>
     <el-dialog append-to-body
                modal-append-to-body
@@ -514,7 +514,7 @@
            class="applyDetailTitle">
         <span>修改项目</span>
       </div>
-      <edit  :data="editDetail" @refresh="refresh"></edit>
+      <edit  :data="editDetail" :workFlow="WorkFlow" @refresh="refresh"></edit>
     </el-dialog>
     <el-dialog append-to-body
                modal-append-to-body
@@ -528,7 +528,7 @@
            class="applyDetailTitle">
         <span>复制项目</span>
       </div>
-      <copy :data="copyDetail" @refresh="refresh"></copy>
+      <copy :data="copyDetail" :workFlow="WorkFlow" @refresh="refresh"></copy>
     </el-dialog>
     <el-dialog append-to-body
                modal-append-to-body
@@ -686,11 +686,8 @@ export default {
             },
             fn: function (scope) {
               console.log(scope)
-              if (that.WorkFlow === 0){
-               return
-              }else {
+
                 that.getAppvalProcList(scope.row)
-              }
             }
           }],
         selection: true,
@@ -1225,6 +1222,10 @@ export default {
     },
     //获取审批流程
     getAppvalProcList(row){
+      if (this.WorkFlow ===0){
+        this.$msgBox.show('无数据可执行确认')
+        return;
+      }
       if (row.FApproveStatus ==='1'){
         this.$msgBox.error('单据还未送审，未生成审批流，请先送审')
         return

@@ -6,7 +6,9 @@
                width="50%"
                @close="closeSum"
                :close-on-click-modal="false">
-      <el-button class="btn" @click="printTable">打印</el-button>
+      <div style="text-align: right;width: 100%;height: 30px;">
+        <el-button class="btn" @click="printTable">打印</el-button>
+      </div>
       <p style="font-size: .35rem">广东省总工会预立项项目申报表</p>
       <div ref="printArea">
         <div v-for="(item,idx) in data" style="margin-bottom: 20px">

@@ -25,11 +25,15 @@
           <div class="top-btn">
             <el-button class="btn"
                        size="mini"
+                       style="margin-left: 0"
                        @click="submit('bc')">保存</el-button>
             <el-button class="btn"
+                       style="margin-left: 0"
                        size="mini"
+                       v-if="workFlow === 1"
                        @click="submit('bcss')">保存并送审</el-button>
             <el-button class="btn"
+                       style="margin-left: 0"
                        size="mini"
                        @click="submit('zc')">暂存</el-button>
             <el-popover  trigger="hover">
@@ -235,9 +239,21 @@
                   <li>金额（元）</li>
                   <li>资金来源</li>
                   <li>支付方式</li>
-                  <li>支出功能分类科目</li>
-                  <li>集中采购</li>
-                  <li>测算过程及其他说明事项</li>
+                  <li style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis">
+                    <el-tooltip content="支出功能分类科目">
+                         <span>
+                               支出功能分类科目
+                         </span>
+                    </el-tooltip>
+                  </li>
+                  <li v-if="false">集中采购</li>
+                  <li style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis">
+                    <el-tooltip content="测算过程及其他说明事项">
+                         <span>
+                               测算过程及其他说明事项
+                         </span>
+                    </el-tooltip>
+                  </li>
                 </ul>
               </div>
             </div>
@@ -292,7 +308,7 @@
                                  :value="item.KMDM"></el-option>
                     </el-select>
                   </li>
-                  <li>
+                  <li v-if="false">
                     <el-radio v-model="item.FIfPurchase"
                               :label="1">是</el-radio>
                     <el-radio v-model="item.FIfPurchase"
@@ -581,6 +597,10 @@
         default:function () {
           return {}
         }
+      },
+      workFlow:{
+        type:Number,
+        default:0
       }
     },
     components: {FileUp,ItemPrint,GoApproval, addBr, setBuy, textareaDialog },
@@ -1726,7 +1746,7 @@
         width: 80px;
 
         &:not(:last-of-type) {
-          margin-right: 15px;
+          /*margin-right: 15px;*/
         }
       }
     }
@@ -1921,15 +1941,15 @@
                 }
 
                 &:nth-of-type(6) {
-                  width: 12%;
+                  width: 15%;
                 }
 
                 &:nth-of-type(7) {
-                  width: 12%;
+                  width: 27%;
                 }
-                &:nth-of-type(8) {
-                  width: 18%;
-                }
+                /*&:nth-of-type(8) {*/
+                /*  width: 18%;*/
+                /*}*/
 
                 > label {
                   line-height: 40px;

@@ -202,7 +202,7 @@
                       <span>{{scope.row[item.prop2].replace('T00:00:00','')}}</span>
                     </div>
                     <div v-else-if="item.other ==='time'">
-                      <span v-if="scope.row[item.prop]">{{scope.row[item.prop].replace('T',' ')}}</span>
+                      <span v-if="scope.row[item.prop]">{{scope.row[item.prop].split('T',9)[0]}}</span>
                       <span v-else="scope.row[item.prop]">{{scope.row[item.prop]}}</span>
                     </div>
                     <div v-else-if="item.other ==='status-click'">
@@ -288,7 +288,7 @@
                             <span>预算部门：{{scope.row.FBudgetDept_EXName?scope.row.FBudgetDept_EXName:'无'}}</span>
                           </li>
                           <li>
-                            <span>申报日期：{{scope.row.FDateofDeclaration?scope.row.FDateofDeclaration.replace('T',' '):'无'}}</span>
+                            <span>申报日期：{{scope.row.FDateofDeclaration?scope.row.FDateofDeclaration.split('T',9)[0]:'无'}}</span>
                           </li>
                           <li>
                             <span>申报进度：
@@ -503,12 +503,8 @@
 
               },
               fn: function (scope) {
-                console.log(scope)
-                if (that.WorkFlow === 0){
-                  return
-                }else {
                   that.getAppvalProcList(scope.row)
-                }
+
               }
             }],
           selection: true
@@ -890,6 +886,10 @@
       },
       //获取审批流程
       getAppvalProcList(row){
+        if (this.WorkFlow ===0){
+          this.$msgBox.show('无数据可执行确认')
+          return;
+        }
         if (row.FApproveStatus ==='1'){
           this.$msgBox.error('单据还未送审，未生成审批流，请先送审')
           return

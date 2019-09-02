@@ -61,14 +61,14 @@
           <li class="handle"
               @click="applyTablePrint()">
             <div>
-              <img src="@/assets/images/zlx-1_07.png">
+              <img style="height: 33px" src="@/assets/images/zlx-1_07.png">
             </div>
             <span>申请表打印</span>
           </li>
           <li class="handle"
               @click="sumTablePrint()">
             <div>
-              <img src="@/assets/images/zlx-1_07.png">
+              <img style="height: 33px" src="@/assets/images/zlx-1_07.png">
             </div>
             <span>汇总表打印</span>
           </li>
@@ -254,7 +254,7 @@
                       <span>{{scope.row[item.prop2].replace('T00:00:00','')}}</span>
                     </div>
                     <div v-else-if="item.other ==='time'">
-                      <span v-if="scope.row[item.prop]">{{scope.row[item.prop].replace('T',' ')}}</span>
+                      <span v-if="scope.row[item.prop]">{{scope.row[item.prop].split('T',9)[0]}}</span>
                       <span v-else="scope.row[item.prop]">{{scope.row[item.prop]}}</span>
                     </div>
                     <div v-else-if="item.other ==='status-click'">
@@ -340,7 +340,7 @@
                             <span>预算部门：{{scope.row.FBudgetDept_EXName?scope.row.FBudgetDept_EXName:'无'}}</span>
                           </li>
                           <li>
-                            <span>申报日期：{{scope.row.FDateofDeclaration?scope.row.FDateofDeclaration.replace('T',' '):'无'}}</span>
+                            <span>申报日期：{{scope.row.FDateofDeclaration?scope.row.FDateofDeclaration.split('T',9)[0]:'无'}}</span>
                           </li>
                           <li>
                             <span>申报进度：
@@ -396,7 +396,7 @@
                         <span v-if="scope.row.FProjStatus ===6">(项目终止)</span>
                         <span v-if="scope.row.FProjStatus ===7">(项目关闭)</span>
                       </div>
-                      <div class="status-context" @click="WorkFlow === 0 ? '' : getAppvalProcList(scope.row)">
+                      <div class="status-context" @click="getAppvalProcList(scope.row)">
                         <span v-if="WorkFlow === 1">
                           <span v-if="scope.row.FApproveStatus ==1">待送审</span>
                           <span v-if="scope.row.FApproveStatus ==2">审批中</span>
@@ -441,7 +441,7 @@
            class="applyDetailTitle">
         <span>预算修正</span>
       </div>
-      <budget-edit :data="budgetEditDetail" @refresh="refresh"></budget-edit>
+      <budget-edit :data="budgetEditDetail" :workFlow="WorkFlow"  @refresh="refresh"></budget-edit>
     </el-dialog>
     <el-dialog append-to-body
                modal-append-to-body
@@ -465,7 +465,7 @@
     <!--查看审批流程-->
     <auditfollow :visible.sync="auditDialog"
                  auditType="005"
-                 :auditMsg="auditMsg"></auditfollow>
+                 :auditMsg="auditMsg"  ></auditfollow>
 
     <!--汇总表打印-->
     <sum-tab-print ref="sumTabPrint" :data="sumtabData" :totalAmount="totalFProjAmount"></sum-tab-print>
@@ -599,12 +599,8 @@ export default {
 
             },
             fn: function (scope) {
-              console.log(scope)
-              if (that.WorkFlow === 0){
-                return
-              }else {
                 that.getAppvalProcList(scope.row)
-              }
+
             }
           }],
         selection: true
@@ -1053,21 +1049,40 @@ export default {
           let data = {
             id:this.selection[0].PhId
           }
-          if(this.selection[0].FApproveStatus === '1' && this.selection[0].FProjStatus === 2){
-            this.getAxios('GXM/ProjectMstApi/GetSaveBudgetMst',data).then(res=>{
-              if(res.Status ==='success'){
-                this.$msgBox.show('项目执行确认成功')
-                this.getTableData()
-              }else {
-                this.$msgBox.error(res.Msg)
-              }
+          if (this.WorkFlow === 0){
+            if((this.selection[0].FApproveStatus === '1') && this.selection[0].FProjStatus === 2){
+              this.getAxios('GXM/ProjectMstApi/GetSaveBudgetMst',data).then(res=>{
+                if(res.Status ==='success'){
+                  this.$msgBox.show('项目执行确认成功')
+                  this.getTableData()
+                }else {
+                  this.$msgBox.error(res.Msg)
+                }
 
-            }).catch(err=>{
-              this.$msgBox.error('项目执行确认失败')
-            })
-          } else {
-            this.$msgBox.error('不存在符合项目确认执行的数据，请重新选择！')
-            this.selection.splice(0,1)
+              }).catch(err=>{
+                this.$msgBox.error('项目执行确认失败')
+              })
+            } else {
+              this.$msgBox.error('不存在符合项目确认执行的数据，请重新选择！')
+              this.selection.splice(0,1)
+            }
+          }else {
+            if((this.selection[0].FApproveStatus === '3') && this.selection[0].FProjStatus === 2){
+              this.getAxios('GXM/ProjectMstApi/GetSaveBudgetMst',data).then(res=>{
+                if(res.Status ==='success'){
+                  this.$msgBox.show('项目执行确认成功')
+                  this.getTableData()
+                }else {
+                  this.$msgBox.error(res.Msg)
+                }
+
+              }).catch(err=>{
+                this.$msgBox.error('项目执行确认失败')
+              })
+            } else {
+              this.$msgBox.error('不存在符合项目确认执行的数据，请重新选择！')
+              this.selection.splice(0,1)
+            }
           }
 
       }else {
@@ -1150,27 +1165,48 @@ export default {
         let stu = false
         let arr = []
         for (let i in  this.selection){
-          if (this.selection[i].FApproveStatus == "3" &&this.selection[i].FProjStatus == 2  && this.selection[i].FSaveToOldG6h == 0) {
-            stu = true
-          } else {
-            stu = false
-            break
-          }
+          // if (this.selection[i].FApproveStatus == "3" &&this.selection[i].FProjStatus == 2  && this.selection[i].FSaveToOldG6h == 0) {
+          //   stu = true
+          // } else {
+          //   stu = false
+          //   break
+          // }
           arr[i] = this.selection[i].PhId
 
         }
         let data = {
           fPhIdList:arr
         }
-        console.log(data)
-        if (stu){
+        if (this.WorkFlow ===0 ){
+          for (let i in this.selection){
+            if (this.selection[i].FApproveStatus == "1" && this.selection[i].FSaveToOldG6h == 0 &&this.selection[i].FProjStatus == 2) {
+
+            }else {
+              this.$msgBox.error('所选单据中存在不是待执行以及项目执行的数据')
+              return
+            }
+          }
           this.postAxios('/GXM/ProjectMstApi/PostAddData',data).then(res=>{
-              console.log(res)
+            this.$msgBox.show(res)
           }).catch(err =>{
             console.log(err)
           })
-        } else {
-          this.$msgBox.error('所选择不符合同步条件！')
+          
+        }else {
+          debugger
+          for (let i in this.selection){
+            if (this.selection[i].FApproveStatus == "3" && this.selection[i].FSaveToOldG6h == 0 &&this.selection[i].FProjStatus == 2) {
+
+            }else {
+              this.$msgBox.error('所选单据中存在审批未通过或者项目执行的数据')
+              return
+            }
+          }
+          this.postAxios('/GXM/ProjectMstApi/PostAddData',data).then(res=>{
+            this.$msgBox.show(res)
+          }).catch(err =>{
+            console.log(err)
+          })
         }
       } else {
         this.$msgBox.error('请选择需要同步的数据！')
@@ -1178,6 +1214,10 @@ export default {
     },
     //获取审批流程
     getAppvalProcList(row){
+      if (this.WorkFlow ===0){
+        this.$msgBox.show('无数据可执行确认')
+        return;
+      }
       if (row.FApproveStatus ==='1' || row.FApproveStatus ==='5'){
         this.$msgBox.error('单据还未送审，未生成审批流，请先送审')
         return
