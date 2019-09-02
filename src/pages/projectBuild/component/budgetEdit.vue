@@ -13,7 +13,7 @@
                 <span>当前阶段：年初申报</span>
               </li>
               <li>
-                <span>申报日期：{{new Date().getFullYear()+'-'+(new Date().getMonth()+1)+'-'+new Date().getDate() }}</span>
+                <span>申报日期：{{(new Date()).getFullYear()+'-'+((new Date()).getMonth()<10?'0'+((new Date()).getMonth()+1):(new Date()).getMonth())+'-'+((new Date()).getDate()<10?'0'+((new Date()).getDate()):(new Date()).getDate())}}</span>
               </li>
               <li>
                 <span>申报人：{{UserName}}</span>
@@ -25,12 +25,16 @@
           <div class="top-btn">
             <el-button class="btn"
                        size="mini"
+                       style="margin-left: 0"
                        @click="submit('bc')">保存</el-button>
             <el-button class="btn"
                        size="mini"
+                       style="margin-left: 0"
+                       v-if="workFlow ===1"
                        @click="submit('bcss')">保存并送审</el-button>
             <el-button class="btn"
                        size="mini"
+                       style="margin-left: 0"
                        @click="submit('zc')">暂存</el-button>
             <el-button class="btn"
                        size="mini">上传附件</el-button>
@@ -597,6 +601,10 @@
         default:function () {
           return {}
         }
+      },
+      workFlow:{
+        type:Number,
+        default:0
       }
     },
     components: {GoApproval, addBr, setBuy, textareaDialog },
@@ -1664,7 +1672,7 @@
         width: 80px;
 
         &:not(:last-of-type) {
-          margin-right: 15px;
+          /*margin-right: 15px;*/
         }
       }
     }

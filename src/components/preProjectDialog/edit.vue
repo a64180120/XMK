@@ -13,7 +13,7 @@
                 <span>当前阶段：年初申报</span>
               </li>
               <li>
-                <span>申报日期：{{new Date().getFullYear()+'-'+(new Date().getMonth()+1)+'-'+new Date().getDate() }}</span>
+                <span>申报日期：{{(new Date()).getFullYear()+'-'+((new Date()).getMonth()<10?'0'+((new Date()).getMonth()+1):(new Date()).getMonth())+'-'+((new Date()).getDate()<10?'0'+((new Date()).getDate()):(new Date()).getDate())}}</span>
               </li>
               <li>
                 <span>申报人：{{UserName}}</span>
@@ -25,11 +25,15 @@
           <div class="top-btn">
             <el-button class="btn"
                        size="mini"
+                       style="margin-left: 0"
                        @click="submit('bc')">保存</el-button>
             <el-button class="btn"
+                       style="margin-left: 0"
                        size="mini"
+                       v-if="workFlow === 1"
                        @click="submit('bcss')">保存并送审</el-button>
             <el-button class="btn"
+                       style="margin-left: 0"
                        size="mini"
                        @click="submit('zc')">暂存</el-button>
             <el-popover  trigger="hover">
@@ -235,9 +239,21 @@
                   <li>金额（元）</li>
                   <li>资金来源</li>
                   <li>支付方式</li>
-                  <li>支出功能分类科目</li>
-                  <li>集中采购</li>
-                  <li>测算过程及其他说明事项</li>
+                  <li style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis">
+                    <el-tooltip content="支出功能分类科目">
+                         <span>
+                               支出功能分类科目
+                         </span>
+                    </el-tooltip>
+                  </li>
+                  <li v-if="false">集中采购</li>
+                  <li style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis">
+                    <el-tooltip content="测算过程及其他说明事项">
+                         <span>
+                               测算过程及其他说明事项
+                         </span>
+                    </el-tooltip>
+                  </li>
                 </ul>
               </div>
             </div>
@@ -292,7 +308,7 @@
                                  :value="item.KMDM"></el-option>
                     </el-select>
                   </li>
-                  <li>
+                  <li v-if="false">
                     <el-radio v-model="item.FIfPurchase"
                               :label="1">是</el-radio>
                     <el-radio v-model="item.FIfPurchase"
@@ -581,6 +597,10 @@
         default:function () {
           return {}
         }
+      },
+      workFlow:{
+        type:Number,
+        default:0
       }
     },
     components: {FileUp,ItemPrint,GoApproval, addBr, setBuy, textareaDialog },
@@ -779,6 +799,7 @@
             QtAttachments:[]
           }
         },
+        money:0
       }
     },
     computed: {
@@ -794,6 +815,7 @@
       TotalAmount () {
         // let arr = this.budgetdetailData
         // 直接赋值会把defineproperty带入！
+
         let arr = JSON.parse(JSON.stringify(this.budgetdetailData))
         let sum = 0
         for (let key in arr) {
@@ -884,6 +906,8 @@
               FNecessity:  res.ProjectDtlTextContents.FNecessity //必要性
           };
           //预算明细表数据
+
+          console.log('拉取1到的：',res)
           for (let i in res.ProjectDtlBudgetDtls) {
             res.ProjectDtlBudgetDtls[i].FAmount = res.ProjectDtlBudgetDtls[i].FAmount.toString()
             let decimals = 2;
@@ -1273,6 +1297,7 @@
       submit (type) {
         console.log(this.target.targetTableData)
         //预算主表对象
+
         let projectMst = this.dataDtl.ProjectMst;
         projectMst.FProjName = this.projSurvey.FProjName;
         projectMst.FDeclarationDept = this.projSurvey.FDeclarationDept;
@@ -1294,6 +1319,8 @@
         projectMst.NgUpdateDt = ''
         projectMst.PropertyBytes = ''
         projectMst._OldIdValue_ = ''
+        projectMst.FBudgetAmount = this.TotalAmount
+        projectMst.FProjAmount = this.TotalAmount
         //
         let projectDtlTextContents = this.dataDtl.ProjectDtlTextContents;
         projectDtlTextContents.FAnnualPerformGoal = this.target.ndTagetL;
@@ -1327,7 +1354,7 @@
               FMeasUnit:this.budgetdetailData[i].FMeasUnit,
               FQty:this.budgetdetailData[i].FQty,
               FPrice:this.budgetdetailData[i].FPrice,
-              FAmount:this.budgetdetailData[i].FAmount,
+              FAmount:this.budgetdetailData[i].FAmount?this.budgetdetailData[i].FAmount.replace(',',''):'0.00',
               FSpecification:this.budgetdetailData[i].FSpecification,
               FRemark:this.budgetdetailData[i].FRemark,
               FEstimatedPurTime:this.budgetdetailData[i].FEstimatedPurTime,
@@ -1339,6 +1366,9 @@
               FAmount:this.budgetdetailData[i].FAmount
             })
           }
+        }
+        for (let i in this.budgetdetailData) {
+          this.budgetdetailData[i].FAmount = this.budgetdetailData[i].FAmount.replace(/,/g,'')
         }
         for (let i in this.PurchaseDtls) {
           this.PurchaseDtls[i].PhId = ''
@@ -1716,7 +1746,7 @@
         width: 80px;
 
         &:not(:last-of-type) {
-          margin-right: 15px;
+          /*margin-right: 15px;*/
         }
       }
     }
@@ -1911,15 +1941,15 @@
                 }
 
                 &:nth-of-type(6) {
-                  width: 12%;
+                  width: 15%;
                 }
 
                 &:nth-of-type(7) {
-                  width: 12%;
+                  width: 27%;
                 }
-                &:nth-of-type(8) {
-                  width: 18%;
-                }
+                /*&:nth-of-type(8) {*/
+                /*  width: 18%;*/
+                /*}*/
 
                 > label {
                   line-height: 40px;
