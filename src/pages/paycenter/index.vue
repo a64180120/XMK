@@ -658,7 +658,7 @@ export default {
             : '', //申报日期结束
         'FSubmitdate*date*ge*1': this.zfrq ? this.zfrq[0] || '' : '', //支付日期开始
         'FSubmitdate*date*le*1':
-          this.zfrq && this.sbrq.length
+          this.zfrq && this.zfrq.length
             ? this.zfrq[1].toString() + ' 23:59:59' || ''
             : '', //支付日期结束
         'FApproval*byte*eq*1': '', //审批状态0- 待送审 1-待审批 2- 未通过 9-审批通过
