@@ -2,7 +2,7 @@
   <!-- <el-dialog append-to-body :visible="true" width="1000px" :close-on-click-modal="false">
     <tb-data></tb-data>
   </el-dialog>-->
-  <section class="item-print" ref="printTable">
+  <section class="item-print" >
     <el-row>
       <el-col :span="24" style="margin-top:10px;margin-bottom: 10px">
         <slot name="btn">
@@ -13,10 +13,10 @@
         </slot>
       </el-col>
     </el-row>
-    <div class="printContent">
+    <div class="printContent" ref="printTable">
       <h2>{{data.ProjectMst.FProjName}}</h2>
       <h2 style="text-align:right;">单据号： {{data.ProjectMst.PhId}}</h2>
-      <div class="content">
+      <div class="printBody" >
         <div class="list">
           <div class="tableBody" >
             <table class="printTable" >
@@ -204,8 +204,8 @@ export default {
     printTable(){
 
       let dom = this.$refs.printTable
-      document.body.innerHTML='';
-      document.body.appendChild(dom)
+      // document.body.innerHTML='';
+      // document.body.appendChild(dom)
 
       // window.print()
       // window.location.reload()
@@ -217,7 +217,7 @@ export default {
 <style lang="scss" scoped>
 .item-print {
   .dialog-title {
-    overflow: hidden;
+    position: relative;
     > span {
       width: 100%;
       text-align: left;
@@ -234,63 +234,65 @@ export default {
       }
     }
   }
-  .printContent {
-    h2 {
-      margin-bottom: 10px;
-    }
-    .content {
-      height: 670px;
-      position: relative;
-      .list {
-        color: #333;
-        position: absolute;
-        bottom: 0;
-        top: 0;
-        left: 10px;
-        right: 10px;
-        overflow: hidden;
-        .tableHead {
-          th {
-            color: #fff;
-            height: 48px;
-            border-right: 1px solid #fff;
-            background: $btnColor;
-          }
-        }
-        .tableBody {
-          top: 0;
-          bottom: 10px;
-          table {
-            border: 1px solid $borderColor_ccc;
-            border-collapse:collapse;
-          }
-          td {
-            border-radius: 0;
-            border-bottom: 1px solid $borderColor_ccc;
-            border-left-color: $borderColor_ccc;
-            line-height: 24px;
-            word-break: break-all;
-            white-space: normal;
-          }
-          .trtd {
-            text-align: right;
-          }
-          .tltd {
-            text-align: left;
-          }
-        }
-        .tableBody table tr {
-          box-shadow: none;
-        }
-      }
-    }
-  }
 
   .bottom-btn {
     margin-top: 10px;
     text-align: right;
     .btn {
       margin-right: 15px;
+    }
+  }
+}
+.printContent {
+  h2 {
+    margin-bottom: 10px;
+  }
+  .printBody {
+    position: relative;
+    margin-bottom: 15px;
+    .list {
+      color: #333;
+      /*position: absolute;*/
+      bottom: 0;
+      top: 0;
+      left: 10px;
+      right: 10px;
+      overflow: hidden;
+      .tableHead {
+        th {
+          color: #fff;
+          height: 48px;
+          border-right: 1px solid #fff;
+          background: $btnColor;
+        }
+      }
+      .tableBody {
+        position: static;
+        overflow-y: auto;
+        top: 0;
+        bottom: 10px;
+        table {
+          border: 1px solid $borderColor_ccc;
+          border-collapse:collapse;
+        }
+        td {
+          border-radius: 0;
+          border-bottom: 1px solid $borderColor_ccc;
+          border-left-color: $borderColor_ccc;
+          line-height: 24px;
+          word-break: break-all;
+          white-space: normal;
+        }
+        .trtd {
+          text-align: right;
+        }
+        .tltd {
+          text-align: left;
+        }
+      }
+      .tableBody table tr {
+        box-shadow: none;
+      }
     }
   }
 }

@@ -5,11 +5,11 @@
 import axios from './axios_new'
 import Qs from 'qs'
 import store from '../store'
-import { Message } from 'element-ui'
+// import { Message } from 'element-ui'
 import md5 from 'js-md5'
-import {appinfoUrl} from './config'
+// import {appinfoUrl} from './config'
 // 在config.js文件中统一存放一些公共常量，方便之后维护
-import { getSha512 } from './validate.js'
+// import { getSha512 } from './validate.js'
 let Base64 = require('js-base64').Base64
 
 // 封装axios--------------------------------------------------------------------------------------
