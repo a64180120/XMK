@@ -1,6 +1,7 @@
 <template>
   <div class="projectManage">
-    <topHandle :title="'项目管理在线工作平台'"
+    <topHandle :title="'预算项目管理在线工作平台'"
+               :approvalSum ='approvalSum'
                @refresh="refresh">
 
     </topHandle>
@@ -97,12 +98,46 @@
 
 <script>
 import topHandle from '@/components/topNav/topHandle'
+import { mapState } from 'vuex'
 export default {
   name: 'projectManage',
+  data(){
+    return{
+      approvalSum:{
+        status:true,
+        sum:0
+      }
+    }
+  },
+  computed:{
+    ...mapState({
+      OrgCode: state => state.user.orgcode,
+      UserId: state => state.user.userid,
+      Orgid: state => state.user.orgid,
+      Year: state => state.user.year,
+    })
+  },
   mounted () {
-
+    this.getProcTypes()
   },
   methods: {
+    //获取审批类型，获取为审批数
+    getProcTypes () {
+      let data = {
+        Uid: this.UserId,
+        Orgid: this.Orgid,
+        OrgCode: this.OrgCode,
+        Year: this.Year
+      }
+      this.getAxios('/GSP/GAppvalRecord/GetRecordListNum', data).then(res => {
+        for (let i in res.Data){
+          this.approvalSum.sum += res.Data[i].NNum
+        }
+        console.log(res)
+      }).catch(err => {
+
+      })
+    },
     refresh () {
 
     },
@@ -151,7 +186,7 @@ export default {
     // }
   },
   components: {
-    topHandle
+    topHandle,
   }
 }
 </script>

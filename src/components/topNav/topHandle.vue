@@ -19,6 +19,13 @@
           </el-breadcrumb>
         </div>
         <ul class="rightBtn">
+          <li style="width: 65px" v-if="type === 'swatchBtn'" @click.stop="swatchList">
+            <div>
+              <img src="@/assets/images/list.png"
+                   alt>
+            </div>
+            <span>列表切换</span>
+          </li>
           <li>
             <el-popover width="270"
                         placement="bottom"
@@ -95,6 +102,7 @@
             </div>
             <span>刷新</span>
           </li>
+
           <!-- <li @click.stop="goHome">
             <div>
               <img src="@/assets/images/g-1.png" alt>
@@ -165,6 +173,10 @@
              :class="{turnArr:arrow}">
         </div>
       </div>
+      <div v-if="approvalSum.status" style="height: 30px;line-height: 30px;margin: 0 20px">
+        <span>待审批事项数:</span>
+        <span class="num">{{approvalSum.sum}}</span>
+      </div>
     </div>
   </div>
 </template>
@@ -178,6 +190,16 @@ export default {
     type: { //审批中心
       type: String,
       default: ''
+    },
+    //待审批数
+    approvalSum:{
+      type:Object,
+      default: function () {
+        return {
+          status:false,
+          sum:0
+        }
+      }
     },
     countBtn: {  //在线人数
       type: Boolean,
@@ -225,7 +247,7 @@ export default {
     },
     setyearList () { //年度列表
       this.year = this.$store.state.user.year;//当前默认选中的年份
-      for (let y = 2019; y <= new Date().getFullYear(); y++) {
+      for (let y = 2019; y <= new Date().getFullYear()+1; y++) {
         this.options.unshift({ label: y, value: y })
       }
     },
@@ -249,6 +271,9 @@ export default {
     },
     refresh () { //刷新
       this.$emit('refresh');
+    },
+    swatchList(){
+      this.$emit('swatchList')
     },
     //组织树样式
     rendercontent (h, { node, data, store }) {

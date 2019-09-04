@@ -451,7 +451,6 @@ export default {
       }*/
       this.getAxios('GYS/BudgetMstApi/GetBeginYear', data)
         .then(res => {
-          console.log(res);
           if(res.Status=='success'){
             this.dataList = res.Data;
             this.verifyType=res.Data[0].VERIFYSTART;
@@ -690,7 +689,6 @@ export default {
   padding-bottom: 50px;
   .topNav {
     height: 38px;
-    border-bottom: 2px dotted #00b8ee;
     > div {
       display: inline-block;
       &:nth-of-type(1) {

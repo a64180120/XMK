@@ -736,7 +736,7 @@
         tabindex: 0,//当前的tab页
         tabOldIndex: 0,//前一个Tab页码
         copyLine: false,
-        tabsList: ['项目科研', '预算明细', '实施计划', '绩效目标'],
+        tabsList: ['项目可研', '预算明细', '实施计划', '绩效目标'],
         // budgetdetail: [
         //   {
         //     FName: '',
