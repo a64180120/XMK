@@ -587,7 +587,7 @@
       /*报表数据获取*/
       getData:function(search_val){
         let data={
-          UserId:this.userid,
+          UserId:this.usercode,
           /*UserId:'9999',*/
           FApproveStatus:this.searchData.approval, //(选填，审批状态0-全部；1-待上报；2-审批中；3-审批通过；4-未通过)、
           FExpenseCategory:this.searchData.payType,
@@ -763,7 +763,6 @@
     }
     .secondNav{
       height: 38px;
-      border-bottom: 2px dotted #00b8ee;
       >div{
         display: inline-block;
         >ul{
