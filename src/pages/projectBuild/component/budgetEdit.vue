@@ -2,7 +2,7 @@
   <!-- <el-dialog
       append-to-body :visible="true" width="90%" :close-on-click-modal="false"
   ></el-dialog>-->
-  <section class="prerojectnewproject">
+  <section class="prerojectnewproject budgetEdit">
     <el-row>
       <el-col :span="24"
               style="margin-top:10px;margin-bottom: 10px">
@@ -50,7 +50,7 @@
             <span>项目名称：</span>
             <div
                  class="opentextarea"
-                 style="width:100%;text-align:left;line-height:32px;padding-left:15px;color: #C0C4CC ;background-color: #F5F7FA">
+                 style="width:100%;text-align:left;line-height:32px;padding-left:15px ;background-color: #F5F7FA">
               <el-tooltip v-if="projSurvey.FProjName"
                           :content="projSurvey.FProjName">
                 <span style="font-size:0.14rem;">{{projSurvey.FProjName}}</span>
@@ -63,6 +63,7 @@
           <li>
             <span>项目级别：</span>
             <el-select v-model="projSurvey.FLevel"
+                       class="word-color"
                        disabled
                        size="small"
                        placeholder="必选">
@@ -76,6 +77,7 @@
             <span>申报部门：</span>
             <el-select v-model="projSurvey.FDeclarationDept"
                        size="small"
+                       class="word-color"
                        disabled
                        placeholder="必选">
               <el-option v-for="(item,idx) in projGroup.FDeclarationDeptGroup"
@@ -89,6 +91,7 @@
             <el-select v-model="projSurvey.FBudgetDept"
                        size="small"
                        disabled
+                       class="word-color"
                        placeholder="必选">
               <el-option v-for="(item,idx) in projGroup.FBudgetDeptGroup"
                          :key="idx"
@@ -101,6 +104,7 @@
             <el-select v-model="projSurvey.ProjectPropers"
                        size="small"
                        disabled
+                       class="word-color"
                        placeholder="必选">
               <el-option v-for="(item,idx) in projGroup.ProjectPropersGroup"
                          :key="idx"
@@ -113,6 +117,7 @@
             <el-select v-model="projSurvey.TimeLimits"
                        size="small"
                        disabled
+                       class="word-color"
                        placeholder="必选">
               <el-option v-for="(item,idx) in projGroup.TimeLimitsGroup"
                          :key="idx"
@@ -125,10 +130,12 @@
             <el-select  v-model="projSurvey.ExpenseCategories"
                        size="small"
                        disabled
+                        class="word-color"
                        placeholder="必选">
               <el-option v-for="(item,idx) in projGroup.ExpenseCategoriesGroup"
                          :key="idx"
                          :label="item.Mc"
+                         class="word-color"
                          :value="item.Dm"></el-option>
             </el-select>
           </li>
@@ -137,6 +144,7 @@
             <el-select v-model="yearSelect"
                        size="small"
                        disabled
+                       class="word-color"
                        placeholder="必选">
               <el-option :label="parseInt(year) + 1"
                          :value="parseInt(year)+1"></el-option>
@@ -152,6 +160,7 @@
                             v-model="projSurvey.sedTime"
                             type="daterange"
                             disabled
+                            class="word-color"
                             range-separator="至"
                             :clearable="false"
                             start-placeholder="开始日期"
@@ -162,6 +171,7 @@
             <el-select v-model="projSurvey.FIfPerformanceAppraisal"
                        size="small"
                        disabled
+                       class="word-color"
                        placeholder="必选">
               <el-option v-for="(item,idx) in projGroup.FIfPerformanceAppraisalGroup"
                          :key="idx"
@@ -193,6 +203,7 @@
                         maxlength="500"
                         :autosize="{minRows:4}"
                         :rows="5"
+                        class="word-color"
                         placeholder="限500字以内（必填）"
                         v-model="projScience.FFunctionalOverview"></el-input>
             </li>
@@ -201,6 +212,7 @@
               <el-input type="textarea"
                         show-word-limit
                         disabled
+                        class="word-color"
                         maxlength="250"
                         :autosize="{minRows:4}"
                         :rows="5"
@@ -212,6 +224,7 @@
               <el-input type="textarea"
                         show-word-limit
                         disabled
+                        class="word-color"
                         maxlength="250"
                         :autosize="{minRows:4}"
                         :rows="5"
@@ -223,6 +236,7 @@
               <el-input type="textarea"
                         show-word-limit
                         disabled
+                        class="word-color"
                         maxlength="250"
                         :autosize="{minRows:4}"
                         :rows="5"
@@ -246,9 +260,21 @@
                   <li>支付方式</li>
                   <li>预算科目</li>
                   <li>支出渠道</li>
-                  <li>支出功能分类科目</li>
-                  <li>集中采购</li>
-                  <li>测算过程及其他说明事项</li>
+                  <li style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis">
+                    <el-tooltip content="支出功能分类科目">
+                         <span>
+                               支出功能分类科目
+                         </span>
+                    </el-tooltip>
+                  </li>
+                  <li v-if="false">集中采购</li>
+                  <li style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis">
+                    <el-tooltip content="测算过程及其他说明事项">
+                         <span>
+                               测算过程及其他说明事项
+                         </span>
+                    </el-tooltip>
+                  </li>
                 </ul>
               </div>
             </div>
@@ -263,6 +289,7 @@
                   <li>
                     <el-input v-model="item.FName"
                               disabled
+                              class="word-color"
                               @change="valueChange(item)"
                               placeholder="必填" />
                   </li>
@@ -271,7 +298,7 @@
                               disabled
                               @keyup.native="clearNum(item,$event)"
                               @blur="filterMoney(item,index)"
-                              class="money"
+                              class="money word-color"
                               v-model="item.FAmount"
                               placeholder="必填" />
                   </li>
@@ -279,6 +306,7 @@
                     <el-select v-model="item.FSourceOfFunds"
                                size="small"
                                disabled
+                               class="word-color"
                                placeholder="必选">
                       <el-option v-for="(item,idx) in budgetDetail.FSourceOfFundsGroup"
                                  :key="idx"
@@ -290,6 +318,7 @@
                     <el-select v-model="item.FPaymentMethod"
                                size="small"
                                disabled
+                               class="word-color"
                                placeholder="必选">
                       <el-option v-for="(item,idx) in budgetDetail.fundPayGroup"
                                  :key="idx"
@@ -300,6 +329,7 @@
                   <li>
                     <el-select v-model="item.FBudgetAccounts"
                                size="small"
+                               class="word-color"
                                placeholder="必选">
                       <el-option v-for="(item,idx) in budgetDetail.BudgetAccountsGroup"
                                  :key="idx"
@@ -310,6 +340,7 @@
                   <li>
                     <el-select v-model="item.FExpensesChannel"
                                size="small"
+                               class="word-color"
                                placeholder="必选">
                       <el-option v-for="(item,idx) in budgetDetail.Vc2mListGroup"
                                  :key="idx"
@@ -321,6 +352,7 @@
                     <el-select v-model="item.FQtZcgnfl"
                                size="small"
                                disabled
+                               class="word-color"
                                placeholder="必选">
                       <el-option v-for="(item,idx) in projGroup.FQtZcgnflGroup"
                                  :key="idx"
@@ -328,7 +360,7 @@
                                  :value="item.KMDM"></el-option>
                     </el-select>
                   </li>
-                  <li>
+                  <li v-if="false">
                     <el-radio v-model="item.FIfPurchase"
                               disabled
                               :label="1">是</el-radio>
@@ -342,6 +374,7 @@
                     <!--@click="openTextarea(item,'FOtherInstructions')"-->
                     <el-input v-model="item.FOtherInstructions"
                               disabled
+                              class="word-color"
                               placeholder="必填" />
 
                     <el-tooltip v-if="item.FOtherInstructions"
@@ -408,7 +441,7 @@
                     :class="[delRow == index?'select-row':'']">
                   <li>{{index+1}}</li>
                   <li>
-                    <el-input v-model="item.FImplContent" disabled
+                    <el-input v-model="item.FImplContent" disabled class="word-color"
                               placeholder="必填" />
                   </li>
                   <li class="enable">
@@ -416,6 +449,7 @@
                                     disabled
                                     v-model="item.sedTime"
                                     type="daterange"
+                                    class="word-color"
                                     range-separator="至"
                                     start-placeholder="开始日期"
                                     end-placeholder="结束日期"></el-date-picker>
@@ -444,6 +478,7 @@
                 <span>年度绩效目标：</span>
                 <el-input type="textarea"
                           disabled
+                          class="word-color"
                           show-word-limit
                           maxlength="250"
                           :rows="6"
@@ -455,6 +490,7 @@
                 <el-input type="textarea"
                           show-word-limit
                           disabled
+                          class="word-color"
                           maxlength="250"
                           :rows="6"
                           placeholder="限250字以内（必填）"
@@ -524,16 +560,16 @@
                     </td>
                     <td v-for="(itemType) in tarType" :rowspan="itemType.sum" v-if="idx==itemType.beginIdx">{{item.FTargetClassCode_EXName}}</td>
                     <td>
-                      <el-input disabled class="td-ipt" v-model="item.FTargetName"></el-input>
+                      <el-input  disabled class="td-ipt word-color" v-model="item.FTargetName"></el-input>
                     </td>
                     <td>
-                      <el-input disabled class="td-ipt" v-model="item.FTargetValue"></el-input>
+                      <el-input disabled class="td-ipt word-color" v-model="item.FTargetValue"></el-input>
                     </td>
                     <td>
-                      <el-input disabled class="td-ipt" @change="targetWeight()" v-model="item.FTargetWeight"></el-input>
+                      <el-input disabled class="td-ipt word-color" @change="targetWeight()" v-model="item.FTargetWeight"></el-input>
                     </td>
                     <td @mouseenter="mouseEnter(idx)">
-                      <el-input disabled class="td-ipt" v-model="item.FTargetDescribe"></el-input>
+                      <el-input disabled class="td-ipt word-color" v-model="item.FTargetDescribe"></el-input>
                     </td>
                     <td class="enable" >
 <!--                      <div v-show="nowIndex == idx" class="icon active">-->
@@ -742,7 +778,7 @@
         tabindex: 1,//当前的tab页
         tabOldIndex: 0,//前一个Tab页码
         copyLine: false,
-        tabsList: ['项目科研', '预算明细', '实施计划', '绩效目标'],
+        tabsList: ['项目可研', '预算明细', '实施计划', '绩效目标'],
         // budgetdetail: [
         //   {
         //     FName: '',
@@ -1876,11 +1912,11 @@
                   width: 10%;
                 }
                 &:nth-of-type(9) {
-                  width: 12%;
+                  width: 24%;
                 }
-                &:nth-of-type(10) {
-                  width: 12%;
-                }
+                /*&:nth-of-type(10) {*/
+                /*  width: 12%;*/
+                /*}*/
 
                 > label {
                   line-height: 40px;
@@ -2183,6 +2219,19 @@
   .null-projS{
     border-bottom: 1px #ef5b47 solid !important;
   }
+
+  .budgetEdit .word-color >>> .is-disabled .el-input__inner{
+    color: #606266
+  }
+  .budgetEdit .word-color >>>  .el-input__inner{
+    color: #606266
+  }
+  .budgetEdit .word-color >>>  .el-textarea__inner{
+     color: #606266
+   }
+  .budgetEdit .word-color >>>  .el-range-input{
+    color: #606266
+  }
 </style>
 <style lang="stylus">
   .prerojectnewproject
@@ -2230,6 +2279,8 @@
   .setBuyDialog
     .el-dialog__body
       padding-top 0
+</style>
+<style>
 </style>
 
 

@@ -75,12 +75,20 @@
   border-bottom: none !important;
   background-color: #CACACA !important;
   border-right: 1px solid #ffffff !important;
+  padding:10px 0px !important;
 }
 .dataTable_proBuildProject .thead-frist{
   border-bottom: none !important;
   background-color: #CACACA !important;
   border-right: 1px solid #CACACA !important;
   padding-right: 5px !important;
+}
+.dataTable_proBuildProject .thead-second{
+  border-bottom: none !important;
+  background-color: #CACACA !important;
+  border-right: 1px solid #FFFFFF ;
+  padding-right: 0px !important;
+  padding-left: 0px !important;
 }
 .dataTable_proBuildProject .thead-frist .cell{
   text-align: right;
@@ -204,12 +212,20 @@
   border-bottom: none !important;
   background-color: #CACACA !important;
   border-right: 1px solid #ffffff !important;
+  padding: 10px 0px!important;
 }
 .itemTable_proBuildProject .thead-frist{
   border-bottom: none !important;
   background-color: #CACACA !important;
   border-right: 1px solid #CACACA !important;
   padding-right: 5px !important;
+}
+.itemTable_proBuildProject .thead-second{
+  border-bottom: none !important;
+  background-color: #CACACA !important;
+  border-right: 1px solid #FFFFFF ;
+  padding-right: 0px !important;
+  padding-left: 0px !important;
 }
 .itemTable_proBuildProject .thead-frist .cell{
   text-align: right;

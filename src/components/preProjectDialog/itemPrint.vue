@@ -123,9 +123,9 @@
                 <!-- 部门领导意见 -->
                 <tr>
                   <td>部门领导意见</td>
-                  <td colspan="4">{{'待添加字段'}}</td>
+                  <td colspan="4"></td>
                   <td class="tltd">部门分管领导意见</td>
-                  <td colspan="2" class="tltd">{{'待添加字段'}}</td>
+                  <td colspan="2" class="tltd"></td>
                 </tr>
                 <!-- 预算编审小组意见 -->
                 <tr>
