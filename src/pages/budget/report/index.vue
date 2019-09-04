@@ -1,7 +1,7 @@
 <template>
   <section class="report">
     <div style="position: relative">
-      <tophandle title="预算中心" @refresh="getData">
+      <tophandle title="预算管理在线工作平台" @refresh="getData">
        <div class="btnCon">
          <!-- 预算按钮事件 -->
          <template v-if="navActive==0">

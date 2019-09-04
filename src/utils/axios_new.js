@@ -5,7 +5,7 @@
 
 import axios from 'axios'
 import { Message } from 'element-ui'
-import store from '@/store'
+// import store from '@/store'
 import {  baseURL } from './config.js'
 import { Loading } from 'element-ui';
 // create an axios instance
@@ -34,7 +34,7 @@ service.interceptors.response.use(
     // 如果只需要返回体中数据，则如下，如果需要全部，则 return response 即可 response.data
     const res = response.data
 
-    if (typeof (res) == "object" && Object.prototype.toString.call(res).toLowerCase() == "[object object]" && !res.length) {
+    if (typeof (res) === "object" && Object.prototype.toString.call(res).toLowerCase() === "[object object]" && !res.length) {
         return Promise.reject(res);
     } else {
         var jsonStr = res.replace(/\n/g, "\\n").replace(/\r/g, "\\r").replace('：',':');
@@ -84,7 +84,7 @@ service.interceptors.response.use(
     }
 
     var obj = error.response.data;
-    if (typeof (obj) == "object" && Object.prototype.toString.call(obj).toLowerCase() == "[object object]" && !obj.length) {
+    if (typeof (obj) === "object" && Object.prototype.toString.call(obj).toLowerCase() === "[object object]" && !obj.length) {
       return Promise.reject(obj);
     } else {
       const res = obj.replace(/\n/g, "\\n").replace(/\r/g, "\\r")

@@ -256,6 +256,7 @@ export default {
           this.$msgBox(res.Msg)
         } else {
           res.FCode = '0000'
+          debugger
           this.typeList = [res]  //sb  wgg  一会对象一会数组
           if (this.typeList[0].Children.length) {
 
