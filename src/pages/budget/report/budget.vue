@@ -369,7 +369,7 @@ export default {
       },
       //表格数据-自造数据
       dataList: [
-        { "PhId": "0", "PHIDSUBJECT": "0", "SUBJECTCODE": "401", "SUBJECTNAME": "会费收入", "ORGID": "488181024000003", "ORGCODE": "101001", "UYEAR": "2019", "FINALACCOUNTSTOTAL": 0.0, "BUDGETTOTAL": 0.0, "ADJUSTMENT": 0.0, "APPROVEDBUDGETTOTAL": 0.0, "ThisaccountsTotal": 0.0, "COMPLETE": 0.0, "DESCRIPTION": null, "VERIFYSTART": 0, "VERIFYMIDDLE": 0, "VERIFYEND": 0, "VERIFYSTARTTIME": null, "VERIFYMIDDLETIME": null, "VERIFYENDTIME": null, "PHIDMST": "0", "DESCRIPTIONMIDDLE": null, "DESCRIPTIONEND": null, "ForeignKeys": null, "BusinessPrimaryKeys": null, "PersistentState": 0, "NgRecordVer": 0, "NgInsertDt": "2019-08-06 14:08:20", "NgUpdateDt": "2019-08-06 14:08:20", "Creator": "0", "Editor": "0", "CurOrgId": "0", "_OldIdValue_": null, "PropertyBytes": null, "ExtendObjects": null }
+        // { "PhId": "0", "PHIDSUBJECT": "0", "SUBJECTCODE": "401", "SUBJECTNAME": "会费收入", "ORGID": "488181024000003", "ORGCODE": "101001", "UYEAR": "2019", "FINALACCOUNTSTOTAL": 0.0, "BUDGETTOTAL": 0.0, "ADJUSTMENT": 0.0, "APPROVEDBUDGETTOTAL": 0.0, "ThisaccountsTotal": 0.0, "COMPLETE": 0.0, "DESCRIPTION": null, "VERIFYSTART": 0, "VERIFYMIDDLE": 0, "VERIFYEND": 0, "VERIFYSTARTTIME": null, "VERIFYMIDDLETIME": null, "VERIFYENDTIME": null, "PHIDMST": "0", "DESCRIPTIONMIDDLE": null, "DESCRIPTIONEND": null, "ForeignKeys": null, "BusinessPrimaryKeys": null, "PersistentState": 0, "NgRecordVer": 0, "NgInsertDt": "2019-08-06 14:08:20", "NgUpdateDt": "2019-08-06 14:08:20", "Creator": "0", "Editor": "0", "CurOrgId": "0", "_OldIdValue_": null, "PropertyBytes": null, "ExtendObjects": null }
         /*{code:'401',title:'会费收入',lastBudget:'0',nowBudget:'0',descript:'',type:'0',children:[]},
         {code:'402',title:'拨缴经费收入',lastBudget:'0',nowBudget:'0',descript:'',type:'0',children:[]},
         {code:'403',title:'上级补助收入',lastBudget:'0',nowBudget:'0',descript:'',type:'0',children:[
@@ -439,19 +439,18 @@ export default {
     *
     * */
     getData: function () {
-      /* let data={
+       let data={
          orgid: this.orgid,
          orgCode: this.orgcode,
          Year:this.year,//年度
-       }*/
-      let data = {
+       }
+      /*let data = {
         orgid: '488181024000003',
         orgCode: '101001',
         Year: '2019'
-      }
+      }*/
       this.getAxios('GYS/BudgetMstApi/GetBeginYear', data)
         .then(res => {
-          console.log(res);
           if(res.Status=='success'){
             this.dataList = res.Data;
             this.verifyType=res.Data[0].VERIFYSTART;
@@ -511,12 +510,12 @@ export default {
     save: function (type) {
 
       let data={
-       /* orgid: this.orgid,
+        orgid: this.orgid,
         orgCode: this.orgcode,
-        Year:this.year,//年度*/
-        orgid: '488181024000003',
+        Year:this.year,//年度
+        /*orgid: '488181024000003',
         orgCode: '101001',
-        Year: '2019',
+        Year: '2019',*/
         infoData:this.dataList  //列表集合
       };
       this.postAxios('GYS/BudgetMstApi/PostSaveAccountList', data)
@@ -690,7 +689,6 @@ export default {
   padding-bottom: 50px;
   .topNav {
     height: 38px;
-    border-bottom: 2px dotted #00b8ee;
     > div {
       display: inline-block;
       &:nth-of-type(1) {

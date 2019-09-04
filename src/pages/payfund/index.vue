@@ -135,7 +135,7 @@
                   </el-select>
                 </li>
                 <li>
-                  <span>申报日期</span>
+                  <span>申报日期：</span>
                   <el-date-picker size="mini"
                                   v-model="date"
                                   type="daterange"
@@ -146,7 +146,7 @@
                   </el-date-picker>
                 </li>
                 <li>
-                  <span>申报金额</span>
+                  <span>申报金额：</span>
                   <input style="width:auto;height: 28px;"
                          class="el-input__inner"
                          :precision="2"
@@ -512,19 +512,20 @@
     <!--查看审批流程-->
     <auditfollow :visible.sync="visible"
                  :auditMsg="auditMsg"></auditfollow>
+
   </div>
 </template>
 
 <script>
-import tophandle from '../../components/topNav/topHandle'
-import pieChart from '../../components/echart/pieChart'
+import tophandle from '@/components/topNav/topHandle'
+import pieChart from '@/components/echart/pieChart'
 /*import num from '../../components/numAct/index'*/
-import Applybill from '../../components/applyBill/applybill'
-import Orgtree from '../../components/orgtree/index'
-import Applypro from '../../components/applyPro/applyPro'
-import goApproval from '../../components/applyPro/goApproval'
-import Auditfollow from '../../components/auditFollow/auditfollow'
-import ApprovalDialog from '../../components/applyPro/approval'
+import Applybill from '@/components/applyBill/applybill'
+import Orgtree from '@/components/orgtree/index'
+import Applypro from '@/components/applyPro/applyPro'
+import goApproval from '@/components/applyPro/goApproval'
+import Auditfollow from '@/components/auditFollow/auditfollow'
+import ApprovalDialog from '@/components/applyPro/approval'
 import { mapState } from 'vuex'
 import { printTable } from '@/api/upload'
 import countTo from 'vue-count-to'
@@ -817,7 +818,7 @@ export default {
 
       var pWidth = parseInt(window.getComputedStyle(union).width) //父级宽度
       //return;
-      let gap = unionStateConWidth - pWidth
+      let gap = unionStateConWidth - pWidth+10;
 
       if (!parseInt(unionStateCon.style.right)) {
         unionStateCon.style.right = '0px'
@@ -1665,7 +1666,6 @@ export default {
   height: 30px;
   font-size: 0.12rem;
   top: -4px;
-  background-color: #fff;
   cursor: pointer;
 }
 .iconMsg i {

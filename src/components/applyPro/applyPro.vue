@@ -150,7 +150,7 @@
                 </span>
                 <span style="float: right">
                   <span>
-                    项目编码
+                    项目编码：
                   </span>
                   <span>{{item.PaymentXm.XmProjcode}}</span>
                 </span>
@@ -735,7 +735,8 @@ export default {
             this.$msgBox.show({
               content: '删除成功。',
               fn: () => {
-                this.xmDisable()
+                this.xmDisable();
+                this.moneyChange(-1,-1);
               }
             })
           }).catch(() => { })
@@ -771,6 +772,7 @@ export default {
           this.moneyChange(pindex, Number(index) + 1);
         })
       }
+
       if (this.prodataList.length == 1) {
         this.$nextTick(() => {
           this.choosedProject = this.prodataList[0];
@@ -788,8 +790,9 @@ export default {
       }
       this.PaymentXmDtl[pindex].PaymentDtls.splice(index, 1)
       if (this.PaymentXmDtl[pindex].PaymentDtls.length == 0) {
-        this.addDtl(pindex, 0)
+        this.addDtl(pindex, -1 )
       }
+      this.moneyChange(-1,-1);
     },
     /*金额计算*/
     moneyChange: function (pindex, index) {
@@ -800,7 +803,6 @@ export default {
         for (var j in px.PaymentDtls) {
           let pd = px.PaymentDtls[j];
           count = (Number((count * 100).toFixed(0)) + Number((pd.FAmount * 100).toFixed(0))) / 100;
-          console.log(count)
         }
         px.PaymentXm.FAmountTotal = count;
         if (pindex == i && count > px.PaymentXm.Surplus) {
@@ -819,7 +821,10 @@ export default {
         countAll += count;
       }
       this.PaymentMst.FAmountTotal = countAll;
-      this.PaymentXmDtl[pindex].PaymentDtls[index].checked = false;
+      if( pindex>=0 && index>=0 ){
+        this.PaymentXmDtl[pindex].PaymentDtls[index].checked = false;
+      }
+
     },
     //送审
     postApply: function () {
@@ -923,7 +928,8 @@ export default {
       if (!type) {
         this.orgDetailType = false;
       }
-      console.log(this.choosedPro);
+      console.log(this.choosedProject);
+      console.log(this.PaymentXmDtl[this.choosedPro[0]].PaymentDtls[this.choosedPro[1]]);
       this.PaymentXmDtl[this.choosedPro[0]].PaymentDtls[this.choosedPro[1]].BudgetdtlPhid = this.choosedProject.PhId;
       this.PaymentXmDtl[this.choosedPro[0]].PaymentDtls[this.choosedPro[1]].BudgetdtlName = this.choosedProject.FName;
       this.PaymentXmDtl[this.choosedPro[0]].PaymentDtls[this.choosedPro[1]].QtKmdm = this.choosedProject.FBudgetAccounts;
@@ -1385,6 +1391,8 @@ table td input {
 }
 .proTab .el-input__inner {
   padding-right: 60px;
+  font-size: .17rem;
+  color: #303133;
 }
 .proTab .el-input__suffix {
   right: 0;

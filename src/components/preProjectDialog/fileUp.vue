@@ -1,0 +1,188 @@
+<template>
+  <div id="fileupload" :class="{active:filelist.length>0}">
+    <el-upload
+      ref="upload"
+      class="upload-demo"
+      drag
+      :on-change="progress"
+      :file-list="files"
+      action
+      :auto-upload="false"
+      multiple
+    >
+      <i class="el-icon-upload"></i>
+      <div class="el-upload__text">
+        将文件拖到此处，或
+        <em>点击选择</em>
+      </div>
+      <!-- <div class="el-upload__tip" slot="tip"> <span @click="clear" class=" btn" slot="tip">点击上传</span>&nbsp;&nbsp;文件大小不超过500kb </div> -->
+      <div class="el-upload__tip" slot="tip">
+        <span @click="submit" class="btn" slot="tip" style="width: 120px">确认上传</span>
+        <!--&nbsp;&nbsp;文件大小不超过500kb -->
+      </div>
+    </el-upload>
+    <ul v-show="filelist.length>0" class="fileHandle">
+      <li
+        :title="file.name"
+        @mouseenter="picView(file)"
+        @mouseleave="picpreview=''"
+        v-for="(file,index) of filelist"
+      >
+        {{file.name}}
+        <i @click="clear(index)" class="el-icon-close"></i>
+      </li>
+    </ul>
+    <div class="preview" v-if="picpreview">
+      <img :src="picpreview" alt>
+    </div>
+  </div>
+</template>
+
+<script>
+  import lrz from 'lrz'
+  export default {
+    name: 'fileUp',
+    props: {
+      file: {
+        type: Array,
+        default() {
+          return []
+        }
+      },
+      fileItem:{
+        type: Array,
+        default:function () {
+          return []
+        }
+      }
+    },
+    data() {
+      return {
+        filelist: [],
+        files: [],
+        picpreview: ''
+      }
+    },
+    mounted(){
+      this.filelist = this.fileItem;
+      for (let i in this.fileItem){
+        if (this.fileItem[i].BName) {
+          this.filelist[i].name = this.fileItem[i].BName
+        }
+      }
+    },
+    methods: {
+      progress(file, filelist) {
+        let vm = this
+        this.filelist = filelist
+
+        console.log(file)
+      },
+      picView(file) {
+        if (!file.raw){
+          return
+        }
+        let vm = this
+        if (
+          file.raw.type === 'image/png' ||
+          file.raw.type === 'application/pdf' ||
+          file.raw.type === 'image/gif' ||
+          file.raw.type === 'image/jpeg'
+        ) {
+          lrz(file.raw, { width: 480 }).then(function(rst) {
+            vm.picpreview = rst.base64
+
+            return rst
+          })
+        } else {
+          vm.picpreview = ''
+        }
+      },
+
+      submit() {
+        this.picpreview = ''
+        this.$emit('submit', this.filelist)
+        //this.filelist = []
+        // return this.filelist;
+      },
+      clear(index) {
+        //清空文件列表
+        this.picpreview = ''
+        this.$refs.upload.clearFiles()
+        this.filelist.splice(index, 1)
+        this.files = JSON.parse(JSON.stringify(this.filelist))
+      }
+    },
+    watch: {
+      file(val) {
+        if (val) {
+          this.files = val
+        }
+      }
+    }
+  }
+</script>
+
+<style lang="scss" scope>
+  #fileupload {
+    width: 370px;
+    height: 240px;
+    text-align: left;
+    position: relative;
+    &.active {
+      width: 640px;
+    }
+    > div.preview:last-of-type {
+      width: 480px;
+      height: 480px;
+      position: absolute;
+      top: -100px;
+      right: 270px;
+      border: 1px solid #eee;
+      background: #fff;
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+      }
+    }
+  }
+  .submit {
+  }
+  .fileHandle {
+    display: inline-block;
+    width: 250px;
+    height: 100%;
+    overflow-y: auto;
+    > li {
+      height: 30px;
+      line-height: 30px;
+      cursor: pointer;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      position: relative;
+      padding-right: 20px;
+      &:hover {
+        background: #eee;
+      }
+
+      > i {
+        position: absolute;
+        right: 5px;
+        top: 8px;
+      }
+    }
+  }
+</style>
+<style lang="scss" >
+  .upload-demo {
+    width: 370px;
+    display: inline-block;
+    .el-upload-list,
+    .el-upload-list--text {
+      display: none;
+    }
+  }
+</style>
+

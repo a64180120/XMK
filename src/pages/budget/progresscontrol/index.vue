@@ -324,6 +324,7 @@ export default {
     getData () {
       this.update = false;
       let data = {
+        FYear: this.$store.state.user.year,
         FOcode: this.checkedOrg.OCode,
         PageIndex: this.pageindex - 1,
         PageSize: this.pagesize,

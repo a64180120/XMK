@@ -259,12 +259,12 @@ export default {
         formData.append('NextOperators', JSON.stringify(arr));
         formData.append('BackPostPhid', this.backPost.PhId);
       }
+      debugger
       if (this.fileList.length !== 0) {
         for (let file of this.fileList) {
           formData.append('files', file.raw);
         }
       }
-
       this.formAxios('GSP/GAppvalRecord/PostApprovalRecordList', formData).then(res => {
         if (res.Status == 'success' && res) {
           this.fileCount = 0

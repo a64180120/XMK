@@ -1,5 +1,5 @@
 <template>
-  <!--年初收支预算表-->
+  <!--项目支出申报表-->
   <div class="contentPanel">
     <!--一级栏-->
     <!--<div class="topNav">
@@ -140,7 +140,7 @@
           </li>
           <li>
             <span>审批状态：</span>
-            <el-select size="mini" style="width: 100px;" v-model="searchData.approval" @change="getData">
+            <el-select size="mini" style="width: 100px;" v-model="searchData.approval" @change="getData(false)">
               <el-option v-for="item in approvalList" :label="item.label" :value="item.value"></el-option>
             </el-select>
           </li>
@@ -333,23 +333,22 @@
               <el-button class="btn" size="mini" slot="reference">列表显示</el-button>
             </el-popover>
           </li>
-         <!-- <li><el-button class="btn" size="mini" @click="tableType=tableType==0?'1':'0'">切换表格</el-button></li>-->
+          <li><el-button class="btn" size="mini" @click="tableType=tableType==0?'1':'0'">切换表格</el-button></li>
         </ul>
       </div>
     </div>
 
       <!--普通表格-->
-      <template v-if="tableType==0">
-        <div class="tbArea" @scroll="tablescroll" ref="scrollTable">
+        <div :style="{'visibility':tableType==0?'visible':'hidden',height:tableType==0?'100%':'0'}" class="tbArea" @scroll="tablescroll" ref="scrollTable">
           <table >
             <thead>
             <th><input type="checkbox" v-model="checkeAll" />序号</th>
             <th v-for="item in tableContent" v-if="item.isShow&&item.title">
               <span>{{item.title}}</span>
-              <span class="upOrDown">
-              <i :class="{'el-icon-arrow-up':true,'isactive':order&&order.split(' ')[0]==item.prop&&order.split(' ')[1]=='desc'}" @click="order=item.prop+' desc'"></i>
-              <i :class="{'el-icon-arrow-down':true,'isactive':order&&order.split(' ')[0]==item.prop&&order.split(' ')[1]=='asc'}" @click="order=item.prop+' asc'"></i>
-            </span>
+              <span class="upOrDown" v-if="item.isSort">
+                <i :class="{'el-icon-arrow-up':true,'isactive':order&&order.split(' ')[0]==item.prop&&order.split(' ')[1]=='desc'}" @click="order=item.prop.replace('_EXName','')+' desc'"></i>
+                <i :class="{'el-icon-arrow-down':true,'isactive':order&&order.split(' ')[0]==item.prop&&order.split(' ')[1]=='asc'}" @click="order=item.prop.replace('_EXName','')+' asc'"></i>
+              </span>
             </th>
             </thead>
             <tbody>
@@ -367,6 +366,9 @@
                       <p style="overflow: hidden;text-overflow: ellipsis;text-align: right">{{ searchData.moneyType==1?data[col.prop]/10000:data[col.prop] | NumFormat}}</p>
                     </el-tooltip>
                   </template>
+                  <template v-else-if="col.title=='审批状态'">
+                    {{approvalList_type[data[col.prop]]}}
+                  </template>
                   <template v-else>
                     <el-tooltip :disabled="!(data[col.prop]&&data[col.prop].length>20)" :content="(col.subLen?data[col.prop].substring(col.subLen[0],col.subLen[1]):data[col.prop]||'').toString()"
                                 popper-class="tooltipCla"
@@ -381,12 +383,11 @@
             </tbody>
           </table>
         </div>
-      </template>
 
       <!--面板表格-->
-      <template v-else>
-        <div class="tbArea_panel">
-          <paneltable v-if="tableType!=0" :moneyType="searchData.moneyType"></paneltable>
+      <template v-if="tableType!=0">
+        <div class="tbArea_panel" style="margin-top: 10px">
+          <paneltable v-if="tableType!=0" :moneyType="searchData.moneyType" :dataList="dataList"></paneltable>
         </div>
       </template>
 
@@ -437,7 +438,8 @@
         //支出类别
         payTypeList:[{label:'全部',value:0},{label:'主业类',value:1},{label:'企事业类',value:2},{label:'机关行政类',value:3}],
         //审批状态 审批状态0-全部 1-待上报 2-审批中 3-已审批 4-纳入预算 5-作废
-        approvalList:[{label:'全部',value:0},{label:'待上报',value:1},{label:'审批中',value:2},{label:'审批通过',value:3},{label:'已退回',value:4},{label:'作废',value:5}],
+        approvalList:[{label:'全部',value:0},{label:'待上报',value:1},{label:'审批中',value:2},{label:'审批通过',value:3},{label:'已退回',value:4}/*,{label:'作废',value:5}*/],
+        approvalList_type:['全部','待上报','审批中','审批通过','已退回'],
         //绩效评价
         FIfPerformanceAppraisal:[{label:'是',value:1},{label:'否',value:2}],
         //高级弹窗
@@ -472,9 +474,9 @@
           {title:'缓存期限',isSort:true,isShow:false,prop:'FDuration'},
           {title:'支出类别',isSort:true,isShow:true,prop:'FExpenseCategory_EXName'},
           {title:'项目级别',isSort:true,isShow:false,prop:'FProjStatus'},
-          {title:'绩效评价',isSort:true,isShow:false,prop:'FPerformEvalType'},
-          {title:'绩效指标类别',isSort:true,isShow:false,prop:'FPerformType'},
-          {title:'起止日期',isSort:true,isShow:true,prop:'FStartDate-FEndDate',subLen:[0,10]},
+          {title:'绩效评价',isSort:true,isShow:false,prop:'FPerformEvalType_EXName'},
+          {title:'绩效指标类别',isSort:true,isShow:false,prop:'FPerformType_EXName'},
+          {title:'起止日期',isSort:false,isShow:true,prop:'FStartDate-FEndDate',subLen:[0,10]},
           {title:'申报人员',isSort:true,isShow:true,prop:'FDeclarer'},
           {title:'申报日期',isSort:true,isShow:true,prop:'FDateofDeclaration',subLen:[0,10]},
           {title:'审批状态',isSort:true,isShow:true,prop:'FApproveStatus'},
@@ -515,7 +517,6 @@
           this.seniorSearch=JSON.parse(sin);
         }
         let tableRow=this.getCookie('tableRow');
-        console.log(JSON.parse(tableRow))
         if(tableRow!=undefined){
           this.tableContent=JSON.parse(tableRow);
         }
@@ -586,8 +587,8 @@
       /*报表数据获取*/
       getData:function(search_val){
         let data={
-          /*UserId:this.userid,*/
-          UserId:'9999',
+          UserId:this.usercode,
+          /*UserId:'9999',*/
           FApproveStatus:this.searchData.approval, //(选填，审批状态0-全部；1-待上报；2-审批中；3-审批通过；4-未通过)、
           FExpenseCategory:this.searchData.payType,
           PageIndex:this.pageSearch.pageIndex-1,
@@ -698,6 +699,7 @@
         let param = { orgid: this.orgid, orgCode: this.orgcode }
         this.getAxios('GQT/QTSysSetApi/GetAllBasicData', param)
           .then(res => {
+            console.log('基础数据')
             console.log(res)
             if(res.Status=='success') this.baseList=res;
 
@@ -710,6 +712,9 @@
       printTables: function() {
         let print=document.createElement('div');
         print.appendChild(this.$refs.scrollTable.cloneNode(true));
+        print.firstElementChild.style.visibility='visible';
+        print.firstElementChild.style.height='100%';
+        console.log(print);
         this.$print(print);
         print=null;
       },
@@ -758,7 +763,6 @@
     }
     .secondNav{
       height: 38px;
-      border-bottom: 2px dotted #00b8ee;
       >div{
         display: inline-block;
         >ul{

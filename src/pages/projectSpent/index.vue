@@ -433,6 +433,7 @@
     <!--送审-->
     <go-approval v-if="approvalDataS.openDialog"
                  :data="approvalDataS"
+                 :bType="bType"
                  @delete="handleDelete"></go-approval>
     <!--审批弹窗-->
 
@@ -574,6 +575,7 @@
           orgName: "浙江省总本级"
         },
         cancelVisible: false,//额度核销弹窗
+        bType:'003',//审批流类型
       }
     },
     components: {
@@ -901,12 +903,10 @@
       getAppvalProc: function () {
         let param = {
           Orgid: this.orgid , //组织idthis.apartData.bm.PhId
-          BType: '003' //单据类型（"001":资金拨付单,"002":支付单）
+          BType: this.bType //单据类型（"001":资金拨付单,"002":支付单）
         }
         this.getAxios('GSP/GAppvalProc/GetAppvalProc', param)
           .then(res => {
-            console.log('审批流获取')
-            console.log(res)
             this.approvalDataS.subData = res.Data
             this.apartData.subData = res.Data
           })
@@ -1102,56 +1102,14 @@
           })
         } else {
           if (this.approvalDataS.subData.length == 0) {
-            this.$confirm(
-              '当前部门未创建审批流，无法送审。是否直接生成支付单',
-              '提示',
-              {
-                confirmButtonText: '确定',
-                cancelBtnText: '取消',
-                type: 'warning'
-              }
-            )
-              .then(() => {
-                if (this.menu['fund_createpay']) {
-                  this.showAuditAdd('SC')
-                } else {
-                  this.$msgBox.show({
-                    content: '您没有生成支付单权限，请联系管理员获取权限。'
-                  })
-                }
+            this.$msgBox.show({
+              content: '当前部门未创建审批流，无法送审。'
+            })
 
-              })
-              .catch(() => { })
           } else {
             if (this.menu['fund_check']) {
               let data = []
               for (var i in checkedList) {
-                if (checkedList[0].FApproval == 2 && checkedList[0].FApproval == 3) {
-                  this.$msgBox.show({
-                    content: '审批中及审批通过的单据不允许删除。'
-                  })
-                }else if( checkedList[0].FApproval == 4 ){
-                  this.$confirm('确认删除该额度核销项目用款单?', '提示', {
-                    confirmButtonText: '确定',
-                    cancelBtnText: '取消',
-                    type: 'warning'
-                  })
-                    .then(() => {
-                      this.deleteJk(checkedList[0].PhId,1)
-                    })
-                    .catch(() => { })
-                }else{
-                  this.$confirm('确认删除该项目用款单?', '提示', {
-                    confirmButtonText: '确定',
-                    cancelBtnText: '取消',
-                    type: 'warning'
-                  })
-                    .then(() => {
-                      this.deleteJk(checkedList[0].PhId,0)
-                    })
-                    .catch(() => { })
-                }
-
 
                 if (
                   checkedList[i].FApproval == 2 &&

@@ -151,7 +151,7 @@ export default {
       } else if (item.Value === '004') {
         path = '/preprojectApproval'
       } else if (item.Value === '005') {
-        path = ''
+        path = '/buildprojectApproval'
       } else {
         path = ''
       }
@@ -174,9 +174,9 @@ export default {
       } else if (item.Value === '003') {
         path = ''
       } else if (item.Value === '004') { //年初调整页面路由
-        path = ''
+        path = '/preprojectApproval'
       } else if (item.Value === '005') {
-        path = ''
+        path = '/buildprojectApproval'
       } else {
         path = ''
       }

@@ -63,7 +63,7 @@ const staticRoute = [
         path: '/projectManage',
         component: () =>
           import(/* webpackChunkName:'projectManage'*/ '../pages/projectManage'),
-        meta: { requireAuth: true, type: 'page', name: '项目管理' }
+        meta: { requireAuth: true, type: 'page', name: '预算项目管理' }
       },
       {
         path: '/preBuildProject',
@@ -84,6 +84,18 @@ const staticRoute = [
         meta: { requireAuth: true, type: 'page', name: '项目立项' }
       },
       {
+        path: '/buildprojectApproval',
+        component: () =>
+          import(/* webpackChunkName:'preBuildProject'*/ '../pages/bgnyearApproval/buildprojectApproval'),
+        meta: { requireAuth: true, type: 'page', name: '项目立项审批' }
+      },
+      {
+        path: '/projectList',
+        component: () =>
+          import(/* webpackChunkName:'preBuildProject'*/ '../pages/projectList/projectList'),
+        meta: { requireAuth: true, type: 'page', name: '项目查询' }
+      },
+      {
         path: '/midyearDeclare',
         component: () =>
           import(/* webpackChunkName:'preBuildProject'*/ '../pages/midyearDeclare/midyearDeclare'),
@@ -100,6 +112,13 @@ const staticRoute = [
         component: () =>
           import(/* webpackChunkName:'progresscontrol'*/ '../pages/budget/progresscontrol'),
         meta: { requireAuth: true, type: 'page', name: '进度控制' }
+      },
+
+      {
+        path: '/buggetreport',
+        component: () =>
+          import(/* webpackChunkName:'buggetReport'*/ '../pages/budget/buggetReport'),
+        meta: { requireAuth: true, type: 'page', name: '预算报表' }
       },
       {
         path: '/projectspent',

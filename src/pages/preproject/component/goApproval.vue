@@ -3,6 +3,7 @@
     <el-dialog :visible.sync="data.openDialog"
                width="620px"
                :close-on-click-modal="false"
+               @close="cancel()"
                class="dialog goApproval"
                modal-append-to-body
                append-to-body>
@@ -99,7 +100,7 @@
       <div class="approval-btn">
         <el-button size="small"
                    type="primary"
-                   @click="data.openDialog = false">{{btnGroup.cancelName}}</el-button>
+                   @click="cancel()">{{btnGroup.cancelName}}</el-button>
         <el-button size="small"
                    type="primary"
                    @click="submit">{{btnGroup.onfirmName}}</el-button>
@@ -288,6 +289,7 @@
       handleSelectAll (selection) { },
       //取消
       cancel () {
+        this.$emit('delete', { flag: true, type: 'qx' })
         this.openDialog = false
       },
       handleCurrentChange (newRow, oldRow) {

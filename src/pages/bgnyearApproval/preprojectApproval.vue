@@ -41,7 +41,7 @@
           <!--搜索栏-->
           <div class="btnArea">
             <el-form :inline="true">
-              <el-form-item label="申报部门" class="top-form-left">
+              <el-form-item label="申报部门:" class="top-form-left">
                 <el-tooltip v-if="applyDeportTop !=='' " :content="applyDeportTop">
                   <el-input
                     size="mini"
@@ -62,7 +62,7 @@
                   placeholder="全部"
                 ></el-input>
               </el-form-item>
-              <el-form-item label="停留时长" class="top-form-left">
+              <el-form-item  v-if="isApproval" label="停留时长:" class="top-form-left">
                 <el-input
                   size="mini"
                   v-model="searchForm.StopHour"
@@ -84,7 +84,7 @@
                   </el-select>
                 </el-input>
               </el-form-item>
-              <el-form-item label="申报日期" class="top-form-left">
+              <el-form-item label="申报日期:" class="top-form-left">
                 <el-date-picker
                   v-model="searchForm.BDate"
                   @change="changeInput()"
@@ -108,34 +108,30 @@
                 <col width="5%" />
                 <col width="10%" />
                 <col width="10%" />
-                <col width="8%" />
+                <col width="22%" />
                 <col width="8%" />
                 <col width="10%" />
                 <col width="15%" />
                 <col width="10%" />
-                <col width="8%" />
-                <col v-if="isApproval" width="5%" />
-                <col width="11%" />
+                <col width="10%" />
               </colgroup>
               <thead>
               <tr>
                 <td>
                   <el-checkbox v-model="checkedAll" :indeterminate="IsIndeterminate">序号</el-checkbox>
                 </td>
-                <td>申报部门/单位</td>
-                <td>支付单编号</td>
-                <td>支付金额(元)</td>
-                <td>单据类型</td>
-                <td>申报单编号</td>
+                <td>申报部门</td>
+                <td>项目编码</td>
+                <td>项目名称</td>
+                <td>项目金额(元)</td>
+                <td>预算部门</td>
                 <td>申报日期</td>
-                <td>支付单名称</td>
-                <td>审批状态</td>
-                <td v-if="isApproval">
+                <td>
                   <el-tooltip content="停留时长">
                     <span>停留时长</span>
                   </el-tooltip>
                 </td>
-                <td>申报说明</td>
+                <td>审批状态</td>
               </tr>
               </thead>
             </table>
@@ -146,14 +142,12 @@
                 <col width="5%" />
                 <col width="10%" />
                 <col width="10%" />
-                <col width="8%" />
+                <col width="22%" />
                 <col width="8%" />
                 <col width="10%" />
                 <col width="15%" />
                 <col width="10%" />
-                <col width="8%" />
-                <col width="5%" />
-                <col width="11%" />
+                <col width="10%" />
               </colgroup>
               <tbody>
               <tr :class="{trActive:check[idx]}" v-for="(item,idx) in tableData" :key="idx">
@@ -163,29 +157,14 @@
                 <td>
                   <el-tooltip
                     effect="dark"
-                    :content="item.OrgName"
+                    :content="item.DepName"
                     placement="bottom"
                     popper-class="pay-fund-approval_tooltip"
                   >
-                    <p>{{item.OrgName}}</p>
+                    <p>{{item.DepName}}</p>
                   </el-tooltip>
                 </td>
                 <td @click="handleRowClick(item,idx)" class="apply-epart cell-click">
-                  <el-tooltip
-                    effect="dark"
-                    :content="item.PayNum"
-                    placement="bottom"
-                    popper-class="pay-fund-approval_tooltip"
-                  >
-                    <p>{{item.PayNum}}</p>
-                  </el-tooltip>
-                </td>
-                <td style="text-align: right">{{item.PayAccount | NumFormat}}</td>
-                <td>
-                  <span v-if="item.BBilltype == '001'">资金拨付单</span>
-                  <span v-if="item.BBilltype == '002'">支付单</span>
-                </td>
-                <td>
                   <el-tooltip
                     effect="dark"
                     :content="item.BNum"
@@ -193,6 +172,29 @@
                     popper-class="pay-fund-approval_tooltip"
                   >
                     <p>{{item.BNum}}</p>
+                  </el-tooltip>
+                </td>
+                <td >
+                  <el-tooltip
+                    effect="dark"
+                    :content="item.BName"
+                    placement="bottom"
+                    popper-class="pay-fund-approval_tooltip"
+                  >
+                    <p>{{item.BName}}</p>
+                  </el-tooltip>
+                </td>
+                <td style="text-align: right">
+                  {{item.BAccount | NumFormat}}
+                </td>
+                <td>
+                  <el-tooltip
+                    effect="dark"
+                    :content="item.BudgetName"
+                    placement="bottom"
+                    popper-class="pay-fund-approval_tooltip"
+                  >
+                    <p>{{item.BudgetName}}</p>
                   </el-tooltip>
                 </td>
                 <td>
@@ -204,38 +206,6 @@
                   >
                     <p>{{item.BDate}}</p>
                   </el-tooltip>
-                </td>
-                <td>
-                  <el-tooltip
-                    effect="dark"
-                    :content="item.BName"
-                    placement="bottom"
-                    popper-class="pay-fund-approval_tooltip"
-                  >
-                    <p>{{item.BName}}</p>
-                  </el-tooltip>
-                </td>
-                <td>
-                    <span
-                      class="cell-click"
-                      v-if="item.BStatus ==0 "
-                      @click.stop="openAuditfollow(item,idx)"
-                    >未审批</span>
-                  <span
-                    class="cell-click"
-                    v-if="item.BStatus ==1 "
-                    @click.stop="openAuditfollow(item,idx)"
-                  >审批中</span>
-                  <span
-                    class="cell-click"
-                    v-if="item.BStatus ==2 "
-                    @click.stop="openAuditfollow(item,idx)"
-                  >未通过</span>
-                  <span
-                    class="cell-click"
-                    v-if="item.BStatus ==9 "
-                    @click.stop="openAuditfollow(item,idx)"
-                  >审批通过</span>
                 </td>
                 <td>
                   <div>
@@ -252,50 +222,29 @@
                       />
                       <img v-else src="../../assets/images/sj1.png" class="img-icon" />
                     </el-tooltip>
-                    <!--<el-tooltip v-if="item.BStatus == 0" class="" effect="dark" :content="'已经停留'+item.StopHour +'小时'" placement="bottom-start">
-                    <img  src="../../assets/images/sj2.png" class="img-icon">
-                  </el-tooltip>
-                </td>
-                <td style="text-align: right">
-                  {{item.PayAccount | NumFormat}}
-                </td>
-                <td>
-                  <span v-if="item.BBilltype == '001'">资金拨付单</span>
-                  <span v-if="item.BBilltype == '002'">支付单</span>
-                </td>
-                <td>
-                  <el-tooltip effect="dark"
-                              :content="item.BNum"
-                              placement="bottom"
-                              popper-class="pay-fund-approval_tooltip">
-                    <p>
-                      {{item.BNum}}
-                    </p>
-                  </el-tooltip>
-                </td>
-                <td>
-                  <el-tooltip effect="dark"
-                              :content="item.BDate"
-                              placement="bottom"
-                              popper-class="pay-fund-approval_tooltip">
-                    <p>
-                      {{item.BDate}}
-                    </p>
-                  </el-tooltip>
-                  <el-tooltip v-else-if="item.BStatus == 10" class="" effect="dark" :content="'已经停留'+item.StopHour +'小时'" placement="bottom-start">
-                    <img  src="../../assets/images/sj1.png" class="img-icon">
-                    </el-tooltip>-->
                   </div>
                 </td>
-                <td style="text-align: left">
-                  <el-tooltip
-                    effect="dark"
-                    :content="item.BDescribe"
-                    placement="bottom-start"
-                    popper-class="pay-fund-approval_tooltip"
-                  >
-                    <p>{{item.BDescribe}}</p>
-                  </el-tooltip>
+                <td>
+                    <span
+                      class="cell-click"
+                      v-if="item.BStatus ==1 "
+                      @click.stop="openAuditfollow(item,idx)"
+                    >待审批</span>
+                  <span
+                    class="cell-click"
+                    v-if="item.BStatus ==2 "
+                    @click.stop="openAuditfollow(item,idx)"
+                  >审批中</span>
+                  <span
+                    class="cell-click"
+                    v-if="item.BStatus ==3 "
+                    @click.stop="openAuditfollow(item,idx)"
+                  >审批通过</span>
+                  <span
+                    class="cell-click"
+                    v-if="item.BStatus ==4 "
+                    @click.stop="openAuditfollow(item,idx)"
+                  >已退回</span>
                 </td>
               </tr>
               <tr v-if="tableData.length === 0" :class="{trActive:check[0]}">
@@ -309,35 +258,26 @@
             <table>
               <colgroup>
                 <col width="5%" />
+                <col width="15%" />
                 <col width="10%" />
+                <col width="27%" />
                 <col width="8%" />
-                <col width="8%" />
-                <col width="8%" />
-                <col width="12%" />
                 <col width="10%" />
+                <col width="15%" />
                 <col width="10%" />
-                <col width="8%" />
-                <col width="21%" />
               </colgroup>
               <thead>
               <tr>
                 <td>
                   <el-checkbox v-model="checkedAll" :indeterminate="IsIndeterminate">序号</el-checkbox>
                 </td>
-                <td>申报部门/单位</td>
-                <td>支付单编号</td>
-                <td>支付金额(元)</td>
-                <td>单据类型</td>
-                <td>
-                  申报单编号
-                  <el-tooltip content="显示全部单据">
-                    <i class="el-icon-refresh refrest-same-follow" @click="resetSameFollow"></i>
-                  </el-tooltip>
-                </td>
+                <td>申报部门</td>
+                <td>项目编码</td>
+                <td>项目名称</td>
+                <td>项目金额(元)</td>
+                <td>预算部门</td>
                 <td>申报日期</td>
-                <td>支付单名称</td>
-                <td>申报状态</td>
-                <td>申报说明</td>
+                <td>审批状态</td>
               </tr>
               </thead>
             </table>
@@ -346,15 +286,13 @@
             <table ref="printArea">
               <colgroup>
                 <col width="5%" />
+                <col width="15%" />
                 <col width="10%" />
+                <col width="27%" />
                 <col width="8%" />
-                <col width="8%" />
-                <col width="8%" />
-                <col width="12%" />
                 <col width="10%" />
+                <col width="15%" />
                 <col width="10%" />
-                <col width="8%" />
-                <col width="21%" />
               </colgroup>
               <tbody>
               <tr :class="{trActive:check[idx]}" v-for="(item,idx) in tableData" :key="idx">
@@ -364,36 +302,44 @@
                 <td>
                   <el-tooltip
                     effect="dark"
-                    :content="item.OrgName"
+                    :content="item.DepName"
                     placement="bottom"
                     popper-class="pay-fund-approval_tooltip"
                   >
-                    <p>{{item.OrgName}}</p>
+                    <p>{{item.DepName}}</p>
                   </el-tooltip>
                 </td>
                 <td @click="handleRowClick(item,idx)" class="apply-epart cell-click">
                   <el-tooltip
                     effect="dark"
-                    :content="item.PayNum"
+                    :content="item.BNum"
                     placement="bottom"
                     popper-class="pay-fund-approval_tooltip"
                   >
-                    <p>{{item.PayNum}}</p>
+                    <p>{{item.BNum}}</p>
                   </el-tooltip>
                 </td>
-                <td style="text-align: right">{{item.PayAccount | NumFormat}}</td>
-                <td>
-                  <span v-if="item.BBilltype == '001'">资金拨付单</span>
-                  <span v-if="item.BBilltype == '002'">支付单</span>
+                <td >
+                  <el-tooltip
+                    effect="dark"
+                    :content="item.BName"
+                    placement="bottom"
+                    popper-class="pay-fund-approval_tooltip"
+                  >
+                    <p>{{item.BName}}</p>
+                  </el-tooltip>
+                </td>
+                <td style="text-align: right">
+                  {{item.BAccount | NumFormat}}
                 </td>
                 <td @mouseenter="showSearchIcon(item,idx)" @mouseleave="hideSearchIcon()">
-                  <span>{{item.BNum}}</span>
-                  <el-tooltip content="显示关联单据">
-                    <i
-                      v-show="idx === showSearchIconIdx"
-                      class="el-icon-search refrest-same-follow"
-                      @click="seachSameFollow(item.BNum)"
-                    ></i>
+                  <el-tooltip
+                    effect="dark"
+                    :content="item.BudgetName"
+                    placement="bottom"
+                    popper-class="pay-fund-approval_tooltip"
+                  >
+                    <p>{{item.BudgetName}}</p>
                   </el-tooltip>
                 </td>
                 <td>
@@ -407,46 +353,26 @@
                   </el-tooltip>
                 </td>
                 <td>
-                  <el-tooltip
-                    effect="dark"
-                    :content="item.BName"
-                    placement="bottom"
-                    popper-class="pay-fund-approval_tooltip"
-                  >
-                    <p>{{item.BName}}</p>
-                  </el-tooltip>
-                </td>
-                <td>
                     <span
                       class="cell-click"
-                      v-if="item.BStatus ==0 "
+                      v-if="item.BStatus ==1 "
                       @click.stop="openAuditfollow(item,idx)"
-                    >未审批</span>
-                  <span
-                    class="cell-click"
-                    v-if="item.BStatus ==1 "
-                    @click.stop="openAuditfollow(item,idx)"
-                  >审批中</span>
+                    >待审批</span>
                   <span
                     class="cell-click"
                     v-if="item.BStatus ==2 "
                     @click.stop="openAuditfollow(item,idx)"
-                  >未通过</span>
+                  >审批中</span>
                   <span
                     class="cell-click"
-                    v-if="item.BStatus ==9 "
+                    v-if="item.BStatus ==3 "
                     @click.stop="openAuditfollow(item,idx)"
                   >审批通过</span>
-                </td>
-                <td style="text-align: left">
-                  <el-tooltip
-                    effect="dark"
-                    :content="item.BDescribe"
-                    placement="bottom-start"
-                    popper-class="pay-fund-approval_tooltip"
-                  >
-                    <p>{{item.BDescribe}}</p>
-                  </el-tooltip>
+                  <span
+                    class="cell-click"
+                    v-if="item.BStatus ==4 "
+                    @click.stop="openAuditfollow(item,idx)"
+                  >已退回</span>
                 </td>
               </tr>
               <tr v-if="tableData.length === 0" :class="{trActive:check[0]}">
@@ -470,9 +396,28 @@
       </div>
     </div>
     <!--查看审批流程-->
-    <auditfollow :visible.sync="visible" @closefollow="closeFollow" :auditMsg="auditMsg"></auditfollow>
+    <auditfollow :visible.sync="visible" @closefollow="closeFollow" :auditMsg="auditMsg" audit-type="004"></auditfollow>
     <!--组织树-->
     <orgtree :data="orgtreeData" :checkedOrg="checkedOrg" :visible.sync="orgType" @confirm="getOrg"></orgtree>
+    <!--审批弹框-->
+    <pre-p-a-dialog  :rowData="selection"
+                     ref="prepaDialog"
+                     @refresh="loadData"
+                     @subSuc="plSubSuc()"
+                      b-type="004"></pre-p-a-dialog>
+    <!--查看详情弹框-->
+    <el-dialog append-to-body
+               modal-append-to-body
+               :visible.sync="detailDialog"
+               width="50%"
+               :close-on-click-modal="false"
+               class="applyDetailDialog">
+      <div slot="title"
+           class="applyDetailTitle">
+        <span>查看预立项</span>
+      </div>
+      <item-detail :data="itemDetail"></item-detail>
+    </el-dialog>
   </section>
 </template>
 
@@ -488,9 +433,13 @@
   import ImgView from '../../components/imgView/imgView'
   import { printTable } from '@/api/upload'
   import { GetSysSetList } from '@/api/systemSetting/dataSafe'
+  import PrePADialog from "./component/prePADialog";
+  import ItemDetail from "./component/itemDetail";
   export default {
     name: 'index',
     components: {
+      ItemDetail,
+      PrePADialog,
       ImgView,
       Orgtree,
       ApprovalDialog,
@@ -502,7 +451,7 @@
     data() {
       return {
         payListVisible: false,
-        BType: '002', //单据类型 资金拨付 001  申报单 002
+        BType: '004', //单据类型 资金拨付 001  申报单 002
         checkedAll: false, //是否全选
         IsIndeterminate: false, //列表中是否有选中的值并且不是全选
         check: [], //列表所有选中状态
@@ -522,7 +471,8 @@
           OrgCode: '', //组织编码
           OrgName: '', //组织名称
           OrgPhId: '',
-          OrgIds: []
+          OrgIds: [],
+          OrgCodes: []
         },
         tableData: [], //模拟表格数据
         page: {
@@ -539,8 +489,11 @@
             onfirmName: ''
           }
         }, //审核弹框
-        openDialog: false, //打开详情弹框
-        openInnerDialog: false, //打开详情内层弹框
+
+
+        detailDialog: false, //打开详情弹框
+
+        itemDetail:{},//缓存详情弹框内的值
 
         //判断显示为已审批页面还是未审批页面
         isApproval: '',
@@ -671,7 +624,8 @@
               ? ''
               : this.searchForm.BDate[1] + ' 23:59:59',
           Splx_Phid: this.SplxPhid,
-          OrgIds: this.searchForm.OrgIds
+          OrgIds: this.searchForm.OrgIds,
+          OrgCodes:this.searchForm.OrgCodes
         }
         let that = this
         if (eval(this.isApproval)) {
@@ -742,10 +696,17 @@
       },
       //单行点击事件
       handleRowClick(row, idx) {
-        this.payListData = row
-
-        this.openDialog = true
-        this.detailData = row
+        debugger
+        let data = {
+          FProjPhId: row.RefbillPhid
+        }
+        this.getAxios('/GXM/ProjectMstApi/GetProjectMst', data).then(res => {
+          this.itemDetail = res
+          console.log(res)
+          this.detailDialog = true
+        }).catch(err => {
+          this.$msgBox.error('请求失败')
+        })
       },
       //点击checkBox单元格事件
       handleCheckBoxCellClick(row, idx) {
@@ -781,7 +742,7 @@
           this.appDialog.title = '查看'
           this.appDialog.btnGroup.cancelName = '取消'
           this.appDialog.btnGroup.onfirmName = '确认'
-          this.$refs.payDialog.changeDialog()
+          this.$refs.prepaDialog.changeDialog()
         }
       },
       //生成支付单弹框
@@ -825,6 +786,7 @@
       //获取组织树
       getOrg(e) {
         this.searchForm.OrgIds = []
+        this.searchForm.OrgCodes = []
         this.applyDeportTop = ''
         this.searchForm.OrgName = e.map(item => item.OName)
         this.searchForm.OrgName.forEach((item, idx) => {
@@ -834,8 +796,10 @@
             this.applyDeportTop = this.applyDeportTop + item
           }
         })
+        console.log(e)
         for (let key in e) {
           this.searchForm.OrgIds[key] = e[key].PhId
+          this.searchForm.OrgCodes[key] = e[key].OCode
         }
         this.loadData()
 
@@ -941,6 +905,21 @@
   }
 </script>
 <style scoped>
+  .applyDetailDialog >>> .el-dialog__header {
+    padding: 10px 0 0 0;
+  }
+  .applyDetailDialog >>> .el-dialog__body {
+    padding: 0 20px;
+  }
+  .applyDetailTitle {
+    text-align: left;
+    border-bottom: 1px solid #eaeaea;
+    height: 30px;
+  }
+  .applyDetailTitle span {
+    margin-left: 10px;
+    line-height: 30px;
+  }
   .content-body {
     min-width: 1480px;
     min-height: 500px;

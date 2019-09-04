@@ -3,7 +3,7 @@
     <topHandle :title="'系统管理在线工作平台'"
                @refresh="refresh">
       <div class="btnCon">
-        <div v-if="menuButton.datadic_edit=='True'"
+        <div v-if="menuButton.pageMaintenance_edit=='True'"
              v-show="disabled"
              @click.stop="disabled=false;deleteList=[]"
              class="handle">
@@ -11,15 +11,15 @@
                  alt=""></div>
           修改
         </div>
-        <div v-if="menuButton.datadic_edit=='True'"
+        <div v-if="menuButton.pageMaintenance_edit=='True'"
              v-show="!disabled"
-             @click.stop="disabled=false;deleteList=[]"
+             @click.stop="updateInfo"
              class="handle">
           <div class="topIcon"><img src="@/assets/images/bc.png"
                  alt=""></div>
           保存
         </div>
-        <div v-if="menuButton.datadic_edit=='True'"
+        <div v-if="menuButton.pageMaintenance_edit=='True'"
              v-show="!disabled"
              @click.stop="refresh"
              class="handle">
@@ -55,10 +55,16 @@
                 :key="n">
               <li>{{n+1}}</li>
               <li :class="{gray:!disabled&&item.Issystem==1&&ucode!='Admin'}">
-                <div v-show="disabled || item.Issystem==1&&ucode!='Admin'">{{item.TypeName}}</div>
+                <div v-show="disabled || item.Issystem==1&&ucode!='Admin'">{{item.FName}}</div>
                 <div v-show="!disabled&&(item.Issystem!=1||ucode=='Admin')">
-                  <el-input v-model="item.TypeName"
-                            placeholder="请输入控制项名称"></el-input>
+                  <el-select v-model="item.FCode"
+                             placeholder="请选择控制项">
+                    <el-option v-for="code of options"
+                               :label="code.FName "
+                               :value="code.FCode">
+
+                    </el-option>
+                  </el-select>
                 </div>
               </li>
               <li :class="{gray:!disabled&&item.Issystem==1&&ucode!='Admin'}">
@@ -74,17 +80,17 @@
 
               <li class="enable">
                 <div v-show="disabled">
-                  <img v-show="item.Isactive==0"
+                  <img v-show="item.FIfuse==0"
                        src="@/assets/images/gou.svg"
                        alt="">
-                  <img v-show="item.Isactive==1"
+                  <img v-show="item.FIfuse==1"
                        src="@/assets/images/cha.svg"
                        alt="">
                 </div>
                 <div v-show="!disabled">
-                  <el-radio v-model="item.Isactive"
+                  <el-radio v-model="item.FIfuse"
                             :label="0">启用</el-radio>
-                  <el-radio v-model="item.Isactive"
+                  <el-radio v-model="item.FIfuse"
                             :label="1">停用</el-radio>
                 </div>
                 <div class="icon active">
@@ -114,6 +120,7 @@
 
 <script>
 import { mapState } from 'vuex'
+import { GetAllWorkFlows, UpdateSetWorkFlowForOrgs } from '../../../api/systemSetting/pageControl'
 import Orgtree from "@/components/orgtree/index"
 import topHandle from '@/components/topNav/topHandle'
 export default {
@@ -121,9 +128,16 @@ export default {
   data () {
     return {
       disabled: true,
-      typeInfoList: [{ TypeName: '预立项是否启用部门发起&汇总审批', Isactive: 0, OrgList: [{ PhId: this.$store.state.user.orgid, OCode: this.$store.state.user.orgcode, OName: this.$store.state.user.orgname }] }],
+      typeInfoList: [],
       orgVisible: false,
-      orgSelected: []
+      orgSelected: [],
+      options: [
+        { FCode: '001', FName: '资金拨付是否启用部门发起&汇总审批' },
+        { FCode: '002', FName: '支付是否启用部门发起&汇总审批' },
+        { FCode: '003', FName: '用款计划是否启用部门发起&汇总审批' },
+        { FCode: '004', FName: '预立项是否启用部门发起&汇总审批' },
+        { FCode: '005', FName: '项目立项是否启用部门发起&汇总审批' },
+      ]
     }
   },
   computed: {
@@ -131,8 +145,12 @@ export default {
       menuButton: state => state.user.menubutton,
       orglist: state => state.user.orglist,
       orgid: state => state.user.orgid,
-      ucode: state => state.user.usercode
+      ucode: state => state.user.usercode,
+      uid: state => state.user.userid,
     })
+  },
+  mounted () {
+    this.refresh();
   },
   methods: {
     //刷新
@@ -143,7 +161,47 @@ export default {
     },
     //拉取列表
     getData () {
+      let data = {
+        uid: this.uid,
+        orgid: this.orgid
+      }
+      GetAllWorkFlows(data).then(res => {
+        if (res.Status == 'error') {
+          this.$msgBox.error(res.Msg)
+        } else {
+          this.typeInfoList = res.Data
+        }
 
+      }).catch(err => {
+        console.log(err)
+        this.$msgBox.error('获取控制项数据失败!')
+      })
+    },
+    //保存
+    updateInfo () {
+
+      this.typeInfoList.map(info => {
+        this.options.map(op => {
+          if (info.FCode == op.FCode) {
+            info.FName = op.FName
+          }
+        })
+      })
+      let data = {
+        uid: this.uid,
+        orgid: this.orgid,
+        infoData: this.typeInfoList
+      }
+      UpdateSetWorkFlowForOrgs(data).then(res => {
+        if (res.Status == 'error') {
+          this.$msgBox.error(res.Msg)
+        } else {
+          this.$msgBox.show(res.Msg)
+          this.refresh();
+        }
+      }).catch(err => {
+        this.$msgBox.error('保存数据失败!')
+      })
     },
     //类型信息新增
     addInfo (index) {
@@ -154,10 +212,12 @@ export default {
         index + 1,
         0,
         {
-          Isactive: 0,
+          FCode: '001',
+          FName: '资金拨付过程',
           PersistentState: 1,
-          Orgid: this.$store.state.user.orgid,
-          Orgcode: this.$store.state.user.orgcode,
+          FIfuse: 0,
+          orgid: this.$store.state.user.orgid,
+          uid: this.$store.state.user.userid,
           OrgList: [{ PhId: this.$store.state.user.orgid, OCode: this.$store.state.user.orgcode, OName: this.$store.state.user.orgname }]
         }
       )

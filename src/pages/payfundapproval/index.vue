@@ -63,7 +63,7 @@
           <!--搜索栏-->
           <div class="btnArea">
             <el-form :inline="true">
-              <el-form-item label="申报部门"
+              <el-form-item label="申报部门:"
                             class="top-form-left">
                 <el-tooltip v-if="applyDeportTop !=='' "
                             :content="applyDeportTop">
@@ -82,7 +82,7 @@
                           style="width: 120px"
                           placeholder="全部"></el-input>
               </el-form-item>
-              <el-form-item label="停留时长"
+              <el-form-item v-if="isApproval" label="停留时长:"
                             class="top-form-left">
                 <el-input size="mini"
                           v-model="searchForm.StopHour"
@@ -104,7 +104,7 @@
                   </el-select>
                 </el-input>
               </el-form-item>
-              <el-form-item label="申报日期"
+              <el-form-item label="申报日期:"
                             class="top-form-left">
                 <el-date-picker v-model="searchForm.BDate"
                                 @change="changeInput()"
@@ -190,7 +190,13 @@
                     </el-tooltip>
                   </td>
                   <td @click="handleCellClick(item,idx)"
-                      class="apply-epart cell-click">{{item.BNum}}</td>
+                      class="apply-epart cell-click">
+                    <el-tooltip effect="dark"
+                                :content="item.BNum"
+                                placement="bottom"
+                                popper-class="pay-fund-approval_tooltip">
+                      <p>{{item.BNum}}</p>
+                    </el-tooltip></td>
                   <td>
                     <el-tooltip effect="dark"
                                 :content="item.BName"

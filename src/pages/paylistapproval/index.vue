@@ -41,7 +41,7 @@
           <!--搜索栏-->
           <div class="btnArea">
             <el-form :inline="true">
-              <el-form-item label="申报部门" class="top-form-left">
+              <el-form-item label="申报部门:" class="top-form-left">
                 <el-tooltip v-if="applyDeportTop !=='' " :content="applyDeportTop">
                   <el-input
                     size="mini"
@@ -62,7 +62,7 @@
                   placeholder="全部"
                 ></el-input>
               </el-form-item>
-              <el-form-item label="停留时长" class="top-form-left">
+              <el-form-item v-if="isApproval" label="停留时长:" class="top-form-left">
                 <el-input
                   size="mini"
                   v-model="searchForm.StopHour"
@@ -84,7 +84,7 @@
                   </el-select>
                 </el-input>
               </el-form-item>
-              <el-form-item label="申报日期" class="top-form-left">
+              <el-form-item label="申报日期:" class="top-form-left">
                 <el-date-picker
                   v-model="searchForm.BDate"
                   @change="changeInput()"
