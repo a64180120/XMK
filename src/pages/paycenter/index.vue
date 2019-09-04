@@ -1061,12 +1061,11 @@ export default {
   }
   .iconMsg {
     position: absolute;
-    right: 5px;
+    right: 2px;
     width: 30px;
     height: 30px;
     font-size: 0.12rem;
     top: -4px;
-    background-color: #fff;
     cursor: pointer;
     > i {
       position: absolute;
