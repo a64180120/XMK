@@ -84,8 +84,8 @@
                            placeholder="请选择指标类别">
                   <el-option v-for="item in options"
                              :key="item.value"
-                             :label="item.label"
-                             :value="item.value">
+                             :label="item.TypeName"
+                             :value="item.TypeCode">
                   </el-option>
                 </el-select>
               </div>
@@ -156,7 +156,7 @@
              v-show="!disabled">
           <span @click.stop="$emit('refresh')"
                 class="whiteBtn">取消</span>
-          <span @click.stop="$emit('update')"
+          <span @click.stop="UpdateTargets"
                 class="btn">保存</span>
         </div>
       </div>
@@ -256,7 +256,6 @@ export default {
           this.$msgBox(res.Msg)
         } else {
           res.FCode = '0000'
-          debugger
           this.typeList = [res]  //sb  wgg  一会对象一会数组
           if (this.typeList[0].Children.length) {
 
@@ -281,7 +280,6 @@ export default {
         orgCode: this.org.OCode,
         TargetTypeCode: this.type.FCode
       }
-      console.log(data)
       GetPerformEvalTargets(data).then(res => {
         if (res.Status == 'error') {
           this.$msgBox.error(res.Msg)
@@ -292,6 +290,23 @@ export default {
       }).catch(err => {
         console.log(err)
         this.$msgBox.error('获取指标信息列表失败!')
+      })
+    },
+    //修改指标信息列表
+    UpdateTargets () {
+      let data = {
+        orgid: this.org.orgid,
+        orgCode: this.org.OCode,
+        infoData: this.infoList
+      }
+      PostUpdateTargets(data).then(res => {
+        this.$msgBox.show(res.Msg)
+        if (res.Status == 'success') {
+          this.refresh();
+        }
+      }).catch(err => {
+        console.log(err)
+        this.$msgBox.show('修改指标信息失败!')
       })
     },
     orgTreeShow () {//组织树高亮
@@ -333,7 +348,7 @@ export default {
           this.$msgBox.error(res.Msg)
 
         } else {
-          this.options = res.Data
+          this.options = res.Record
           console.log(this.options)
         }
       }).catch(err => {
@@ -581,7 +596,7 @@ export default {
     padding-bottom: 40px;
   }
   .listBodyConUpdate {
-    padding-bottom: 70px;
+    padding-bottom: 77px;
   }
   .listBody {
     overflow-y: scroll;
