@@ -1,7 +1,7 @@
 <template>
   <div class="projectManage">
     <topHandle :title="'预算项目管理在线工作平台'"
-               :approvalSum ='approvalSum'
+               :approvalSum='approvalSum'
                @refresh="refresh">
 
     </topHandle>
@@ -101,15 +101,15 @@ import topHandle from '@/components/topNav/topHandle'
 import { mapState } from 'vuex'
 export default {
   name: 'projectManage',
-  data(){
-    return{
-      approvalSum:{
-        status:true,
-        sum:0
+  data () {
+    return {
+      approvalSum: {
+        status: true,
+        sum: 0
       }
     }
   },
-  computed:{
+  computed: {
     ...mapState({
       OrgCode: state => state.user.orgcode,
       UserId: state => state.user.userid,
@@ -119,8 +119,14 @@ export default {
   },
   mounted () {
     this.getProcTypes()
+    this.updateTitle();
   },
   methods: {
+    //修改title
+    updateTitle () {
+      let title = document.getElementsByTagName('title')[0];
+      title.innerText = "预算项目管理在线工作平台";
+    },
     //获取审批类型，获取为审批数
     getProcTypes () {
       let data = {
@@ -130,7 +136,7 @@ export default {
         Year: this.Year
       }
       this.getAxios('/GSP/GAppvalRecord/GetRecordListNum', data).then(res => {
-        for (let i in res.Data){
+        for (let i in res.Data) {
           this.approvalSum.sum += res.Data[i].NNum
         }
         console.log(res)
