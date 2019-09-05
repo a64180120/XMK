@@ -21,7 +21,7 @@
         <ul class="rightBtn">
           <li style="width: 65px"
               v-if="type === 'swatchBtn'"
-              @click.stop="swatchList">
+              @click="swatchList">
             <div>
               <img src="@/assets/images/list.png"
                    alt>
