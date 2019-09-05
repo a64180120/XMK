@@ -264,6 +264,8 @@ export default {
 
             this.$nextTick(this.typeTreeShow);//类型tree高亮
             this.getData();
+          } else {
+            this.type = this.typeList[0]
           }
 
         }
@@ -370,7 +372,7 @@ export default {
           PersistentState: 1
 
         }
-        this.$refs.typetree.insertAfter(data, this.type);
+        this.$refs.typetree.append(data, this.type);
       } else if (str == 'update') {
         this.type.FName = this.targetName;
         this.type.PersistentState = 2

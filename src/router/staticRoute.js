@@ -69,7 +69,7 @@ const staticRoute = [
         path: '/preBuildProject',
         component: () =>
           import(/* webpackChunkName:'preBuildProject'*/ '../pages/preproject/preBuildProject'),
-        meta: { requireAuth: true, type: 'page', name: '预立项' }
+        meta: { requireAuth: true, type: 'page', name: '预立项',title:'预立项' }
       },
       {
         path: '/preprojectApproval',

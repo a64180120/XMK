@@ -8,7 +8,7 @@
     <div class="container">
       <div class="pageNav">
         <div class="project">
-          <div class="navTitle">
+          <div v-if="MenuButton.projectmanage ==='True'" class="navTitle">
             <div>
               <div><img src="@/assets/images/xmgl.png"
                      alt=""></div>
@@ -18,17 +18,17 @@
           </div>
           <div class="navlistCon">
             <ul class="navlist">
-              <li @click="routerTo('/preBuildProject')">
+              <li v-if="MenuButton.ProjectMstList_Vue ==='True'" @click="routerTo('/preBuildProject')">
                 <div><img src="@/assets/images/yulix.png"
                        alt=""></div>
                 <div>预立项</div>
               </li>
-              <li @click="routerTo('/projectBuild')">
+              <li v-if="MenuButton.ProjectMstList2_Vue ==='True'" @click="routerTo('/projectBuild')">
                 <div><img src="@/assets/images/xmlix.png"
                        alt=""></div>
                 <div>项目立项</div>
               </li>
-              <li @click="routerTo('/projectList')">
+              <li v-if="MenuButton.ProjectMstList3_Vue ==='True'" @click="routerTo('/projectList')">
                 <div><img src="@/assets/images/xmcx.png"
                        alt=""></div>
                 <div>项目查询</div>
@@ -115,6 +115,7 @@ export default {
       UserId: state => state.user.userid,
       Orgid: state => state.user.orgid,
       Year: state => state.user.year,
+      MenuButton: state => state.user.menubutton,
     })
   },
   mounted () {

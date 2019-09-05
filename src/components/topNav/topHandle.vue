@@ -19,7 +19,7 @@
           </el-breadcrumb>
         </div>
         <ul class="rightBtn">
-          <li style="width: 65px" v-if="type === 'swatchBtn'" @click.stop="swatchList">
+          <li style="width: 65px" v-if="type === 'swatchBtn'" @click="swatchList">
             <div>
               <img src="@/assets/images/list.png"
                    alt>
@@ -175,7 +175,7 @@
       </div>
       <div v-if="approvalSum.status" style="height: 30px;line-height: 30px;margin: 0 20px">
         <span>待审批事项数:</span>
-        <span class="num">{{approvalSum.sum}}</span>
+        <span class="approval-num" @click="goApprovalCenter()">{{approvalSum.sum}}</span>
       </div>
     </div>
   </div>
@@ -287,8 +287,10 @@ export default {
           <span>{node.label}</span>
 
         </span>);
+    },
+    goApprovalCenter(){
+      this.$router.push('/approvalcenter')
     }
-
   }
 }
 </script>
@@ -518,6 +520,13 @@ export default {
   color: $orgdisabled;
 }
 .handleBtnCon .leftBtn {
+}
+  .approval-num{
+    color: #3294e8;
+    text-decoration: underline;
+  }
+.approval-num:hover{
+  cursor: pointer;
 }
 </style>
 

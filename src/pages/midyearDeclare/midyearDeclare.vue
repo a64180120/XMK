@@ -7,72 +7,65 @@
       <div class="top" >
         <ul>
           <li class="handle"
-              @click="budgetEdit()">
+              @click="add()">
             <div>
-              <img style="height: 33px" src="@/assets/images/ysxz-1_17.png">
+              <img style="height: 33px" src="@/assets/images/nzxz-1_30.png">
             </div>
-            <span>预算修正</span>
+            <span>年中新增</span>
           </li>
           <li class="handle"
               v-if="WorkFlow === 1"
-              @click="pBApproval()">
+              @click="edit()">
             <div>
-              <img src="@/assets/images/sp.png">
+              <img style="height: 33px" src="@/assets/images/nztz-1_31.png">
             </div>
-            <span>送审</span>
+            <span>年中调整</span>
           </li>
           <li class="handle"
               v-if="WorkFlow === 1"
               @click.stop="unSubApproval()">
             <div>
-              <img src="@/assets/images/ss_d.png">
+              <img src="@/assets/images/zj2.png">
             </div>
-            <span>取消送审</span>
+            <span>修改</span>
           </li>
           <li class="handle"
               v-if="WorkFlow === 0"
               @click="rejectItem()">
             <div>
-              <img style="height: 33px" src="@/assets/images/bh-1_20.png">
+              <img style="height: 33px" src="@/assets/images/zj3.png">
             </div>
-            <span>驳回</span>
+            <span>删除</span>
           </li>
           <li class="handle"
               v-if="WorkFlow === 0"
               @click="itemDefine()">
             <div>
-              <img style="height: 33px" src="@/assets/images/xmzxqr-1_19.png">
+              <img style="height: 33px" src="@/assets/images/fz-1_15.png">
             </div>
-            <span>项目执行确认</span>
+            <span>复制</span>
           </li>
           <li class="handle"
               @click="itemDefine()"
               v-if="WorkFlow === 1">
             <div>
-              <img height="33px" src="@/assets/images/scys-1_22.png">
+              <img height="33px" src="@/assets/images/sb-1_05.png">
             </div>
-            <span>生成预算</span>
+            <span>上报</span>
           </li>
           <li class="handle"
               @click="syncFinance()">
             <div>
-              <img style="height: 33px" src="@/assets/images/tbdcw-1_24.png">
+              <img style="height: 33px" src="@/assets/images/sp.png">
             </div>
-            <span>同步到财务</span>
+            <span>送审</span>
           </li>
           <li class="handle"
               @click="applyTablePrint()">
             <div>
-              <img style="height: 33px" src="@/assets/images/zlx-1_07.png">
+              <img style="height: 33px" src="@/assets/images/ss_d.png">
             </div>
-            <span>申请表打印</span>
-          </li>
-          <li class="handle"
-              @click="sumTablePrint()">
-            <div>
-              <img style="height: 33px" src="@/assets/images/zlx-1_07.png">
-            </div>
-            <span>汇总表打印</span>
+            <span>取消送审</span>
           </li>
         </ul>
 
@@ -80,8 +73,8 @@
     </top-handle>
 
     <div>
-      <div class="container content-body" style="min-width: 1700px;overflow: auto;min-height:750px">
-        <div class="formArea">
+      <div class="container content-body" style="min-height: 750px;overflow: auto">
+        <div class="formArea" >
           <!--搜索栏-->
           <div class="btnArea"
                style="margin-bottom: 15px">
@@ -217,87 +210,75 @@
           </div>
           <!--表格区域-->
           <div v-if="watchTable"
-               class="table-main">
-<!--            <section class="dataTable_proBuildProject">-->
-<!--              <el-table :data="table.tableData"-->
-<!--                        :row-class-name="rowClassName"-->
-<!--                        :cell-class-name="cellClassName"-->
-<!--                        @select="rowSelect"-->
-<!--                        @select-all="rowSelectAll"-->
-<!--                        :header-cell-class-name="handerCellClassName"-->
-<!--                        @current-change=""-->
-<!--                        :highlight-current-row="highlightCurrentRow"-->
-<!--                        style="overflow: visible;position: static;padding-top: 50px">-->
-<!--                <el-table-column v-if="table.selection"-->
-<!--                                 type="selection" width="30"></el-table-column>-->
-<!--                <el-table-column label="序号"-->
-<!--                                 type="index"-->
-<!--                                 :index="function(index) {-->
-<!--                                     return index +1-->
-<!--                                 }" width="40"></el-table-column>-->
-<!--                <el-table-column v-for="(item,idx) in table.column"-->
-<!--                                 :prop="item.prop"-->
-<!--                                 :label="item.label"-->
-<!--                                 :width="item.width"-->
-<!--                                 :key="idx"-->
-<!--                                 align="center">-->
-<!--                  <template slot-scope="scope"-->
-<!--                            style="">-->
-<!--                    <div v-if="item.other === 'function'"-->
-<!--                         class="table-column-height"-->
-<!--                         @click="cellClick(scope)"-->
-<!--                         :style="{textAlign:item.align}">-->
-<!--                      <span :style="{textAlign:item.align}"-->
-<!--                            class="cell-click">{{scope.row[item.prop]}}</span>-->
-<!--                    </div>-->
-<!--                    <div v-else-if="item.other === 'money'"-->
-<!--                         class="table-column-height"-->
-<!--                         :style="{textAlign:item.align}">-->
-<!--                      <span v-if="formList.year =='1'"-->
-<!--                            :style="{textAlign:item.align}">{{scope.row[item.prop] |NumFormat}}</span>-->
-<!--                      <span v-else-->
-<!--                            :style="{textAlign:item.align}">{{(scope.row[item.prop] / 10000) | NumFormat}}</span>-->
-<!--                    </div>-->
-<!--                    <div v-else-if="item.other ==='start-end'"-->
-<!--                         class="table-column-height"-->
-<!--                         :style="{textAlign:item.align}">-->
-<!--                      <span>{{scope.row[item.prop1].replace('T00:00:00','')}}至</span>-->
-<!--                      <span>{{scope.row[item.prop2].replace('T00:00:00','')}}</span>-->
-<!--                    </div>-->
-<!--                    <div v-else-if="item.other ==='time'">-->
-<!--                      <span v-if="scope.row[item.prop]">{{scope.row[item.prop].split('T',9)[0]}}</span>-->
-<!--                      <span v-else="scope.row[item.prop]">{{scope.row[item.prop]}}</span>-->
-<!--                    </div>-->
-<!--                    <div v-else-if="item.other ==='status-click'">-->
-<!--                      <span v-html="formatter(scope)"-->
-<!--                            @click="cellClick(scope)"-->
-<!--                            class="cell-click"></span>-->
-<!--                    </div>-->
-<!--                    <div v-else-if="item.other ==='status'">-->
-<!--                      <span v-html="formatter(scope)"-->
-<!--                      ></span>-->
-<!--                    </div>-->
-<!--                    <div v-else-->
-<!--                         class="table-column-height"-->
-<!--                         :style="{textAlign:item.align}">-->
-<!--                      <span :style="{textAlign:item.align}">{{scope.row[item.prop]}}</span>-->
-<!--                    </div>-->
-<!--                  </template>-->
-<!--                </el-table-column>-->
-<!--              </el-table>-->
-<!--            </section>-->
+               class="dataTable_list">
+            <div class="start"></div>
+            <div class="end"></div>
             <section>
-              <el-table :data="table.tableData" style="width: 100%" max-height="700px">
-                <el-table-column label="" prop="" type="selection"></el-table-column>
-                <el-table-column label="" prop="" type="index"></el-table-column>
-                <el-table-column label="项目编码" prop="" ></el-table-column>
-                <el-table-column label="项目名称" prop="" ></el-table-column>
-                <el-table-column label="项目金额" prop="" ></el-table-column>
-                <el-table-column label="申报部门" prop="" ></el-table-column>
-                <el-table-column label="预算部门" prop="" ></el-table-column>
-                <el-table-column label="支出类别" prop="" ></el-table-column>
-                <el-table-column label="起止日期" prop="" ></el-table-column>
-                <el-table-column label="申报日期" prop="" ></el-table-column>
+              <el-table :data="table.tableData"
+                        :row-class-name="rowClassName"
+                        :cell-class-name="cellClassName"
+                        @select="rowSelect"
+                        @select-all="rowSelectAll"
+                        :header-cell-class-name="handerCellClassName"
+                        @current-change=""
+                        :highlight-current-row="highlightCurrentRow"
+                        style="width: 100%"
+                        border
+                        max-height="630px"
+                        min-height="600px">
+                <el-table-column label="" prop="" type="selection" width="35" align="center"></el-table-column>
+                <el-table-column label="" prop="" width="35" type="index" label="序号" :index="function(index) {
+                  return index+1
+                }" ></el-table-column>
+                <el-table-column v-for="(item,idx) in table.column"
+                                 :prop="item.prop"
+                                 :label="item.label"
+                                 :width="item.width"
+                                 :key="idx"
+                                 align="center">
+                  <template slot-scope="scope"
+                            style="">
+
+                    <div style="" v-if="item.other === 'function'"
+                         class="table-column-height"
+                         @click="cellClick(scope)"
+                         :style="{textAlign:item.align}">
+                      <span :style="{textAlign:item.align}"
+                            class="cell-click">{{scope.row[item.prop]}}</span>
+                    </div>
+                    <div v-else-if="item.other === 'money'"
+                         class="table-column-height"
+                         :style="{textAlign:item.align}">
+                      <span v-if="formList.year =='1'"
+                            :style="{textAlign:item.align}">{{scope.row[item.prop] |NumFormat}}</span>
+                      <span v-else
+                            :style="{textAlign:item.align}">{{scope.row[item.prop] / 10000|NumFormat }}</span>
+                    </div>
+                    <div v-else-if="item.other ==='start-end'"
+                         class="table-column-height"
+                         :style="{textAlign:item.align}">
+                      <span>{{scope.row[item.prop1].replace('T00:00:00','')}}至</span>
+                      <span>{{scope.row[item.prop2].replace('T00:00:00','')}}</span>
+                    </div>
+                    <div v-else-if="item.other ==='time'">
+                      <span>{{scope.row[item.prop].split('T',9)[0]}}</span>
+                    </div>
+                    <div v-else-if="item.other ==='status-click'">
+                      <span v-html="formatter(scope)"
+                            @click="cellClick(scope)"
+                            class="cell-click"></span>
+                    </div>
+                    <div v-else-if="item.other ==='status'">
+                      <span v-html="formatter(scope)"
+                            class=""></span>
+                    </div>
+                    <div v-else
+                         class="table-column-height"
+                         :style="{textAlign:item.align}">
+                      <span :style="{textAlign:item.align}">{{scope.row[item.prop]}}</span>
+                    </div>
+                  </template>
+                </el-table-column>
               </el-table>
             </section>
           </div>
@@ -575,7 +556,7 @@
   import ApplyTabPrint from "../preproject/component/applyTabPrint";
 
   export default {
-    name: "projectBuild",
+    name: "midyearDeclare",
     components: {
       ApplyTabPrint,
       SumTabPrint,
@@ -593,7 +574,7 @@
               prop: 'FProjCode',
               label: '项目编码',
               align: 'center',
-              width:150,
+              width:165,
               other: 'function',
               fn: function (scope) {
                 that.showDetail(scope)
@@ -602,23 +583,24 @@
               prop: 'FProjName',
               label: '项目名称',
               align: 'center',
+              width:300,
 
             },
             {
               prop: 'FProjAmount',
               label: '项目金额(元)',
-              width: 150,
+              width: 160,
               other: 'money',
               align: "right"
             },
             {
               prop: 'FDeclarationDept_EXName',
               label: '申报部门',
-              width:120
+              width:160
             }, {
               prop: 'FBudgetDept_EXName',
               label: '预算部门',
-              width:120
+              width:160
             },
             {
               prop: 'FExpenseCategory_EXName',
@@ -630,20 +612,20 @@
               prop2: 'FEndDate',
               label: '起止日期',
               align: 'center',
-              width: 145,
+              width: 300,
               other: "start-end"
             }, {
               prop: 'FDateofDeclaration',
               label: '申报日期',
               align: 'center',
               other: 'time',
-              width: 130,
+              width: 160,
             }, {
               prop: 'FType',
               label: '申报进度',
               align: 'center',
               other: 'status',
-              width: 110,
+              width: 160,
               format:function (scope) {
                 if (scope.row.FType+scope.row.FVerNo ==='c0001') {
                   return '年初新增'
@@ -660,7 +642,7 @@
               label: '项目状态',
               align: 'center',
               other: 'status',
-              width: 110,
+              width: 160,
               format:function (scope) {
                 let MC = '';
                 if (scope.row.FProjStatus ===1) {
@@ -683,7 +665,7 @@
             }, {
               prop: 'FApproveStatus',
               label: '审批状态',
-              width: 120,
+              width: 160,
               align: 'center',
               other: 'status-click',
               format: function (scope) {
@@ -781,7 +763,7 @@
         auditMsg: [],//审批流数据
         auditDialog: false,
 
-        paddRight: '10px',
+        paddRight: '30px',
 
         //审批状态下拉组
         aplStaGrop: [],
@@ -810,11 +792,17 @@
     created() {
     },
     mounted() {
+      this.updateTitle();
       this.getWorkFlow()
       this.getExpenseCategoryList()
       this.getTableData()
     },
     methods: {
+      //修改title
+      updateTitle (){
+        let title = document.getElementsByTagName('title')[0];
+        title.innerText = "年中调整";
+      },
       //获取过程是否启用工作流
       getWorkFlow() {
         let data = {
@@ -1037,14 +1025,7 @@
         }
         return this.table.column[index].fn(scope)
       },
-      //测试方法
-      fn() {
-        this.table.colum.push({
-          prop: 'end',
-          label: '测试',
-          align: 'left'
-        })
-      },
+
       //切换表格样式
       swatchTable() {
         if (this.watchTable) {
@@ -1053,48 +1034,10 @@
           this.watchTable = true
         }
       },
-      //新增方法
-      budgetEdit() {
-        this.addDialog = true
-        if (this.selection.length === 0) {
-          this.$msgBox.error('请选择需要预算修正的单据')
-        } else if (this.selection.length === 1) {
-          if (this.selection[0].FApproveStatus === '1' || this.selection[0].FApproveStatus === '5' || this.selection[0].FApproveStatus === '4') {
-            this.budgetEditDetail = this.selection[0]
-            this.budgetEditDialog = true
-          } else {
-            this.$msgBox.error("只有暂存、待送审与已退回的数据可以预算修正")
-          }
-        } else {
-          this.$msgBox.error('只能选择一条单据进行预算修正')
-        }
-      },
+
+      add(){},
       edit() {
-        this.addDialog = true
-      },
-      deleteItem() {
-        if (this.selection.length === 0) {
-          this.$msgBox.error('请选择数据进行删除')
-          return
-        } else if (this.selection.length !== 1 && this.selection.length !== 0) {
-          this.$msgBox.error('只能选择一行数据进行删除')
-          return
-        } else {
-          let data = {
-            FProjCode: this.selection[0].FProjCode,
-            FProjPhId: this.selection[0].PhId
-          };
-          this.postAxios('/GXM/ProjectMstApi/PostDeleteProject', data).then(res => {
-            if (res.Status === 'success') {
-              this.$msgBox.show('删除成功')
-              this.getTableData()
-            } else {
-              this.$msgBox.error(res.Msg)
-            }
-          }).catch(err => {
-            this.$msgBox.error('请求失败')
-          })
-        }
+
       },
       showDetail(scope) {
         let data = {
@@ -1107,9 +1050,6 @@
         }).catch(err => {
           this.$msgBox.error('请求失败')
         })
-      },
-      openAuditfollow() {
-        this.openfollow = true;
       },
       //选择框改变事件
       query() {
@@ -1149,59 +1089,7 @@
         }
         this.getTableData()
       },
-      //项目执行确认
-      itemDefine() {
-        if (this.selection.length === 0) {
-          this.$msgBox.error('请选择单据进行项目执行确认')
-        } else if (this.selection.length === 1) {
 
-          if (this.selection[0].FIfYsxz != '0') {
-            this.$msgBox.error('请先预算修正再进行项目执行确认')
-            return
-          }
-          let data = {
-            id: this.selection[0].PhId
-          }
-          if (this.WorkFlow === 0) {
-            if ((this.selection[0].FApproveStatus === '1') && this.selection[0].FProjStatus === 2) {
-              this.getAxios('GXM/ProjectMstApi/GetSaveBudgetMst', data).then(res => {
-                if (res.Status === 'success') {
-                  this.$msgBox.show('项目执行确认成功')
-                  this.getTableData()
-                } else {
-                  this.$msgBox.error(res.Msg)
-                }
-
-              }).catch(err => {
-                this.$msgBox.error('项目执行确认失败')
-              })
-            } else {
-              this.$msgBox.error('不存在符合项目确认执行的数据，请重新选择！')
-              this.selection.splice(0, 1)
-            }
-          } else {
-            if ((this.selection[0].FApproveStatus === '3') && this.selection[0].FProjStatus === 2) {
-              this.getAxios('GXM/ProjectMstApi/GetSaveBudgetMst', data).then(res => {
-                if (res.Status === 'success') {
-                  this.$msgBox.show('项目执行确认成功')
-                  this.getTableData()
-                } else {
-                  this.$msgBox.error(res.Msg)
-                }
-
-              }).catch(err => {
-                this.$msgBox.error('项目执行确认失败')
-              })
-            } else {
-              this.$msgBox.error('不存在符合项目确认执行的数据，请重新选择！')
-              this.selection.splice(0, 1)
-            }
-          }
-
-        } else {
-          this.$msgBox.error('项目执行确认只支持单条数据，请进行单选')
-        }
-      },
       //送审
       pBApproval() {
         if (this.selection.length === 0) {
@@ -1217,26 +1105,6 @@
           this.approvalDataS.data = this.selection
         } else {
           this.$msgBox.error('不支持多行送审，请单行选择')
-        }
-      },
-      //驳回
-      rejectItem() {
-        if (this.selection.length === 0) {
-          this.$msgBox.error('请选择所需要驳回的单据')
-        } else {
-          let arr = []
-          for (let i in this.selection) {
-            arr[i] = this.selection[i].PhId
-          }
-          let data = {
-            fPhIdList: arr,
-          }
-          this.postAxios('GXM/ProjectMstApi/PostUnValid', data).then(res => {
-            this.$msgBox.show('驳回成功' + res.SuccessNum + '条数据，驳回失败' + res.FailNum + '条数据')
-            this.getTableData()
-          }).catch(err => {
-            console.log(err)
-          })
         }
       },
       //取消送审
@@ -1271,72 +1139,7 @@
         this.approvalDataS.openDialog = false
         this.getTableData()
       },
-      //同步
-      syncFinance() {
-        if (this.selection.length !== 0) {
-          console.log(this.selection)
-          let stu = false
-          let arr = []
-          for (let i in  this.selection) {
-            // if (this.selection[i].FApproveStatus == "3" &&this.selection[i].FProjStatus == 2  && this.selection[i].FSaveToOldG6h == 0) {
-            //   stu = true
-            // } else {
-            //   stu = false
-            //   break
-            // }
-            arr[i] = this.selection[i].PhId
 
-          }
-          let data = {
-            fPhIdList: arr
-          }
-          if (this.WorkFlow === 0) {
-            for (let i in this.selection) {
-              if (this.selection[i].FApproveStatus == "1" && this.selection[i].FSaveToOldG6h == 0 && this.selection[i].FProjStatus == 2) {
-
-              } else {
-                this.$msgBox.error('所选单据中存在不是待执行以及项目执行的数据')
-                return
-              }
-            }
-            this.postAxios('/GXM/ProjectMstApi/PostAddData', data).then(res => {
-              if (res.Status){
-                this.$msgBox.show(res.Msg)
-              }else {
-                this.$msgBox.error(res.Msg)
-              }
-            }).catch(err => {
-              this.$msgBox.error(err)
-            })
-
-          } else {
-            for (let i in this.selection) {
-              if (this.selection[i].FSaveToOldG6h == 0) {
-                if (this.selection[i].FApproveStatus == "3" && this.selection[i].FProjStatus == 2) {
-
-                } else {
-                  this.$msgBox.error('所选单据中存在不是审批通过并且项目状态不为项目执行的数据')
-                  return
-                }
-              } else {
-                this.$msgBox.error('所选单据中存在已同步过的数据')
-                return
-              }
-            }
-            this.postAxios('/GXM/ProjectMstApi/PostAddData', data).then(res => {
-              debugger
-              console.log(res+'111111')
-              console.log('11111')
-              this.$msgBox.show(res +"1111111")
-            }).catch(err => {
-              console.log(222)
-              this.$msgBox.error(err)
-            })
-          }
-        } else {
-          this.$msgBox.error('请选择需要同步的数据！')
-        }
-      },
       //获取审批流程
       getAppvalProcList(row) {
         if (this.WorkFlow === 0) {
@@ -1367,41 +1170,7 @@
         })
       },
 
-      //汇总表打印
-      sumTablePrint() {
-        if (this.selection.length === 0) {
-          this.$msgBox.error('请选择需要打印的单据！！')
-        } else {
-          this.$refs.sumTabPrint.sumdialog = true
-          this.sumtabData = this.selection;
-          let sum = 0
-          for (let i in this.selection) {
-            sum += this.selection[i].FProjAmount
-          }
-          this.totalAmount = sum
-          console.log(this.selection)
-        }
-      },
-      //申请表打印
-      applyTablePrint() {
-        if (this.selection.length === 0) {
-          this.$msgBox.error('请选择需要打印的单据！！')
-        } else {
-          let data = {
-            fPhIdList: []
-          }
-          for (let i in this.selection) {
-            data.fPhIdList[i] = this.selection[i].PhId
-          }
-          this.postAxios('/GXM/ProjectMstApi/PostPrintData', data).then(res => {
-            console.log(res)
-            this.$refs.applyTabPrint.applydialog = true
-            this.applytabData = res;
-          }).catch(err => {
 
-          })
-        }
-      },
       //单位切换
       swatchUnit(){
         if (this.formList.year === '1') {
@@ -1446,6 +1215,7 @@
 
   .top ul li {
     float: left;
+    margin-left: 48px;
   }
 
   .top ul li:hover {

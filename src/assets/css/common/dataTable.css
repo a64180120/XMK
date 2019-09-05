@@ -14,16 +14,16 @@
   line-height: 30px
 }
 .dataTable_proBuildProject .row-class-name{
-  box-shadow: 0 0px 8px #cbcbcb;
+  box-shadow: 0 2px 4px #cbcbcb;
   border-radius: 8px;
 }
 .dataTable_proBuildProject .row-class-name:hover{
   box-shadow: 0 0px 9px #409eff;
 }
 .dataTable_proBuildProject .el-table__row:hover>td{
-  border-top: 1px solid  #00b7ee !important;
-  border-bottom: 1px solid  #00b7ee !important;
-}
+   border-top: 1px solid  #00b7ee !important;
+   border-bottom: 1px solid  #00b7ee !important;
+ }
 .dataTable_proBuildProject .el-table__row:hover>.frist-column{
   border-left: 1px solid #00b7ee !important;
 }
@@ -152,7 +152,7 @@
 
 /*表格每一行样式*/
 .itemTable_proBuildProject .row-class-name{
-  box-shadow: 0 0px 8px #cbcbcb;
+  box-shadow: 0 2px 4px #cbcbcb;
   border-radius: 8px;
 }
 .itemTable_proBuildProject .row-class-name:hover{
@@ -389,4 +389,149 @@
 }
 .itemTable_proBuildProject .el-table__header thead tr .is-leaf .cell{
   padding: 0;
+}
+
+
+.dataTable_list{
+  padding:0 25px;
+  position: relative;
+}
+.dataTable_list .table-column-height{
+  width: 100%;
+  min-height: 30px;
+  line-height: 30px
+}
+.dataTable_list .row-class-name{
+  box-shadow: 0 2px 4px #cbcbcb;
+  border-radius: 8px;
+}
+.dataTable_list .row-class-name:hover{
+  box-shadow: 0 0px 9px #409eff;
+}
+.dataTable_list .el-table__row:hover>td{
+  border-top: 1px solid  #00b7ee !important;
+  border-bottom: 1px solid  #00b7ee !important;
+}
+.dataTable_list .el-table__row:hover>.frist-column{
+  border-left: 1px solid #00b7ee !important;
+}
+.dataTable_list .el-table__row:hover>.last-column{
+  border-right: 1px solid #00b7ee !important;
+}
+.dataTable_list .row-class-name td{
+  border-bottom: none;
+  border-top: 1px solid #e3e3e3 ;
+  border-bottom: 1px solid #e3e3e3 ;
+  border-right: 1px solid #e3e3e3 ;
+  padding: 5px 10px !important;
+}
+/*.dataTable_list .row-class-name td .cell{*/
+/*  width: 100%;;overflow: hidden;word-wrap: break-word;word-break: break-all;padding: 0;*/
+/*}*/
+/*调整表格每一行间距*/
+.dataTable_list .el-table__body{
+  border-collapse: separate;
+  border-spacing:0px 10px ;
+}
+/*第一列数据*/
+.dataTable_list .row-class-name .frist-column{
+  padding:5px 0px  !important;
+}
+.dataTable_list .row-class-name .frist-column .cell{
+  padding: 0px ;
+}
+.dataTable_list .frist-column{
+  width: 150px !important;
+  border-left: 1px solid #e3e3e3 !important;
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+  border-right: none !important;
+  padding:5px 0px  !important;
+  border-right: none !important;
+}
+.dataTable_list .row-class-name .secend-column{
+  padding:5px 0px  !important;
+}
+.dataTable_list .row-class-name .secend-column .cell{
+  padding: 0px ;
+}
+/*最后一列数据*/
+.dataTable_list .last-column{
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+/*表头单元格*/
+.dataTable_list .thead-cell{
+  border-bottom: none !important;
+  background-color: #CACACA !important;
+  border-right: 1px solid #ffffff !important;
+  padding:10px 0px !important;
+  color: #333;
+}
+
+.dataTable_list .el-table__header-wrapper .thead-frist{
+  padding:5px 0px  !important;
+
+}
+.dataTable_list .el-table__header-wrapper .thead-frist .cell{
+  padding: 0px ;
+}
+.dataTable_list .thead-frist{
+  border-bottom: none !important;
+  background-color: #CACACA !important;
+  border-right: 1px solid #CACACA !important;
+  padding-right: 5px !important;
+  color: #333;
+}
+.dataTable_list .el-table__header-wrapper .thead-second{
+  padding:5px 0px  !important;
+}
+.dataTable_list .el-table__header-wrapper .thead-second .cell{
+  padding: 0px ;
+}
+.dataTable_list .thead-second{
+  border-bottom: none !important;
+  background-color: #CACACA !important;
+  border-right: 1px solid #FFFFFF ;
+  padding-right: 0px !important;
+  padding-left: 0px !important;
+  color: #333;
+}
+/*表头单元格*/
+.dataTable_list .thead-last-cell{
+  border-bottom: none !important;
+  background-color: #CACACA !important;
+  border-right: 1px solid #CACACA !important;
+  color: #333;
+}
+/*顶部滚动条颜色*/
+.dataTable_list .gutter{
+  background-color: #CACACA !important;
+}
+.dataTable_list .start{
+  position: absolute;
+  left: 0;
+  top: 0;
+  background-color: #CACACA;
+  width: 25px;
+  height: 44px;
+}
+.dataTable_list .end{
+  position: absolute;
+  right: 0;
+  top: 0;
+  background-color: #CACACA;
+  width: 26px;
+  height: 44px;
+  z-index: 2;
+}
+.dataTable_list .el-table__header{
+  padding: 0 9px;
+  background-color: #CACACA;
+}
+.dataTable_list .el-table__body {
+  padding: 0 9px;
+}
+.dataTable_list .el-table {
+  border: none;
 }

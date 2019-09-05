@@ -152,8 +152,10 @@
           </div>
           <!--表格区域-->
           <div v-if="watchTable"
-               class="table-main">
-            <section class="dataTable_proBuildProject">
+               class="dataTable_list">
+            <div class="start"></div>
+            <div class="end"></div>
+            <section>
               <el-table :data="table.tableData"
                         :row-class-name="rowClassName"
                         :cell-class-name="cellClassName"
@@ -162,14 +164,14 @@
                         :header-cell-class-name="handerCellClassName"
                         @current-change=""
                         :highlight-current-row="highlightCurrentRow"
-                        style="overflow: visible;position: static;padding-top: 50px">
-                <el-table-column v-if="table.selection"
-                                 type="selection" width="30"></el-table-column>
-                <el-table-column label="序号"
-                                 type="index"
-                                 :index="function(index) {
-                                     return index +1
-                                 }" width="40"></el-table-column>
+                        style="width: 100%"
+                        border
+                        max-height="630px"
+                        min-height="600px">
+                <el-table-column label="" prop="" type="selection" width="35" align="center"></el-table-column>
+                <el-table-column label="" prop="" width="35" type="index" label="序号" :index="function(index) {
+                  return index+1
+                }" ></el-table-column>
                 <el-table-column v-for="(item,idx) in table.column"
                                  :prop="item.prop"
                                  :label="item.label"
@@ -178,7 +180,8 @@
                                  align="center">
                   <template slot-scope="scope"
                             style="">
-                    <div v-if="item.other === 'function'"
+
+                    <div style="" v-if="item.other === 'function'"
                          class="table-column-height"
                          @click="cellClick(scope)"
                          :style="{textAlign:item.align}">
@@ -191,7 +194,7 @@
                       <span v-if="formList.year =='1'"
                             :style="{textAlign:item.align}">{{scope.row[item.prop] |NumFormat}}</span>
                       <span v-else
-                            :style="{textAlign:item.align}">{{scope.row[item.prop] / 10000}}</span>
+                            :style="{textAlign:item.align}">{{scope.row[item.prop] / 10000|NumFormat }}</span>
                     </div>
                     <div v-else-if="item.other ==='start-end'"
                          class="table-column-height"
@@ -200,8 +203,7 @@
                       <span>{{scope.row[item.prop2].replace('T00:00:00','')}}</span>
                     </div>
                     <div v-else-if="item.other ==='time'">
-                      <span v-if="scope.row[item.prop]">{{scope.row[item.prop].split('T',9)[0]}}</span>
-                      <span v-else="scope.row[item.prop]">{{scope.row[item.prop]}}</span>
+                      <span>{{scope.row[item.prop].split('T',9)[0]}}</span>
                     </div>
                     <div v-else-if="item.other ==='status-click'">
                       <span v-html="formatter(scope)"
@@ -209,7 +211,8 @@
                             class="cell-click"></span>
                     </div>
                     <div v-else-if="item.other ==='status'">
-                      <span v-html="formatter(scope)"></span>
+                      <span v-html="formatter(scope)"
+                            class=""></span>
                     </div>
                     <div v-else
                          class="table-column-height"
@@ -464,7 +467,7 @@
               prop: 'FProjCode',
               label: '项目编码',
               align: 'center',
-              width:150,
+              width:165,
               other: 'function',
               fn: function (scope) {
                 that.showDetail(scope)
@@ -472,23 +475,25 @@
             }, {
               prop: 'FProjName',
               label: '项目名称',
-              align: 'center'
+              align: 'center',
+              width:300,
+
             },
             {
               prop: 'FProjAmount',
               label: '项目金额(元)',
-              width: 150,
+              width: 160,
               other: 'money',
               align: "right"
             },
             {
               prop: 'FDeclarationDept_EXName',
               label: '申报部门',
-              width:120
+              width:160
             }, {
               prop: 'FBudgetDept_EXName',
               label: '预算部门',
-              width:120
+              width:160
             },
             {
               prop: 'FExpenseCategory_EXName',
@@ -500,20 +505,20 @@
               prop2: 'FEndDate',
               label: '起止日期',
               align: 'center',
-              width: 145,
+              width: 300,
               other: "start-end"
             }, {
               prop: 'FDateofDeclaration',
               label: '申报日期',
               align: 'center',
               other: 'time',
-              width: 130,
+              width: 160,
             }, {
               prop: 'FType',
               label: '申报进度',
               align: 'center',
               other: 'status',
-              width: 110,
+              width: 160,
               format:function (scope) {
                 if (scope.row.FType+scope.row.FVerNo ==='c0001') {
                   return '年初新增'
@@ -530,7 +535,7 @@
               label: '项目状态',
               align: 'center',
               other: 'status',
-              width: 110,
+              width: 160,
               format:function (scope) {
                 let MC = '';
                 if (scope.row.FProjStatus ===1) {
@@ -553,7 +558,7 @@
             }, {
               prop: 'FApproveStatus',
               label: '审批状态',
-              width: 120,
+              width: 160,
               align: 'center',
               other: 'status-click',
               format: function (scope) {
@@ -651,7 +656,7 @@
         auditMsg:[],//审批流数据
         auditDialog:false,
 
-        paddRight:'10px',
+        paddRight:'30px',
 
         //汇总表打印
         //开关弹框

@@ -264,8 +264,10 @@
           <!--表格区域-->
           <div></div>
           <div v-if="watchTable"
-               class="table-main">
-            <section class="dataTable_proBuildProject">
+               class="dataTable_list">
+            <div class="start"></div>
+            <div class="end"></div>
+            <section>
               <el-table :data="table.tableData"
                         :row-class-name="rowClassName"
                         :cell-class-name="cellClassName"
@@ -274,15 +276,14 @@
                         :header-cell-class-name="handerCellClassName"
                         @current-change=""
                         :highlight-current-row="highlightCurrentRow"
-                        style="overflow: visible;position: static;padding-top: 50px">
-                <el-table-column v-if="table.selection"
-                                 type="selection" width="30">
-
-                </el-table-column>
-                <el-table-column label="序号"
-                                 type="index" :index="function(index) {
-                                   return index +1
-                                 }" width="40"></el-table-column>
+                        style="width: 100%"
+                        border
+                        max-height="630px"
+                        min-height="600px">
+                <el-table-column label="" prop="" type="selection" width="35" align="center"></el-table-column>
+                <el-table-column label="" prop="" width="35" type="index" label="序号" :index="function(index) {
+                  return index+1
+                }" ></el-table-column>
                 <el-table-column v-for="(item,idx) in table.column"
                                  :prop="item.prop"
                                  :label="item.label"
@@ -650,7 +651,7 @@ export default {
             prop: 'FProjCode',
             label: '项目编码',
             align: 'center',
-            width:150,
+            width:165,
             other: 'function',
             fn: function (scope) {
               that.showDetail(scope)
@@ -658,23 +659,25 @@ export default {
           }, {
             prop: 'FProjName',
             label: '项目名称',
-            align: 'center'
+            align: 'center',
+            width:300,
+
           },
-           {
+          {
             prop: 'FProjAmount',
             label: '项目金额(元)',
-            width: 150,
+            width: 160,
             other: 'money',
             align: "right"
           },
           {
             prop: 'FDeclarationDept_EXName',
             label: '申报部门',
-            width:120
+            width:160
           }, {
             prop: 'FBudgetDept_EXName',
             label: '预算部门',
-            width:120
+            width:160
           },
           {
             prop: 'FExpenseCategory_EXName',
@@ -686,20 +689,20 @@ export default {
             prop2: 'FEndDate',
             label: '起止日期',
             align: 'center',
-            width: 145,
+            width: 300,
             other: "start-end"
           }, {
             prop: 'FDateofDeclaration',
             label: '申报日期',
             align: 'center',
             other: 'time',
-            width: 130,
+            width: 160,
           }, {
             prop: 'FType',
             label: '申报进度',
             align: 'center',
             other: 'status',
-            width: 110,
+            width: 160,
             format:function (scope) {
               if (scope.row.FType+scope.row.FVerNo ==='c0001') {
                 return '年初新增'
@@ -716,7 +719,7 @@ export default {
             label: '项目状态',
             align: 'center',
             other: 'status',
-            width: 110,
+            width: 160,
             format:function (scope) {
               let MC = '';
               if (scope.row.FProjStatus ===1) {
@@ -739,7 +742,7 @@ export default {
           }, {
             prop: 'FApproveStatus',
             label: '审批状态',
-            width: 120,
+            width: 160,
             align: 'center',
             other: 'status-click',
             format: function (scope) {
@@ -773,7 +776,7 @@ export default {
             fn: function (scope) {
               console.log(scope)
 
-                that.getAppvalProcList(scope.row)
+              that.getAppvalProcList(scope.row)
             }
           }],
         selection: true,
@@ -839,7 +842,7 @@ export default {
       auditMsg:[],//审批流数据
       auditDialog:false,
 
-      paddRight:'10px',
+      paddRight:'30px',
       //汇总表打印
       //开关弹框
       sumtabDialog:false,
@@ -867,15 +870,23 @@ export default {
   },
   created () {
     this.getTableData();
+
   },
   mounted () {
+    this.updateTitle();
     this.getWorkFlow()
     this.getExpenseCategoryList()
     this.getBudegDepart();
     this.getDeclareList();
-    console.log(this.MenuButton)
+    console.log(this.MenuButton);
+
   },
   methods: {
+    //修改title
+    updateTitle (){
+      let title = document.getElementsByTagName('title')[0];
+      title.innerText = "预立项";
+    },
     //获取过程是否启用工作流
     getWorkFlow(){
       let data = {
@@ -889,7 +900,9 @@ export default {
           this.WorkFlow =res.Data;
           console.log('---', this.WorkFlow)
           if (res.Data === 0) {
-            this.formList.swatchBtn = "2"
+            this.formList.swatchBtn = "2";
+            this.formList.approvalStatus = 1
+            this.getTableData()
           }else {
             this.formList.swatchBtn = "1"
           }

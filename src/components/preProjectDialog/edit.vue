@@ -799,7 +799,9 @@
             QtAttachments:[]
           }
         },
-        money:0
+        money:0,
+
+        addNull:true,//判断是否由于没有空值而决定能否提交 false不能提交  true 可以提交
       }
     },
     computed: {
@@ -1295,6 +1297,7 @@
       },
       //保存
       submit (type) {
+        this.addNull = true
         console.log(this.target.targetTableData)
         //预算主表对象
 
@@ -1428,40 +1431,205 @@
           UserId:this.UserId,
           ProjectDtlTextContents:projectDtlTextContents,
         }
-        console.log(data)
-        this.postAxios('/GXM/ProjectMstApi/PostSaveProject', data).then((res) => {
-          if (res.Status ==='success'){
-            this.upFile(res.KeyCodes[0])
-            if(type === 'bc'){
-              let that =this
-              this.$msgBox.show({
-                content:'修改成功',
-                fn:function () {
-                  that.$emit("refresh",res,'edit')
-                }
-              })
-            } else if (type === 'bcss'){
-              let arr = [];
-              arr.push({
-                PhId:res.KeyCodes[0]
-              })
-              this.approvalDataS.openDialog = true
-              this.approvalDataS.data = arr
-            } else if(type === 'zc'){
-              let that =this
-              this.$msgBox.show({
-                content:'暂存成功',
-                fn:function () {
-                  that.$emit("refresh",res,'edit')
-                }
-              })
+        let itemName = ''
+        //提交时判断项目概况是否已经填写完
+        let projectMstData = {
+          FProjName: projectMst.FProjName,
+          FLevel:projectMst.FLevel,
+          FDeclarationDept:projectMst.FDeclarationDept,
+          FBudgetDept:projectMst.FBudgetDept,
+          ProjectPropers:projectMst.FProjAttr,
+          TimeLimits:projectMst.FDuration,
+          ExpenseCategories:projectMst.FExpenseCategory,
+          sedTime:[projectMst.FStartDate,projectMst.FEndDate]
+        }
+        for(let i in projectMstData){
+          if (itemName) {
+            break
+          }
+          if (projectMstData[i] === '' || projectMstData[i] ===undefined ||projectMstData[i] ===null){
+            this.addNull = false //不能提交表单
+            //提示哪一项未录入
+            if (!itemName){
+              if( i ==='FProjName'){
+                itemName = '项目概况-项目名称'
+              }else if (i ==='FLevel'){
+                itemName = '项目概况-项目级别'
+              }else if (i ==='FDeclarationDept'){
+                itemName = '项目概况-申报部门'
+              }else if (i ==='FBudgetDept'){
+                itemName = '项目概况-预算部门'
+              }else if (i ==='ProjectPropers'){
+                itemName = '项目概况-项目属性'
+              }else if (i ==='TimeLimits'){
+                itemName = '项目概况-存续期限'
+              }else if (i ==='ExpenseCategories'){
+                itemName = '项目概况-支出类别'
+              }else if (i ==='sedTime'){
+                itemName = '项目概况-起止日期'
+              }
             }
           }else {
-            this.$msgBox.error('修改失败'+res.Msg)
+            this.addNull = true
           }
-        }).catch(err => {
-          this.$msgBox.error('请求错误'+res.Msg)
-        })
+        }
+        //提交时判断项目科研是否已经填写完成
+        let proScienceData = {
+          FFunctionalOverview:projectDtlTextContents.FFunctionalOverview,
+          FProjBasis:projectDtlTextContents.FProjBasis,
+          FFeasibility:projectDtlTextContents.FFeasibility,
+          FNecessity:projectDtlTextContents.FNecessity
+        }
+        for(let i in proScienceData){
+          if (itemName) {
+            break
+          }
+          if (proScienceData[i] == '' || proScienceData[i] === undefined || proScienceData[i] === null) {
+            this.addNull = false //不能提交表单
+            //提示哪一项未录入
+            if (!itemName){
+              if( i ==='FFunctionalOverview'){
+                itemName = '项目可研-部门职能概述'
+              }else if (i ==='FProjBasis'){
+                itemName = '项目可研-申报依据'
+              }else if (i ==='FFeasibility'){
+                itemName = '项目可研-可行性'
+              }else if (i ==='FNecessity'){
+                itemName = '项目可研-必要性'
+              }
+            }
+          }else {
+            this.addNull = true
+          }
+        }
+
+        //预算明细验证
+        let budetDDMst = []
+        for (let i in data.ProjectDtlBudgetDtls){
+          budetDDMst.push({
+            FName:data.ProjectDtlBudgetDtls[i].FName,
+            FAmount:data.ProjectDtlBudgetDtls[i].FAmount,
+            FSourceOfFunds:data.ProjectDtlBudgetDtls[i].FSourceOfFunds,
+            FPaymentMethod:data.ProjectDtlBudgetDtls[i].FPaymentMethod,
+            FOtherInstructions:data.ProjectDtlBudgetDtls[i].FOtherInstructions,
+          })
+        }
+        for(let i in budetDDMst){
+          if (itemName) {
+            break
+          }
+          for (let j in budetDDMst[i]){
+            if (budetDDMst[i][j] === '' || budetDDMst[i][j] ===undefined ||budetDDMst[i][j] ===null){
+              this.addNull = false //不能提交表单
+              if (!itemName){
+                let num = parseInt(i) + 1
+                if (j === 'FName') {
+                  itemName ='预算明细-第'+num+'行-明细项目名称'
+                }else if (j ==='FAmount'){
+                  itemName = '预算明细-第'+num+'行-明细金额'
+                }else if (j ==='FSourceOfFunds'){
+                  itemName = '预算明细-第'+num+'行-资金来源'
+                }else if (j ==='FPaymentMethod'){
+                  itemName = '预算明细-第'+num+'行-支付方式'
+                }else if (j ==='FOtherInstructions'){
+                  itemName = '预算明细-第'+num+'行-测算过程及其他说明事项'
+                }
+              }
+            }else {
+              this.addNull = true
+            }
+          }
+        }
+        //实施计划
+        let ImpPPMst = []
+        for (let i in data.ProjectDtlImplPlans) {
+          ImpPPMst.push({
+            FName:data.ProjectDtlImplPlans[i].FName?data.ProjectDtlImplPlans[i].FName:data.ProjectDtlImplPlans[i].FImplContent,
+            sedTime:data.ProjectDtlImplPlans[i].sedTime
+          })
+        }
+        for(let i in ImpPPMst){
+          if (itemName) {
+            break
+          }
+          for (let j in ImpPPMst[i]){
+            console.log(ImpPPMst[i][j])
+            if (ImpPPMst[i][j] === ''||ImpPPMst[i][j] === undefined || ImpPPMst[i][j] === null){
+              this.addNull = false //不能提交表单
+              if (!itemName){
+                let num = parseInt(i)+ 1
+                if (j === 'FName') {
+                  itemName ='实施计划-第'+num+'行-实施内容'
+                }else if (j ==='sedTime'){
+                  itemName = '实施计划-第'+num+'行-起止时间'
+                }
+              }
+              break
+            }else {
+              this.addNull = true
+            }
+          }
+        }
+        // //提交时判断判断效绩目标表格是否拉取到
+        // for(let i in this.target){
+        //   if (itemName) {
+        //     break
+        //   }
+        //   if (this.target[i] === '' && this.target[i] !=='targetType'){
+        //     this.targetNull[i] = true
+        //     this.addNull = false //不能提交表单
+        //     //提示哪一项未录入
+        //     if (!itemName){
+        //       if( i ==='ndTagetL'){
+        //         itemName = '效绩目标-年度绩效目标'
+        //       }else if (i ==='cqTarget'){
+        //         itemName = '效绩目标-长期绩效目标'
+        //       }
+        //     }
+        //   }else {
+        //     this.addNull = true
+        //   }
+        // }
+
+        console.log(data)
+        if (this.addNull){
+          this.postAxios('/GXM/ProjectMstApi/PostSaveProject', data).then((res) => {
+            if (res.Status ==='success'){
+              this.upFile(res.KeyCodes[0])
+              if(type === 'bc'){
+                let that =this
+                this.$msgBox.show({
+                  content:'修改成功',
+                  fn:function () {
+                    that.$emit("refresh",res,'edit')
+                  }
+                })
+              } else if (type === 'bcss'){
+                let arr = [];
+                arr.push({
+                  PhId:res.KeyCodes[0]
+                })
+                this.approvalDataS.openDialog = true
+                this.approvalDataS.data = arr
+              } else if(type === 'zc'){
+                let that =this
+                this.$msgBox.show({
+                  content:'暂存成功',
+                  fn:function () {
+                    that.$emit("refresh",res,'edit')
+                  }
+                })
+              }
+            }else {
+              this.$msgBox.error('修改失败'+res.Msg)
+            }
+          }).catch(err => {
+            this.$msgBox.error('请求错误'+res.Msg)
+          })
+        } else {
+          this.$msgBox.error(itemName+'未录入')
+        }
+
       },
       //输入框值改变
       valueChange (item) {
