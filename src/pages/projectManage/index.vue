@@ -1,13 +1,14 @@
 <template>
   <div class="projectManage">
-    <topHandle :title="'项目管理在线工作平台'"
+    <topHandle :title="'预算项目管理在线工作平台'"
+               :approvalSum='approvalSum'
                @refresh="refresh">
 
     </topHandle>
     <div class="container">
       <div class="pageNav">
         <div class="project">
-          <div class="navTitle">
+          <div v-if="MenuButton.projectmanage ==='True'" class="navTitle">
             <div>
               <div><img src="@/assets/images/xmgl.png"
                      alt=""></div>
@@ -17,17 +18,17 @@
           </div>
           <div class="navlistCon">
             <ul class="navlist">
-              <li @click="routerTo('/preBuildProject')">
+              <li v-if="MenuButton.ProjectMstList_Vue ==='True'" @click="routerTo('/preBuildProject')">
                 <div><img src="@/assets/images/yulix.png"
                        alt=""></div>
                 <div>预立项</div>
               </li>
-              <li @click="routerTo('/projectBuild')">
+              <li v-if="MenuButton.ProjectMstList2_Vue ==='True'" @click="routerTo('/projectBuild')">
                 <div><img src="@/assets/images/xmlix.png"
                        alt=""></div>
                 <div>项目立项</div>
               </li>
-              <li @click="routerTo('/projectList')">
+              <li v-if="MenuButton.ProjectMstList3_Vue ==='True'" @click="routerTo('/projectList')">
                 <div><img src="@/assets/images/xmcx.png"
                        alt=""></div>
                 <div>项目查询</div>
@@ -97,12 +98,53 @@
 
 <script>
 import topHandle from '@/components/topNav/topHandle'
+import { mapState } from 'vuex'
 export default {
   name: 'projectManage',
+  data () {
+    return {
+      approvalSum: {
+        status: true,
+        sum: 0
+      }
+    }
+  },
+  computed: {
+    ...mapState({
+      OrgCode: state => state.user.orgcode,
+      UserId: state => state.user.userid,
+      Orgid: state => state.user.orgid,
+      Year: state => state.user.year,
+      MenuButton: state => state.user.menubutton,
+    })
+  },
   mounted () {
-
+    this.getProcTypes()
+    this.updateTitle();
   },
   methods: {
+    //修改title
+    updateTitle () {
+      let title = document.getElementsByTagName('title')[0];
+      title.innerText = "预算项目管理在线工作平台";
+    },
+    //获取审批类型，获取为审批数
+    getProcTypes () {
+      let data = {
+        Uid: this.UserId,
+        Orgid: this.Orgid,
+        OrgCode: this.OrgCode,
+        Year: this.Year
+      }
+      this.getAxios('/GSP/GAppvalRecord/GetRecordListNum', data).then(res => {
+        for (let i in res.Data) {
+          this.approvalSum.sum += res.Data[i].NNum
+        }
+        console.log(res)
+      }).catch(err => {
+
+      })
+    },
     refresh () {
 
     },
@@ -151,7 +193,7 @@ export default {
     // }
   },
   components: {
-    topHandle
+    topHandle,
   }
 }
 </script>

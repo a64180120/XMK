@@ -315,7 +315,7 @@
                   <li>
                     <el-select v-model="item.FQtZcgnfl"
                                size="small"
-                               placeholder="必选">
+                               placeholder="">
                       <el-option v-for="(item,idx) in projGroup.FQtZcgnflGroup"
                                  :key="idx"
                                  :label="item.KMMC"
@@ -1337,33 +1337,37 @@ export default {
       formData.append('ProjectDtlPurchaseDtls',JSON.stringify(data.ProjectDtlPurchaseDtls))
       formData.append('ProjectDtlPurDtl4SOFs',JSON.stringify(data.ProjectDtlPurDtl4SOFs))
       formData.append('ProjectDtlTextContents',JSON.stringify(data.ProjectDtlTextContents))
-      debugger
       let itemName = ''
       //提交时判断项目概况是否已经填写完
       for(let i in this.projSurvey){
+        if (itemName) {
+          break
+        }
         if (this.projSurvey[i] === ''){
           this.projSurveyNull[i] = true
           this.addNull = false //不能提交表单
           //提示哪一项未录入
           if (!itemName){
             if( i ==='FProjName'){
-              itemName = '项目名称'
+              itemName = '项目概况-项目名称'
             }else if (i ==='FLevel'){
-              itemName = '项目级别'
+              itemName = '项目概况-项目级别'
             }else if (i ==='FDeclarationDept'){
-              itemName = '申报部门'
+              itemName = '项目概况-申报部门'
             }else if (i ==='FBudgetDept'){
-              itemName = '预算部门'
+              itemName = '项目概况-预算部门'
             }else if (i ==='ProjectPropers'){
-              itemName = '项目属性'
+              itemName = '项目概况-项目属性'
             }else if (i ==='TimeLimits'){
-              itemName = '存续期限'
+              itemName = '项目概况-存续期限'
             }else if (i ==='ExpenseCategories'){
-              itemName = '支出类别'
+              itemName = '项目概况-支出类别'
             }else if (i ==='sedTime'){
-              itemName = '起止日期'
+              itemName = '项目概况-起止日期'
             }
           }
+        }else {
+          this.addNull = true
         }
       }
       //提交时判断项目科研是否已经填写完成
@@ -1373,57 +1377,89 @@ export default {
           this.addNull = false //不能提交表单
           //提示哪一项未录入
           if (!itemName){
-            if( i ==='FProjName'){
-              itemName = '项目名称'
-            }else if (i ==='FLevel'){
-              itemName = '项目级别'
-            }else if (i ==='FDeclarationDept'){
-              itemName = '申报部门'
-            }else if (i ==='FBudgetDept'){
-              itemName = '预算部门'
-            }else if (i ==='ProjectPropers'){
-              itemName = '项目属性'
-            }else if (i ==='TimeLimits'){
-              itemName = '存储期限'
-            }else if (i ==='ExpenseCategories'){
-              itemName = '支出类别'
-            }else if (i ==='sedTime'){
-              itemName = '起止日期'
+            if( i ==='FFunctionalOverview'){
+              itemName = '项目可研-部门职能概述'
+            }else if (i ==='FProjBasis'){
+              itemName = '项目可研-申报依据'
+            }else if (i ==='FFeasibility'){
+              itemName = '项目可研-可行性'
+            }else if (i ==='FNecessity'){
+              itemName = '项目可研-必要性'
             }
+          }
+        }else {
+          this.addNull = true
+        }
+      }
+
+      //预算明细验证
+      for(let i in this.budgetdetailData){
+        if (itemName) {
+          break
+        }
+        for (let j in this.budgetdetailData[i]){
+          if (this.budgetdetailData[i][j] === ''){
+            this.addNull = false //不能提交表单
+            if (!itemName){
+              let num = parseInt(i) + 1
+              if (j === 'FName') {
+                itemName ='预算明细-第'+num+'行-明细项目名称'
+              }else if (j ==='FAmount'){
+                itemName = '预算明细-第'+num+'行-明细金额'
+              }else if (j ==='FSourceOfFunds'){
+                itemName = '预算明细-第'+num+'行-资金来源'
+              }else if (j ==='FPaymentMethod'){
+                itemName = '预算明细-第'+num+'行-支付方式'
+              }else if (j ==='FOtherInstructions'){
+                itemName = '预算明细-第'+num+'行-测算过程及其他说明事项'
+              }
+            }
+          }else {
+            this.addNull = true
+          }
+        }
+      }
+      //实施计划
+      for(let i in this.ImplPlanPanelData){
+        if (itemName) {
+          break
+        }
+        for (let j in this.ImplPlanPanelData[i]){
+          if (this.ImplPlanPanelData[i][j] === ''){
+            this.addNull = false //不能提交表单
+            if (!itemName){
+              let num = parseInt(i)+ 1
+              if (j === 'FName') {
+                itemName ='实施计划-第'+num+'行-实施内容'
+              }else if (j ==='sedTime'){
+                itemName = '实施计划-第'+num+'行-起止时间'
+              }
+            }
+          }else {
+            this.addNull = true
           }
         }
       }
       //提交时判断判断效绩目标表格是否拉取到
       for(let i in this.target){
+        if (itemName) {
+          break
+        }
         if (this.target[i] === '' && this.target[i] !=='targetType'){
           this.targetNull[i] = true
           this.addNull = false //不能提交表单
           //提示哪一项未录入
           if (!itemName){
-            if( i ==='FProjName'){
-              itemName = '项目名称'
-            }else if (i ==='FLevel'){
-              itemName = '项目级别'
-            }else if (i ==='FDeclarationDept'){
-              itemName = '申报部门'
-            }else if (i ==='FBudgetDept'){
-              itemName = '预算部门'
-            }else if (i ==='ProjectPropers'){
-              itemName = '项目属性'
-            }else if (i ==='TimeLimits'){
-              itemName = '存储期限'
-            }else if (i ==='ExpenseCategories'){
-              itemName = '支出类别'
-            }else if (i ==='sedTime'){
-              itemName = '起止日期'
+            if( i ==='ndTagetL'){
+              itemName = '效绩目标-年度绩效目标'
+            }else if (i ==='cqTarget'){
+              itemName = '效绩目标-长期绩效目标'
             }
           }
-        }
-        if (!itemName){
-          itemName = i;
+        }else {
+          this.addNull = true
         }
       }
-
       // //提交时判断判断效绩目标表格是否拉取到
       // if (this.projSurvey.FIfPerformanceAppraisal == 1 ){
       //   if (this.target.targetType ===''){

@@ -8,13 +8,13 @@
            <template v-if="!edit">
              <div v-if="!budgetHide" @click.stop="editFuc" class="handle">
                <div class="topIcon">
-                 <img src="@/assets/images/dy.png" alt="">
+                 <img src="@/assets/images/zj2.png" alt="">
                </div>
                编辑
              </div>
              <div v-if="!budgetHide" @click.stop="$refs.budget.reportBudget" class="handle" style="width:80px">
                <div class="topIcon" >
-                 <img src="@/assets/images/dy.png" alt="">
+                 <img src="@/assets/images/sb-1_05.png" alt="">
                </div>
                上报预算
              </div>
@@ -183,7 +183,15 @@
     },
 
     components:{tophandle,budget,income,basexpend,proexpend},
+    mounted(){
+      this.updateTitle();
+    },
     methods:{
+      //修改title
+      updateTitle (){
+        let title = document.getElementsByTagName('title')[0];
+        title.innerText = "年初申报";
+      },
       getData:function(){
 
       },

@@ -1,7 +1,8 @@
 <template>
   <section>
     <top-handle title="项目管理在线工作平台"
-                @refresh="refresh()">
+                type="swatchBtn"
+                @refresh="refresh()" @swatchList="swatchTable">
       <div class="top">
         <ul>
           <li class="handle"
@@ -11,20 +12,13 @@
             </div>
             <span>汇总表打印</span>
           </li>
-          <li class="handle"
-              @click="swatchTable">
-            <div>
-              <img style="height: 34px" src="@/assets/images/list.png">
-            </div>
-            <span>列表样式</span>
-          </li>
         </ul>
 
       </div>
     </top-handle>
 
     <div>
-      <div class="container content-body">
+      <div class="container content-body" style="min-width: 1700px;overflow: auto;min-height:750px">
         <div class="formArea">
           <!--搜索栏-->
           <div class="btnArea"
@@ -32,6 +26,7 @@
             <el-form :inline="true">
               <el-form-item label="单位：">
                 <el-select v-model="formList.year"
+                           @change="swatchUnit()"
                            size="mini">
                   <el-option value="2"
                              label="万元">万元</el-option>
@@ -75,7 +70,7 @@
                   <div class="seniorSearch">
                     <div>
                       <span>高级查询</span>
-                      <span class="el-icon-close" @click="popvisiable=false"></span>
+                      <span class="el-icon-close closeSenior" @click="popvisiable=false"></span>
                     </div>
                     <table>
                       <colgroup>
@@ -125,7 +120,7 @@
                       <tr>
                         <!-- <td>项目级别</td>
                          <td colspan="3"><el-input size="mini" v-model="seniorSearch.PLevel" placeholder="请输入项目级别"></el-input></td>-->
-                        <td>起止日期</td>
+                        <td>申报日期</td>
                         <td colspan="5">
                           <el-date-picker size="mini"
                                           style="width: 100%;"
@@ -157,8 +152,10 @@
           </div>
           <!--表格区域-->
           <div v-if="watchTable"
-               class="table-main">
-            <section class="dataTable_proBuildProject">
+               class="dataTable_list">
+            <div class="start"></div>
+            <div class="end"></div>
+            <section>
               <el-table :data="table.tableData"
                         :row-class-name="rowClassName"
                         :cell-class-name="cellClassName"
@@ -167,11 +164,14 @@
                         :header-cell-class-name="handerCellClassName"
                         @current-change=""
                         :highlight-current-row="highlightCurrentRow"
-                        style="overflow: visible;position: static;padding-top: 50px">
-                <el-table-column v-if="table.selection"
-                                 type="selection" width="30"></el-table-column>
-                <el-table-column
-                  type="index" class="index" width="35"></el-table-column>
+                        style="width: 100%"
+                        border
+                        max-height="630px"
+                        min-height="600px">
+                <el-table-column label="" prop="" type="selection" width="35" align="center"></el-table-column>
+                <el-table-column label="" prop="" width="35" type="index" label="序号" :index="function(index) {
+                  return index+1
+                }" ></el-table-column>
                 <el-table-column v-for="(item,idx) in table.column"
                                  :prop="item.prop"
                                  :label="item.label"
@@ -180,7 +180,8 @@
                                  align="center">
                   <template slot-scope="scope"
                             style="">
-                    <div v-if="item.other === 'function'"
+
+                    <div style="" v-if="item.other === 'function'"
                          class="table-column-height"
                          @click="cellClick(scope)"
                          :style="{textAlign:item.align}">
@@ -191,19 +192,18 @@
                          class="table-column-height"
                          :style="{textAlign:item.align}">
                       <span v-if="formList.year =='1'"
-                            :style="{textAlign:item.align}">{{scope.row[item.prop] |NumFormat}}元</span>
+                            :style="{textAlign:item.align}">{{scope.row[item.prop] |NumFormat}}</span>
                       <span v-else
-                            :style="{textAlign:item.align}">{{scope.row[item.prop] / 10000}}万元</span>
+                            :style="{textAlign:item.align}">{{scope.row[item.prop] / 10000|NumFormat }}</span>
                     </div>
                     <div v-else-if="item.other ==='start-end'"
                          class="table-column-height"
                          :style="{textAlign:item.align}">
-                      <span>{{scope.row[item.prop1].replace('T00:00:00','')}}——</span>
+                      <span>{{scope.row[item.prop1].replace('T00:00:00','')}}至</span>
                       <span>{{scope.row[item.prop2].replace('T00:00:00','')}}</span>
                     </div>
                     <div v-else-if="item.other ==='time'">
-                      <span v-if="scope.row[item.prop]">{{scope.row[item.prop].split('T',9)[0]}}</span>
-                      <span v-else="scope.row[item.prop]">{{scope.row[item.prop]}}</span>
+                      <span>{{scope.row[item.prop].split('T',9)[0]}}</span>
                     </div>
                     <div v-else-if="item.other ==='status-click'">
                       <span v-html="formatter(scope)"
@@ -212,7 +212,7 @@
                     </div>
                     <div v-else-if="item.other ==='status'">
                       <span v-html="formatter(scope)"
-                            class="cell-click"></span>
+                            class=""></span>
                     </div>
                     <div v-else
                          class="table-column-height"
@@ -236,8 +236,11 @@
                         :highlight-current-row="highlightCurrentRow"
                         style="overflow: visible;position: static;padding-top: 50px">
                 <el-table-column type="selection" width="30"></el-table-column>
-                <el-table-column
-                  type="index" class="index" width="35"></el-table-column>
+                <el-table-column label="序号"
+                                 type="index"
+                                 :index="function(index) {
+                                     return index +1
+                                 }" width="40"></el-table-column>
                 <el-table-column prop="item"
                                  align="center"
                                  label="项目立项项目信息">
@@ -260,53 +263,107 @@
                       <div class="context">
                         <ul>
                           <li>
-                            <span @click="showDetail(scope.row)">项目属性：{{scope.row.FProjAttr_EXName?scope.row.FProjAttr_EXName:'无'}}</span>
+                            <span @click="showDetail(scope.row)">项目属性：<el-tooltip :content="scope.row.FProjAttr_EXName">
+                                <span>{{scope.row.FProjAttr_EXName}}</span>
+                              </el-tooltip></span>
                           </li>
                           <li>
-                            <span>存续期限：{{scope.row.FDuration_EXName?scope.row.FDuration_EXName:'无'}}</span>
+                            <span>存续期限：<el-tooltip :content="scope.row.FDuration_EXName">
+                                <span>{{scope.row.FDuration_EXName}}</span>
+                              </el-tooltip></span>
                           </li>
                           <li>
-                            <span>项目级别：{{scope.row.FLevel_EXName?scope.row.FLevel_EXName:'无'}}</span>
+                            <span>项目级别：<el-tooltip :content="scope.row.FLevel_EXName">
+                                <span>{{scope.row.FLevel_EXName}}</span>
+                              </el-tooltip>
+                            </span>
                           </li>
                           <li>
-                            <span>起止日期：
-                               <el-tooltip :content="scope.row.FStartDate.replace('T00:00:00','')+'至'+scope.row.FEndDate.replace('T00:00:00','')">
+                            <span>起止日期：<el-tooltip :content="scope.row.FStartDate.replace('T00:00:00','')+'至'+scope.row.FEndDate.replace('T00:00:00','')">
                                   <span>{{scope.row.FStartDate.replace('T00:00:00','')}}至{{scope.row.FEndDate.replace('T00:00:00','')}}</span>
                               </el-tooltip>
                             </span>
                           </li>
                           <li>
-                            <span>支出类别：{{scope.row.FExpenseCategory_EXName?scope.row.FExpenseCategory_EXName:'无'}}</span>
+                            <span>支出类别：<el-tooltip :content="scope.row.FExpenseCategory_EXName">
+                                <span>{{scope.row.FExpenseCategory_EXName}}</span>
+                              </el-tooltip></span>
                           </li>
                           <li>
-                            <span>效绩评价：{{scope.row.FIfPerformanceAppraisal ===1?'否':'是'}}</span>
+                            <span>效绩评价：<el-tooltip :content="scope.row.FIfPerformanceAppraisal ===1?'否':'是'">
+                                <span>{{scope.row.FIfPerformanceAppraisal ===1?'否':'是'}}</span>
+                              </el-tooltip></span>
                           </li>
                           <li>
-                            <span>申报部门：{{scope.row.FDeclarationDept_EXName?scope.row.FDeclarationDept_EXName:'无'}}</span>
+                            <span>申报部门：<el-tooltip :content="scope.row.FDeclarationDept_EXName">
+                                <span>{{scope.row.FDeclarationDept_EXName}}</span>
+                              </el-tooltip></span>
                           </li>
                           <li>
-                            <span>预算部门：{{scope.row.FBudgetDept_EXName?scope.row.FBudgetDept_EXName:'无'}}</span>
+                            <span>预算部门：<el-tooltip :content="scope.row.FBudgetDept_EXName">
+                                <span>{{scope.row.FBudgetDept_EXName}}</span>
+                              </el-tooltip></span>
                           </li>
                           <li>
-                            <span>申报日期：{{scope.row.FDateofDeclaration?scope.row.FDateofDeclaration.split('T',9)[0]:'无'}}</span>
+                            <span>申报日期：<el-tooltip :content="scope.row.FDateofDeclaration.split('T',9)[0]">
+                                <span>{{scope.row.FDateofDeclaration.split('T',9)[0]}}</span>
+                              </el-tooltip></span>
                           </li>
                           <li>
-                            <span>申报进度：
-                              <span v-if="scope.row.FType+scope.row.FVerNo ==='c0001'">年初新增</span>
-                              <span v-else-if="scope.row.FType+scope.row.FVerNo ==='c0002'">年中调整</span>
-                              <span v-else-if="scope.row.FType+scope.row.FVerNo ==='z0001'">年中新增</span>
+                            <span>申报进度：<span v-if="scope.row.FType+scope.row.FVerNo ==='c0001'">
+                              <el-tooltip content="年初新增">
+                                <span>年初新增</span>
+                              </el-tooltip>
+                            </span>
+                              <span v-else-if="scope.row.FType+scope.row.FVerNo ==='c0002'">
+                                <el-tooltip content="年中调整">
+                                    <span>年中调整</span>
+                                 </el-tooltip>
+                              </span>
+                              <span v-else-if="scope.row.FType+scope.row.FVerNo ==='z0001'">
+                                  <el-tooltip content="年中新增">
+                                    <span>年中新增</span>
+                                 </el-tooltip>
+                              </span>
                               <span v-else>无</span>
                             </span>
                           </li>
                           <li>
-                            <span>项目状态：
-                              <span v-if="scope.row.FProjStatus ===1">预立项</span>
-                              <span v-else-if="scope.row.FProjStatus ===2">项目立项</span>
-                              <span v-else-if="scope.row.FProjStatus ===3">项目执行</span>
-                              <span v-else-if="scope.row.FProjStatus ===4">项目调整</span>
-                              <span v-else-if="scope.row.FProjStatus ===5">项目暂停</span>
-                              <span v-else-if="scope.row.FProjStatus ===6">项目终止</span>
-                              <span v-else-if="scope.row.FProjStatus ===7">项目关闭</span>
+                            <span>项目状态：<span v-if="scope.row.FProjStatus ===1">
+                              <el-tooltip content="预立项">
+                                <span>预立项</span>
+                              </el-tooltip>
+                            </span>
+                              <span v-else-if="scope.row.FProjStatus ===2">
+                                <el-tooltip content="项目立项">
+                                   <span>项目立项</span>
+                                </el-tooltip>
+                              </span>
+                              <span v-else-if="scope.row.FProjStatus ===3">
+                                <el-tooltip content="项目执行">
+                                   <span>项目执行</span>
+                                </el-tooltip>
+                              </span>
+                              <span v-else-if="scope.row.FProjStatus ===4">
+                                <el-tooltip content="项目调整">
+                                   <span>项目调整</span>
+                                </el-tooltip>
+                              </span>
+                              <span v-else-if="scope.row.FProjStatus ===5">
+                                <el-tooltip content="项目暂停">
+                                   <span>项目暂停</span>
+                                </el-tooltip>
+                              </span>
+                              <span v-else-if="scope.row.FProjStatus ===6">
+                                <el-tooltip content="项目终止">
+                                   <span>项目终止</span>
+                                </el-tooltip>
+                              </span>
+                              <span v-else-if="scope.row.FProjStatus ===7">
+                                  <el-tooltip content="项目关闭">
+                                   <span>项目关闭</span>
+                                </el-tooltip>
+                              </span>
                               <span v-else>无</span>
                             </span>
                           </li>
@@ -410,7 +467,7 @@
               prop: 'FProjCode',
               label: '项目编码',
               align: 'center',
-              width:150,
+              width:165,
               other: 'function',
               fn: function (scope) {
                 that.showDetail(scope)
@@ -418,47 +475,68 @@
             }, {
               prop: 'FProjName',
               label: '项目名称',
-              align: 'center'
+              align: 'center',
+              width:300,
+
             },
             {
               prop: 'FProjAmount',
-              label: '项目金额',
-              width: 130,
+              label: '项目金额(元)',
+              width: 160,
               other: 'money',
               align: "right"
             },
             {
               prop: 'FDeclarationDept_EXName',
               label: '申报部门',
-              width:120
+              width:160
             }, {
               prop: 'FBudgetDept_EXName',
               label: '预算部门',
+              width:160
             },
             {
               prop: 'FExpenseCategory_EXName',
               label: '支出类别',
               align: 'center',
-              width:160
+              width:180
             }, {
               prop1: 'FStartDate',
               prop2: 'FEndDate',
               label: '起止日期',
               align: 'center',
-              width: 270,
+              width: 300,
               other: "start-end"
             }, {
               prop: 'FDateofDeclaration',
               label: '申报日期',
               align: 'center',
               other: 'time',
-            }, {
-              prop: 'FApproveStatus',
-              label: '审批状态',
               width: 160,
+            }, {
+              prop: 'FType',
+              label: '申报进度',
               align: 'center',
-              other: 'status-click',
-              format: function (scope) {
+              other: 'status',
+              width: 160,
+              format:function (scope) {
+                if (scope.row.FType+scope.row.FVerNo ==='c0001') {
+                  return '年初新增'
+                } else if (scope.row.FType+scope.row.FVerNo ==='c0002'){
+                  return '年中调整'
+                } else if (scope.row.FType+scope.row.FVerNo ==='z0001'){
+                  return '年中新增'
+                } else {
+                  return "无"
+                }
+              }
+            },  {
+              prop: 'FProjStatus',
+              label: '项目状态',
+              align: 'center',
+              other: 'status',
+              width: 160,
+              format:function (scope) {
                 let MC = '';
                 if (scope.row.FProjStatus ===1) {
                   MC = '预立项'
@@ -475,36 +553,46 @@
                 } else if (scope.row.FProjStatus ===7) {
                   MC = '项目关闭'
                 }
+                return MC
+              }
+            }, {
+              prop: 'FApproveStatus',
+              label: '审批状态',
+              width: 160,
+              align: 'center',
+              other: 'status-click',
+              format: function (scope) {
                 if (that.WorkFlow === 1){
                   if (scope.row.FApproveStatus == 1) {
-                    return '<span>' + '待送审('+MC+')' + '</span>'
+                    return '<span>待送审</span>'
                   } else if (scope.row.FApproveStatus == 2) {
-                    return '<span>' + '审批中('+MC+')' + '</span>'
+                    return '<span>审批中</span>'
                   } else if (scope.row.FApproveStatus == 3) {
-                    return '<span>' + '审批成功('+MC+')' + '</span>'
+                    return '<span>审批成功</span>'
                   } else if (scope.row.FApproveStatus == 4) {
-                    return '<span>' + '退回('+MC+')' + '</span>'
+                    return '<span>退回</span>'
                   }else if (scope.row.FApproveStatus == 5) {
-                    return '<span>' + '暂存('+MC+')' + '</span>'
+                    return '<span>暂存</span>'
                   }
                 }else{
                   if (scope.row.FApproveStatus == 1) {
-                    return '<span>' + '部门申报('+MC+')' + '</span>'
+                    return '<span>部门申报</span>'
                   } else if (scope.row.FApproveStatus == 2) {
-                    return '<span>' + '汇总审批('+MC+')' + '</span>'
+                    return '<span>汇总审批</span>'
                   } else if (scope.row.FApproveStatus == 3) {
-                    return '<span>' + '已审批('+MC+')' + '</span>'
+                    return '<span>已审批</span>'
                   } else if (scope.row.FApproveStatus == 4) {
-                    return '<span>' + '待执行('+MC+')' + '</span>'
+                    return '<span>待执行</span>'
                   }else if (scope.row.FApproveStatus == 5) {
-                    return '<span>' + '暂存('+MC+')' + '</span>'
+                    return '<span>暂存</span>'
                   }
                 }
 
               },
               fn: function (scope) {
-                  that.getAppvalProcList(scope.row)
+                console.log(scope)
 
+                that.getAppvalProcList(scope.row)
               }
             }],
           selection: true
@@ -568,7 +656,7 @@
         auditMsg:[],//审批流数据
         auditDialog:false,
 
-        paddRight:'10px',
+        paddRight:'30px',
 
         //汇总表打印
         //开关弹框
@@ -720,7 +808,9 @@
           return 'thead-last-cell'
         } else if (columnIndex === 0){
           return 'thead-frist'
-        } else {
+        } else if (columnIndex === 1){
+          return 'thead-second'
+        }else {
           return 'thead-cell'
         }
       },
@@ -743,7 +833,9 @@
           return 'thead-last-cell'
         }else if (columnIndex === 0){
           return 'thead-frist'
-        } else {
+        } else if (columnIndex === 1){
+          return 'thead-second'
+        }else {
           return 'thead-cell'
         }
       },
@@ -929,6 +1021,22 @@
           console.log(this.selection)
         }
       },
+      //单位切换
+      swatchUnit(){
+        if (this.formList.year === '1') {
+          for (let i in this.table.column){
+            if (this.table.column[i].prop === 'FProjAmount') {
+              this.$set(this.table.column[i],"label",'项目金额(元)')
+            }
+          }
+        } else {
+          for (let i in this.table.column){
+            if (this.table.column[i].prop === 'FProjAmount') {
+              this.$set(this.table.column[i],"label",'项目金额(万元)')
+            }
+          }
+        }
+      }
     }
   }
 </script>
@@ -1039,6 +1147,10 @@
     td{
       text-align: center;
     }
+  }
+
+  .closeSenior:hover{
+    cursor: pointer;
   }
   .top-left-code{
     color: #409eff;

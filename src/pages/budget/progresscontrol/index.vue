@@ -307,7 +307,7 @@ export default {
       this.$refs.orgtree.setCurrentNode({ OCode: this.checkedOrg.OCode })
     })
     // this.getOrglist();
-
+    this.updateTitle();
   },
   beforeDestroy () {
     let vm = this;
@@ -320,6 +320,11 @@ export default {
     refresh () {
       this.filterText = '';
       this.getData();
+    },
+    //修改title
+    updateTitle () {
+      let title = document.getElementsByTagName('title')[0];
+      title.innerText = "进度控制";
     },
     getData () {
       this.update = false;

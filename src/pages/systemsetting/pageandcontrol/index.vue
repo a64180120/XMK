@@ -3,7 +3,7 @@
     <topHandle :title="'系统管理在线工作平台'"
                @refresh="refresh">
       <div class="btnCon">
-        <div v-if="menuButton.pageMaintenance_edit=='True'"
+        <div v-if="menuButton.pageMaintenance_edit!=='True'"
              v-show="disabled"
              @click.stop="disabled=false;deleteList=[]"
              class="handle">
@@ -57,7 +57,8 @@
               <li :class="{gray:!disabled&&item.Issystem==1&&ucode!='Admin'}">
                 <div v-show="disabled || item.Issystem==1&&ucode!='Admin'">{{item.FName}}</div>
                 <div v-show="!disabled&&(item.Issystem!=1||ucode=='Admin')">
-                  <el-select v-model="item.FCode"
+                  <el-select style="width:100%"
+                             v-model="item.FCode"
                              placeholder="请选择控制项">
                     <el-option v-for="code of options"
                                :label="code.FName "

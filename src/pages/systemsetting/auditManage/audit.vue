@@ -498,13 +498,19 @@ export default {
       GetProcTypes(data).then(res => {
         if (res.Status == 'error') {
           this.$msgBox.show(res.Msg)
-        } else {
+        } else if (res.Data.length) {
+
           this.typeList = res.Data;
           this.typechecked = false;
           this.typeallChecked(false);
           this.$set(this.typeList[0], 'checked', true);
           this.typechoosedItem[0] = this.typeList[0];
           this.getData(this.typeList[0])
+        } else {
+          this.typeList = res.Data;
+          this.typechecked = false;
+          this.typeallChecked(false);
+          this.auditList = [];
         }
       }).catch(err => {
         this.$msgBox.show('获取类型列表失败!')
