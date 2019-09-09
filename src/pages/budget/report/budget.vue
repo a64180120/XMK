@@ -472,7 +472,8 @@ export default {
                 this.specialLineList[3]=i;
               }
             }
-          console.log(this.specialLineList);
+          }else{
+            this.$msgBox.show(res.Msg)
           }
 
         })
