@@ -511,7 +511,7 @@
                   </colgroup>
                   <tbody>
                     <tr v-if="target.targetTableData.length !==0" v-for="(item,idx) in target.targetTableData">
-                      <td>{{idx}}</td>
+                      <td>{{idx+1}}</td>
                       <td
                           v-if="idx==0"
                           :rowspan="target.targetTableData.length">
@@ -1349,21 +1349,21 @@ export default {
           //提示哪一项未录入
           if (!itemName){
             if( i ==='FProjName'){
-              itemName = '项目概况-项目名称'
+              itemName = '项目概况-项目名称未录入'
             }else if (i ==='FLevel'){
-              itemName = '项目概况-项目级别'
+              itemName = '项目概况-项目级别未录入'
             }else if (i ==='FDeclarationDept'){
-              itemName = '项目概况-申报部门'
+              itemName = '项目概况-申报部门未录入'
             }else if (i ==='FBudgetDept'){
-              itemName = '项目概况-预算部门'
+              itemName = '项目概况-预算部门未录入'
             }else if (i ==='ProjectPropers'){
-              itemName = '项目概况-项目属性'
+              itemName = '项目概况-项目属性未录入'
             }else if (i ==='TimeLimits'){
-              itemName = '项目概况-存续期限'
+              itemName = '项目概况-存续期限未录入'
             }else if (i ==='ExpenseCategories'){
-              itemName = '项目概况-支出类别'
+              itemName = '项目概况-支出类别未录入'
             }else if (i ==='sedTime'){
-              itemName = '项目概况-起止日期'
+              itemName = '项目概况-起止日期未录入'
             }
           }
         }else {
@@ -1378,13 +1378,13 @@ export default {
           //提示哪一项未录入
           if (!itemName){
             if( i ==='FFunctionalOverview'){
-              itemName = '项目可研-部门职能概述'
+              itemName = '项目可研-部门职能概述未录入'
             }else if (i ==='FProjBasis'){
-              itemName = '项目可研-申报依据'
+              itemName = '项目可研-申报依据未录入'
             }else if (i ==='FFeasibility'){
-              itemName = '项目可研-可行性'
+              itemName = '项目可研-可行性未录入'
             }else if (i ==='FNecessity'){
-              itemName = '项目可研-必要性'
+              itemName = '项目可研-必要性未录入'
             }
           }
         }else {
@@ -1403,15 +1403,15 @@ export default {
             if (!itemName){
               let num = parseInt(i) + 1
               if (j === 'FName') {
-                itemName ='预算明细-第'+num+'行-明细项目名称'
+                itemName ='预算明细-第'+num+'行-明细项目名称未录入'
               }else if (j ==='FAmount'){
-                itemName = '预算明细-第'+num+'行-明细金额'
+                itemName = '预算明细-第'+num+'行-明细金额未录入'
               }else if (j ==='FSourceOfFunds'){
-                itemName = '预算明细-第'+num+'行-资金来源'
+                itemName = '预算明细-第'+num+'行-资金来源未录入'
               }else if (j ==='FPaymentMethod'){
-                itemName = '预算明细-第'+num+'行-支付方式'
+                itemName = '预算明细-第'+num+'行-支付方式未录入'
               }else if (j ==='FOtherInstructions'){
-                itemName = '预算明细-第'+num+'行-测算过程及其他说明事项'
+                itemName = '预算明细-第'+num+'行-测算过程及其他说明事项未录入'
               }
             }
           }else {
@@ -1430,9 +1430,9 @@ export default {
             if (!itemName){
               let num = parseInt(i)+ 1
               if (j === 'FName') {
-                itemName ='实施计划-第'+num+'行-实施内容'
+                itemName ='实施计划-第'+num+'行-实施内容未录入'
               }else if (j ==='sedTime'){
-                itemName = '实施计划-第'+num+'行-起止时间'
+                itemName = '实施计划-第'+num+'行-起止时间未录入'
               }
             }
           }else {
@@ -1451,15 +1451,32 @@ export default {
           //提示哪一项未录入
           if (!itemName){
             if( i ==='ndTagetL'){
-              itemName = '效绩目标-年度绩效目标'
+              itemName = '效绩目标-年度绩效目标未录入'
             }else if (i ==='cqTarget'){
-              itemName = '效绩目标-长期绩效目标'
+              itemName = '效绩目标-长期绩效目标未录入'
             }
           }
         }else {
           this.addNull = true
         }
       }
+
+      if (this.projSurvey.FIfPerformanceAppraisal ===1){
+        let sum = 0
+        for (let i in this.target.targetTableData) {
+          if (this.target.targetTableData[i].FTargetWeight) {
+            sum = sum + parseInt(this.target.targetTableData[i].FTargetWeight)
+          }
+        }
+        if (sum !== 100){
+          this.addNull = false
+          itemName = '效绩目标-权重值相加必须等于100，当前值为:'+sum
+        }else {
+          this.addNull = true
+        }
+      }
+      //判断效绩指标权重是否等于100
+
       // //提交时判断判断效绩目标表格是否拉取到
       // if (this.projSurvey.FIfPerformanceAppraisal == 1 ){
       //   if (this.target.targetType ===''){
@@ -1496,7 +1513,7 @@ export default {
 
         })
       }else {
-        this.$msgBox.error(itemName+'未录入')
+        this.$msgBox.error(itemName)
       }
       console.log(data)
 
@@ -1637,6 +1654,7 @@ export default {
         }
       }
       if (sum !== 100){
+        this.addNull === false
         this.$msgBox.show('权重值已改变，所有权重值相加必须等于100，当前值为:'+sum)
       }
     },
@@ -1701,7 +1719,6 @@ export default {
       this.uploadVis = false;
     },
     upFile(code){
-      debugger
       let formData = new FormData
       formData.append('PhId',code)
       let fileList = this.choosedIndexAndPro.pro.QtAttachments;

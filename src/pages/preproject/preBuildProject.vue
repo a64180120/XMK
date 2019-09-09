@@ -126,7 +126,7 @@
 
     <div>
       <div class="container content-body"
-           style="min-width: 1900px;overflow: auto;min-height:750px">
+           style="overflow: auto" :style="{minHeight:formAreaHeight}">
         <div class="formArea">
           <!--搜索栏-->
           <div class="btnArea"
@@ -278,8 +278,7 @@
                         :highlight-current-row="highlightCurrentRow"
                         style="width: 100%"
                         border
-                        max-height="630px"
-                        min-height="600px">
+                        :height="tableHeight">
                 <el-table-column label="" prop="" type="selection" width="35" align="center"></el-table-column>
                 <el-table-column label="" prop="" width="35" type="index" label="序号" :index="function(index) {
                   return index+1
@@ -338,7 +337,7 @@
           </div>
           <div v-else
                class="table-main">
-            <section class="itemTable_proBuildProject" :style="{paddingRight:paddRight }">
+            <section class="itemTable_proBuildProject" :style="{paddingRight:paddRight,height:tableHeight}">
               <el-table :data="table.tableData"
                         @select="rowSelect"
                         @select-all="rowSelectAll"
@@ -854,7 +853,10 @@ export default {
     //  申请表数据
       applytabData:[],
 
-      aplStaGrop:[]
+      aplStaGrop:[],
+      //表格最大高度
+      tableHeight:"630px",
+      formAreaHeight:'650px',
 
     }
   },
@@ -879,6 +881,16 @@ export default {
     this.getBudegDepart();
     this.getDeclareList();
     console.log(this.MenuButton);
+    let clientHeight = document.body.clientHeight
+    console.log(clientHeight)
+    if (clientHeight>900){
+      this.tableHeight = '630px'
+      this.formAreaHeight = '750px'
+    }else if(clientHeight<900 && clientHeight>600){
+      this.tableHeight = '480px'
+      this.formAreaHeight = '600px'
+    }
+
 
   },
   methods: {
@@ -895,7 +907,7 @@ export default {
         workType:'004'
       }
       this.getAxios('/GQT/QTSysSetApi/GetWorkFlow',data).then(res=>{
-        
+
         if (res.Status ==='success') {
           this.WorkFlow =res.Data;
           console.log('---', this.WorkFlow)
@@ -1134,6 +1146,7 @@ export default {
     swatchTable () {
       if (this.watchTable) {
         this.watchTable = false
+        this.formAreaHeight = '750px'
       } else {
         this.watchTable = true
       }
@@ -1520,7 +1533,7 @@ export default {
     //单位切换
     swatchUnit(){
       if (this.formList.year === '1') {
-        for (let i in this.table.column){ 
+        for (let i in this.table.column){
           if (this.table.column[i].prop === 'FProjAmount') {
             this.$set(this.table.column[i],"label",'项目金额(元)')
           }

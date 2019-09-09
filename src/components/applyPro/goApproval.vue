@@ -203,7 +203,6 @@ export default {
   mounted () {
     this.param.RefbillPhidList = this.data.data
     this.getAppvalProc();
-    alert(this.bType);
     console.log(this.data.data)
   },
   methods: {

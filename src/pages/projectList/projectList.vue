@@ -18,7 +18,7 @@
     </top-handle>
 
     <div>
-      <div class="container content-body" style="min-width: 1700px;overflow: auto;min-height:750px">
+      <div class="container content-body" style="overflow: auto" :style="{minHeight:formAreaHeight}">
         <div class="formArea">
           <!--搜索栏-->
           <div class="btnArea"
@@ -166,8 +166,7 @@
                         :highlight-current-row="highlightCurrentRow"
                         style="width: 100%"
                         border
-                        max-height="630px"
-                        min-height="600px">
+                        :height="tableHeight">
                 <el-table-column label="" prop="" type="selection" width="35" align="center"></el-table-column>
                 <el-table-column label="" prop="" width="35" type="index" label="序号" :index="function(index) {
                   return index+1
@@ -226,7 +225,7 @@
           </div>
           <div v-else
                class="table-main">
-            <section class="itemTable_proBuildProject" :style="{paddingRight:paddRight }">
+            <section class="itemTable_proBuildProject" :style="{paddingRight:paddRight ,height:tableHeight}">
               <el-table :data="table.tableData"
                         :row-class-name="rowClassName"
                         :cell-class-name="itemCellClassName"
@@ -663,6 +662,11 @@
         sumtabDialog:false,
         //汇总数据
         sumtabData:[],
+        totalFProjAmount:0,
+
+        //表格最大高度
+        tableHeight:"630px",
+        formAreaHeight:'650px'
       }
     },
     computed: {
@@ -680,7 +684,17 @@
     mounted () {
       this.getWorkFlow()
       this.getExpenseCategoryList()
-      this.getTableData()
+      this.getTableData();
+
+      let clientHeight = document.body.clientHeight
+      console.log(clientHeight)
+      if (clientHeight>900){
+        this.tableHeight = '630px'
+        this.formAreaHeight = '750px'
+      }else if(clientHeight<900 && clientHeight>600){
+        this.tableHeight = '480px'
+        this.formAreaHeight = '600px'
+      }
     },
     methods: {
       //获取过程是否启用工作流
@@ -1161,6 +1175,7 @@
   }
   .top-center{
     /*width: 300px;*/
+    text-align: center;
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;

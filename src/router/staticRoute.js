@@ -99,7 +99,7 @@ const staticRoute = [
         path: '/midyearDeclare',
         component: () =>
           import(/* webpackChunkName:'preBuildProject'*/ '../pages/midyearDeclare/midyearDeclare'),
-        meta: { requireAuth: true, type: 'page', name: '年中申报' }
+        meta: { requireAuth: true, type: 'page', name: '年中调整' }
       },
       {
         path: '/yearreport',
