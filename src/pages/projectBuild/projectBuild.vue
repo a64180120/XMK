@@ -83,7 +83,7 @@
     </top-handle>
 
     <div>
-      <div class="container content-body" style="overflow: auto;min-height:750px">
+      <div class="container content-body" style="overflow: auto;" :style="{minHeight:formAreaHeight}">
         <div class="formArea">
           <!--搜索栏-->
           <div class="btnArea"
@@ -234,8 +234,7 @@
                         :highlight-current-row="highlightCurrentRow"
                         style="width: 100%"
                         border
-                        max-height="630px"
-                        min-height="600px">
+                        :height="tableHeight">
                 <el-table-column label="" prop="" type="selection" width="35" align="center"></el-table-column>
                 <el-table-column label="" prop="" width="35" type="index" label="序号" :index="function(index) {
                   return index+1
@@ -271,7 +270,7 @@
                       <span>{{scope.row[item.prop2].replace('T00:00:00','')}}</span>
                     </div>
                     <div v-else-if="item.other ==='time'">
-                      <span>{{scope.row[item.prop].split('T',9)[0]}}</span>
+                      <span>{{scope.row[item.prop]?scope.row[item.prop].split('T',9)[0]:'无'}}</span>
                     </div>
                     <div v-else-if="item.other ==='status-click'">
                       <span v-html="formatter(scope)"
@@ -294,7 +293,7 @@
           </div>
           <div v-else
                class="table-main">
-            <section class="itemTable_proBuildProject" :style="{paddingRight:paddRight }">
+            <section class="itemTable_proBuildProject" :style="{paddingRight:paddRight,height:tableHeight}">
               <el-table :data="table.tableData"
                         :row-class-name="rowClassName"
                         :cell-class-name="itemCellClassName"
@@ -659,6 +658,8 @@
                   MC = '预立项'
                 } else if (scope.row.FProjStatus ===2) {
                   MC = '项目立项'
+                }else if (scope.row.FProjStatus ===2 && scope.row.FIfYsxz === 0) {
+                  MC = '项目预执行'
                 } else if (scope.row.FProjStatus ===3) {
                   MC = '项目执行'
                 } else if (scope.row.FProjStatus ===4) {
@@ -787,6 +788,10 @@
 
         //  申请表数据
         applytabData: [],
+
+        //表格最大高度
+        tableHeight:"630px",
+        formAreaHeight:'650px'
       }
     },
     computed: {
@@ -805,7 +810,16 @@
       this.updateTitle();
       this.getWorkFlow()
       this.getExpenseCategoryList()
-      this.getTableData()
+      this.getTableData();
+      let clientHeight = document.body.clientHeight
+      console.log(clientHeight)
+      if (clientHeight>900){
+        this.tableHeight = '630px'
+        this.formAreaHeight = '750px'
+      }else if(clientHeight<900 && clientHeight>600){
+        this.tableHeight = '480px'
+        this.formAreaHeight = '600px'
+      }
     },
     methods: {
       //修改title
@@ -1017,6 +1031,7 @@
       },
       //
       rowSelect(selection, row) {
+        console.log(selection)
         this.selection = selection
       },
       rowSelectAll(selection) {
@@ -1575,6 +1590,7 @@
 
   .top-center {
     /*width: 300px;*/
+    text-align: left;
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;

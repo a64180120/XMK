@@ -4,7 +4,7 @@
                 type="swatchBtn"
                 @swatchList="swatchTable"
                 @refresh="refresh()">
-      <div class="top" >
+      <div class="top"  style="width: 750px">
         <ul>
           <li class="handle"
               @click="add()">
@@ -30,7 +30,7 @@
             <span>修改</span>
           </li>
           <li class="handle"
-              v-if="WorkFlow === 0"
+              v-if="WorkFlow === 1"
               @click="rejectItem()">
             <div>
               <img style="height: 33px" src="@/assets/images/zj3.png">
@@ -38,7 +38,7 @@
             <span>删除</span>
           </li>
           <li class="handle"
-              v-if="WorkFlow === 0"
+              v-if="WorkFlow === 1"
               @click="itemDefine()">
             <div>
               <img style="height: 33px" src="@/assets/images/fz-1_15.png">
@@ -73,7 +73,7 @@
     </top-handle>
 
     <div>
-      <div class="container content-body" style="min-height: 750px;overflow: auto">
+      <div class="container content-body" style="overflow: auto" :style="{minHeight:formAreaHeight}">
         <div class="formArea" >
           <!--搜索栏-->
           <div class="btnArea"
@@ -224,8 +224,8 @@
                         :highlight-current-row="highlightCurrentRow"
                         style="width: 100%"
                         border
-                        max-height="630px"
-                        min-height="600px">
+                        :max-height="tableHeight"
+                        :min-height="tableHeight">
                 <el-table-column label="" prop="" type="selection" width="35" align="center"></el-table-column>
                 <el-table-column label="" prop="" width="35" type="index" label="序号" :index="function(index) {
                   return index+1
@@ -284,7 +284,7 @@
           </div>
           <div v-else
                class="table-main">
-            <section class="itemTable_proBuildProject" :style="{paddingRight:paddRight }">
+            <section class="itemTable_proBuildProject" :style="{paddingRight:paddRight,height:tableHeight }">
               <el-table :data="table.tableData"
                         :row-class-name="rowClassName"
                         :cell-class-name="itemCellClassName"
@@ -498,16 +498,16 @@
     </div>
     <el-dialog append-to-body
                modal-append-to-body
-               :visible.sync="budgetEditDialog"
+               :visible.sync="addDialog"
                width="85%"
                class="applyDetailDialog"
-               v-if="budgetEditDialog"
+               v-if="addDialog"
                :close-on-click-modal="false">
       <div slot="title"
            class="applyDetailTitle">
-        <span>预算修正</span>
+        <span>年中新增</span>
       </div>
-      <budget-edit :data="budgetEditDetail" :workFlow="WorkFlow" @refresh="refresh"></budget-edit>
+      <add @refresh='refresh' :workFlow="WorkFlow"></add>
     </el-dialog>
     <el-dialog append-to-body
                modal-append-to-body
@@ -533,10 +533,6 @@
                  auditType="005"
                  :auditMsg="auditMsg"></auditfollow>
 
-    <!--汇总表打印-->
-    <sum-tab-print ref="sumTabPrint" :data="sumtabData" :totalAmount="totalAmount"></sum-tab-print>
-    <!--申请表打印-->
-    <apply-tab-print ref="applyTabPrint" :data="applytabData"></apply-tab-print>
   </section>
 </template>
 
@@ -554,12 +550,12 @@
 
   import SumTabPrint from "../preproject/component/sumTabPrint";
   import ApplyTabPrint from "../preproject/component/applyTabPrint";
+  import Add from "./component/add";
 
   export default {
     name: "midyearDeclare",
     components: {
-      ApplyTabPrint,
-      SumTabPrint,
+      Add,
       GoApproval,
       BudgetEdit, Auditfollow, ItemPrint, Prerojectnewproject, SearchInput, ItemTable, DataTable, TopHandle
     },
@@ -740,7 +736,7 @@
 
         search: '',
         itemlDialog: false,
-        budgetEditDialog: false,
+        addDialog: false,
         openfollow: false,
         page: {
           currentPage: 1,
@@ -777,6 +773,10 @@
 
         //  申请表数据
         applytabData: [],
+
+        //表格最大高度
+        tableHeight:"630px",
+        formAreaHeight:'650px'
       }
     },
     computed: {
@@ -795,7 +795,17 @@
       this.updateTitle();
       this.getWorkFlow()
       this.getExpenseCategoryList()
-      this.getTableData()
+      this.getTableData();
+
+      let clientHeight = document.body.clientHeight
+      console.log(clientHeight)
+      if (clientHeight>900){
+          this.tableHeight = '630px'
+          this.formAreaHeight = '750px'
+      }else if(clientHeight<900 && clientHeight>600){
+        this.tableHeight = '480px'
+        this.formAreaHeight = '600px'
+      }
     },
     methods: {
       //修改title
@@ -1035,7 +1045,9 @@
         }
       },
 
-      add(){},
+      add(){
+        this.addDialog = true
+      },
       edit() {
 
       },
@@ -1084,8 +1096,8 @@
       },
       //刷新
       refresh(val, stu) {
-        if (stu === 'budgetEdit') {
-          this.budgetEditDialog = false
+        if (stu === 'add') {
+          this.addDialog = false
         }
         this.getTableData()
       },
@@ -1337,6 +1349,7 @@
 
   .top-center {
     /*width: 300px;*/
+    text-align: left;
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
