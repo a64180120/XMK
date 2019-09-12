@@ -490,7 +490,7 @@
                   </colgroup>
                   <tbody>
                   <tr v-if="target.targetTableData.length !==0" v-for="(item,idx) in target.targetTableData">
-                    <td>{{idx}}</td>
+                    <td>{{idx+1}}</td>
                     <td
                       v-if="idx==0"
                       :rowspan="target.targetTableData.length">
@@ -728,6 +728,8 @@
           ndTagetL:"",
           cqTarget:""
         },
+        //项目资金申请
+        ProjectDtlFundAppls:[],
         inp: '',
         yearSelect: '',
         value1: '',
@@ -964,6 +966,8 @@
             this.target.targetType.FName = res.ProjectDtlPerformTargets[0].FTargetTypeCode_EXName
             this.target.targetType.FCode = res.ProjectDtlPerformTargets[0].FTargetTypeCode
           }
+          //项目资金申请
+          this.ProjectDtlFundAppls = res.ProjectDtlFundAppls
           console.log('拉取到的：',res)
         }).catch(err => {
           this.$emit('refresh')
@@ -1412,6 +1416,22 @@
         } else if (type ==='zc'){
           projectMst.FApproveStatus = '5'
         }
+        //项目资金申请
+        let FundAppls = []
+        for (let a in this.budgetDetail.FSourceOfFundsGroup){
+          FundAppls.push({
+            FSourceOfFunds: this.budgetDetail.FSourceOfFundsGroup[a].DM,
+            FAmount: this.budgetdetailData.filter(i=>i.FSourceOfFunds===this.budgetDetail.FSourceOfFundsGroup[a].DM).reduce((prev,cur)=>prev+parseFloat((Number((cur.FAmount).replace(/[,]/g, ''))).toFixed(2)),0)
+          })
+        }
+        for (let a in this.ProjectDtlFundAppls) {
+          for (let i in FundAppls) {
+            if (this.ProjectDtlFundAppls[a].FSourceOfFunds === FundAppls[i].FSourceOfFunds) {
+              this.ProjectDtlFundAppls[a].FAmount = FundAppls[i].FAmount
+            }
+          }
+        }
+
         let data = {
           //预算主表对象
           ProjectMst:projectMst,
@@ -1430,6 +1450,8 @@
           //用户ID
           UserId:this.UserId,
           ProjectDtlTextContents:projectDtlTextContents,
+          //项目资金申请
+          ProjectDtlFundAppls:this.ProjectDtlFundAppls
         }
         let itemName = ''
         //提交时判断项目概况是否已经填写完

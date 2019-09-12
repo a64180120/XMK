@@ -33,12 +33,18 @@ export default {
     })
   },
   mounted () {
+    this.updateTitle();
     this.URL = baseURL.replace(/\/custom2/ig, '').replace(/\/api/ig, '')
   },
   beforeDestroy () {
 
   },
   methods: {
+    //修改title
+    updateTitle (){
+      let title = document.getElementsByTagName('title')[0];
+      title.innerText = "预算报表";
+    },
     refresh () {
 
     }

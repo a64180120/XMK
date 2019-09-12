@@ -325,6 +325,11 @@
                       <span v-html="formatter(scope)"
                             class=""></span>
                     </div>
+                    <div v-else-if="item.other ==='title'" style="width: 100%;overflow: hidden;white-space: nowrap;text-overflow: ellipsis">
+                      <el-tooltip :content="scope.row[item.prop]">
+                        <span :style="{textAlign:item.align}">{{scope.row[item.prop]}}</span>
+                      </el-tooltip>
+                    </div>
                     <div v-else
                          class="table-column-height"
                          :style="{textAlign:item.align}">
@@ -591,7 +596,7 @@
     <el-dialog append-to-body
                modal-append-to-body
                :visible.sync="detailDialog"
-               width="50%"
+               width="900px"
                :close-on-click-modal="false"
                class="detailDialog">
       <div slot="title"
@@ -660,7 +665,7 @@ export default {
             label: '项目名称',
             align: 'center',
             width:300,
-
+            other:"title"
           },
           {
             prop: 'FProjAmount',
@@ -682,7 +687,8 @@ export default {
             prop: 'FExpenseCategory_EXName',
             label: '支出类别',
             align: 'center',
-            width:180
+            width:180,
+            other:"title"
           }, {
             prop1: 'FStartDate',
             prop2: 'FEndDate',
@@ -1395,6 +1401,7 @@ export default {
         this.formList.approvalStatus = '0';
         this.paddRight = '25px';
       }
+      this.page.currentPage = 0
       this.getTableData()
     },
     //复制单据

@@ -682,6 +682,7 @@
     created () {
     },
     mounted () {
+      this.updateTitle();
       this.getWorkFlow()
       this.getExpenseCategoryList()
       this.getTableData();
@@ -697,6 +698,11 @@
       }
     },
     methods: {
+      //修改title
+      updateTitle (){
+        let title = document.getElementsByTagName('title')[0];
+        title.innerText = "项目查询";
+      },
       //获取过程是否启用工作流
       getWorkFlow(){
         let data = {

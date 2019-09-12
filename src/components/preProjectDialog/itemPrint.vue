@@ -56,16 +56,15 @@
                   <td>序号</td>
                   <td colspan="2">明细项目名称</td>
                   <td>金额(元)</td>
-                  <td>支付方式</td>
-                  <td colspan="2">测算过程或其他需要说明的事项</td>
+                  <td colspan="2">支付方式</td>
+                  <td >测算过程或其他需要说明的事项</td>
                 </tr>
                 <tr v-if="data.ProjectDtlBudgetDtls.length !==0" v-for="(item,idx) in data.ProjectDtlBudgetDtls">
                   <td>{{idx+1}}</td>
                   <td class="tltd" colspan="2">{{item.FName}}</td>
                   <td class="trtd">{{item.FAmount | NumFormat}}</td>
-                  <td class="tltd">{{item.FPaymentMethod_EXName}}</td>
+                  <td class="tltd" colspan="2">{{item.FPaymentMethod_EXName}}</td>
                   <td
-                    colspan="2"
                   >{{item.FOtherInstructions}}</td>
                 </tr>
                 <tr v-if="data.ProjectDtlBudgetDtls.length ===0">
@@ -77,8 +76,8 @@
                 </tr>
                 <!-- 项目资金申请行 -->
                 <tr>
-                  <td v-if="data.ProjectDtlFundAppls.length !==0" :rowspan="data.ProjectDtlFundAppls.length +1">项目资金申请(万元)</td>
-                  <td v-if="data.ProjectDtlFundAppls.length ===0" :rowspan="1 +1">项目资金申请(万元)</td>
+                  <td v-if="data.ProjectDtlFundAppls.length !==0" :rowspan="data.ProjectDtlFundAppls.length +1" >项目资金申请<br/>(万元)</td>
+                  <td v-if="data.ProjectDtlFundAppls.length ===0" :rowspan="1 +1" >项目资金申请<br/>(万元)</td>
                   <td>序号</td>
                   <td  colspan="5">资金来源</td>
                   <td>金额</td>
@@ -101,8 +100,8 @@
                 </tr>
                 <tr v-if="data.ProjectDtlImplPlans.length !== 0" v-for="(item,idx) in data.ProjectDtlImplPlans">
                   <td class="tltd" colspan="4">{{item.FImplContent}}</td>
-                  <td colspan="2">{{item.FStartDate}}</td>
-                  <td colspan="1">{{item.FEndDate}}</td>
+                  <td colspan="2">{{item.FStartDate?item.FStartDate.split(' ',1)[0]:''}}</td>
+                  <td colspan="1">{{item.FEndDate?item.FEndDate.split(' ',1)[0]:''}}</td>
                 </tr>
                 <tr v-if="data.ProjectDtlImplPlans.length === 0">
                   <td class="no-data" colspan="7">暂无数据</td>
@@ -185,6 +184,9 @@ export default {
       }else {
         return amount
       }
+    },
+    applyFund(){
+
     }
   },
   methods: {
@@ -276,6 +278,7 @@ export default {
           border-collapse:collapse;
         }
         td {
+          text-align: center;
           border-radius: 0;
           border-bottom: 1px solid $borderColor_ccc;
           border-left-color: $borderColor_ccc;

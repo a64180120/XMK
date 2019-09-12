@@ -281,6 +281,11 @@
                       <span v-html="formatter(scope)"
                             class=""></span>
                     </div>
+                    <div v-else-if="item.other ==='title'" style="width: 100%;overflow: hidden;white-space: nowrap;text-overflow: ellipsis">
+                      <el-tooltip :content="scope.row[item.prop]">
+                        <span :style="{textAlign:item.align}">{{scope.row[item.prop]}}</span>
+                      </el-tooltip>
+                    </div>
                     <div v-else
                          class="table-column-height"
                          :style="{textAlign:item.align}">
@@ -583,7 +588,7 @@
               prop: 'FProjCode',
               label: '项目编码',
               align: 'center',
-              width:165,
+              width:175,
               other: 'function',
               fn: function (scope) {
                 that.showDetail(scope)
@@ -593,7 +598,7 @@
               label: '项目名称',
               align: 'center',
               width:300,
-
+              other:'title'
             },
             {
               prop: 'FProjAmount',
@@ -615,7 +620,8 @@
               prop: 'FExpenseCategory_EXName',
               label: '支出类别',
               align: 'center',
-              width:180
+              width:180,
+              other:"title"
             }, {
               prop1: 'FStartDate',
               prop2: 'FEndDate',

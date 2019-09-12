@@ -35,6 +35,14 @@
                         trigger="click">
 
               <ul class="fastNav">
+                <li v-if="menuButton.projectmanage	=='True'"
+                    @click.stop="navPage('/projectmanage')">
+                  <div>
+                    <img src="@/assets/images/yusuan.png"
+                         alt>
+                  </div>
+                  <span>预算项目库</span>
+                </li>
                 <li v-if="menuButton.fund=='True'"
                     @click.stop="navPage('/fund')">
                   <div>
@@ -76,14 +84,6 @@
                   </div>
                   <span>系统设置</span>
                 </li>
-                <li v-if="menuButton.projectmanage	=='True'"
-                    @click.stop="navPage('/projectmanage')">
-                  <div>
-                    <img src="@/assets/images/yusuan.png"
-                         alt>
-                  </div>
-                  <span>预算项目库</span>
-                </li>
               </ul>
 
               <div slot="reference"
@@ -122,6 +122,12 @@
              alt>
         <span>当前在线人数:</span>
         <span class="num">23</span>
+      </div>
+      <div v-if="approvalSum.status"
+           class="count"
+           style="height: 30px;line-height: 30px;margin: 0 20px">
+        <span>待审批任务:</span>
+        <span class="approval-num" @click="goApprovalCenter()">{{approvalSum.sum}}</span>
       </div>
       <div>
         <span class="mr-2">年度:</span>
@@ -175,11 +181,7 @@
              :class="{turnArr:arrow}">
         </div>
       </div>
-      <div v-if="approvalSum.status"
-           style="height: 30px;line-height: 30px;margin: 0 20px">
-        <span>待审批事项数:</span>
-        <span class="approval-num" @click="goApprovalCenter()">{{approvalSum.sum}}</span>
-      </div>
+
     </div>
   </div>
 </template>
@@ -217,7 +219,7 @@ export default {
   data () {
     return {
       arrow: false,//组织箭头样式
-      options: [],//年度列表    
+      options: [],//年度列表
       year: '',//年度
       org: { //当前组织
         "OCode": "101",

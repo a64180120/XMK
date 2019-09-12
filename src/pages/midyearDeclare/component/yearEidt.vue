@@ -2,7 +2,7 @@
   <!-- <el-dialog
       append-to-body :visible="true" width="90%" :close-on-click-modal="false"
   ></el-dialog>-->
-  <section class="prerojectnewproject">
+  <section class="prerojectnewproject budgetEdit">
     <el-row>
       <el-col :span="24"
               style="margin-top:10px;margin-bottom: 10px">
@@ -30,23 +30,15 @@
             <el-button class="btn"
                        size="mini"
                        style="margin-left: 0"
-                       v-if="workFlow===1"
+                       v-if="workFlow ===1"
                        @click="submit('bcss')">保存并送审</el-button>
             <el-button class="btn"
                        size="mini"
                        style="margin-left: 0"
                        @click="submit('zc')">暂存</el-button>
-            <el-popover  trigger="hover">
-              <div>
-                <span style="font-size: 0.16rem">附单据<span style="text-decoration: underline">{{choosedIndexAndPro.index}}</span>张</span>
-              </div>
-              <el-button class="btn"
-                         size="mini"
-                         @click="uploadFile()"
-                         slot="reference">上传附件</el-button>
-            </el-popover>
             <el-button class="btn"
-                       @click="preview()"
+                       size="mini">上传附件</el-button>
+            <el-button class="btn"
                        size="mini">填报预览</el-button>
           </div>
         </slot>
@@ -54,11 +46,11 @@
       <div class="left-box">
         <div class="tb">项目概况</div>
         <ul>
-          <li :class="[projSurvey.FProjName === ''?'null-projS':'']">
+          <li >
             <span>项目名称：</span>
-            <div @click="openTextarea(projSurvey,'FProjName')"
-                 class="opentextarea"
-                 style="width:100%;text-align:left;line-height:32px;padding-left:15px;">
+            <div
+              class="opentextarea"
+              style="width:100%;text-align:left;line-height:32px;padding-left:15px ;background-color: #F5F7FA">
               <el-tooltip v-if="projSurvey.FProjName"
                           :content="projSurvey.FProjName">
                 <span style="font-size:0.14rem;">{{projSurvey.FProjName}}</span>
@@ -71,6 +63,8 @@
           <li>
             <span>项目级别：</span>
             <el-select v-model="projSurvey.FLevel"
+                       class="word-color"
+                       disabled
                        size="small"
                        placeholder="必选">
               <el-option v-for="(item,idx) in projGroup.FLevelGroup"
@@ -83,6 +77,8 @@
             <span>申报部门：</span>
             <el-select v-model="projSurvey.FDeclarationDept"
                        size="small"
+                       class="word-color"
+                       disabled
                        placeholder="必选">
               <el-option v-for="(item,idx) in projGroup.FDeclarationDeptGroup"
                          :key="idx"
@@ -94,6 +90,8 @@
             <span>预算部门：</span>
             <el-select v-model="projSurvey.FBudgetDept"
                        size="small"
+                       disabled
+                       class="word-color"
                        placeholder="必选">
               <el-option v-for="(item,idx) in projGroup.FBudgetDeptGroup"
                          :key="idx"
@@ -105,6 +103,8 @@
             <span>项目属性：</span>
             <el-select v-model="projSurvey.ProjectPropers"
                        size="small"
+                       disabled
+                       class="word-color"
                        placeholder="必选">
               <el-option v-for="(item,idx) in projGroup.ProjectPropersGroup"
                          :key="idx"
@@ -116,6 +116,8 @@
             <span>存续期限：</span>
             <el-select v-model="projSurvey.TimeLimits"
                        size="small"
+                       disabled
+                       class="word-color"
                        placeholder="必选">
               <el-option v-for="(item,idx) in projGroup.TimeLimitsGroup"
                          :key="idx"
@@ -125,12 +127,15 @@
           </li>
           <li>
             <span>支出类别：</span>
-            <el-select v-model="projSurvey.ExpenseCategories"
-                       size="small"
-                       placeholder="必选">
+            <el-select  v-model="projSurvey.ExpenseCategories"
+                        size="small"
+                        disabled
+                        class="word-color"
+                        placeholder="必选">
               <el-option v-for="(item,idx) in projGroup.ExpenseCategoriesGroup"
                          :key="idx"
                          :label="item.Mc"
+                         class="word-color"
                          :value="item.Dm"></el-option>
             </el-select>
           </li>
@@ -138,6 +143,8 @@
             <span>项目年度：</span>
             <el-select v-model="yearSelect"
                        size="small"
+                       disabled
+                       class="word-color"
                        placeholder="必选">
               <el-option :label="parseInt(year) + 1"
                          :value="parseInt(year)+1"></el-option>
@@ -152,6 +159,8 @@
             <el-date-picker size="small"
                             v-model="projSurvey.sedTime"
                             type="daterange"
+                            disabled
+                            class="word-color"
                             range-separator="至"
                             :clearable="false"
                             start-placeholder="开始日期"
@@ -161,6 +170,8 @@
             <span>绩效评价：</span>
             <el-select v-model="projSurvey.FIfPerformanceAppraisal"
                        size="small"
+                       disabled
+                       class="word-color"
                        placeholder="必选">
               <el-option v-for="(item,idx) in projGroup.FIfPerformanceAppraisalGroup"
                          :key="idx"
@@ -187,10 +198,12 @@
             <li>
               <span>部门职能概述：</span>
               <el-input type="textarea"
+                        disabled
                         show-word-limit
                         maxlength="500"
                         :autosize="{minRows:4}"
                         :rows="5"
+                        class="word-color"
                         placeholder="限500字以内（必填）"
                         v-model="projScience.FFunctionalOverview"></el-input>
             </li>
@@ -198,6 +211,8 @@
               <span>申报依据：</span>
               <el-input type="textarea"
                         show-word-limit
+                        disabled
+                        class="word-color"
                         maxlength="250"
                         :autosize="{minRows:4}"
                         :rows="5"
@@ -208,6 +223,8 @@
               <span>可行性：</span>
               <el-input type="textarea"
                         show-word-limit
+                        disabled
+                        class="word-color"
                         maxlength="250"
                         :autosize="{minRows:4}"
                         :rows="5"
@@ -218,6 +235,8 @@
               <span>必要性：</span>
               <el-input type="textarea"
                         show-word-limit
+                        disabled
+                        class="word-color"
                         maxlength="250"
                         :autosize="{minRows:4}"
                         :rows="5"
@@ -229,7 +248,7 @@
           <div v-show="tabindex == 1"
                class="budgetdetail">
             <div style="text-align:left;">
-              <el-checkbox v-model="budgetDetail.copyLine">复制行</el-checkbox>
+              <el-checkbox disabled v-model="budgetDetail.copyLine">复制行</el-checkbox>
             </div>
             <div class="list">
               <div class="listHead">
@@ -237,8 +256,24 @@
                   <li>序号</li>
                   <li>明细项目名称</li>
                   <li>金额（元）</li>
+                  <li style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis">
+                    <el-tooltip content="调整金额（元）">
+                         <span>
+                               调整金额（元）
+                         </span>
+                    </el-tooltip>
+                  </li>
+                  <li style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis">
+                    <el-tooltip content="调整后金额（元）">
+                         <span>
+                               调整后金额（元）
+                         </span>
+                    </el-tooltip>
+                  </li>
                   <li>资金来源</li>
                   <li>支付方式</li>
+                  <li>预算科目</li>
+                  <li>支出渠道</li>
                   <li style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis">
                     <el-tooltip content="支出功能分类科目">
                          <span>
@@ -267,6 +302,8 @@
                   <li>{{index+1}}</li>
                   <li>
                     <el-input v-model="item.FName"
+                              :disabled="item.PhId? true:false "
+                              class="word-color"
                               @change="valueChange(item)"
                               placeholder="必填" />
                   </li>
@@ -274,13 +311,34 @@
                     <el-input @focus="clearNum(item,$event,1)"
                               @keyup.native="clearNum(item,$event)"
                               @blur="filterMoney(item,index)"
-                              class="money"
+                              :disabled="item.PhId? true:false "
+                              class="money word-color"
                               v-model="item.FAmount"
+                              placeholder="必填" />
+                  </li>
+                  <li>
+                    <el-input @focus="clearNumB(item,$event,1)"
+                              @keyup.native="clearNumB(item,$event)"
+                              @blur="filterMoneyB(item,index)"
+                              class="money word-color"
+                              @change="FAmountEditHandle(item,index)"
+                              v-model="item.FAmountEdit"
+                              placeholder="必填" />
+                  </li>
+                  <li>
+                    <el-input @focus="clearNumC(item,$event,1)"
+                              @keyup.native="clearNumC(item,$event)"
+                              @blur="filterMoneyC(item,index)"
+                              disabled
+                              class="money word-color"
+                              v-model="item.FAmountAfterEdit"
                               placeholder="必填" />
                   </li>
                   <li>
                     <el-select v-model="item.FSourceOfFunds"
                                size="small"
+                               :disabled="item.PhId? true:false "
+                               class="word-color"
                                placeholder="必选">
                       <el-option v-for="(item,idx) in budgetDetail.FSourceOfFundsGroup"
                                  :key="idx"
@@ -291,6 +349,8 @@
                   <li>
                     <el-select v-model="item.FPaymentMethod"
                                size="small"
+                               :disabled="item.PhId? true:false "
+                               class="word-color"
                                placeholder="必选">
                       <el-option v-for="(item,idx) in budgetDetail.fundPayGroup"
                                  :key="idx"
@@ -299,8 +359,34 @@
                     </el-select>
                   </li>
                   <li>
+                    <el-select v-model="item.FBudgetAccounts"
+                               size="small"
+                               :disabled="item.PhId? true:false "
+                               class="word-color"
+                               placeholder="必选">
+                      <el-option v-for="(item,idx) in budgetDetail.BudgetAccountsGroup"
+                                 :key="idx"
+                                 :label="item.KMMC"
+                                 :value="item.KMDM"></el-option>
+                    </el-select>
+                  </li>
+                  <li>
+                    <el-select v-model="item.FExpensesChannel"
+                               size="small"
+                               :disabled="item.PhId? true:false "
+                               class="word-color"
+                               placeholder="必选">
+                      <el-option v-for="(item,idx) in budgetDetail.Vc2mListGroup"
+                                 :key="idx"
+                                 :label="item.Dymc"
+                                 :value="item.DYDM"></el-option>
+                    </el-select>
+                  </li>
+                  <li>
                     <el-select v-model="item.FQtZcgnfl"
                                size="small"
+                               :disabled="item.PhId? true:false "
+                               class="word-color"
                                placeholder="必选">
                       <el-option v-for="(item,idx) in projGroup.FQtZcgnflGroup"
                                  :key="idx"
@@ -310,33 +396,37 @@
                   </li>
                   <li v-if="false">
                     <el-radio v-model="item.FIfPurchase"
+                              disabled
                               :label="1">是</el-radio>
                     <el-radio v-model="item.FIfPurchase"
+                              disabled
                               :label="2">否</el-radio>
-                    <i @click="item.FIfPurchase =='1'?setBuy(item):''"
-                       :class="{'el-icon-setting':true,'canSetting':item.FIfPurchase=='1'?true:false}"></i>
+                    <i @click=""
+                       :class="{'el-icon-setting':true,'canSetting':false}"></i>
                   </li>
-                  <li class="enable"
-                      @click="openTextarea(item,'FOtherInstructions')">
+                  <li class="enable">
+                    <!--@click="openTextarea(item,'FOtherInstructions')"-->
                     <el-input v-model="item.FOtherInstructions"
+                              :disabled="item.PhId? true:false "
+                              class="word-color"
                               placeholder="必填" />
 
                     <el-tooltip v-if="item.FOtherInstructions"
                                 :content="item.FOtherInstructions">
                       <span style="display: inline-block;max-width: 100%;">{{item.FOtherInstructions}}</span>
                     </el-tooltip>
-                    <div class="icon active">
-                      <div>
-                        <img @click.stop="addBudgetdetail(item)"
-                             src="@/assets/images/jia.png"
-                             alt />
-                      </div>
-                      <div>
-                        <img @click.stop="delBudgetdetail(item,index)"
-                             src="@/assets/images/jian.png"
-                             alt />
-                      </div>
-                    </div>
+                                        <div class="icon active">
+                                          <div>
+                                            <img @click.stop="addBudgetdetail(item)"
+                                                 src="@/assets/images/jia.png"
+                                                 alt />
+                                          </div>
+                                          <div>
+                                            <img @click.stop="delBudgetdetail(item,index)"
+                                                 src="@/assets/images/jian.png"
+                                                 alt />
+                                          </div>
+                                        </div>
                   </li>
                 </ul>
               </div>
@@ -351,10 +441,11 @@
               <div class="listBottom-right">
                 <span>其中:</span>
                 <ul>
-                  <li v-for="(item,idx) in budgetDetail.FSourceOfFundsGroup">
+                  <li v-if=" budgetDetail.FSourceOfFundsGroup.length !==0" v-for="(item,idx) in budgetDetail.FSourceOfFundsGroup">
                     <span class="title">{{item.MC}}</span>
-                    <span class="money">{{budgetdetailData.filter(i=>i.FSourceOfFunds===item.DM).reduce((prev,cur)=>prev+parseFloat((Number((cur.FAmount).replace(/[,]/g, ''))).toFixed(2)),0) | NumFormat}}</span>
+                    <span class="money">{{budgetdetailData.filter(i=>i.FSourceOfFunds===item.DM).reduce((prev,cur)=>prev+parseFloat((Number((cur.FAmountAfterEdit).replace(/[,]/g, ''))).toFixed(2)),0) | NumFormat}}</span>
                   </li>
+                  <li v-else style="text-align: center;color: #eaeaea"> 暂无数据 </li>
                 </ul>
               </div>
             </div>
@@ -363,7 +454,7 @@
           <div v-show="tabindex == 2"
                class="budgetdetail">
             <div style="text-align:left;">
-              <el-checkbox v-model="copyLine">复制行</el-checkbox>
+              <el-checkbox disabled v-model="copyLine">复制行</el-checkbox>
             </div>
             <div class="list plan">
               <div class="listHead">
@@ -384,28 +475,30 @@
                     :class="[delRow == index?'select-row':'']">
                   <li>{{index+1}}</li>
                   <li>
-                    <el-input v-model="item.FImplContent"
+                    <el-input v-model="item.FImplContent" disabled class="word-color"
                               placeholder="必填" />
                   </li>
                   <li class="enable">
                     <el-date-picker size="small"
+                                    disabled
                                     v-model="item.sedTime"
                                     type="daterange"
+                                    class="word-color"
                                     range-separator="至"
                                     start-placeholder="开始日期"
                                     end-placeholder="结束日期"></el-date-picker>
-                    <div class="icon active">
-                      <div>
-                        <img @click="add(item)"
-                             src="@/assets/images/jia.png"
-                             alt />
-                      </div>
-                      <div>
-                        <img @click="del(item,index)"
-                             src="@/assets/images/jian.png"
-                             alt />
-                      </div>
-                    </div>
+                    <!--                    <div class="icon active">-->
+                    <!--                      <div>-->
+                    <!--                        <img @click="add(item)"-->
+                    <!--                             src="@/assets/images/jia.png"-->
+                    <!--                             alt />-->
+                    <!--                      </div>-->
+                    <!--                      <div>-->
+                    <!--                        <img @click="del(item,index)"-->
+                    <!--                             src="@/assets/images/jian.png"-->
+                    <!--                             alt />-->
+                    <!--                      </div>-->
+                    <!--                    </div>-->
                   </li>
                 </ul>
               </div>
@@ -418,6 +511,8 @@
               <div>
                 <span>年度绩效目标：</span>
                 <el-input type="textarea"
+                          disabled
+                          class="word-color"
                           show-word-limit
                           maxlength="250"
                           :rows="6"
@@ -428,6 +523,8 @@
                 <span>长期绩效目标：</span>
                 <el-input type="textarea"
                           show-word-limit
+                          disabled
+                          class="word-color"
                           maxlength="250"
                           :rows="6"
                           placeholder="限250字以内（必填）"
@@ -441,7 +538,7 @@
                   <el-tree
                     :data="targetTreeData"
                     :props="targetTreeProps"
-                    :default-expand-all="true" @node-click="nodeClick">
+                    :default-expand-all="true">
 
                   </el-tree>
                 </div>
@@ -489,7 +586,7 @@
                   </colgroup>
                   <tbody>
                   <tr v-if="target.targetTableData.length !==0" v-for="(item,idx) in target.targetTableData">
-                    <td>{{idx+1}}</td>
+                    <td>{{idx}}</td>
                     <td
                       v-if="idx==0"
                       :rowspan="target.targetTableData.length">
@@ -497,30 +594,30 @@
                     </td>
                     <td v-for="(itemType) in tarType" :rowspan="itemType.sum" v-if="idx==itemType.beginIdx">{{item.FTargetClassCode_EXName}}</td>
                     <td>
-                      <el-input class="td-ipt" v-model="item.FTargetName"></el-input>
+                      <el-input  disabled class="td-ipt word-color" v-model="item.FTargetName"></el-input>
                     </td>
                     <td>
-                      <el-input class="td-ipt" v-model="item.FTargetValue"></el-input>
+                      <el-input disabled class="td-ipt word-color" v-model="item.FTargetValue"></el-input>
                     </td>
                     <td>
-                      <el-input class="td-ipt" @change="targetWeight()" v-model="item.FTargetWeight"></el-input>
+                      <el-input disabled class="td-ipt word-color" @change="targetWeight()" v-model="item.FTargetWeight"></el-input>
                     </td>
                     <td @mouseenter="mouseEnter(idx)">
-                      <el-input class="td-ipt" v-model="item.FTargetDescribe"></el-input>
+                      <el-input disabled class="td-ipt word-color" v-model="item.FTargetDescribe"></el-input>
                     </td>
                     <td class="enable" >
-                      <div v-show="nowIndex == idx" class="icon active">
-                        <div>
-                          <img @click="addTargetItem(item,idx)"
-                               src="@/assets/images/jia.png"
-                               alt />
-                        </div>
-                        <div>
-                          <img @click="delTargetItem(idx)"
-                               src="@/assets/images/jian.png"
-                               alt />
-                        </div>
-                      </div>
+                      <!--                      <div v-show="nowIndex == idx" class="icon active">-->
+                      <!--                        <div>-->
+                      <!--                          <img @click="addTargetItem(item,idx)"-->
+                      <!--                               src="@/assets/images/jia.png"-->
+                      <!--                               alt />-->
+                      <!--                        </div>-->
+                      <!--                        <div>-->
+                      <!--                          <img @click="delTargetItem(idx)"-->
+                      <!--                               src="@/assets/images/jian.png"-->
+                      <!--                               alt />-->
+                      <!--                        </div>-->
+                      <!--                      </div>-->
                     </td>
                   </tr>
                   <tr v-if="target.targetTableData.length ==0">
@@ -532,8 +629,6 @@
               </div>
             </div>
           </div>
-        </div>
-        <div class="bottom-info">
         </div>
       </div>
     </el-row>
@@ -553,33 +648,11 @@
                class="setBuyDialog">
       <textarea-dialog v-if="textareaDialogData.openDialog"
                        :maxWord="maxWord"
-                       :title="textTitle"
                        :data="textareaDialogData"></textarea-dialog>
     </el-dialog>
     <go-approval v-if="approvalDataS.openDialog"
                  :data="approvalDataS"
                  @delete="handleDelete"></go-approval>
-    <el-dialog append-to-body
-               modal-append-to-body
-               :visible.sync="detailDialog"
-               width="50%"
-               :close-on-click-modal="false"
-               class="applyDetailDialog">
-      <div slot="title"
-           class="applyDetailTitle">
-        <span>填报预览</span>
-      </div>
-      <item-print :data="itemDetail"></item-print>
-    </el-dialog>
-    <el-dialog :visible.sync="uploadVis"
-               modal-append-to-body
-               :append-to-body="true"
-               width="auto"
-               title="附件上传"
-               :close-on-click-modal="false">
-      <file-up
-        @submit="submitFn" v-if="uploadVis" :fileItem="choosedIndexAndPro.pro.QtAttachments"></file-up>
-    </el-dialog>
   </section>
 </template>
 
@@ -588,12 +661,10 @@
   import setBuy from '../../../components/preProjectDialog/setBuy'
   import textareaDialog from '../../../components/preProjectDialog/textareaDialog'
   import { mapState } from 'vuex'
-  import GoApproval from "./goApproval";
-  import ItemPrint from "../../../components/preProjectDialog/itemPrint";
-  import FileUp from "../../../components/preProjectDialog/fileUp";
+  import GoApproval from "../../projectBuild/component/goApproval";
 
   export default {
-    name: 'copy',
+    name: 'yearEdit',
     props: {
       data:{
         type:Object,
@@ -606,13 +677,12 @@
         default:0
       }
     },
-    components: {FileUp,ItemPrint, GoApproval, addBr, setBuy, textareaDialog },
+    components: {GoApproval, addBr, setBuy, textareaDialog },
     data () {
       return {
         timeClearable: false,
         //文本域最大字数
         maxWord: "600",
-        textTitle:"",
         //项目概况
         projSurvey: {
           FProjName: '', //项目名称
@@ -655,7 +725,9 @@
         budgetDetail: {
           copyLine: false, //复制行
           FSourceOfFundsGroup: [], //资金源组
-          fundPayGroup: [] //支付方式下拉项组
+          fundPayGroup: [] ,//支付方式下拉项组
+          BudgetAccountsGroup:[],//预算科目
+          Vc2mListGroup:[]//支出渠道集合
         },
         //预算明细表
         budgetdetailData: [
@@ -732,15 +804,12 @@
           ndTagetL:"",
           cqTarget:""
         },
-        //项目资金申请
-        ProjectDtlFundAppls:[],
-
         inp: '',
         yearSelect: '',
         value1: '',
         textarea: '',
         type: '',
-        tabindex: 0,//当前的tab页
+        tabindex: 1,//当前的tab页
         tabOldIndex: 0,//前一个Tab页码
         copyLine: false,
         tabsList: ['项目可研', '预算明细', '实施计划', '绩效目标'],
@@ -790,22 +859,12 @@
         isOldTTData:true,
         //缓存被替换的原始指标明细
         oldTTData:[],
-        //审批弹框
+//审批弹框
         approvalDataS:{
           openDialog:false,
           data:{},
           subData:[]//获取审批流
-        },
-        //报表预览
-        detailDialog:false,
-        itemDetail:{},
-        uploadVis:false ,//上传附件dialog
-        choosedIndexAndPro:{
-          index: 0,
-          pro: {
-            QtAttachments:[]
-          }
-        },
+        }
       }
     },
     computed: {
@@ -824,7 +883,7 @@
         let arr = JSON.parse(JSON.stringify(this.budgetdetailData))
         let sum = 0
         for (let key in arr) {
-          let FAmount = arr[key].FAmount.replace(/[,]/g, '')
+          let FAmount = arr[key].FAmountAfterEdit.replace(/[,]/g, '')
           sum += parseFloat(FAmount) || 0
         }
         return sum
@@ -855,6 +914,7 @@
           }
           nameArr[key].sum = sum
         }
+        console.log(nameArr)
         return nameArr
       }
     },
@@ -872,6 +932,7 @@
       }
     },
     mounted () {
+      this.yearSelect = this.year;
       this.getProjectMst();
       this.getDeclareList();
       this.getAllBasicData();
@@ -887,17 +948,9 @@
           FProjPhId: this.data.PhId
         }
         this.getAxios('/GXM/ProjectMstApi/GetProjectMst', data).then(res => {
-          console.log('==',res)
-           //获取附件
-          this.choosedIndexAndPro.index = res.ProjectAttachments.length
-          this.choosedIndexAndPro.pro.QtAttachments= res.ProjectAttachments
-
-
-
           this.dataDtl  = res;
           //项目概况赋值
           this.projectMst = res.ProjectMst;
-          this.yearSelect = res.ProjectMst.FYear;
           this.projSurvey.FProjName = res.ProjectMst.FProjName;
           this.projSurvey.FDeclarationDept = res.ProjectMst.FDeclarationDept;
           this.projSurvey.FLevel = res.ProjectMst.FLevel;
@@ -916,14 +969,17 @@
           };
           //预算明细表数据
           for (let i in res.ProjectDtlBudgetDtls) {
-            res.ProjectDtlBudgetDtls[i].PhId=''
             res.ProjectDtlBudgetDtls[i].FAmount = res.ProjectDtlBudgetDtls[i].FAmount.toString()
+            res.ProjectDtlBudgetDtls[i].FAmountAfterEdit = res.ProjectDtlBudgetDtls[i].FAmountAfterEdit.toString()
             let decimals = 2;
             let decPoint='.';
             let thousandsSep = ','
             if (!res.ProjectDtlBudgetDtls[i].FAmount) return '0.00'
+            if (!res.ProjectDtlBudgetDtls[i].FAmountAfterEdit) return '0.00'
             res.ProjectDtlBudgetDtls[i].FAmount = (res.ProjectDtlBudgetDtls[i].FAmount + '').replace(/[^0-9+-Ee.]/g, '')
+            res.ProjectDtlBudgetDtls[i].FAmountAfterEdit = (res.ProjectDtlBudgetDtls[i].FAmountAfterEdit + '').replace(/[^0-9+-Ee.]/g, '')
             let n = !isFinite(+res.ProjectDtlBudgetDtls[i].FAmount) ? 0 : +res.ProjectDtlBudgetDtls[i].FAmount
+            let m = !isFinite(+res.ProjectDtlBudgetDtls[i].FAmountAfterEdit) ? 0 : +res.ProjectDtlBudgetDtls[i].FAmountAfterEdit
             let prec = !isFinite(+decimals) ? 0 : Math.abs(decimals)
             let sep = typeof thousandsSep === 'undefined' ? ',' : thousandsSep
             let dec = typeof decPoint === 'undefined' ? '.' : decPoint
@@ -932,7 +988,9 @@
             let toFixedFix = function (n, prec) {
               return '' + n.toFixed(2)
             }
+
             s = (prec ? toFixedFix(n, prec) : '' + n).split('.')
+            s = (prec ? toFixedFix(m, prec) : '' + m).split('.')
             let re = /(-?\d+)(\d{3})/
             while (re.test(s[0])) {
               s[0] = s[0].replace(re, '$1' + sep + '$2')
@@ -942,13 +1000,13 @@
               s[1] += new Array(prec - s[1].length + 1).join('0')
             }
             res.ProjectDtlBudgetDtls[i].FAmount =  s.join(dec)
+            res.ProjectDtlBudgetDtls[i].FAmountAfterEdit =  s.join(dec)
           }
           this.budgetdetailData =res.ProjectDtlBudgetDtls
 
           //实施计划
           this.ImplPlanPanelData = res.ProjectDtlImplPlans
           for (let i in res.ProjectDtlImplPlans){
-            res.ProjectDtlImplPlans[i].PhId = '';
             this.ImplPlanPanelData[i].FImplContent = res.ProjectDtlImplPlans[i].FImplContent;
             this.ImplPlanPanelData[i].sedTime = [res.ProjectDtlImplPlans[i].FStartDate,res.ProjectDtlImplPlans[i].FEndDate];
             this.ImplPlanPanelData[i].FName = res.ProjectDtlImplPlans[i].FName;
@@ -965,16 +1023,13 @@
           }
 
           //效绩目标表格
-
           this.target.targetTableData = res.ProjectDtlPerformTargets
           //绩效指标类别
           if (res.ProjectDtlPerformTargets.length !==0){
             this.target.targetType.FName = res.ProjectDtlPerformTargets[0].FTargetTypeCode_EXName
             this.target.targetType.FCode = res.ProjectDtlPerformTargets[0].FTargetTypeCode
           }
-
-          //项目资金申请
-          this.ProjectDtlFundAppls = res.ProjectDtlFundAppls
+          console.log('拉取到的：',res)
         }).catch(err => {
           this.$emit('refresh')
           this.$msgBox.error('请求失败')
@@ -988,9 +1043,11 @@
           uid:this.UserId
         }
         this.getAxios('/GQT/CorrespondenceSettingsApi/GetDeptByUnit',data).then(res=>{
+          console.log(res)
           this.projGroup.FBudgetDeptGroup = res.Record
 
         }).catch(err=>{
+          console.log(err)
         })
       },
       //获取申报部门集合
@@ -1024,12 +1081,15 @@
         this.getAxios('/GQT/QTSysSetApi/GetAllBasicData', data)
           .then(res => {
             this.budgetDetail.fundPayGroup = res.PayMethodTwos
+            this.budgetDetail.BudgetAccountsGroup = res.BudgetAccounts
+            this.budgetDetail.Vc2mListGroup = res.Vc2mList
             this.budgetDetail.FSourceOfFundsGroup = res.SourceOfFunds
             this.projGroup.FLevelGroup = res.ProjectLevels
             this.projGroup.ProjectPropersGroup = res.ProjectPropers
             this.projGroup.TimeLimitsGroup = res.TimeLimits
             this.projGroup.ExpenseCategoriesGroup = res.ExpenseCategories;
             this.projGroup.FQtZcgnflGroup = res.Zcgnfls
+            console.log(res)
           })
           .catch(err => { })
       },
@@ -1043,6 +1103,7 @@
         this.getAxios('/GQT/QTSysSetApi/GetTargetTypeTree',data).then(res=>{
           this.$set(this.targetTreeData,0,res)
         }).catch(err=>{
+          console.log(err)
         })
       },
       addBudgetdetail (val) {
@@ -1121,6 +1182,9 @@
         if (val.PhId){
           for (let i in this.budgetdetailData) {
             if(val.PhId === this.budgetdetailData[i].PhId){
+              this.budgetdetailData[i].PersistentState = 3;
+              let arr  = JSON.parse(JSON.stringify(this.budgetdetailData[i]));
+              this.delBdData.push(arr);
               this.budgetdetailData.splice(i,1)
             }
           }
@@ -1165,6 +1229,7 @@
       add (val) {
         let item = JSON.parse(JSON.stringify(val));
         item.PhId = '';
+        console.log(item)
         let newItem = Object.assign(
           {},
           this.copyLine
@@ -1188,6 +1253,8 @@
           this.delRow = -1
           if (item.PhId){
             this.ImplPlanPanelData.splice(index, 1);
+            item.PersistentState=3;
+            this.delIppData.push(item)
           }else {
             this.ImplPlanPanelData.splice(index, 1)
           }
@@ -1213,6 +1280,7 @@
         item.FAmount = obj.value
       },
       filterMoney (item) {
+        console.log(item)
 
         function fil (value, decimals = 2, decPoint = '.', thousandsSep = ',') {
           if (!value) return '0.00'
@@ -1240,6 +1308,100 @@
         var a = fil(item.FAmount)
         item.FAmount = a
       },
+      clearNumB (item, e, isFocus) {
+        let obj = e.target
+        obj.value = obj.value.replace(/[^\d.]/g, '') //清除“数字”和“.”以外的字符
+        obj.value = obj.value.replace(/\.{2,}/g, '.') //只保留第一个. 清除多余的
+        obj.value = obj.value
+          .replace('.', '$#$')
+          .replace(/\./g, '')
+          .replace('$#$', '.')
+        obj.value = obj.value.replace(/^(\-)*(\d+)\.(\d\d).*$/, '$1$2.$3') //只能输入两个小数
+        if (obj.value.indexOf('.') < 0 && obj.value != '') {
+          //以上已经过滤，此处控制的是如果没有小数点，首位不能为类似于 01、02的金额
+          obj.value = parseFloat(obj.value)
+        }
+        if (parseInt(obj.value) == '' && isFocus) {
+          obj.value = ''
+        }
+        item.FAmountEdit = obj.value
+      },
+      filterMoneyB (item) {
+        console.log(item)
+
+        function fil (value, decimals = 2, decPoint = '.', thousandsSep = ',') {
+          if (!value) return '0.00'
+          value = (value + '').replace(/[^0-9+-Ee.]/g, '')
+          let n = !isFinite(+value) ? 0 : +value
+          let prec = !isFinite(+decimals) ? 0 : Math.abs(decimals)
+          let sep = typeof thousandsSep === 'undefined' ? ',' : thousandsSep
+          let dec = typeof decPoint === 'undefined' ? '.' : decPoint
+          let s = ''
+
+          let toFixedFix = function (n, prec) {
+            return '' + n.toFixed(2)
+          }
+          s = (prec ? toFixedFix(n, prec) : '' + n).split('.')
+          let re = /(-?\d+)(\d{3})/
+          while (re.test(s[0])) {
+            s[0] = s[0].replace(re, '$1' + sep + '$2')
+          }
+          if ((s[1] || '').length < prec) {
+            s[1] = s[1] || ''
+            s[1] += new Array(prec - s[1].length + 1).join('0')
+          }
+          return s.join(dec)
+        }
+        var a = fil(item.FAmountEdit)
+        item.FAmountEdit = a
+      },
+      clearNumC (item, e, isFocus) {
+        let obj = e.target
+        obj.value = obj.value.replace(/[^\d.]/g, '') //清除“数字”和“.”以外的字符
+        obj.value = obj.value.replace(/\.{2,}/g, '.') //只保留第一个. 清除多余的
+        obj.value = obj.value
+          .replace('.', '$#$')
+          .replace(/\./g, '')
+          .replace('$#$', '.')
+        obj.value = obj.value.replace(/^(\-)*(\d+)\.(\d\d).*$/, '$1$2.$3') //只能输入两个小数
+        if (obj.value.indexOf('.') < 0 && obj.value != '') {
+          //以上已经过滤，此处控制的是如果没有小数点，首位不能为类似于 01、02的金额
+          obj.value = parseFloat(obj.value)
+        }
+        if (parseInt(obj.value) == '' && isFocus) {
+          obj.value = ''
+        }
+        item.FAmountEdit = obj.value
+      },
+      filterMoneyC(item) {
+        console.log(item)
+
+        function fil (value, decimals = 2, decPoint = '.', thousandsSep = ',') {
+          if (!value) return '0.00'
+          value = (value + '').replace(/[^0-9+-Ee.]/g, '')
+          let n = !isFinite(+value) ? 0 : +value
+          let prec = !isFinite(+decimals) ? 0 : Math.abs(decimals)
+          let sep = typeof thousandsSep === 'undefined' ? ',' : thousandsSep
+          let dec = typeof decPoint === 'undefined' ? '.' : decPoint
+          let s = ''
+
+          let toFixedFix = function (n, prec) {
+            return '' + n.toFixed(2)
+          }
+          s = (prec ? toFixedFix(n, prec) : '' + n).split('.')
+          let re = /(-?\d+)(\d{3})/
+          while (re.test(s[0])) {
+            s[0] = s[0].replace(re, '$1' + sep + '$2')
+          }
+          if ((s[1] || '').length < prec) {
+            s[1] = s[1] || ''
+            s[1] += new Array(prec - s[1].length + 1).join('0')
+          }
+          return s.join(dec)
+        }
+        var a = fil(item.FAmountEdit)
+        item.FAmountEdit = a
+      },
       setBuy (item) {
         if (item.FSourceOfFunds === '') {
           this.$msgBox.error('请先设置资金来源！')
@@ -1259,16 +1421,15 @@
           arr[0] = item
         }
         arr[0] =  JSON.parse(JSON.stringify(arr[0]));
+        console.log(arr[0])
         this.setBuyDialog.data = arr[0]
       },
       openTextarea (item, property) {
         if (property ==='FProjName'){
           this.maxWord = '100'
-          this.textTitle = '项目名称'
         }
         if (property === 'FOtherInstructions'){
           this.maxWord = '250'
-          this.textTitle = '测算过程及其他说明事项'
         }
         this.textareaDialogData.data = item
         this.textareaDialogData.property = property
@@ -1279,6 +1440,7 @@
       },
       //tab切换
       swatchTabs (index) {
+        // console.log(this.cacheAddData)
         // this.cacheAddData = []//确认后清空缓存新增加的数据
         this.tabindex = index
         //实施计划第一行是否为空，只要有一列有值就不为空
@@ -1297,6 +1459,7 @@
       },
       //保存
       submit (type) {
+        console.log(this.target.targetTableData)
         //预算主表对象
         let projectMst = this.dataDtl.ProjectMst;
         projectMst.FProjName = this.projSurvey.FProjName;
@@ -1319,9 +1482,6 @@
         projectMst.NgUpdateDt = ''
         projectMst.PropertyBytes = ''
         projectMst._OldIdValue_ = ''
-        projectMst.PhId = ''
-        projectMst.FProjCode = ''
-        projectMst.FProjAmount = this.TotalAmount
         //
         let projectDtlTextContents = this.dataDtl.ProjectDtlTextContents;
         projectDtlTextContents.FAnnualPerformGoal = this.target.ndTagetL;
@@ -1340,12 +1500,10 @@
         projectDtlTextContents.NgUpdateDt = ''
         projectDtlTextContents.PropertyBytes = ''
         projectDtlTextContents._OldIdValue_ = ''
-        projectDtlTextContents.PhId = ''
         //预算明细的采购
         let addPurchaseDtls = []
         let addPurDtl4SOFs = []
         for (let i in this.budgetdetailData){
-          this.budgetdetailData[i].FDtlCode = '';
           if (this.budgetdetailData[i].id){
             addPurchaseDtls.push({
               FDtlCode:'',//明细项目代码	必填（明细项目带入）
@@ -1358,22 +1516,21 @@
               FQty:this.budgetdetailData[i].FQty,
               FPrice:this.budgetdetailData[i].FPrice,
               FAmount:this.budgetdetailData[i].FAmount,
+              FAmountEdit:this.budgetdetailData[i].FAmountEdit,
+              FAmountAfterEdit:this.budgetdetailData[i].FAmountAfterEdit,
               FSpecification:this.budgetdetailData[i].FSpecification,
               FRemark:this.budgetdetailData[i].FRemark,
               FEstimatedPurTime:this.budgetdetailData[i].FEstimatedPurTime,
-              PhId:''
             });
             addPurDtl4SOFs.push({
               FDtlCode:'',//明细项目代码	必填（明细项目带入）
               FName:this.budgetdetailData[i].FName,//明细项目名称	必填（明细项目带入）
               FSourceOfFunds:this.budgetdetailData[i].FSourceOfFunds,
               FAmount:this.budgetdetailData[i].FAmount,
-              PhId:''
-            });
+              FAmountEdit:this.budgetdetailData[i].FAmountEdit,
+              FAmountAfterEdit:this.budgetdetailData[i].FAmountAfterEdit,
+            })
           }
-        }
-        for (let i in this.budgetdetailData) {
-          this.budgetdetailData[i].FAmount = this.budgetdetailData[i].FAmount.replace(/,/g,'')
         }
         for (let i in this.PurchaseDtls) {
           this.PurchaseDtls[i].PhId = ''
@@ -1408,55 +1565,53 @@
             this.ImplPlanPanelData[i].FStartDate = this.ImplPlanPanelData[i].sedTime[1]
           }
         }
-        for (let i in  this.target.targetTableData) {
-          this.target.targetTableData[i].PhId = ''
+
+        if (projectMst.FApproveStatus === '1'){
+          if (type ==='bc' || type ==='bcss'){
+            projectMst.FApproveStatus = '1'
+          } else if (type ==='zc'){
+            projectMst.FApproveStatus = '5'
+          }
         }
-        if (type ==='bc' || type ==='bcss'){
-          projectMst.FApproveStatus = '1'
-        } else if (type ==='zc'){
-          projectMst.FApproveStatus = '5'
-        }
-        //项目资金申请
-        let FundAppls = []
-        for (let a in this.budgetDetail.FSourceOfFundsGroup){
-          FundAppls.push({
-            FSourceOfFunds: this.budgetDetail.FSourceOfFundsGroup[a].DM,
-            FAmount: this.budgetdetailData.filter(i=>i.FSourceOfFunds===this.budgetDetail.FSourceOfFundsGroup[a].DM).reduce((prev,cur)=>prev+parseFloat((Number((cur.FAmount).replace(/[,]/g, ''))).toFixed(2)),0)
-          })
+        for (let i in this.budgetdetailData){
+          if (this.budgetdetailData[i].FExpensesChannel === undefined || this.budgetdetailData[i].FBudgetAccounts === undefined ){
+            this.$msgBox.error('请将支出渠道与预算科目补充完整才能提交')
+            return
+            break
+          }
         }
 
         let data = {
+          midYearEdit:"midYearEdit",
           //预算主表对象
           ProjectMst:projectMst,
 
 
           //预算明细
           // ProjectDtlBudgetDtls:this.dataDtl.ProjectDtlBudgetDtls,
-          ProjectDtlBudgetDtls:this.budgetdetailData,
+          ProjectDtlBudgetDtls:[...this.budgetdetailData,...this.delBdData],
           //实施计划
-          ProjectDtlImplPlans:this.ImplPlanPanelData,
+          ProjectDtlImplPlans: [...this.ImplPlanPanelData,...this.delIppData],
           //绩效指标
-          ProjectDtlPerformTargets:this.target.targetTableData,
+          ProjectDtlPerformTargets:[...this.oldTTData,...this.target.targetTableData],
           //预算明细的采购
           ProjectDtlPurchaseDtls:[...this.PurchaseDtls,...addPurchaseDtls],
           ProjectDtlPurDtl4SOFs:[...this.PurDtl4SOFs,...addPurDtl4SOFs],
           //用户ID
           UserId:this.UserId,
           ProjectDtlTextContents:projectDtlTextContents,
-          //项目资金申请
-          ProjectDtlFundAppls:FundAppls
         }
         console.log(data)
-        this.postAxios('/GXM/ProjectMstApi/PostSaveProject', data).then((res) => {
+        this.postAxios('/GYS/YS/BudgetMstApi/PostSaveProject ', data).then((res) => {
           if (res.Status ==='success'){
 
 
             if(type === 'bc'){
               let that =this
               this.$msgBox.show({
-                content:'复制成功',
+                content:'预算修正成功',
                 fn:function () {
-                  that.$emit("refresh",res,'copy')
+                  that.$emit("refresh",res,'budgetEdit')
                 }
               })
             } else if (type === 'bcss') {
@@ -1467,11 +1622,11 @@
               this.approvalDataS.openDialog = true
               this.approvalDataS.data = arr
             }else if (type ==='zc') {
-              this.$msgBox.show('暂存成功')
-              this.$emit("refresh",res,'copy')
+              this.$msgBox.show('预算修正暂存成功')
+              this.$emit("refresh",res,'budgetEdit')
             }
           }else {
-            this.$msgBox.error('复制失败'+res.Msg)
+            this.$msgBox.error('预算修正失败'+res.Msg)
           }
         }).catch(err => {
           this.$msgBox.error('请求错误'+res.Msg)
@@ -1541,6 +1696,7 @@
 
                 for (let key in that.ImplPlanPanelData){
                   if ( item.PhId ===that.ImplPlanPanelData[key].PhId){
+                    console.log(that.ImplPlanPanelData[key].PhId)
                     that.ImplPlanPanelData[key].FImplContent = item.FName
                     that.ImplPlanPanelData[key].FName = item.FName
                   }
@@ -1578,10 +1734,19 @@
         };
         this.getAxios('/GQT/QTSysSetApi/GetPerformEvalTargets',data).then(res=>{
           if (res){
+            if (this.isOldTTData){
+              let arr = JSON.parse(JSON.stringify(this.target.targetTableData))
+              for (let i in arr){
+                arr[i].PersistentState=3
+              }
+              this.oldTTData = arr
+              this.isOldTTData = false
+            }
             this.target.targetTableData = res.Data
             for (let i in this.target.targetTableData) {
               this.target.targetTableData[i].PhId = ''
             }
+            console.log(this.target.targetTableData)
 
           }else {
             this.$msgBox.error('请求出错')
@@ -1635,74 +1800,44 @@
       //审批弹框关闭时的回调
       handleDelete(data){
         this.approvalDataS.openDialog = false
-        this.$emit("refresh",'','copy')
+        this.$emit("refresh",'','budgetEdit')
       },
-      //填报预览
-      preview(){
-        let ProjectDtlBudget = []
-        let ProjectDtlImpl = []
-        for (let i in this.budgetdetailData){
-          ProjectDtlBudget.push({
-            FName:this.budgetdetailData[i].FName,
-            FAmount:this.budgetdetailData[i].FAmount.replace(',',''),
-            FPaymentMethod_EXName:this.budgetdetailData[i].FPaymentMethod?this.budgetDetail.fundPayGroup.filter(item => item.TypeCode ===this.budgetdetailData[i].FPaymentMethod )[0].TypeName:'',
-            FOtherInstructions:this.budgetdetailData[i].FOtherInstructions,
-          })
-        }
-        for (let i in this.ImplPlanPanelData) {
-          ProjectDtlImpl.push({
-            FImplContent:this.ImplPlanPanelData[i].FImplContent,
-            FStartDate:this.ImplPlanPanelData[i].sedTime[0],
-            FEndDate:this.ImplPlanPanelData[i].sedTime[1]
-          })
-        }
-        let data = {
-          ProjectDtlBudgetDtls:ProjectDtlBudget,
-          ProjectDtlFundAppls:[],
-          ProjectDtlImplPlans:ProjectDtlImpl,
-          ProjectDtlPerformTargets:{},
-          ProjectDtlPurDtl4SOFs:{},
-          ProjectDtlPurchaseDtls:{},
-          ProjectDtlTextContents:{
-            FLTPerformGoal:this.target.cqTarget,
-            FAnnualPerformGoal:this.target.ndTagetL
-          },
-          ProjectMst:{
-            FProjName:this.projSurvey.FProjName,
-            PhId:'无',
-            FDeclarationDept_EXName:this.projSurvey.FDeclarationDept?this.projGroup.FDeclarationDeptGroup.filter(item => item.deptCode ===this.projSurvey.FDeclarationDept )[0].deptName:'',
-            FDateofDeclaration:(new Date()).getDate(),
-            FDeclarer:this.UserName,
-            FProjCode:'无',
-            FProjAttr_EXName:this.projSurvey.ProjectPropers?this.projGroup.ProjectPropersGroup.filter(item => item.TypeCode ===this.projSurvey.ProjectPropers )[0].TypeName:'',
-            FMeetingTime:'无',
-            FMeetiingSummaryNo:'无'
-          }
-        }
-        this.itemDetail = data
-        this.detailDialog = true
-      },
-      //上传附件
-      uploadFile(){
-        this.uploadVis = true
-      },
-      submitFn(val){
-        console.log('++',val);
-        this.choosedIndexAndPro.index = val.length
-        this.choosedIndexAndPro.pro.QtAttachments = val;
-        this.uploadVis = false;
-      },
-      upFile(code){
+      FAmountEditHandle(item,index){
+
+        let fAmount = parseFloat(item.FAmount.replace(/,/g,''))
+        let fAmountEdit = parseFloat(item.FAmountEdit.replace(/,/g,''))
         debugger
-        let formData = new FormData
-        formData.append('PhId',code)
-        let fileList = this.choosedIndexAndPro.pro.QtAttachments;
-        for (let file of fileList){
-          formData.append('files',file.raw)
+        let sum = fAmount+fAmountEdit
+        console.log(fAmount,this.budgetdetailData[index].FAmountAfterEdit )
+
+        sum = sum.toString()
+        let decimals = 2;
+        let decPoint='.';
+        let thousandsSep = ','
+        if (!sum) return '0.00'
+        sum = (sum + '').replace(/[^0-9+-Ee.]/g, '')
+        let n = !isFinite(+sum) ? 0 : +sum
+        let prec = !isFinite(+decimals) ? 0 : Math.abs(decimals)
+        let sep = typeof thousandsSep === 'undefined' ? ',' : thousandsSep
+        let dec = typeof decPoint === 'undefined' ? '.' : decPoint
+        let s = ''
+
+        let toFixedFix = function (n, prec) {
+          return '' + n.toFixed(2)
         }
-        this.formAxios('/GXM/ProjectMstApi/PostSaveProject2',formData).then(res=>{
-          console.log(res)
-        }).catch()
+
+        s = (prec ? toFixedFix(n, prec) : '' + n).split('.')
+        let re = /(-?\d+)(\d{3})/
+        while (re.test(s[0])) {
+          s[0] = s[0].replace(re, '$1' + sep + '$2')
+        }
+        if ((s[1] || '').length < prec) {
+          s[1] = s[1] || ''
+          s[1] += new Array(prec - s[1].length + 1).join('0')
+        }
+        sum =  s.join(dec)
+
+        this.budgetdetailData[index].FAmountAfterEdit = sum
       }
     }
   }
@@ -1923,35 +2058,44 @@
                 font-size: 0.16rem;
 
                 &:first-of-type {
-                  width: 6%;
+                  width: 4%;
                   border-left: 1px solid $borderColor_ccc;
                 }
 
                 &:nth-of-type(2) {
-                  width: 16%;
+                  width: 10%;
                 }
-
                 &:nth-of-type(3) {
-                  width: 12%;
+                  width: 9%;
                 }
-
                 &:nth-of-type(4) {
-                  width: 13%;
+                  width: 9%;
                 }
-
                 &:nth-of-type(5) {
-                  width: 11%;
+                  width: 9%;
                 }
-
                 &:nth-of-type(6) {
-                  width: 15%;
+                  width: 9%;
                 }
 
                 &:nth-of-type(7) {
-                  width: 27%;
+                  width: 9%;
                 }
-                /*&:nth-of-type(8) {*/
-                /*  width: 18%;*/
+
+                &:nth-of-type(8) {
+                  width: 9%;
+                }
+                &:nth-of-type(9) {
+                  width: 9%;
+                }
+                &:nth-of-type(10) {
+                  width: 9%;
+                }
+                &:nth-of-type(11) {
+                  width: 14%;
+                }
+                /*&:nth-of-type(10) {*/
+                /*  width: 12%;*/
                 /*}*/
 
                 > label {
@@ -2255,6 +2399,19 @@
   .null-projS{
     border-bottom: 1px #ef5b47 solid !important;
   }
+
+  .budgetEdit .word-color >>> .is-disabled .el-input__inner{
+    color: #606266
+  }
+  .budgetEdit .word-color >>>  .el-input__inner{
+    color: #606266
+  }
+  .budgetEdit .word-color >>>  .el-textarea__inner{
+    color: #606266
+  }
+  .budgetEdit .word-color >>>  .el-range-input{
+    color: #606266
+  }
 </style>
 <style lang="stylus">
   .prerojectnewproject
@@ -2302,6 +2459,8 @@
   .setBuyDialog
     .el-dialog__body
       padding-top 0
+</style>
+<style>
 </style>
 
 

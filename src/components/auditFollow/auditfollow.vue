@@ -95,17 +95,16 @@
       </div>
       <el-dialog class="dialog img-dialog"
                  :visible.sync="imgDialog"
-                 
                  :append-to-body="false"
                  :close-on-click-modal="true"
                  :modal-append-to-body="false"
-
+                  @close="closeImgView()"
                  width="800px"
-                 @click.stop="fn()">
+                 @click="fn()">
         <div slot="title"
              class="dialog-title"
              @click.stop="fn()">
-          <span style="float: left">查看1附件</span>
+          <span style="float: left">查看附件</span>
         </div>
         <img-view :images="imgList"></img-view>
       </el-dialog>
@@ -144,6 +143,7 @@ export default {
   },
   data () {
     return {
+      modal:true,
       activeName: '',
       imgList: [],//图片列表
       imgDialog: false,//图片预览弹框
@@ -238,7 +238,7 @@ export default {
         this.$emit('close', false)
         this.$store.commit('setAuditfollow', false)
       }
-    }
+    },
   },
   computed: {
     ...mapState({
@@ -266,6 +266,8 @@ export default {
       this.imgDialog = false
       let arr = []
       if (imgList !== null) {
+        this.modal = true
+        console.log('=====',this.modal)
         this.imgDialog = true
         for (let key in imgList) {
           let img = {
@@ -299,6 +301,11 @@ export default {
     },
     keepDialog () {
 
+    },
+    closeImgView(){
+      this.modal = false
+      console.log('+++++',this.modal)
+      this.$forceUpdate()
     }
   },
   components: {
@@ -326,7 +333,7 @@ export default {
       line-height: 40px;
       background: $primaryColor;
       position: fixed;
-      z-index: 3500;
+      z-index: 1999;
       width: 310px;
       > i {
         position: absolute;
