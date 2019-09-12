@@ -29,9 +29,10 @@ Vue.use(ajax)
 Vue.use(MessageBox)
 // 注册组件到Vue
 Vue.prototype.$axios = axios
-
 // 注册打印
 Vue.use(Print)
+
+
 
 // 注入到根实例中
 /* eslint-disable no-new */

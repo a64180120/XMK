@@ -1858,7 +1858,7 @@
         this.uploadVis = false;
       },
       upFile(code){
-        let formData = new FormData
+        let formData = new FormData()
         formData.append('PhId',code)
         let fileList = this.choosedIndexAndPro.pro.QtAttachments;
         for (let file of fileList){

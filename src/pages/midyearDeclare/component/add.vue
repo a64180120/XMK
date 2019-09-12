@@ -1268,7 +1268,7 @@
         }else if (type ==='zc'){
           fas = 5
         }
-        let formData = new FormData
+        let formData = new FormData()
         let fileList = this.choosedIndexAndPro.pro.QtAttachments
         if (fileList.length !==0){
           for (let file of fileList){
@@ -1702,7 +1702,7 @@
       },
       upFile(code){
         debugger
-        let formData = new FormData
+        let formData = new FormData()
         formData.append('PhId',code)
         let fileList = this.choosedIndexAndPro.pro.QtAttachments;
         for (let file of fileList){

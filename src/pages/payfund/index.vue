@@ -39,7 +39,8 @@
         </div>
         <div v-if="menu['fund_uncheck']"
              @click.stop="showAuditAdd('QXSS')"
-             class="handle"  style="width: 65px;">
+             class="handle"
+             style="width: 65px;">
           <div class="topIcon">
             <img src="@/assets/images/ss_d.png"
                  alt />
@@ -408,8 +409,14 @@
                   <div>项目总数</div>
                 </div>
                 <div>
-                  <p style="color:#f52c1d; font-size: .4rem;" :title="apartData.Amount | NumFormat">
-                    <count-to :startVal="startVal" :endVal="endVal" :duration="1000" :decimals="2" separator="," :suffix="dw"></count-to>
+                  <p style="color:#f52c1d; font-size: .4rem;"
+                     :title="apartData.Amount | NumFormat">
+                    <count-to :startVal="startVal"
+                              :endVal="endVal"
+                              :duration="1000"
+                              :decimals="2"
+                              separator=","
+                              :suffix="dw"></count-to>
                     <!--<num :vv="Number(apartData.Amount)"></num>-->
                     <!--{{apartData.money}}-->
                   </p>
@@ -628,9 +635,9 @@ export default {
       apartDataMst: {}, //部门数组，通过phid绑值，用于显示title
       isAdd: true, //判断是修改（false）还是新增(true)
       auditMsg: [], //审批流程 数据
-      startVal:0,
-      endVal:0,
-      dw:'元'
+      startVal: 0,
+      endVal: 0,
+      dw: '元'
     }
   },
   components: {
@@ -818,7 +825,7 @@ export default {
 
       var pWidth = parseInt(window.getComputedStyle(union).width) //父级宽度
       //return;
-      let gap = unionStateConWidth - pWidth+10;
+      let gap = unionStateConWidth - pWidth + 10;
 
       if (!parseInt(unionStateCon.style.right)) {
         unionStateCon.style.right = '0px'
@@ -961,13 +968,13 @@ export default {
               this.apartDataMst[res.Mst[i].PhId] = res.Mst[i].FProjName
             }
             this.apartData.Amount = res.FAmount;
-            this.startVal=this.endVal;
-            this.endVal=+(res.FAmount>10000?(res.FAmount>100000000?res.FAmount/100000000:res.FAmount/10000):res.FAmount);
-            this.dw=res.FAmount>10000?(res.FAmount>100000000?'亿元':'万元'):'元'
-          }else{
-            this.startVal=this.endVal;
-            this.endVal=0;
-            this.dw='元'
+            this.startVal = this.endVal;
+            this.endVal = +(res.FAmount > 10000 ? (res.FAmount > 100000000 ? res.FAmount / 100000000 : res.FAmount / 10000) : res.FAmount);
+            this.dw = res.FAmount > 10000 ? (res.FAmount > 100000000 ? '亿元' : '万元') : '元'
+          } else {
+            this.startVal = this.endVal;
+            this.endVal = 0;
+            this.dw = '元'
           }
           this.apartData.Mst.unshift({ PhId: '', FProjName: '全部' })
 
@@ -1691,7 +1698,7 @@ td p {
 .self_hyz .el-select__tags {
   position: absolute;
   left: 0;
-  max-width: 140px!important;
+  max-width: 140px !important;
 }
 .sinor li {
   margin-bottom: 15px;

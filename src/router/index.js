@@ -8,6 +8,14 @@ import session from "@/utils/session";
 
 Vue.use(VueRouter)
 
+
+//解决vue-router的报错 (Uncaught (in promise) NavigationDuplicated {_name:""NavigationDuplicated)
+
+const originalPush = VueRouter.prototype.push
+VueRouter.prototype.push = function push (location) {
+  return originalPush.call(this, location).catch(err => err)
+}
+
 const vuerouters = new VueRouter({
   mode: 'hash',
   routes: staticRoute
