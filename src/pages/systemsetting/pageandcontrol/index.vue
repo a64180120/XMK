@@ -11,7 +11,7 @@
                  alt=""></div>
           修改
         </div>
-        <div v-if="menuButton.pageMaintenance_edit=='True'"
+        <div v-if="menuButton.pageMaintenance_edit!=='True'"
              v-show="!disabled"
              @click.stop="updateInfo"
              class="handle">
@@ -19,7 +19,7 @@
                  alt=""></div>
           保存
         </div>
-        <div v-if="menuButton.pageMaintenance_edit=='True'"
+        <div v-if="menuButton.pageMaintenance_edit!=='True'"
              v-show="!disabled"
              @click.stop="refresh"
              class="handle">
