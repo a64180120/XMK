@@ -15,7 +15,7 @@
           </li>
           <li class="handle"
               v-if="WorkFlow === 1"
-              @click="edit()">
+              @click="yearEdit()">
             <div>
               <img style="height: 33px" src="@/assets/images/nztz-1_31.png">
             </div>
@@ -496,6 +496,7 @@
         </div>
       </div>
     </div>
+    <!--年中新增-->
     <el-dialog append-to-body
                modal-append-to-body
                :visible.sync="addDialog"
@@ -509,18 +510,19 @@
       </div>
       <add @refresh='refresh' :workFlow="WorkFlow"></add>
     </el-dialog>
+    <!--年中调整-->
     <el-dialog append-to-body
                modal-append-to-body
-               :visible.sync="itemlDialog"
-               width="50%"
-               :close-on-click-modal="false"
-               class="applyDetailDialog">
+               :visible.sync="yearEditDialog"
+               width="85%"
+               class="applyDetailDialog"
+               v-if="yearEditDialog"
+               :close-on-click-modal="false">
       <div slot="title"
-           class="applyDetailTitle"
-           style="text-align: left;border-bottom: 1px solid #eaeaea">
-        <span>申报表打印</span>
+           class="applyDetailTitle">
+        <span>年中调整</span>
       </div>
-      <item-print :data="itemDetail" @closeDetail="itemlDialog = false"></item-print>
+      <year-eidt :data="yearEditDetail" @refresh='refresh' :workFlow="WorkFlow"></year-eidt>
     </el-dialog>
     <auditfollow :visible.sync="openfollow"></auditfollow>
 
@@ -551,10 +553,12 @@
   import SumTabPrint from "../preproject/component/sumTabPrint";
   import ApplyTabPrint from "../preproject/component/applyTabPrint";
   import Add from "./component/add";
+  import YearEidt from "./component/yearEidt";
 
   export default {
     name: "midyearDeclare",
     components: {
+      YearEidt,
       Add,
       GoApproval,
       BudgetEdit, Auditfollow, ItemPrint, Prerojectnewproject, SearchInput, ItemTable, DataTable, TopHandle
@@ -737,6 +741,7 @@
         search: '',
         itemlDialog: false,
         addDialog: false,
+        yearEditDialog:false,
         openfollow: false,
         page: {
           currentPage: 1,
@@ -745,7 +750,7 @@
           pageSizes: [20, 30, 50, 100]
         },
         itemDetail: {},//详情单据数据
-        budgetEditDetail: {},//预算修正数据
+        yearEditDetail: {},//预算修正数据
         selection: [],//单据选中项
         payOutType: [],
 
@@ -1048,8 +1053,16 @@
       add(){
         this.addDialog = true
       },
-      edit() {
+      yearEdit() {
+        if (this.selection.length ===0){
+          this.$msgBox.error('请选择需要年中调整的数据')
+        } else if (this.selection.length ===1 ) {
+          this.yearEditDetail = this.selection[0]
+            this.yearEditDialog = true
 
+        } else {
+          this.$msgBox.error('只支持单挑数据年中调整')
+        }
       },
       showDetail(scope) {
         let data = {

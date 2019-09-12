@@ -688,28 +688,7 @@ export default {
       //预算明细表数据
       budgetDetail: {
         copyLine: false, //复制行
-        FSourceOfFundsGroup: [
-          {
-            label: '全总预算拨款-工会经费',
-            value: 0,
-            FAmount: 0
-          },
-          {
-            label: '全总预算拨款-中央财政拨款',
-            value: 1,
-            FAmount: 0
-          },
-          {
-            label: '省总预算拨款-工会经费',
-            value: 2,
-            FAmount: 0
-          },
-          {
-            label: '省总预算拨款-省财政拨款',
-            value: 3,
-            FAmount: 0
-          }
-        ], //资金源组
+        FSourceOfFundsGroup: [], //资金源组
         fundPayGroup: [], //支付方式下拉项组
       },
       //预算明细表
@@ -1239,7 +1218,7 @@ export default {
           FMeasUnit:this.budgetdetailData[i].FMeasUnit,
           FQty:this.budgetdetailData[i].FQty,
           FPrice:this.budgetdetailData[i].FPrice,
-          FAmount:this.budgetdetailData[i].FAmount,
+          FAmount:this.budgetdetailData[i].FAmount?this.budgetdetailData[i].FAmount.replace(',',''):'0.00',
           FSpecification:this.budgetdetailData[i].FSpecification,
           FRemark:this.budgetdetailData[i].FRemark,
           FEstimatedPurTime:this.budgetdetailData[i].FEstimatedPurTime,
@@ -1275,6 +1254,20 @@ export default {
           formData.append('files',file)
         }
       }
+      let FundAppls = []
+      for (let a in this.budgetDetail.FSourceOfFundsGroup){
+          FundAppls.push({
+            FSourceOfFunds: this.budgetDetail.FSourceOfFundsGroup[a].DM,
+            FAmount: this.budgetdetailData.filter(i=>i.FSourceOfFunds===this.budgetDetail.FSourceOfFundsGroup[a].DM).reduce((prev,cur)=>prev+parseFloat((Number((cur.FAmount).replace(/[,]/g, ''))).toFixed(2)),0)
+          })
+      }
+      let budgetDetail = JSON.parse(JSON.stringify(this.budgetdetailData))
+      for (let i in budgetDetail) {
+        if (budgetDetail[i].FAmount){
+          budgetDetail[i].FAmount = budgetDetail[i].FAmount.replace(',','')
+        }
+      }
+
       let data = {
         //预算主表对象
         ProjectMst: {
@@ -1307,7 +1300,7 @@ export default {
           FPerformEvalType_EXName:this.target.targetType.FName//绩效评价类型代码名称
         },
         //预算明细
-        ProjectDtlBudgetDtls: this.budgetdetailData,
+        ProjectDtlBudgetDtls: budgetDetail,
         //实施计划
         ProjectDtlImplPlans: implPlans,
         //绩效指标
@@ -1325,6 +1318,8 @@ export default {
           FLTPerformGoal:this.target.cqTarget,//长期目标
           FAnnualPerformGoal:this.target.ndTagetL//年度目标
         },
+        //项目资金申请
+        ProjectDtlFundAppls:FundAppls
       }
       formData.append('UserId',JSON.stringify(data.UserId))
       for(let i in data.ProjectMst){
