@@ -14,6 +14,7 @@
             <!-- <el-breadcrumb-item><img src="@/assets/images/g1.png"
                    alt=""></el-breadcrumb-item> -->
             <el-breadcrumb-item v-if="item.meta.name"
+                                style="cursor:pointer"
                                 v-for="(item,n) of $route.matched"
                                 @click.native="routerTo(item.path)"
                                 :key="n">{{item.meta.name}}</el-breadcrumb-item>
@@ -42,7 +43,7 @@
                     <img src="@/assets/images/yusuan.png"
                          alt>
                   </div>
-                  <span>预算项目库</span>
+                  <span>预算项目</span>
                 </li>
                 <li v-if="menuButton.fund=='True'"
                     @click.stop="navPage('/fund')">
@@ -248,7 +249,6 @@ export default {
 
   methods: {
     routerTo (path) {
-      debugger
       this.$router.push(path);
     },
     orgTreeShow () {//组织树显示

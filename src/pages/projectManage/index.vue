@@ -8,7 +8,8 @@
     <div class="container">
       <div class="pageNav">
         <div class="project">
-          <div v-if="MenuButton.projectmanage ==='True'" class="navTitle">
+          <div v-if="MenuButton.projectmanage ==='True'"
+               class="navTitle">
             <div>
               <div><img src="@/assets/images/xmgl.png"
                      alt=""></div>
@@ -18,17 +19,20 @@
           </div>
           <div class="navlistCon">
             <ul class="navlist">
-              <li v-if="MenuButton.ProjectMstList_Vue ==='True'" @click="routerTo('/preBuildProject')">
+              <li v-if="MenuButton.ProjectMstList_Vue ==='True'"
+                  @click="routerTo('/preBuildProject')">
                 <div><img src="@/assets/images/yulix.png"
                        alt=""></div>
                 <div>预立项</div>
               </li>
-              <li v-if="MenuButton.ProjectMstList2_Vue ==='True'" @click="routerTo('/projectBuild')">
+              <li v-if="MenuButton.ProjectMstList2_Vue ==='True'"
+                  @click="routerTo('/projectBuild')">
                 <div><img src="@/assets/images/xmlix.png"
                        alt=""></div>
                 <div>项目立项</div>
               </li>
-              <li v-if="MenuButton.ProjectMstList3_Vue ==='True'" @click="routerTo('/projectList')">
+              <li v-if="MenuButton.ProjectMstList3_Vue ==='True'"
+                  @click="routerTo('/projectList')">
                 <div><img src="@/assets/images/xmcx.png"
                        alt=""></div>
                 <div>项目查询</div>
@@ -40,11 +44,13 @@
               </li>
             </ul>
           </div>
-          <div class="leftArr arrowShow">
+          <div v-show="proArr"
+               class="leftArr arrowShow">
             <i class="el-icon-d-arrow-right"
                @click.stop="arrowFn(false,0)"></i>
           </div>
-          <div class="rightArr arrowShow">
+          <div v-show="proArr"
+               class="rightArr arrowShow">
             <i class="el-icon-d-arrow-right"
                @click.stop="arrowFn(true,0)"></i>
           </div>
@@ -82,11 +88,13 @@
               </li>
             </ul>
           </div>
-          <div class="leftArr arrowShow">
+          <div v-show="repArr"
+               class="leftArr arrowShow">
             <i class="el-icon-d-arrow-right"
                @click.stop="arrowFn(false,1)"></i>
           </div>
-          <div class="rightArr arrowShow">
+          <div v-show="repArr"
+               class="rightArr arrowShow">
             <i class="el-icon-d-arrow-right"
                @click.stop="arrowFn(true,1)"></i>
           </div>
@@ -106,7 +114,9 @@ export default {
       approvalSum: {
         status: true,
         sum: 0
-      }
+      },
+      proArr: false,//项目箭头
+      repArr: false,//预算箭头
     }
   },
   computed: {
@@ -119,8 +129,15 @@ export default {
     })
   },
   mounted () {
+    let vm = this;
     this.getProcTypes()
     this.updateTitle();
+    this.$nextTick(this.arrowShow)
+    window.addEventListener('resize', vm.arrowShow)
+  },
+  beforeDestroy () {
+    let vm = this;
+    window.removeEventListener('resize', vm.arrowShow)
   },
   methods: {
     //修改title
@@ -152,7 +169,32 @@ export default {
 
       this.$router.push({ path: str })
     },
+    //箭头显示
+    arrowShow () {
+      let pro, rep, con, conW, proW, repW;
+      con = document.querySelector('.pageNav .navlistCon');//项目容器
+      pro = document.querySelectorAll('.pageNav .navlistCon .navlist')[0];//项目
+      rep = document.querySelectorAll('.pageNav .navlistCon .navlist')[1];//预算
+
+      conW = window.getComputedStyle(con).width;
+      proW = window.getComputedStyle(pro).width;
+      repW = window.getComputedStyle(rep).width;
+      console.log(conW, proW, repW)
+      if (parseFloat(conW) >= parseFloat(proW)) {
+        this.proArr = false;
+      } else {
+        this.proArr = true;
+      }
+      if (parseFloat(conW) >= parseFloat(repW)) {
+        this.repArr = false;
+      } else {
+        this.repArr = true;
+      }
+
+    },
+    //箭头左右移动
     arrowFn (arrow, type) {
+
       let list, navlistCon, mixin, left, base, childrenLength;
       base = 235;
       mixin = arrow ? 1 : -1;
@@ -201,15 +243,17 @@ export default {
 <style lang="scss" scoped>
 .projectManage {
   .container {
-    overflow: auto;
+    overflow: hidden;
     text-align: center;
     .pageNav {
-      display: inline-block;
-      vertical-align: middle;
-
-      min-width: 1210px;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translateX(-50%) translateY(-50%);
+      width: 90%;
       height: 470px;
       font-size: 0.25rem;
+      padding-left: 60px;
       > div {
         height: 230px;
         margin-bottom: 10px;
@@ -228,6 +272,10 @@ export default {
 
   .project,
   .report {
+    width: 100%;
+    padding-left: 240px;
+    padding-right: 60px;
+    position: relative;
     .leftArr,
     .rightArr {
       position: absolute;
@@ -238,7 +286,7 @@ export default {
       animation: da 1s infinite linear;
     }
     .rightArr {
-      right: -50px;
+      right: 0px;
       transform: rotate(0deg);
     }
     // @media screen and (max-width: 1530px) {
@@ -254,6 +302,9 @@ export default {
     padding: 10px;
     // min-width: 250px;
     // margin-right: 10px;
+    position: absolute;
+    top: 0;
+    left: 0;
     height: 230px;
     line-height: 30px;
     color: #fff;
@@ -284,12 +335,11 @@ export default {
     }
   }
   .navlistCon {
-    float: left;
-    width: 965px;
+    width: 100%;
     height: 250px;
-
+    white-space: nowrap;
     display: inline-block;
-
+    position: relative;
     overflow: hidden;
   }
   .navlist {
@@ -298,10 +348,14 @@ export default {
     white-space: nowrap;
     transition: all 0.2s linear;
     color: $btnColor;
-    position: relative;
+    position: absolute;
+    top: 0;
+    left: 0;
+    transition: all 0.3s ease;
     > li {
-      // display: inline-block;
-      float: left;
+      display: inline-block;
+      // float: left;
+      font-size: 0;
       margin-bottom: 50px;
       width: 220px;
       height: 100%;
@@ -315,6 +369,7 @@ export default {
         box-shadow: 0 0 5px $btnColor;
       }
       > div {
+        font-size: 0.25rem;
         height: 160px;
         line-height: 160px;
         > img {
@@ -335,6 +390,12 @@ export default {
 
 .arrowShow {
   // display: none;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
   transform: rotate(180deg);
   transition: all 0.3s linear;
   cursor: pointer;
@@ -347,9 +408,12 @@ export default {
   animation: ad 1s infinite linear;
   cursor: pointer;
 }
-.arrowShow:hover {
+.arrowShow:hover,
+.projectManage .project .leftArr:hover,
+.projectManage .report .leftArr:hover {
   animation: none;
 }
+
 //箭头左右移动动效
 @keyframes ad {
   0% {

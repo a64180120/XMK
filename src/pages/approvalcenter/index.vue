@@ -1,6 +1,6 @@
 <template>
   <section>
-    <div>
+    <div v-if="$route.path=='/approvalcenter'">
       <el-row>
         <el-col :span="24">
           <top-handle title="审批中心在线工作平台"
@@ -72,6 +72,7 @@
         </div>
       </section>
     </div>
+    <router-view></router-view>
   </section>
 </template>
 
@@ -150,13 +151,12 @@ export default {
       } else if (item.Value === '003') {
         path = ''
       } else if (item.Value === '004') {
-        path = '/preprojectApproval'
+        path = '/approvalcenter/preprojectApproval'
       } else if (item.Value === '005') {
-        path = '/buildprojectApproval'
+        path = '/approvalcenter/buildprojectApproval'
       } else {
         path = ''
       }
-      console.log(item.PhId, path)
       this.$router.push({
         path: path,
         query: {

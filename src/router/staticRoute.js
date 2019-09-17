@@ -29,24 +29,41 @@ const staticRoute = [
           import(/* webpackChunkName:'paycenter'*/ '../pages/paycenter/index'),
         meta: { requireAuth: true, type: 'page', name: '支付中心' }
       },
-      {
-        path: '/payfundapproval',
-        component: () =>
-          import(/* webpackChunkName:'payfundapproval'*/ '../pages/payfundapproval/index'),
-        meta: { requireAuth: true, type: 'page', name: '资金拨付审批' }
-      },
+
       {
         path: '/approvalcenter',
         component: () =>
           import(/* webpackChunkName:'approvalcenter'*/ '../pages/approvalcenter/index'),
-        meta: { requireAuth: true, type: 'page', name: '审批中心' }
+        meta: { requireAuth: true, type: 'page', name: '审批中心' },
+        children: [
+          {
+            path: 'payfundapproval',
+            component: () =>
+              import(/* webpackChunkName:'payfundapproval'*/ '../pages/payfundapproval/index'),
+            meta: { requireAuth: true, type: 'page', name: '资金拨付审批' }
+          },
+          {
+            path: 'paylistapproval',
+            component: () =>
+              import(/* webpackChunkName:'paylistapproval'*/ '../pages/paylistapproval/index'),
+            meta: { requireAuth: true, type: 'page', name: '支付单审批' },
+
+          },
+          {
+            path: 'preprojectApproval',
+            component: () =>
+              import(/* webpackChunkName:'preBuildProject'*/ '../pages/bgnyearApproval/preprojectApproval'),
+            meta: { requireAuth: true, type: 'page', name: '预立项审批' }
+          },
+          {
+            path: 'buildprojectApproval',
+            component: () =>
+              import(/* webpackChunkName:'preBuildProject'*/ '../pages/bgnyearApproval/buildprojectApproval'),
+            meta: { requireAuth: true, type: 'page', name: '项目立项审批' }
+          },
+        ]
       },
-      {
-        path: '/paylistapproval',
-        component: () =>
-          import(/* webpackChunkName:'paylistapproval'*/ '../pages/paylistapproval/index'),
-        meta: { requireAuth: true, type: 'page', name: '支付单审批' }
-      },
+
       {
         path: '/bankaccount',
         component: () =>
@@ -69,26 +86,16 @@ const staticRoute = [
         path: '/preBuildProject',
         component: () =>
           import(/* webpackChunkName:'preBuildProject'*/ '../pages/preproject/preBuildProject'),
-        meta: { requireAuth: true, type: 'page', name: '预立项',title:'预立项' }
+        meta: { requireAuth: true, type: 'page', name: '预立项', title: '预立项' }
       },
-      {
-        path: '/preprojectApproval',
-        component: () =>
-          import(/* webpackChunkName:'preBuildProject'*/ '../pages/bgnyearApproval/preprojectApproval'),
-        meta: { requireAuth: true, type: 'page', name: '预立项审批' }
-      },
+
       {
         path: '/projectBuild',
         component: () =>
           import(/* webpackChunkName:'preBuildProject'*/ '../pages/projectBuild/projectBuild'),
         meta: { requireAuth: true, type: 'page', name: '项目立项' }
       },
-      {
-        path: '/buildprojectApproval',
-        component: () =>
-          import(/* webpackChunkName:'preBuildProject'*/ '../pages/bgnyearApproval/buildprojectApproval'),
-        meta: { requireAuth: true, type: 'page', name: '项目立项审批' }
-      },
+
       {
         path: '/projectList',
         component: () =>
