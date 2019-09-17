@@ -23,7 +23,7 @@ export default {
 
     $route: {
       handler () {
-        console.log(111111)
+        console.log(this.$route)
       },
       deep: true
     }
@@ -41,7 +41,7 @@ export default {
 
 <style scoped>
 .layout {
-    position: relative;
-    height: 100%;
+  position: relative;
+  height: 100%;
 }
 </style>

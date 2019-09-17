@@ -15,6 +15,7 @@
                    alt=""></el-breadcrumb-item> -->
             <el-breadcrumb-item v-if="item.meta.name"
                                 v-for="(item,n) of $route.matched"
+                                @click.native="routerTo(item.path)"
                                 :key="n">{{item.meta.name}}</el-breadcrumb-item>
           </el-breadcrumb>
         </div>
@@ -127,7 +128,8 @@
            class="count"
            style="height: 30px;line-height: 30px;margin: 0 20px">
         <span>待审批任务:</span>
-        <span class="approval-num" @click="goApprovalCenter()">{{approvalSum.sum}}</span>
+        <span class="approval-num"
+              @click="goApprovalCenter()">{{approvalSum.sum}}</span>
       </div>
       <div>
         <span class="mr-2">年度:</span>
@@ -241,9 +243,14 @@ export default {
   },
   mounted () {
     this.setyearList();
+    console.log(this.$route.matched)
   },
 
   methods: {
+    routerTo (path) {
+      debugger
+      this.$router.push(path);
+    },
     orgTreeShow () {//组织树显示
       this.$refs.orgtree.setCurrentNode({ OCode: this.orgcode });
     },
@@ -293,7 +300,7 @@ export default {
 
         </span>);
     },
-    goApprovalCenter(){
+    goApprovalCenter () {
       this.$router.push('/approvalcenter')
     }
   }
@@ -526,11 +533,11 @@ export default {
 }
 .handleBtnCon .leftBtn {
 }
-  .approval-num{
-    color: #3294e8;
-    text-decoration: underline;
-  }
-.approval-num:hover{
+.approval-num {
+  color: #3294e8;
+  text-decoration: underline;
+}
+.approval-num:hover {
   cursor: pointer;
 }
 </style>
