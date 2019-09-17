@@ -240,6 +240,7 @@ export default {
   },
   methods: {
     refresh () {
+
       this.getTargetClasses();
       this.getType();
 
@@ -294,15 +295,17 @@ export default {
     },
     //修改指标信息列表
     UpdateTargets () {
+      let list = this.infoList.concat(this.deleteList);
+
       let data = {
         orgid: this.org.orgid,
         orgCode: this.org.OCode,
-        infoData: this.infoList
+        infoData: list
       }
       PostUpdateTargets(data).then(res => {
         this.$msgBox.show(res.Msg)
         if (res.Status == 'success') {
-          this.refresh();
+          this.$emit('refresh');
         }
       }).catch(err => {
         console.log(err)
@@ -349,7 +352,7 @@ export default {
 
         } else {
           this.options = res.Record
-          console.log(this.options)
+
         }
       }).catch(err => {
         console.log(err)
@@ -402,7 +405,8 @@ export default {
 
         this.$msgBox.show(res.Msg);
         this.targetTypeShow = false;
-        this.refresh();
+
+        this.$emit('refresh');
 
       }).catch(err => {
         console.log(err)
@@ -442,8 +446,12 @@ export default {
 
     },
     deleteInfo (n, item) {
-      this.deleteList.push(item);
+      if (item.PhId) {
+        item.PersistentState = 3;
+        this.deleteList.push(item);
+      }
       this.infoList.splice(n, 1)
+
     }
   },
   components: {
